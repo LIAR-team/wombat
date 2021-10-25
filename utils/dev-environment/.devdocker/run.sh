@@ -42,8 +42,7 @@ docker run -it --rm \
   --volume=${HOME}:${DOCKER_HOME}/host-home:rw \
   --volume=${HOME}/.gitconfig:${DOCKER_HOME}/.gitconfig:ro \
   --volume=${HOME}/.ssh:${DOCKER_HOME}/.ssh:ro \
-  --volume=${WOMBAT_DIR}:${DOCKER_WOMBAT_WS}/src/wombat:rw \
-  --volume=${HOST_WOMBAT_WS}:${DOCKER_WOMBAT_WS}:rw \
+  --volume=${WOMBAT_DIR}:${DOCKER_WOMBAT_WS}:rw \
   --workdir ${DOCKER_WOMBAT_WS} \
   wombat-dev \
   $@
