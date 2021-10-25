@@ -27,5 +27,12 @@ USER $USERNAME
 # Not recursive ownership, see this bug (https://github.com/docker/for-linux/issues/388)
 RUN sudo chown $USERNAME:$USERNAME /workspaces
 
+# Create wombat workspace where this repo will be mounted as a volume
+RUN mkdir -p /workspaces/wombat_ws/src/wombat && \
+  sudo chown -R $USERNAME:$USERNAME /workspaces/wombat_ws
+  # && \
+  #sudo chown -R $USERNAME:$USERNAME /workspaces/wombat_ws/src && \
+  #sudo chown -R $USERNAME:$USERNAME /workspaces/wombat_ws/src/wombat
+
 RUN echo ' \n\
   source /workspaces/ros2_galactic/install/setup.sh' >> $HOME/.bashrc
