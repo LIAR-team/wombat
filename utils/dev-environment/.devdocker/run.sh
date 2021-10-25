@@ -24,11 +24,7 @@ fi
 # Define some useful directory names
 WOMBAT_DIR=$(dirname ${THIS_DIR})
 DOCKER_HOME=/home/docker-dev
-DOCKER_WOMBAT_WS=/workspaces/wombat_ws
-HOST_WOMBAT_WS=$(dirname ${WOMBAT_DIR})/wombat-ws
-
-# Make sure that host wombat workspace exists
-mkdir -p $HOST_WOMBAT_WS/src
+DOCKER_WOMBAT_WS=/workspaces/wombat
 
 # Run the developer's dockerfile
 docker run -it --rm \
