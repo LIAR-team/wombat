@@ -64,6 +64,7 @@ docker build \
   --build-arg USER_UID="$UID" \
   --file $THIS_DIR/Dockerfile \
   --network=host \
+  --pull \
   --tag wombat-user \
   $THIS_DIR
 

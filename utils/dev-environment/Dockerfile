@@ -1,4 +1,4 @@
-FROM wombat-base
+FROM alsora/wombat-base:latest
 
 # Build-time arguments
 ARG USERNAME=docker-dev
@@ -26,10 +26,6 @@ USER $USERNAME
 # Get ownership of the /workspaces directory
 # Not recursive ownership, see this bug (https://github.com/docker/for-linux/issues/388)
 RUN sudo chown $USERNAME:$USERNAME /workspaces
-
-# Create wombat workspace where this repo will be mounted as a volume
-RUN mkdir -p /workspaces/wombat_ws/src/wombat && \
-  sudo chown -R $USERNAME:$USERNAME /workspaces/wombat_ws
 
 RUN echo ' \n\
   source /workspaces/ros2_galactic/install/setup.sh' >> $HOME/.bashrc
