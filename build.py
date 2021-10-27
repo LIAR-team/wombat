@@ -7,7 +7,6 @@ import os
 import platform
 import shutil
 import subprocess
-import sys
 
 ###
 # Constants
@@ -24,27 +23,27 @@ class Workflows(Enum):
 
 # https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python
 class bcolors:
-    BLUE = '\033[34m'
-    GREEN = '\033[32m'
-    LIGHT_MAGENTA = '\033[95m'
-    LIGHT_BLUE = '\033[94m'
-    LIGHT_GREEN = '\033[92m'
-    LIGHT_YELLOW = '\033[93m'
-    LIGHT_RED = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    DIM = '\033[2m'
-    ITALIC = '\033[3m'
-    UNDERLINE = '\033[4m'
-    INVERT = '\033[7m'
+  BLUE = '\033[34m'
+  GREEN = '\033[32m'
+  LIGHT_MAGENTA = '\033[95m'
+  LIGHT_BLUE = '\033[94m'
+  LIGHT_GREEN = '\033[92m'
+  LIGHT_YELLOW = '\033[93m'
+  LIGHT_RED = '\033[91m'
+  ENDC = '\033[0m'
+  BOLD = '\033[1m'
+  DIM = '\033[2m'
+  ITALIC = '\033[3m'
+  UNDERLINE = '\033[4m'
+  INVERT = '\033[7m'
 
-    @staticmethod
-    def header(txt):
-        return bcolors.BOLD +  bcolors.UNDERLINE + txt + bcolors.ENDC
-    
-    @staticmethod
-    def warning(txt):
-        return bcolors.BOLD + bcolors.LIGHT_YELLOW + txt + bcolors.ENDC
+  @staticmethod
+  def header(txt):
+    return bcolors.BOLD +  bcolors.UNDERLINE + txt + bcolors.ENDC
+  
+  @staticmethod
+  def warning(txt):
+    return bcolors.BOLD + bcolors.LIGHT_YELLOW + txt + bcolors.ENDC
 
 ###
 # Command line arguments
@@ -167,7 +166,7 @@ class TestWorkflow(BaseWorkflow):
 class ResetWorkflow(BaseWorkflow):
   def run(self):
     if not os.path.exists(WORKSPACE_DIR):
-      print("Workspace does not exist, nothing to reset!")
+      print(bcolors.warning("Workspace does not exist, nothing to reset!"))
       return
     
     if self.wombat_args.reset_hard:

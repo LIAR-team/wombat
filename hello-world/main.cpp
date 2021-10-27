@@ -14,23 +14,23 @@ class MinimalPublisher : public rclcpp::Node
 {
 public:
   MinimalPublisher()
-  : Node("minimal_publisher"), count_(0)
+  : Node("minimal_publisher"), m_count(0)
   {
-    publisher_ = this->create_publisher<std_msgs::msg::String>("topic", 10);
+    m_publisher = this->create_publisher<std_msgs::msg::String>("topic", 10);
     auto timer_callback =
       [this]() -> void {
         auto message = std_msgs::msg::String();
-        message.data = "Hello, world! " + std::to_string(this->count_++);
+        message.data = "Hello, world! " + std::to_string(this->m_count++);
         RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
-        this->publisher_->publish(message);
+        this->m_publisher->publish(message);
       };
-    timer_ = this->create_wall_timer(500ms, timer_callback);
+    m_timer = this->create_wall_timer(500ms, timer_callback);
   }
 
 private:
-  rclcpp::TimerBase::SharedPtr timer_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
-  size_t count_;
+  rclcpp::TimerBase::SharedPtr m_timer;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr m_publisher;
+  size_t m_count;
 };
 
 int main(int argc, char * argv[])
