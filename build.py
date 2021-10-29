@@ -16,11 +16,6 @@ WOMBAT_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 WORKSPACE = "_ws"
 WORKSPACE_DIR = os.path.join(WOMBAT_DIR, WORKSPACE)
 
-class Workflows(Enum):
-  BUILD=1
-  RESET=2
-  TEST=3
-
 # https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python
 class bcolors:
   BLUE = '\033[34m'
@@ -90,9 +85,17 @@ def execute(command, cwd=WOMBAT_DIR, dry_run=False):
 def has_custom_colcon_path(args):
   return "--base-path" in args or "--base-paths" in args or "--build-base" in args or "--install-base" in args or "--log-base" in args
 
-def extend_at_index(to_be_extended, index, extension):
+def extend_at_value(to_be_extended, value, extension, default_value_index=0):
+  # inserts a list as individual elements into another list after the specified value
+  # if the list does not include the value, it will first insert it at default_value_index
+
+  # make sure that value is included in the list to be extended
+  if not value in to_be_extended:
+    to_be_extended.insert(default_value_index, value)
+  # get index immediately after value
+  extension_index = to_be_extended.index(value) + 1
   # inserts a list as individual elements into another list at the specified index
-  to_be_extended[index:index] = extension
+  to_be_extended[extension_index:extension_index] = extension
 
 ###
 # Workflows
@@ -120,10 +123,7 @@ class BuildWorkflow(BaseWorkflow):
       build_args.extend([event_handlers_keyword, "console_direct+"])
 
     # Build args must be added after the `build` keyword
-    if not self.BUILD_KEYWORD in self.colcon_args:
-      self.colcon_args.insert(0, self.BUILD_KEYWORD)
-    build_args_index = self.colcon_args.index(self.BUILD_KEYWORD) + 1
-    extend_at_index(self.colcon_args, build_args_index, build_args)
+    extend_at_value(self.colcon_args, self.BUILD_KEYWORD, build_args)
 
     colcon_args_joint = " ".join(self.colcon_args)
     execute(f"colcon {colcon_args_joint}", WORKSPACE_DIR)
@@ -146,18 +146,13 @@ class TestWorkflow(BaseWorkflow):
       ctest_args.extend(["-R", self.wombat_args.test_name])
 
     # Test args must be added after the `test` keyword
-    if not self.TEST_KEYWORD in self.colcon_args:
-      self.colcon_args.insert(0, self.TEST_KEYWORD)
-    test_args_index = self.colcon_args.index(self.TEST_KEYWORD) + 1
-    extend_at_index(self.colcon_args, test_args_index, test_args)
+    extend_at_value(self.colcon_args, self.TEST_KEYWORD, test_args)
 
     # Ctest args must be added at the end
     if ctest_args:
       ctest_keyword = "--ctest-args"
-      if not ctest_keyword in self.colcon_args:
-        self.colcon_args.append(ctest_keyword)
-      ctest_args_index = self.colcon_args.index(ctest_keyword) + 1
-      extend_at_index(self.colcon_args, ctest_args_index, ctest_args)
+      default_ctest_index = len(self.colcon_args)
+      extend_at_value(self.colcon_args, ctest_keyword, ctest_args, default_ctest_index)
 
     # Run colcon test
     colcon_args_joint = " ".join(self.colcon_args)
@@ -186,9 +181,9 @@ class ResetWorkflow(BaseWorkflow):
 def create_workflow(wombat_args, colcon_args):
   workflow = None
 
-  if "build" in colcon_args:
+  if BuildWorkflow.BUILD_KEYWORD in colcon_args:
     workflow = BuildWorkflow(wombat_args, colcon_args)
-  elif "test" in colcon_args:
+  elif TestWorkflow.TEST_KEYWORD in colcon_args:
     workflow = TestWorkflow(wombat_args, colcon_args)
   elif wombat_args.reset or wombat_args.reset_hard:
     workflow = ResetWorkflow(wombat_args, colcon_args)
