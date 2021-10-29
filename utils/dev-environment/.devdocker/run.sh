@@ -24,7 +24,7 @@ fi
 # Define some useful directory names
 WOMBAT_DIR=$(dirname ${THIS_DIR})
 DOCKER_HOME=/home/docker-dev
-DOCKER_WOMBAT_WS=/workspaces/wombat
+DOCKER_WOMBAT_WS=${DOCKER_HOME}/wombat
 
 # Run the developer's dockerfile
 docker run -it --rm \
@@ -33,6 +33,7 @@ docker run -it --rm \
   ${GPU_FLAG} \
   --network=host \
   --privileged \
+  --user=${UID}:${UID} \
   --volume=${XSOCK}:${XSOCK}:rw \
   --volume=${XAUTH}:${XAUTH}:rw \
   --volume=${HOME}:${DOCKER_HOME}/host-home:rw \

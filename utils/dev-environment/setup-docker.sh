@@ -58,15 +58,8 @@ if lshw -C display | grep -q 'NVIDIA'; then
   fi
 fi
 
-# Build base docker image
-docker build \
-  --build-arg USERNAME="docker-dev" \
-  --build-arg USER_UID="$UID" \
-  --file $THIS_DIR/Dockerfile \
-  --network=host \
-  --pull \
-  --tag wombat-user \
-  $THIS_DIR
+# Pull base docker image
+docker pull alsora/wombat-base:latest
 
 # Install dev docker scripts
 if [ ! -e .devdocker ]; then
