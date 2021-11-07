@@ -45,8 +45,9 @@ class bcolors:
 ###
 
 def parse_args():
+  formatter = lambda prog: argparse.RawDescriptionHelpFormatter(prog, max_help_position=52)
   parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter,
+    formatter_class=formatter,
     description=bcolors.header("The wombat Build Script.") +
 '''
 Treat this script as an equivalent of `colcon`, which is meant to simplify the most standard build operations.
@@ -61,13 +62,21 @@ Build up to a package     ./build.py --packages-up-to wombat_hello_world
 Build only a package      ./build.py --packages-select wombat_hello_world
 Test All                  ./build.py test
 Test only a package       ./build.py test --packages-select wombat_hello_world
+Test without linters      ./build.py test --no-lint
 '''
 )
 
-  parser.add_argument("-v", "--verbose", help="prints verbose logs to screen", action="store_true")
-  parser.add_argument("--test-name", help="Build and run unit-tests that match this regex", metavar="<regex>")
-  parser.add_argument("--reset", help="Reset CMake cache", action="store_true")
-  parser.add_argument("--reset-hard", help="Completely erases the wombat workspace", action="store_true")
+  general_args = parser.add_argument_group(bcolors.header("General Arguments"))
+  general_args.add_argument("-v", "--verbose", help="prints verbose logs to screen", action="store_true")
+
+  test_args = parser.add_argument_group(bcolors.header("Test Arguments"))
+  test_args.add_argument("--test-name", help="Run only unit-tests that match this regex", metavar="<regex>")
+  test_args.add_argument("--no-test-name", help="Exclude unit-tests that match this regex", metavar="<regex>")
+  test_args.add_argument("--no-lint", help="Exclude Linters unit-tests", action="store_true")
+
+  clean_args = parser.add_argument_group(bcolors.header("Cleanup Arguments"))
+  clean_args.add_argument("--reset", help="Reset CMake cache", action="store_true")
+  clean_args.add_argument("--reset-hard", help="Completely erases the wombat workspace", action="store_true")
 
   wombat_args, colcon_args = parser.parse_known_args()
   return wombat_args, colcon_args
@@ -83,7 +92,7 @@ def execute(command, cwd=WOMBAT_DIR, dry_run=False):
   return p.wait()
 
 def has_custom_colcon_path(args):
-  return "--base-path" in args or "--base-paths" in args or "--build-base" in args or "--install-base" in args or "--log-base" in args
+  return any(x in args for x in ["--base-path", "--base-paths", "--build-base", "--install-base", "--log-base"])
 
 def extend_at_value(to_be_extended, value, extension, default_value_index=0):
   # inserts a list as individual elements into another list after the specified value
@@ -114,24 +123,46 @@ class BuildWorkflow(BaseWorkflow):
     if not os.path.exists(WORKSPACE_DIR):
       os.makedirs(WORKSPACE_DIR)
 
+    cmd_prefix = ""
+
     # Always set the base path as we run commands in the workspace directory
     build_args = ["--base-paths", WOMBAT_DIR]
 
-    # If user requests verbose mode redirect colcon logs to console
+    # We always pass output to stdout/stderr unless user has their own options
     event_handlers_keyword = "--event-handlers"
-    if self.wombat_args.verbose and not event_handlers_keyword in self.colcon_args:
+    if not event_handlers_keyword in self.colcon_args:
       build_args.extend([event_handlers_keyword, "console_direct+"])
+
+    # If user requests verbose mode then print all build invocations
+    if self.wombat_args.verbose:
+      cmd_prefix = "VERBOSE=1"
+
+    cmake_args = [
+      "-DCMAKE_EXPORT_COMPILE_COMMANDS=True", # Compile commands are needed to run clang-tidy linters
+      "-GNinja" # Use Ninja backend because to speed-up builds
+    ]
 
     # Build args must be added after the `build` keyword
     extend_at_value(self.colcon_args, self.BUILD_KEYWORD, build_args)
 
+    # CMake args must be added at the end
+    if cmake_args:
+      cmake_keyword = "--cmake-args"
+      default_cmake_index = len(self.colcon_args)
+      extend_at_value(self.colcon_args, cmake_keyword, cmake_args, default_cmake_index)
+
     colcon_args_joint = " ".join(self.colcon_args)
-    execute(f"colcon {colcon_args_joint}", WORKSPACE_DIR)
+    execute(f"{cmd_prefix} colcon {colcon_args_joint}", WORKSPACE_DIR)
 
 class TestWorkflow(BaseWorkflow):
   TEST_KEYWORD = "test"
+  # NOTE: this regex needs to be manually updated to match our linters
+  LINTERS_REGEX = "\"(clang|flake|lint|uncrustify)\""
 
   def run(self):
+    if not os.path.exists(WORKSPACE_DIR):
+      raise OSError("Workspace directory is not present: build before running tests.")
+
     ctest_args = []
 
     # Always set the base path as we run commands in the workspace directory
@@ -144,6 +175,12 @@ class TestWorkflow(BaseWorkflow):
 
     if self.wombat_args.test_name:
       ctest_args.extend(["-R", self.wombat_args.test_name])
+
+    if self.wombat_args.exclude_test:
+      ctest_args.extend(["-E", self.wombat_args.exclude_test])
+
+    if self.wombat_args.no_lint:
+      ctest_args.extend(["-E", self.LINTERS_REGEX])
 
     # Test args must be added after the `test` keyword
     extend_at_value(self.colcon_args, self.TEST_KEYWORD, test_args)

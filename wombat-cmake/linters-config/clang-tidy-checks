@@ -1,0 +1,30 @@
+Checks:
+  bugprone-*,
+  cppcoreguidelines-init-variables,
+  cppcoreguidelines-narrowing-conversions,
+  cppcoreguidelines-virtual-class-destructor,
+  google-default-arguments,
+  misc-definitions-in-headers,
+  modernize-avoid-c-arrays,
+  modernize-use-auto,
+  modernize-use-bool-literals,
+  modernize-use-nullptr,
+  modernize-use-override,
+  modernize-use-using,
+  performance-for-range-copy,
+  performance-implicit-conversion-in-loop,
+  performance-inefficient-algorithm,
+  performance-type-promotion-in-math-fn,
+  performance-unnecessary-value-param,
+  readability-identifier-naming,
+  readability-implicit-bool-conversion,
+  readability-make-member-function-const,
+CheckOptions:
+  - { key: readability-identifier-naming.ClassCase,               value: CamelCase  }
+  - { key: readability-identifier-naming.StructCase,              value: CamelCase  }
+  - { key: readability-identifier-naming.VariableCase,            value: lower_case }
+  - { key: readability-identifier-naming.FunctionCase,            value: lower_case }
+  - { key: readability-identifier-naming.ParameterCase,           value: lower_case }
+  - { key: readability-identifier-naming.PrivateMemberPrefix,     value: m_         }
+  - { key: readability-identifier-naming.ProtectedMemberPrefix,   value: m_         }
+  - { key: readability-identifier-naming.StaticVariablePrefix,    value: s_         }
