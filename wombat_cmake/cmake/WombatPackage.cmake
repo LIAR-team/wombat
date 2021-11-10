@@ -43,11 +43,18 @@ macro(wombat_package)
       -Wimplicit-fallthrough
       -Wmissing-braces
       -Wmissing-declarations
-      -Wmissing-include-dirs
       -Wnull-dereference
+      -Wredundant-decls
       -Wshadow
       -fPIC
     )
+  endif()
+
+  option(COVERAGE_ENABLED "Enable code coverage" FALSE)
+  if(COVERAGE_ENABLED)
+    add_compile_options(--coverage)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
   endif()
 
 endmacro()

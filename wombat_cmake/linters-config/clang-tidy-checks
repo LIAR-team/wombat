@@ -1,0 +1,62 @@
+# Full list of available checks: https://releases.llvm.org/10.0.0/tools/clang/tools/extra/docs/clang-tidy/checks/list.html
+Checks:
+  bugprone-*,
+  cert-dcl21-cpp,
+  cert-flp30-c,
+  cert-oop58-cpp,
+  clang-analyzer-core.uninitialized.CapturedBlockVariable,
+  clang-analyzer-cplusplus.InnerPointer,
+  clang-analyzer-unix.Malloc,
+  cppcoreguidelines-init-variables,
+  cppcoreguidelines-narrowing-conversions,
+  cppcoreguidelines-virtual-class-destructor,
+  google-default-arguments,
+  misc-definitions-in-headers,
+  modernize-avoid-c-arrays,
+  modernize-loop-convert,
+  modernize-pass-by-value,
+  modernize-use-auto,
+  modernize-use-bool-literals,
+  modernize-use-default-member-init,
+  modernize-use-nullptr,
+  modernize-use-override,
+  modernize-use-using,
+  performance-for-range-copy,
+  performance-implicit-conversion-in-loop,
+  performance-inefficient-algorithm,
+  performance-no-automatic-move,
+  performance-type-promotion-in-math-fn,
+  performance-unnecessary-value-param,
+  readability-container-size-empty,
+  readability-identifier-naming,
+  readability-implicit-bool-conversion,
+  readability-make-member-function-const,
+  readability-misleading-indentation,
+  readability-simplify-boolean-expr,
+CheckOptions:
+  - key: modernize-loop-convert
+    value: reasonable
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.FunctionCase,
+    value: lower_case
+  - key: readability-identifier-naming.MethodCase,
+    value: lower_case
+  - key: readability-identifier-naming.ParameterCase,
+    value: lower_case
+  - key: readability-identifier-naming.EnumConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.StaticConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.PrivateMemberPrefix
+    value: m_
+  - key: readability-identifier-naming.ProtectedMemberPrefix
+    value: m_
+  - key: readability-identifier-naming.StaticVariablePrefix
+    value: s_

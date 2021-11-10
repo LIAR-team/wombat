@@ -5,7 +5,7 @@
   <version>0.0.1</version>
   <description>Common CMake scripts used by the wombat code</description>
   <maintainer email="alberto.soragna@gmail.com">Alberto Soragna</maintainer>
-  <license>Propietary</license>
+  <license>Proprietary</license>
 
   <buildtool_depend>ament_cmake_core</buildtool_depend>
   <buildtool_depend>ament_cmake_export_dependencies</buildtool_depend>

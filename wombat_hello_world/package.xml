@@ -3,9 +3,9 @@
 <package format="2">
   <name>wombat_hello_world</name>
   <version>0.0.1</version>
-  <description>Test packge for wombat repository</description>
+  <description>Example packge for wombat repository</description>
   <maintainer email="alberto.soragna@gmail.com">Alberto Soragna</maintainer>
-  <license>Propietary</license>
+  <license>Proprietary</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
@@ -16,7 +16,7 @@
   <exec_depend>rclcpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
 
-  <test_depend>wombat_linters</test_depend>
+  <test_depend>wombat_cmake</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

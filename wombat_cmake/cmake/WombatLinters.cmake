@@ -39,10 +39,9 @@ macro(wombat_linters)
     # Clang-tidy
     # C/C++ static analysis for various checks
     find_package(ament_cmake_clang_tidy REQUIRED)
-    # Full list of available checks: https://clang.llvm.org/extra/clang-tidy/checks/list.html
     set(_clang_tidy_config ${_wombat_linters_dir}/clang-tidy-checks)
-    # Show errors from all non-system header files 
-    set(_clang_tidy_header_filter --header-filter .*)
+    # Include only errors from header files located in the project directory
+    set(_clang_tidy_header_filter --header-filter ${PROJECT_SOURCE_DIR}/.*)
     ament_clang_tidy(${CMAKE_BINARY_DIR} ${_clang_tidy_header_filter} CONFIG_FILE ${_clang_tidy_config})
 
     # CppCheck

@@ -2,8 +2,8 @@
 
 import argparse
 import distro
-from enum import Enum
 import os
+from pathlib import Path
 import platform
 import shutil
 import subprocess
@@ -68,15 +68,14 @@ Test without linters      ./build.py test --no-lint
 
   general_args = parser.add_argument_group(bcolors.header("General Arguments"))
   general_args.add_argument("-v", "--verbose", help="prints verbose logs to screen", action="store_true")
+  general_args.add_argument("--reset", help="Reset CMake cache", action="store_true")
+  general_args.add_argument("--reset-hard", help="Completely erases the wombat workspace", action="store_true")
+  general_args.add_argument("--coverage", help="Compute test coverage metrics", action="store_true")
 
   test_args = parser.add_argument_group(bcolors.header("Test Arguments"))
   test_args.add_argument("--test-name", help="Run only unit-tests that match this regex", metavar="<regex>")
   test_args.add_argument("--no-test-name", help="Exclude unit-tests that match this regex", metavar="<regex>")
   test_args.add_argument("--no-lint", help="Exclude Linters unit-tests", action="store_true")
-
-  clean_args = parser.add_argument_group(bcolors.header("Cleanup Arguments"))
-  clean_args.add_argument("--reset", help="Reset CMake cache", action="store_true")
-  clean_args.add_argument("--reset-hard", help="Completely erases the wombat workspace", action="store_true")
 
   wombat_args, colcon_args = parser.parse_known_args()
   return wombat_args, colcon_args
@@ -85,11 +84,18 @@ Test without linters      ./build.py test --no-lint
 # Utilities
 ###
 
-def execute(command, cwd=WOMBAT_DIR, dry_run=False):
+def execute(command, cwd=WOMBAT_DIR, stdout=None, stderr=None, dry_run=False):
+  '''
+  Runs the provided command in a new shell.
+  The command is called from the specified directory.
+  By default the command output (stdout and stderr) is redirected to terminal.
+  It returns a CompletedProcess instance.
+  '''
+  
   print('+ ' + command)
   actual_command=command if not dry_run else '/bin/true'
-  p = subprocess.Popen(actual_command, shell=True, cwd=cwd, stdout=None, stderr=None)
-  return p.wait()
+  cp = subprocess.run(actual_command, shell=True, cwd=cwd, universal_newlines=True, stdout=stdout, stderr=stderr)
+  return cp
 
 def has_custom_colcon_path(args):
   return any(x in args for x in ["--base-path", "--base-paths", "--build-base", "--install-base", "--log-base"])
@@ -173,12 +179,15 @@ class TestWorkflow(BaseWorkflow):
     if self.wombat_args.verbose and not event_handlers_keyword in self.colcon_args:
       test_args.extend([event_handlers_keyword, "console_direct+"])
 
+    # Match the provided tests
     if self.wombat_args.test_name:
       ctest_args.extend(["-R", self.wombat_args.test_name])
 
-    if self.wombat_args.exclude_test:
-      ctest_args.extend(["-E", self.wombat_args.exclude_test])
+    # Exclude the provided tests
+    if self.wombat_args.no_test_name:
+      ctest_args.extend(["-E", self.wombat_args.no_test_name])
 
+    # Exclude linter tests
     if self.wombat_args.no_lint:
       ctest_args.extend(["-E", self.LINTERS_REGEX])
 
@@ -215,6 +224,37 @@ class ResetWorkflow(BaseWorkflow):
           os.remove(cmake_cache_file)
       return
 
+class CoverageWorkflow(BaseWorkflow):
+  def run(self):
+    if not os.path.exists(WORKSPACE_DIR):
+      raise OSError("Workspace directory is not present: build and run tests before computing coverage.")
+
+    build_dir = os.path.join(WORKSPACE_DIR, "build")
+
+    if not list(Path(build_dir).rglob("*.gcno")):
+      raise OSError("Code must be built with --cmake-args -DCOVERAGE_ENABLED=True before computing coverage.")
+    
+    if not list(Path(build_dir).rglob("*.gcda")):
+      raise OSError("Code must be tested before computing coverage.")
+
+    # Get names of all ROS packages in workspace
+    list_pkg_command = f"colcon list --names-only --base-paths {WOMBAT_DIR}"
+    cp = execute(list_pkg_command, cwd=WORKSPACE_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp.check_returncode()
+    packages = cp.stdout.strip().replace('\n',' ')
+
+    # Generage a coverage info file
+    cov_info_file = os.path.join(WORKSPACE_DIR, "coverage.info")
+    execute(f"fastcov --lcov -d {build_dir} --include {packages} --exclude test/ --process-gcno --validate-sources --dump-statistic --output {cov_info_file}", WORKSPACE_DIR)
+    cp.check_returncode()
+
+    # Generage html visualization
+    cov_html_dir = os.path.join(WORKSPACE_DIR, "cov_html")
+    execute(f"genhtml {cov_info_file} --output-directory {cov_html_dir}", WORKSPACE_DIR)
+    cp.check_returncode()
+
+    print(f"\n---> Find coverage report at {cov_html_dir}")
+
 def create_workflow(wombat_args, colcon_args):
   workflow = None
 
@@ -224,6 +264,8 @@ def create_workflow(wombat_args, colcon_args):
     workflow = TestWorkflow(wombat_args, colcon_args)
   elif wombat_args.reset or wombat_args.reset_hard:
     workflow = ResetWorkflow(wombat_args, colcon_args)
+  elif wombat_args.coverage:
+    workflow = CoverageWorkflow(wombat_args, colcon_args)
   else:
     workflow = BuildWorkflow(wombat_args, colcon_args)
 
