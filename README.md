@@ -1,6 +1,6 @@
 # wombat
 
-### Setup Docker environment
+### Setup Environment
 
 This step is only required the first time or whenever the `wombat-base` Docker image is updated.
 It will build a Docker image with all the dependencies required to build the `wombat` software.
@@ -9,7 +9,7 @@ It will build a Docker image with all the dependencies required to build the `wo
 ./utils/dev-environment/setup-docker.sh
 ```
 
-To start a developer Docker container, then you can use:
+Then, whenever you want to start a developer Docker container you can use:
 
 ```bash
 .devdocker/run.sh
@@ -17,11 +17,15 @@ To start a developer Docker container, then you can use:
 
 ### Build `wombat`
 
-To build the `wombat` software you can use the `build.py` script.
-**Note: it is recommended to run this command in a developer Docker container, to make sure that all dependencies, with their correct versions are available.**
+**The `wombat` software is built in a developer Docker container using the `colcon` build tool.**
+
+From the `wombat` directory, build the software and test it.
 
 ```bash
-./build.py
+cd ~/wombat
+colcon build
+colcon test
 ```
 
-This will generate a `_ws` directory containing the built artifacts.
+This will generate a `_ws` sub-directory containing the built artifacts.
+For more advanced commands check `colcon --help`.

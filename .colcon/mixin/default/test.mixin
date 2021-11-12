@@ -1,0 +1,25 @@
+{
+  "test": {
+    "all": {
+      "ctest-args": [],
+    },
+    "linters": {
+      "ctest-args": ["-L", "linter"],
+      "pytest-args": ["-m", "linter"],
+    },
+    "no-linters": {
+      "ctest-args": ["-LE", "linter"],
+      "pytest-args": ["-m", "not linter"],
+    },
+    "clang": {
+      "ctest-args": ["-R", "clang"],
+    },
+    "no-clang": {
+      "ctest-args": ["-E", "clang"],
+    },
+    "coverage": {
+      "pytest-args": ["--cov-report=term"],
+      "pytest-with-coverage": true,
+    },
+  }
+}
