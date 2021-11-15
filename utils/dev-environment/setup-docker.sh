@@ -37,6 +37,15 @@ else
   exit 1
 fi
 
+if id -nG "$USER" | grep -qw "docker"; then
+  echo "$USER belongs to docker group"
+elif [ -n "$(awk -F= '/^NAME/{print $2}' /etc/os-release | grep Ubuntu)" ]; then
+  echo "Adding $USER to docker group"
+  sudo groupadd docker
+  sudo usermod -aG docker $USER
+  RESTART_SUGGESTED=1
+fi
+
 if lshw -C display | grep -q 'NVIDIA'; then
   echo "### - found NVIDIA GPU in the system"
   # Docs https://stackoverflow.com/a/58432877/7108533
