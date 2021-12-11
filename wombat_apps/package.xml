@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>wombat_apps</name>
+  <version>0.0.1</version>
+  <description>The Wombat applications</description>
+  <maintainer email="alberto.soragna@gmail.com">Alberto Soragna</maintainer>
+  <license>Proprietary</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <build_depend>wombat_cmake</build_depend>
+
+  <depend>nav2_bt_navigator</depend>
+  <depend>nav2_controller</depend>
+  <depend>nav2_lifecycle_manager</depend>
+  <depend>nav2_planner</depend>
+  <depend>nav2_recoveries</depend>
+  <depend>nav2_smoother</depend>
+  <depend>nav2_waypoint_follower</depend>
+  <depend>rclcpp</depend>
+
+  <test_depend>wombat_cmake</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
