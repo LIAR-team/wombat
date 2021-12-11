@@ -1,6 +1,9 @@
+# Wombat ignore
 /.vscode
 /.devdocker
 _ws
+
+#### C/C++ ignore
 
 # Prerequisites
 *.d
@@ -34,3 +37,23 @@ _ws
 *.exe
 *.out
 *.app
+
+#### Python ignore
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+develop-eggs/
+eggs/
+.eggs/
+parts/
+sdist/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
