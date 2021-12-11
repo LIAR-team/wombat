@@ -1,0 +1,20 @@
+
+_build_base: &build_base
+  "build-base": "./_ws/build"
+_install_base: &install_base
+  "install-base": "./_ws/install"
+
+"":
+  "log-base": "./_ws/log"
+
+"build":
+  <<: *build_base
+  <<: *install_base
+  "executor": "parallel"
+  "event-handlers": ["console_direct+"]
+  "mixin": ["wombat"]
+
+"test":
+  <<: *build_base
+  <<: *install_base
+  "mixin": ["no-clang"]

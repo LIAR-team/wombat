@@ -1,3 +1,7 @@
+/.vscode
+/.devdocker
+_ws
+
 # Prerequisites
 *.d
 

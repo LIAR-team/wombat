@@ -1,0 +1,17 @@
+{
+  "build": {
+    "wombat": {
+      "cmake-args": [
+        "-GNinja",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+        "--no-warn-unused-cli",
+      ],
+    },
+    "coverage": {
+      "cmake-args": [
+        "-DCOVERAGE_ENABLED=ON",
+      ],
+      "ament-cmake-args": ["-DAMENT_CMAKE_PYTEST_WITH_COVERAGE=ON"],
+    },
+  }
+}
