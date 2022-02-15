@@ -1,0 +1,35 @@
+name: wombat CI
+
+on:
+  pull_request:
+    branches:    
+      - 'main'
+  push:
+    branches:
+      - main
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  Build-and-Test:
+    runs-on: self-hosted
+    container: alsora/wombat-base:latest
+    env:
+      COLCON_HOME: ${{ github.workspace }}/.colcon
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Build wombat
+        run: |
+          source /workspaces/ros2_galactic/install/setup.sh \
+          && colcon build --symlink-install --event-handlers=console_cohesion+
+      - name: Run unit-tests
+        run: |
+          source /workspaces/ros2_galactic/install/setup.sh \
+          && colcon test --mixin no-linters --return-code-on-test-failure --event-handlers=console_cohesion+
+      - name: Run linters
+        run: |
+          source /workspaces/ros2_galactic/install/setup.sh \
+          && colcon test --mixin linters --return-code-on-test-failure --event-handlers=console_cohesion+
