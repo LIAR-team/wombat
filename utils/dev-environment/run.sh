@@ -1,10 +1,28 @@
 #!/bin/bash
 
 THIS_DIR=$(dirname $(realpath -s $0))
+SYMLINKED_DIR="$(dirname "$(readlink -f "$0")")"
+
+DOCKERFILE=$THIS_DIR/Dockerfile
+SETUP_SCRIPT=$SYMLINKED_DIR/setup-docker.sh
+EXPECTED_VERSION_FILE=$SYMLINKED_DIR/VERSION
+
+if [ ! -f $DOCKERFILE ]; then
+  echo "### - Error! $DOCKERFILE not found!"
+  echo "### - Run $SETUP_SCRIPT before this script"
+  exit 1
+fi
+
+THIS_FROM_COMMAND=$(head -n 1 $DOCKERFILE)
+EXPECTED_FROM_COMMAND="FROM $(head -n 1 $EXPECTED_VERSION_FILE)"
+if [ "$THIS_FROM_COMMAND" != "$EXPECTED_FROM_COMMAND" ]; then
+  echo "### - Warning! Your Dockerfile is not up-to-date. The build may fail."
+  echo "### - Run $SETUP_SCRIPT to update."
+fi
 
 # Build the developer's dockerfile
 docker build \
-  --file $THIS_DIR/Dockerfile \
+  --file $DOCKERFILE \
   --network=host \
   --tag wombat-dev \
   $THIS_DIR
