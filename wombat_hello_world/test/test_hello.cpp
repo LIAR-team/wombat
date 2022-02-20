@@ -11,7 +11,7 @@
 TEST(test_hello, hello_publisher)
 {
   rclcpp::init(0, nullptr);
-  auto publisher = std::make_shared<HelloPublisher>();
+  auto publisher = std::make_shared<wombat_hello_world::HelloPublisher>();
   std::cout << "Hello publisher unit test!" << std::endl;
   rclcpp::shutdown();
 

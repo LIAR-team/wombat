@@ -3,6 +3,7 @@ project(wombat_hello_world)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 
 find_package(wombat_cmake REQUIRED)
@@ -16,10 +17,12 @@ target_include_directories(
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-ament_target_dependencies(hello_publisher PUBLIC rclcpp std_msgs)
+ament_target_dependencies(hello_publisher PUBLIC rclcpp rclcpp_components std_msgs)
 
-add_executable(hello_world src/main.cpp)
-target_link_libraries(hello_world PRIVATE wombat_hello_world::hello_publisher)
+rclcpp_components_register_node(wombat_hello_world::hello_publisher
+  PLUGIN "wombat_hello_world::HelloPublisher"
+  EXECUTABLE hello_world
+)
 
 if(BUILD_TESTING)
   wombat_linters()

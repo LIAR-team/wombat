@@ -8,12 +8,16 @@
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_components/register_node_macro.hpp"
 #include "std_msgs/msg/string.hpp"
 
 using namespace std::chrono_literals;
 
-HelloPublisher::HelloPublisher()
-: Node("hello_publisher")
+namespace wombat_hello_world
+{
+
+HelloPublisher::HelloPublisher(const rclcpp::NodeOptions & options)
+: Node("hello_publisher", options)
 {
   m_publisher = this->create_publisher<std_msgs::msg::String>("topic", 10);
   auto timer_callback =
@@ -25,3 +29,7 @@ HelloPublisher::HelloPublisher()
     };
   m_timer = this->create_wall_timer(500ms, timer_callback);
 }
+
+}  // namespace wombat_hello_world
+
+RCLCPP_COMPONENTS_REGISTER_NODE(wombat_hello_world::HelloPublisher)
