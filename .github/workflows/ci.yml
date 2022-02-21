@@ -13,9 +13,27 @@ defaults:
     shell: bash
 
 jobs:
-  Build-and-Test:
+  # Hack to inject VERSION into container. See:
+  # https://github.community/t/how-to-use-env-with-container-image/17252
+  # https://stackoverflow.com/questions/64721253
+  Set-VERSION:
     runs-on: self-hosted
-    container: alsora/wombat-base:latest
+    outputs:
+      DEV_ENV_IMAGE: ${{ steps.set_version.outputs.DEV_ENV_IMAGE }}
+    steps:
+      - name: Read VERSION
+        run: |
+          VER=$(cat ${{ github.workspace }}/utils/dev-environment/VERSION) \
+          && echo "DEV_ENV_IMAGE=$VER" >> $GITHUB_ENV
+      - name: Set VERSION
+        id: set_version
+        run: echo "::set-output name=DEV_ENV_IMAGE::${{ env.DEV_ENV_IMAGE }}"
+
+  Build-and-Test:
+    needs: Set-VERSION
+    runs-on: self-hosted
+    container:
+      image: ${{ needs.Set-VERSION.outputs.DEV_ENV_IMAGE }}
     env:
       COLCON_HOME: ${{ github.workspace }}/.colcon
     steps:
