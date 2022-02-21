@@ -2,15 +2,14 @@
 
 ### Requirements
 
-All the `wombat` dependencies are provided through Docker.
+The build dependencies of `wombat` are provided through Docker.
+On Ubuntu systems the setup procedure will take care of installing Docker.
 The setup procedure will automatically take care of installing Docker if you are running Ubuntu.
-
-If you are not running Ubuntu, then you will have to manually install Docker and make sure that you can run it as a non-root user.
+Alternatively, [install Docker](https://docs.docker.com/get-docker/) and make sure that you can run it as a non-root user.
 
 ### Setup Environment
 
-This step is only required the first time or whenever the `wombat-base` Docker image is updated.
-It will build a Docker image with all the dependencies required to build the `wombat` software.
+This step updates the `wombat-base` Docker image.
 
 ```bash
 ./utils/dev-environment/setup-docker.sh
