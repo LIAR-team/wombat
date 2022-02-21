@@ -4,8 +4,8 @@ project(wombat_hello_world)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-
 find_package(wombat_cmake REQUIRED)
+
 wombat_package()
 
 add_library(hello_publisher SHARED)

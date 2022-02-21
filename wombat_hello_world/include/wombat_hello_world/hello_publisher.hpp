@@ -12,7 +12,7 @@
 class HelloPublisher : public rclcpp::Node
 {
 public:
-  HelloPublisher();
+  explicit HelloPublisher(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 private:
   rclcpp::TimerBase::SharedPtr m_timer;
