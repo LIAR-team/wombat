@@ -12,8 +12,8 @@
 
 using namespace std::chrono_literals;
 
-HelloPublisher::HelloPublisher()
-: Node("hello_publisher")
+HelloPublisher::HelloPublisher(const rclcpp::NodeOptions & options)
+: Node("hello_publisher", options)
 {
   m_publisher = this->create_publisher<std_msgs::msg::String>("topic", 10);
   auto timer_callback =
