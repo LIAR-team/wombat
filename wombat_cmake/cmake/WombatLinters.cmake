@@ -42,7 +42,14 @@ macro(wombat_linters)
     set(_clang_tidy_config ${_wombat_linters_dir}/clang-tidy-checks)
     # Include only errors from header files located in the project directory
     set(_clang_tidy_header_filter --header-filter ${PROJECT_SOURCE_DIR}/.*)
-    ament_clang_tidy(${CMAKE_BINARY_DIR} ${_clang_tidy_header_filter} CONFIG_FILE ${_clang_tidy_config})
+    # Clang-tidy can be very slow
+    set(_clang_tidy_timeout 1000)
+    ament_clang_tidy(
+      ${CMAKE_BINARY_DIR}
+      ${_clang_tidy_header_filter}
+      CONFIG_FILE ${_clang_tidy_config}
+      TIMEOUT ${_clang_tidy_timeout}
+    )
 
     # CppCheck
     # C/C++ static analysis for undefined behaviors and other bugs
@@ -58,7 +65,8 @@ macro(wombat_linters)
     # CPPlint
     # Check style for C/C++ files
     find_package(ament_cmake_cpplint REQUIRED)
-    ament_cpplint(MAX_LINE_LENGTH 120)
+    set(_cpplint_filters -readability/todo)
+    ament_cpplint(MAX_LINE_LENGTH 120 FILTERS ${_cpplint_filters})
   endif()
 
   # Linters for Python files

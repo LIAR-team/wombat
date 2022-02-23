@@ -33,20 +33,21 @@ macro(wombat_package)
 
   # Set default flags
   # See https://gcc.gnu.org/onlinedocs/gcc-9.3.0/gcc/Warning-Options.html#Warning-Options
+  # Can't enable -Wredundant-decls due to https://github.com/ros2/rosidl_typesupport_fastrtps/issues/28
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(
-      -Werror
+      -fPIC
       -Wall
-      -Wextra
-      -Wpedantic
       -Wdeprecated
+      -Werror
+      -Wextra
       -Wimplicit-fallthrough
       -Wmissing-braces
       -Wmissing-declarations
       -Wnull-dereference
-      -Wredundant-decls
+      -Wpedantic
+      -Wpointer-arith
       -Wshadow
-      -fPIC
     )
   endif()
 

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>wombat_strategy</name>
+  <version>0.0.1</version>
+  <description>Nodes and tools to implement high-level strategies</description>
+  <maintainer email="alberto.soragna@gmail.com">Alberto Soragna</maintainer>
+  <license>Proprietary</license>
+  <author>Alberto Soragna</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+
+  <build_depend>wombat_cmake</build_depend>
+
+  <depend>nav2_costmap_2d</depend>
+  <depend>nav2_util</depend>
+  <depend>rclcpp</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_eigen</depend>
+
+  <depend>wombat_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>visualization_msgs</depend>
+
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <test_depend>wombat_cmake</test_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

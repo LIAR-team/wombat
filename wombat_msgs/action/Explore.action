@@ -1,0 +1,9 @@
+## Goal definition
+# How many frontiers to explore; -1 means all
+int32 num_frontiers -1
+---
+## Result definition
+builtin_interfaces/Duration total_elapsed_time
+---
+## Feedback definition
+std_msgs/Empty feedback
