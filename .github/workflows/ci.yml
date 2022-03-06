@@ -16,11 +16,13 @@ jobs:
   # Hack to inject VERSION into container. See:
   # https://github.community/t/how-to-use-env-with-container-image/17252
   # https://stackoverflow.com/questions/64721253
-  Set-VERSION:
+  Setup-Wombat:
     runs-on: self-hosted
     outputs:
       DEV_ENV_IMAGE: ${{ steps.set_version.outputs.DEV_ENV_IMAGE }}
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
       - name: Read VERSION
         run: |
           VER=$(cat ${{ github.workspace }}/utils/dev-environment/VERSION) \
@@ -30,15 +32,13 @@ jobs:
         run: echo "::set-output name=DEV_ENV_IMAGE::${{ env.DEV_ENV_IMAGE }}"
 
   Build-and-Test:
-    needs: Set-VERSION
+    needs: Setup-Wombat
     runs-on: self-hosted
     container:
-      image: ${{ needs.Set-VERSION.outputs.DEV_ENV_IMAGE }}
+      image: ${{ needs.Setup-Wombat.outputs.DEV_ENV_IMAGE }}
     env:
       COLCON_HOME: ${{ github.workspace }}/.colcon
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
       - name: Build wombat
         run: |
           source /opt/ros/rolling/setup.sh \
