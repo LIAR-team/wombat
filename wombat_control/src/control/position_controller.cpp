@@ -11,7 +11,7 @@ PosCtrl::PosCtrl(double len, double gain_x, double gain_y)
   m_gain_y = gain_y;
 }
 
-VelCommands PosCtrl::input_function(double e_x, double e_y, Pose2D pose)
+VelCommands PosCtrl::input_function(double e_x, double e_y, Pose2D pose) const
 {
   VelCommands command;
 
