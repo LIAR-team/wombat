@@ -27,9 +27,14 @@ docker build \
   --tag wombat-dev \
   $THIS_DIR
 
+# Define some useful directory names
+WOMBAT_DIR=$(dirname ${THIS_DIR})
+DOCKER_HOME=/home/docker-dev
+DOCKER_WOMBAT_WS=${DOCKER_HOME}/wombat
+
 # Check if we have display
 DISPLAY_ARGS=""
-if [ ! -z ${DISPLAY} ]; then
+if [ -v DISPLAY ]; then
   # Make sure XAUTH exists
   XSOCK=/tmp/.X11-unix
   XAUTH=/tmp/.docker.xauth
@@ -48,21 +53,25 @@ if type "nvidia-container-cli" &> /dev/null && nvidia-container-cli info &> /dev
   GPU_ARGS="--gpus=all"
 fi
 
-# Define some useful directory names
-WOMBAT_DIR=$(dirname ${THIS_DIR})
-DOCKER_HOME=/home/docker-dev
-DOCKER_WOMBAT_WS=${DOCKER_HOME}/wombat
+SSH_ARGS=""
+if [ -v SSH_AUTH_SOCK ]; then
+  SSH_AGENT_DIR=$(readlink -f ${SSH_AUTH_SOCK})
+
+  SSH_AGENT_ARGS="--volume=${SSH_AGENT_DIR}:/ssh-agent:ro --env SSH_AUTH_SOCK=/ssh-agent"
+  KNOWN_HOSTS="--volume=${HOME}/.ssh/known_hosts:${DOCKER_HOME}/.ssh/known_hosts:ro"
+  SSH_ARGS="${SSH_AGENT_ARGS} ${KNOWN_HOSTS}"
+fi
 
 # Run the developer's dockerfile
 docker run -it --rm \
   ${DISPLAY_ARGS} \
   ${GPU_ARGS} \
+  ${SSH_ARGS} \
   --network=host \
   --privileged \
   --user=${UID}:${UID} \
   --volume=${HOME}:${DOCKER_HOME}/host-home:rw \
   --volume=${HOME}/.gitconfig:${DOCKER_HOME}/.gitconfig:ro \
-  --volume=${HOME}/.ssh:${DOCKER_HOME}/.ssh:ro \
   --volume=${WOMBAT_DIR}:${DOCKER_WOMBAT_WS}:rw \
   --workdir ${DOCKER_WOMBAT_WS} \
   wombat-dev \
