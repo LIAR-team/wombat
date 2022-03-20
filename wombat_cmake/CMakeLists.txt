@@ -13,6 +13,7 @@ ament_export_dependencies(${${PROJECT_NAME}_EXEC_DEPENDS})
 
 ament_package(
   CONFIG_EXTRAS
+    "WombatInstallTargetsExtras.cmake"
     "WombatLintersExtras.cmake"
     "WombatPackageExtras.cmake"
 )
