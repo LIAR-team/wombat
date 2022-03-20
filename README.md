@@ -1,5 +1,7 @@
 # wombat
 
+[![Testing](https://github.com/LIAR-team/wombat/actions/workflows/ci.yml/badge.svg)](https://github.com/LIAR-team/wombat/actions/workflows/ci.yml)
+
 ### Requirements
 
 The build dependencies of `wombat` are provided through Docker.
