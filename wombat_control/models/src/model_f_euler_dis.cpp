@@ -1,7 +1,8 @@
 // Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
 // All Rights Reserved.
 
-#include "wombat_control/model/model_f_euler_dis.hpp"
+#include "wombat_control/models/model_f_euler_dis.hpp"
+
 #include <math.h>
 
 KinModel::KinModel(Pose2D initial_pose) {m_current_pose = initial_pose;}

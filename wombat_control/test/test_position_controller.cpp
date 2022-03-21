@@ -7,9 +7,9 @@
 #include <iostream>
 
 #include "wombat_control/data_types/pose2d.hpp"
-#include "wombat_control/model/model_f_euler_dis.hpp"
-#include "wombat_control/control/position_controller.hpp"
 #include "wombat_control/data_types/vel_commands.hpp"
+#include "wombat_control/models/model_f_euler_dis.hpp"
+#include "wombat_control/control/position_controller.hpp"
 
 TEST(test_controller, waypoint_control)
 {

@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "wombat_control/data_types/pose2d.hpp"
-#include "wombat_control/model/model_f_euler_dis.hpp"
+#include "wombat_control/models/model_f_euler_dis.hpp"
 
 TEST(test_model, zero_vels_integration)
 {
