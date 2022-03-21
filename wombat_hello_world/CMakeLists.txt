@@ -29,25 +29,10 @@ if(BUILD_TESTING)
   target_link_libraries(test_hello wombat_hello_world::hello_publisher)
 endif()
 
-install(
-  DIRECTORY include/wombat_hello_world
-  DESTINATION include
-)
+wombat_install_target(hello_publisher)
+wombat_install_target(hello_world)
 
-install(
-  TARGETS hello_publisher
-  EXPORT wombat_hello_worldTargets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
-)
-
-install(TARGETS hello_world
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
-)
-
-ament_export_targets(wombat_hello_worldTargets HAS_LIBRARY_TARGET)
+wombat_install_export_targets()
 ament_export_dependencies(rclcpp std_msgs)
 
 ament_package()
