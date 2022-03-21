@@ -1,8 +1,7 @@
 // Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
 // All Rights Reserved.
 
-#ifndef WOMBAT_CONTROL__DATA_TYPES__POSE2D_HPP_
-#define WOMBAT_CONTROL__DATA_TYPES__POSE2D_HPP_
+#pragma once
 
 #include <iostream>
 
@@ -31,5 +30,3 @@ inline bool operator==(const Pose2D & pose1, const Pose2D & pose2)
 {
   return (pose1.x == pose2.x) && (pose1.y == pose2.y) && (pose1.theta == pose2.theta);
 }
-
-#endif  // WOMBAT_CONTROL__DATA_TYPES__POSE2D_HPP_

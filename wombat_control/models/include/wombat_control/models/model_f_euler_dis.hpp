@@ -1,8 +1,7 @@
 // Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
 // All Rights Reserved.
 
-#ifndef WOMBAT_CONTROL__MODELS__MODEL_F_EULER_DIS_HPP_
-#define WOMBAT_CONTROL__MODELS__MODEL_F_EULER_DIS_HPP_
+#pragma once
 
 #include "wombat_control/data_types/pose2d.hpp"
 
@@ -16,5 +15,3 @@ public:
 private:
   Pose2D m_current_pose;
 };
-
-#endif  // WOMBAT_CONTROL__MODELS__MODEL_F_EULER_DIS_HPP_
