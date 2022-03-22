@@ -1,8 +1,7 @@
 // Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
 // All Rights Reserved.
 
-#ifndef WOMBAT_CONTROL__CONTROL__POSITION_CONTROLLER_HPP_
-#define WOMBAT_CONTROL__CONTROL__POSITION_CONTROLLER_HPP_
+#pragma once
 
 #include "wombat_control/data_types/pose2d.hpp"
 #include "wombat_control/data_types/vel_commands.hpp"
@@ -18,5 +17,3 @@ private:
   double m_gain_x;
   double m_gain_y;
 };
-
-#endif  // WOMBAT_CONTROL__CONTROL__POSITION_CONTROLLER_HPP_

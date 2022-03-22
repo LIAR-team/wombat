@@ -1,8 +1,7 @@
 // Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
 // All Rights Reserved.
 
-#ifndef WOMBAT_CONTROL__DATA_TYPES__MATRIX_HPP_
-#define WOMBAT_CONTROL__DATA_TYPES__MATRIX_HPP_
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -72,5 +71,3 @@ inline std::ostream & operator<<(std::ostream & outstr, const Matrix & matrix)
 
   return outstr;
 }
-
-#endif  // WOMBAT_CONTROL__DATA_TYPES__MATRIX_HPP_

@@ -15,6 +15,6 @@ if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
 
-ament_export_targets(wombat_controlTargets HAS_LIBRARY_TARGET)
+wombat_install_export_targets()
 
 ament_package()
