@@ -9,7 +9,7 @@
 #include "nav2_util/geometry_utils.hpp"
 #include "nav2_util/robot_utils.hpp"
 #include "tf2_eigen/tf2_eigen.hpp"
-#include "wombat_strategy/exploration/utilities.hpp"
+#include "wombat_ops/geometry/point.hpp"
 
 using std::placeholders::_1;
 
@@ -231,7 +231,7 @@ FrontierExplorationNode::select_exploration_goal(
     // A goal is valid if it is far enough from any already attempted goal
     bool valid = true;
     for (const auto & attempted_goal : m_attempted_goals) {
-      if (points_squared_distance(goal.position, attempted_goal.position) <= min_dist_squared) {
+      if (wombat_ops::points_squared_distance(goal.position, attempted_goal.position) <= min_dist_squared) {
         valid = false;
         break;
       }
@@ -255,7 +255,7 @@ FrontierExplorationNode::goal_pose_from_frontier(const Frontier & frontier)
   // The location of the goal is the one of the frontier point closest to the frontier centroid
   double min_distance = std::numeric_limits<double>::max();
   for (const auto & point : frontier.points) {
-    double distance = points_squared_distance(point, frontier.centroid);
+    double distance = wombat_ops::points_squared_distance(point, frontier.centroid);
     if (distance < min_distance) {
       min_distance = distance;
       goal.position = point;

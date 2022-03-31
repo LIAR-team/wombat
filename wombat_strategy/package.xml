@@ -18,11 +18,12 @@
   <depend>rclcpp</depend>
   <depend>tf2_ros</depend>
   <depend>tf2_eigen</depend>
+  <depend>wombat_ops</depend>
 
-  <depend>wombat_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>nav_msgs</depend>
   <depend>visualization_msgs</depend>
+  <depend>wombat_msgs</depend>
 
   <exec_depend>rosidl_default_runtime</exec_depend>
 
