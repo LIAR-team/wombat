@@ -42,15 +42,15 @@ jobs:
       - name: Build wombat
         run: |
           source /opt/ros/rolling/setup.sh \
-          source /workspaces/ros2/install/local_setup.sh \
+          && source /workspaces/ros2/install/local_setup.sh \
           && colcon build --symlink-install --event-handlers=console_cohesion+
       - name: Run unit-tests
         run: |
           source /opt/ros/rolling/setup.sh \
-          source /workspaces/ros2/install/local_setup.sh \
+          && source /workspaces/ros2/install/local_setup.sh \
           && colcon test --mixin no-linters --return-code-on-test-failure --event-handlers=console_cohesion+
       - name: Run linters
         run: |
           source /opt/ros/rolling/setup.sh \
-          source /workspaces/ros2/install/local_setup.sh \
+          && source /workspaces/ros2/install/local_setup.sh \
           && colcon test --mixin linters --return-code-on-test-failure --event-handlers=console_cohesion+
