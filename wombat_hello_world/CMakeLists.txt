@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(wombat_hello_world)
 
-find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(wombat_cmake REQUIRED)
@@ -32,7 +31,7 @@ endif()
 wombat_install_target(hello_publisher)
 wombat_install_target(hello_world)
 
-wombat_install_export_targets()
-ament_export_dependencies(rclcpp std_msgs)
-
-ament_package()
+wombat_package_install(
+  EXPORT_DEPS
+    rclcpp std_msgs
+)

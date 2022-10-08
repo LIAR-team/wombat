@@ -3,14 +3,16 @@
 
 #pragma once
 
-#include "wombat_control/data_types/pose2d.hpp"
+#include "wombat_control/data_types/vel_commands.hpp"
+#include "wombat_msgs/pose2d.hpp"
 
 class KinModel
 {
 public:
+  explicit KinModel(const Pose2D & initial_pose);
+
   // v [m/s], omega [rad/s], delta_t [s]
-  Pose2D integration(double v, double omega, double delta_t);
-  explicit KinModel(Pose2D initial_pose);
+  Pose2D integration(const VelCommands & vel_commands, double delta_t);
 
 private:
   Pose2D m_current_pose;

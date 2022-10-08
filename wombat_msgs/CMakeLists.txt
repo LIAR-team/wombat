@@ -11,11 +11,24 @@ find_package(std_msgs REQUIRED)
 
 wombat_package()
 
+# Generate ROS 2 interfaces and create wombat_msgs library
 rosidl_generate_interfaces(${PROJECT_NAME}
   "action/Explore.action"
   DEPENDENCIES action_msgs builtin_interfaces std_msgs
 )
 
-ament_export_dependencies(action_msgs builtin_interfaces std_msgs)
+# Create data_types library
+add_library(data_types INTERFACE)
+add_library(wombat_msgs::data_types ALIAS data_types)
 
-ament_package()
+target_include_directories(
+  data_types
+  INTERFACE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>")
+
+wombat_install_target(data_types)
+
+wombat_package_install(
+  EXPORT_DEPS
+    rosidl_default_runtime
+)

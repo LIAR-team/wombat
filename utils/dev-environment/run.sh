@@ -13,8 +13,15 @@ if [ ! -f $DOCKERFILE ]; then
   exit 1
 fi
 
+if [ ! -f $EXPECTED_VERSION_FILE ]; then
+  echo "### - Error! $EXPECTED_VERSION_FILE not found!"
+  echo "### - Run $SETUP_SCRIPT before this script"
+  exit 1
+fi
+
+EXPECTED_VERSION=$(head -n 1 $EXPECTED_VERSION_FILE)
 THIS_FROM_COMMAND=$(head -n 1 $DOCKERFILE)
-EXPECTED_FROM_COMMAND="FROM $(head -n 1 $EXPECTED_VERSION_FILE)"
+EXPECTED_FROM_COMMAND="FROM $EXPECTED_VERSION"
 if [ "$THIS_FROM_COMMAND" != "$EXPECTED_FROM_COMMAND" ]; then
   echo "### - Warning! Your Dockerfile is not up-to-date. The build may fail."
   echo "### - Run $SETUP_SCRIPT to update."

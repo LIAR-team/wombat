@@ -5,13 +5,13 @@
 # Setup and execute a set of linters depending on the files
 # found in the package.
 #
-# Note that, in order to use this macro, it is necessary to:
+# To use this macro it is necessary to:
 # - add `<test_depend>wombat_cmake</test_depend>` to your project package.xml file
 # - add `find_package(wombat_cmake REQUIRED)` to your project main CMakeLists.txt
 #
 # @public
 #
-macro(wombat_linters)
+function(wombat_linters)
   set(_ARGN "${ARGN}")
   if(_ARGN)
     message(FATAL_ERROR "wombat_linters() called with unused arguments: ${_ARGN}")
@@ -82,4 +82,4 @@ macro(wombat_linters)
   find_package(ament_cmake_lint_cmake REQUIRED)
   ament_lint_cmake()
 
-endmacro()
+endfunction()

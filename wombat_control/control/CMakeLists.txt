@@ -17,6 +17,8 @@ target_link_libraries(
   control
   PUBLIC
     wombat_control::data_types
+    wombat_msgs::data_types
+    Eigen3::Eigen
 )
 
 wombat_install_target(control)

@@ -8,8 +8,9 @@
   <license>Proprietary</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>wombat_cmake</buildtool_depend>
 
-  <build_depend>wombat_cmake</build_depend>
+  <build_depend>wombat_msgs</build_depend>
 
   <test_depend>wombat_cmake</test_depend>
 

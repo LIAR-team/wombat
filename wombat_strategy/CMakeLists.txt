@@ -39,4 +39,4 @@ ament_export_dependencies(
   wombat_ops
 )
 
-ament_package()
+wombat_package_install()

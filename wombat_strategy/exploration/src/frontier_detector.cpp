@@ -32,7 +32,7 @@ std::vector<Frontier> FrontierDetector::search_frontiers()
 
   // Initialize vectors of booleans with size equal to the map size
   // to keep track of indices (i.e. map cells) already examined or already added to a frontier
-  size_t map_size = m_costmap->getSizeInCellsX() * m_costmap->getSizeInCellsY();
+  unsigned int map_size = m_costmap->getSizeInCellsX() * m_costmap->getSizeInCellsY();
   std::vector<bool> touched_indices(map_size, false);
   std::vector<bool> already_included_frontier_indices(map_size, false);
 
@@ -108,8 +108,8 @@ Frontier FrontierDetector::build_frontier(
     centroid.x += point.x;
     centroid.y += point.y;
   }
-  centroid.x = centroid.x / f.points.size();
-  centroid.y = centroid.y / f.points.size();
+  centroid.x = centroid.x / static_cast<double>(f.points.size());
+  centroid.y = centroid.y / static_cast<double>(f.points.size());
   f.centroid = centroid;
 
   return f;
@@ -139,7 +139,8 @@ void FrontierDetector::rank_frontiers(std::vector<Frontier> & frontiers)
   for (size_t i = 0; i < frontiers.size(); i++) {
     Frontier & f = frontiers[i];
     double distance_score = distance_scaling_factor * min_distance / distances[i];
-    double information_gain_score = m_params.frontier_size_scaling_factor * f.points.size() / max_size;
+    double information_gain_score =
+      m_params.frontier_size_scaling_factor * static_cast<double>(f.points.size()) / static_cast<double>(max_size);
     f.score = distance_score + information_gain_score;
   }
 

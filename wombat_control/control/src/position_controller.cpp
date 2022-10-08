@@ -4,16 +4,19 @@
 #include "wombat_control/control/position_controller.hpp"
 #include <math.h>
 
-PosCtrl::PosCtrl(double len, double gain_x, double gain_y)
+PosCtrl::PosCtrl(const Params & params)
 {
-  m_len = len;
-  m_gain_x = gain_x;
-  m_gain_y = gain_y;
+  m_len = params.len;
+  m_gain_x = params.gain_x;
+  m_gain_y = params.gain_y;
 }
 
-VelCommands PosCtrl::input_function(double e_x, double e_y, Pose2D pose) const
+VelCommands PosCtrl::input_function(const Eigen::Vector2d & error, const Pose2D & pose) const
 {
   VelCommands command;
+
+  double e_x = error[0];
+  double e_y = error[1];
 
   double stheta = std::sin(pose.theta);
   double ctheta = std::cos(pose.theta);

@@ -1,6 +1,8 @@
 # Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
 # All Rights Reserved.
 
+include(CMakeParseArguments)
+
 #
 # Private function to install an executable target.
 # Users should call `wombat_install_target`
@@ -57,7 +59,7 @@ endfunction()
 # The export is NOT installed by this function: see `wombat_install_export_targets`
 #
 # Note that, in order to use this function, it is necessary to:
-# - add `<build_depend>wombat_cmake</build_depend>` to your project package.xml file
+# - add `<buildtool_depend>wombat_cmake</buildtool_depend>` to your project package.xml file
 # - add `find_package(wombat_cmake REQUIRED)` to your project main CMakeLists.txt
 #
 # @public
@@ -87,11 +89,46 @@ endfunction()
 # See https://docs.ros.org/en/rolling/How-To-Guides/Ament-CMake-Documentation.html#building-a-library
 #
 # Note that, in order to use this function, it is necessary to:
-# - add `<build_depend>wombat_cmake</build_depend>` to your project package.xml file
+# - add `<buildtool_depend>wombat_cmake</buildtool_depend>` to your project package.xml file
 # - add `find_package(wombat_cmake REQUIRED)` to your project main CMakeLists.txt
 #
 # @public
 #
 macro(wombat_install_export_targets)
   ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGET)
+endmacro()
+
+#
+# Standard utility to install a whole CMake package.
+#
+# This macro must be called from a top-level CMakeLists.txt, not from a subdirectory!
+# See https://docs.ros.org/en/rolling/How-To-Guides/Ament-CMake-Documentation.html#building-a-library
+#
+# Note that, in order to use this function, it is necessary to:
+# - add `<buildtool_depend>wombat_cmake</buildtool_depend>` to your project package.xml file
+# - add `find_package(wombat_cmake REQUIRED)` to your project main CMakeLists.txt
+#
+# @public
+#
+macro(wombat_package_install)
+  cmake_parse_arguments(
+    ARG # prefix of output variables
+    "NO_EXPORT_TARGETS" # list of names of the boolean arguments (only defined ones will be true)
+    "" # list of names of mono-valued arguments
+    "EXPORT_DEPS;AMENT_PACKAGE" # list of names of multi-valued arguments (output variables are lists)
+    ${ARGN} # arguments of the function to parse, here we take the all original ones
+  )
+
+  # Install export targets unless explicitly asked to not do so
+  if(NOT ARG_NO_EXPORT_TARGETS)
+    wombat_install_export_targets()
+  endif()
+
+  # Export package dependencies
+  if (ARG_EXPORT_DEPS)
+    ament_export_dependencies("${ARG_EXPORT_DEPS}")
+  endif()
+
+  # Mark this as a package and complete install setup
+  ament_package("${ARG_AMENT_PACKAGE}")
 endmacro()

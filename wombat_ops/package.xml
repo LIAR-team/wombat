@@ -8,8 +8,7 @@
   <license>Proprietary</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-
-  <build_depend>wombat_cmake</build_depend>
+  <buildtool_depend>wombat_cmake</buildtool_depend>
 
   <depend>geometry_msgs</depend>
   <depend>nav2_costmap_2d</depend>
