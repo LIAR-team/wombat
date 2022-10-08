@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#include "wombat_control/data_types/pose2d.hpp"
+#include "wombat_msgs/pose2d.hpp"
 #include "wombat_control/data_types/vel_commands.hpp"
 #include "wombat_control/models/model_f_euler_dis.hpp"
 #include "wombat_control/control/position_controller.hpp"
@@ -25,8 +25,8 @@ TEST(test_controller, waypoint_control)
 
   // Test 1
   Pose2D current_pose = {0, 0, 0};
-  PosCtrl pos_controller = PosCtrl(len, gain_x, gain_y);
-  VelCommands input_signal = pos_controller.input_function(0, 0, current_pose);
+  PosCtrl pos_controller = PosCtrl({len, gain_x, gain_y});
+  VelCommands input_signal = pos_controller.input_function({0, 0}, current_pose);
   std::cout << input_signal << std::endl;
   VelCommands expected_input_signal = {0, 0};
   assert(input_signal == expected_input_signal);
@@ -45,8 +45,8 @@ TEST(test_controller, waypoint_control)
       goal_reached = true;
       break;
     }
-    input_signal = pos_controller.input_function(e_x, e_y, robot_pose);
-    robot_pose = unicycle.integration(input_signal.v, input_signal.omega, delta_t);
+    input_signal = pos_controller.input_function({e_x, e_y}, robot_pose);
+    robot_pose = unicycle.integration(input_signal, delta_t);
   }
 
   EXPECT_TRUE(goal_reached);

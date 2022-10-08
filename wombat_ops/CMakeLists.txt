@@ -16,7 +16,7 @@ if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
 
-wombat_install_export_targets()
-
-ament_export_dependencies(geometry_msgs nav2_costmap_2d)
-ament_package()
+wombat_package_install(
+  EXPORT_DEPS
+  geometry_msgs nav2_costmap_2d
+)

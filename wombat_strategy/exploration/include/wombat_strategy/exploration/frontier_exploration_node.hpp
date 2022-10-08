@@ -56,7 +56,7 @@ private:
   void drive_to_pose(const geometry_msgs::msg::Pose & goal);
 
   /** @brief Navigate action server callback to be notified about whether a goal is accepted or not */
-  void navigate_goal_response_callback(const std::shared_future<NavigateGoalHandle::SharedPtr> & future);
+  void navigate_goal_response_callback(const NavigateGoalHandle::SharedPtr & goal_handle);
 
   /** @brief Navigate action server callback to be notified about navigation result */
   void navigate_result_callback(const NavigateGoalHandle::WrappedResult & result);

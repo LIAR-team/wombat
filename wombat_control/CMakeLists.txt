@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(wombat_control)
 
-find_package(ament_cmake REQUIRED)
 find_package(wombat_cmake REQUIRED)
+find_package(wombat_msgs REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 wombat_package()
 
@@ -15,6 +16,7 @@ if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
 
-wombat_install_export_targets()
-
-ament_package()
+wombat_package_install(
+  EXPORT_DEPS
+    Eigen3
+)

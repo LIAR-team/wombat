@@ -18,6 +18,7 @@ target_link_libraries(
   models
   PUBLIC
     wombat_control::data_types
+    wombat_msgs::data_types
 )
 
 wombat_install_target(models)

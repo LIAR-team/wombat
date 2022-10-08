@@ -7,6 +7,7 @@
   <maintainer email="alberto.soragna@gmail.com">Alberto Soragna</maintainer>
   <license>Proprietary</license>
 
+  <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_core</buildtool_depend>
   <buildtool_depend>ament_cmake_export_dependencies</buildtool_depend>
 

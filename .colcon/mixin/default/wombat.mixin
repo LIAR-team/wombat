@@ -7,11 +7,5 @@
         "--no-warn-unused-cli",
       ],
     },
-    "coverage": {
-      "cmake-args": [
-        "-DCOVERAGE_ENABLED=ON",
-      ],
-      "ament-cmake-args": ["-DAMENT_CMAKE_PYTEST_WITH_COVERAGE=ON"],
-    },
   }
 }

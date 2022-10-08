@@ -296,12 +296,13 @@ void FrontierExplorationNode::drive_to_pose(const geometry_msgs::msg::Pose & goa
 }
 
 void FrontierExplorationNode::navigate_goal_response_callback(
-  const std::shared_future<NavigateGoalHandle::SharedPtr> & future)
+  const NavigateGoalHandle::SharedPtr & goal_handle)
 {
-  m_navigation_goal_handle = future.get();
-  if (!m_navigation_goal_handle) {
+  if (!goal_handle) {
     RCLCPP_ERROR(this->get_logger(), "Navigation goal was rejected by the server");
+    return;
   }
+  m_navigation_goal_handle = goal_handle;
 }
 
 void FrontierExplorationNode::navigate_result_callback(const NavigateGoalHandle::WrappedResult & result)

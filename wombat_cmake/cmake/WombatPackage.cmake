@@ -6,25 +6,19 @@
 # Call `wombat_package()` at the beginning of your Wombat CMake project in order
 # to setup all common compilation flags and options.
 #
-# Note that, in order to use this macro, it is necessary to:
-# - add `<build_depend>wombat_cmake</build_depend>` to your project package.xml file
+# To use this macro it is necessary to:
+# - add `<buildtool_depend>wombat_cmake</buildtool_depend>` to your project package.xml file
 # - add `find_package(wombat_cmake REQUIRED)` to your project main CMakeLists.txt
 #
 # @public
 #
 macro(wombat_package)
 
-  # Handle CMake build types
   include(${wombat_cmake_DIR}/BuildTypes.cmake)
-  set(_allowed_build_types RELEASE RELWITHDEBUG)
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${_allowed_build_types}")
-  if(NOT CMAKE_BUILD_TYPE)
-    message(STATUS "Setting build type to RelWithDebug as none was specified.")
-    set(CMAKE_BUILD_TYPE RELWITHDEBUG CACHE STRING "" FORCE)
-  elseif(NOT ${CMAKE_BUILD_TYPE} IN_LIST _allowed_build_types)
-    # Verify the correct build type
-    message(FATAL_ERROR "Invalid build type: ${CMAKE_BUILD_TYPE}. Please select one of ${_allowed_build_types}")
-  endif()
+
+  option(WOMBAT_COVERAGE "Enable code coverage" FALSE)
+
+  handle_cmake_build_type()
 
   # Default to C++17
   if(NOT CMAKE_CXX_STANDARD)
@@ -51,8 +45,7 @@ macro(wombat_package)
     )
   endif()
 
-  option(COVERAGE_ENABLED "Enable code coverage" FALSE)
-  if(COVERAGE_ENABLED)
+  if(WOMBAT_COVERAGE)
     add_compile_options(--coverage)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")

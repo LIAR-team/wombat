@@ -1,0 +1,16 @@
+{
+  "build": {
+    "coverage": {
+      "cmake-args": [
+        "-DWOMBAT_COVERAGE=ON",
+      ],
+      "ament-cmake-args": ["-DAMENT_CMAKE_PYTEST_WITH_COVERAGE=ON"],
+    },
+  },
+  "test": {
+    "coverage": {
+      "pytest-args": ["--cov-report=term"],
+      "pytest-with-coverage": true,
+    },
+  }
+}

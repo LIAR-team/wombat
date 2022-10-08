@@ -3,14 +3,24 @@
 
 #pragma once
 
-#include "wombat_control/data_types/pose2d.hpp"
+#include "Eigen/Core"
+
+#include "wombat_msgs/pose2d.hpp"
 #include "wombat_control/data_types/vel_commands.hpp"
 
 class PosCtrl
 {
 public:
-  PosCtrl(double len, double gain_x, double gain_y);
-  VelCommands input_function(double e_x, double e_y, Pose2D pose) const;
+  struct Params
+  {
+    double len {0.0};
+    double gain_x {0.0};
+    double gain_y {0.0};
+  };
+
+  explicit PosCtrl(const Params & params);
+
+  VelCommands input_function(const Eigen::Vector2d & error, const Pose2D & pose) const;
 
 private:
   double m_len;

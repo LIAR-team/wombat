@@ -17,9 +17,5 @@
     "no-clang": {
       "ctest-args": ["-E", "clang"],
     },
-    "coverage": {
-      "pytest-args": ["--cov-report=term"],
-      "pytest-with-coverage": true,
-    },
   }
 }

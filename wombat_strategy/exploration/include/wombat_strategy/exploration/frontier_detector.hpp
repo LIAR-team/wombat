@@ -142,9 +142,9 @@ private:
     * @param cell_idx from which neighbors are searched
     * @return vector of up to 4 neighbors
     */
-  std::vector<int> get_neighbors4(unsigned int cell_idx)
+  std::vector<unsigned int> get_neighbors4(unsigned int cell_idx)
   {
-    std::vector<int> neighbors;
+    std::vector<unsigned int> neighbors;
 
     unsigned int width = m_costmap->getSizeInCellsX();
     unsigned int height = m_costmap->getSizeInCellsY();
@@ -175,9 +175,9 @@ private:
     * @param cell_idx from which neighbors are searched
     * @return vector of up to 8 neighbors
     */
-  inline std::vector<int> get_neighbors8(unsigned int cell_idx)
+  inline std::vector<unsigned int> get_neighbors8(unsigned int cell_idx)
   {
-    std::vector<int> neighbors;
+    std::vector<unsigned int> neighbors;
 
     unsigned int width = m_costmap->getSizeInCellsX();
     unsigned int height = m_costmap->getSizeInCellsY();
