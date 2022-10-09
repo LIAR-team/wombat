@@ -1,0 +1,11 @@
+The wombat software is proprietary.
+
+The wombat software contains and derives from several third-party libraries, with documentation of licensing and modifications as follows.
+
+- srrg software: https://gitlab.com/srrg-software
+  - srrg_hbst:
+    - Included with minor modifications.
+    - Licensed under BSD-3, provided in wombat/wombat_srrg/srrg_hbst/LICENSE
+  - srrg2_core:
+    - Included with minor modifications.
+    - Licensed under BSD-3, provided in wombat/wombat_srrg/srrg2_core/LICENSE
