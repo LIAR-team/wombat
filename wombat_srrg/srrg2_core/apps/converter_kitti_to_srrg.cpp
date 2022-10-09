@@ -4,8 +4,8 @@
 
 #include <srrg_boss/serializer.h>
 #include <srrg_messages/instances.h>
-#include <srrg_system_utils/parse_command_line.h>
-#include <srrg_system_utils/system_utils.h>
+#include "wombat_srrg/srrg_system_utils/parse_command_line.h>
+#include "wombat_srrg/srrg_system_utils/system_utils.h>
 #include <srrg_geometry/geometry3d.h>
 #include <srrg_messages/messages/imu_message.h>
 #include <srrg_messages/messages/joints_message.h>

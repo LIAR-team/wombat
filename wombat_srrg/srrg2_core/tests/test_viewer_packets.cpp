@@ -1,6 +1,6 @@
-#include "srrg_pcl/instances.h"
-#include "srrg_test/test_helper.hpp"
-#include "srrg_viewer/viewer_core/packets.h"
+#include "wombat_srrg/srrg_pcl/instances.h"
+#include "wombat_srrg/srrg_test/test_helper.hpp"
+#include "wombat_srrg/srrg_viewer/viewer_core/packets.h"
 
 using namespace srrg2_core;
 

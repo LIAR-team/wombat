@@ -3,9 +3,9 @@
 #include <iostream>
 #include <limits>
 
-#include "srrg_image/image_data.h"
-#include "srrg_system_utils/system_utils.h"
-#include "srrg_test/test_helper.hpp"
+#include "wombat_srrg/srrg_image/image_data.h"
+#include "wombat_srrg/srrg_system_utils/system_utils.h"
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
 

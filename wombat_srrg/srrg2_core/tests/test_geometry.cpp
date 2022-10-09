@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "srrg_geometry/geometry2d.h"
-#include "srrg_geometry/geometry3d.h"
-#include "srrg_geometry/geometry_defs.h"
-#include "srrg_test/test_helper.hpp"
+#include "wombat_srrg/srrg_geometry/geometry2d.h"
+#include "wombat_srrg/srrg_geometry/geometry3d.h"
+#include "wombat_srrg/srrg_geometry/geometry_defs.h"
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
 using namespace srrg2_core::geometry2d;

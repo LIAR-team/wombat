@@ -6,7 +6,7 @@
 #include <iostream>
 #include <limits>
 #include <set>
-#include <srrg_system_utils/system_utils.h>
+#include "wombat_srrg/srrg_system_utils/system_utils.h>
 #include <vector>
 
 // ds readability

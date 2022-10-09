@@ -1,6 +1,6 @@
-#include "srrg_pcl/point_intensity_descriptor.h"
-#include "srrg_pcl/point_normal.h"
-#include "srrg_test/test_helper.hpp"
+#include "wombat_srrg/srrg_pcl/point_intensity_descriptor.h"
+#include "wombat_srrg/srrg_pcl/point_normal.h"
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
 

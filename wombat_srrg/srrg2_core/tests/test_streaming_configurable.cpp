@@ -1,9 +1,9 @@
 #include <fstream>
 
-#include "srrg_config/configurable.h"
-#include "srrg_config/property_configurable.h"
-#include "srrg_property/property_container_manager.h"
-#include "srrg_test/test_helper.hpp"
+#include "wombat_srrg/srrg_config/configurable.h"
+#include "wombat_srrg/srrg_config/property_configurable.h"
+#include "wombat_srrg/srrg_property/property_container_manager.h"
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
 

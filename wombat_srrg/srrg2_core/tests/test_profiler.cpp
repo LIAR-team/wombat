@@ -1,5 +1,5 @@
-#include "srrg_system_utils/profiler.h"
-#include "srrg_test/test_helper.hpp"
+#include "wombat_srrg/srrg_system_utils/profiler.h"
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
 

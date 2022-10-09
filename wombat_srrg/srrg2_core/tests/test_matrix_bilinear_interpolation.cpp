@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "srrg_data_structures/matrix.h"
-#include "srrg_pcl/point_types.h"
-#include "srrg_test/test_helper.hpp"
+#include "wombat_srrg/srrg_data_structures/matrix.h"
+#include "wombat_srrg/srrg_pcl/point_types.h"
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
 

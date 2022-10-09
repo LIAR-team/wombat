@@ -1,5 +1,5 @@
-#include "srrg_pcl/instances.h"
-#include "srrg_test/synthetic_world.hpp"
+#include "wombat_srrg/srrg_pcl/instances.h"
+#include "wombat_srrg/srrg_test/synthetic_world.hpp"
 
 using namespace srrg2_core;
 using namespace srrg2_test;

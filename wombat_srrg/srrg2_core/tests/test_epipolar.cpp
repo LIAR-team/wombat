@@ -1,7 +1,7 @@
-#include "srrg_geometry/epipolar.h"
-#include "srrg_geometry/geometry2d.h"
-#include "srrg_geometry/geometry3d.h"
-#include <srrg_system_utils/shell_colors.h>
+#include "wombat_srrg/srrg_geometry/epipolar.h"
+#include "wombat_srrg/srrg_geometry/geometry2d.h"
+#include "wombat_srrg/srrg_geometry/geometry3d.h"
+#include "wombat_srrg/srrg_system_utils/shell_colors.h>
 #include <srrg_test/test_helper.hpp>
 
 using namespace srrg2_core;

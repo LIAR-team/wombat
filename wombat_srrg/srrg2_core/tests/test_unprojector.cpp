@@ -1,5 +1,5 @@
-#include "srrg_pcl/point_unprojector_types.h"
-#include "srrg_test/test_helper.hpp"
+#include "wombat_srrg/srrg_pcl/point_unprojector_types.h"
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
 

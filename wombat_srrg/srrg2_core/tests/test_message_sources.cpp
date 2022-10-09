@@ -1,8 +1,8 @@
-#include "srrg_messages/instances.h"
+#include "wombat_srrg/srrg_messages/instances.h"
 #include <srrg_data_structures/platform.h>
 #include <srrg_messages/instances.h>
 #include <srrg_messages/messages/grid_map_message.h>
-#include <srrg_property/property_container.h>
+#include "wombat_srrg/srrg_property/property_container.h"
 #include <srrg_messages/messages/imu_message.h>
 #include <srrg_messages/messages/joints_message.h>
 #include <srrg_messages/messages/image_message.h>
@@ -25,7 +25,7 @@
 #include <srrg_messages/message_handlers/message_sorted_source.h>
 #include <srrg_messages/message_handlers/message_synchronized_source.h>
 #include <srrg_messages/message_handlers/message_pack.h>
-#include "srrg_test/test_helper.hpp"
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
 
