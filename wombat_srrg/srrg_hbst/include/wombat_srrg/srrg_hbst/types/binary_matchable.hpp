@@ -99,7 +99,7 @@ namespace srrg_hbst {
     //! @brief computes the classic Hamming descriptor distance between this and another matchable
     //! @param[in] matchable_query_ the matchable to compare this against
     //! @returns the matching distance as integer
-    inline const uint32_t
+    inline uint32_t
     distance(const BinaryMatchable<ObjectType_, descriptor_size_bits_>* matchable_query_) const {
       return (matchable_query_->descriptor ^ this->descriptor).count();
     }
@@ -200,18 +200,6 @@ namespace srrg_hbst {
     template <typename BinaryNodeType_>
     friend class BinaryTree;
   };
-
-  // ds come on c++11
-  template <typename ObjectType_, uint32_t descriptor_size_bits_>
-  constexpr uint32_t BinaryMatchable<ObjectType_, descriptor_size_bits_>::descriptor_size_bits;
-  template <typename ObjectType_, uint32_t descriptor_size_bits_>
-  constexpr uint32_t BinaryMatchable<ObjectType_, descriptor_size_bits_>::raw_descriptor_size_bytes;
-  template <typename ObjectType_, uint32_t descriptor_size_bits_>
-  constexpr uint32_t
-    BinaryMatchable<ObjectType_, descriptor_size_bits_>::descriptor_size_bits_in_bytes;
-  template <typename ObjectType_, uint32_t descriptor_size_bits_>
-  constexpr uint32_t
-    BinaryMatchable<ObjectType_, descriptor_size_bits_>::descriptor_size_bits_overflow;
 
   template <typename ObjectType_>
   using BinaryMatchable128 = BinaryMatchable<ObjectType_, 128>;

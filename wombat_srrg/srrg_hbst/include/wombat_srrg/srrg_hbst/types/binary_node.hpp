@@ -64,7 +64,7 @@ namespace srrg_hbst {
     // ds access
   public:
     // ds create leafs (external use intented)
-    virtual const bool spawnLeafs(const SplittingStrategy& train_mode_) {
+    virtual bool spawnLeafs(const SplittingStrategy& train_mode_) {
       assert(!has_leafs);
       _header.number_of_matchables_compressed = matchables.size();
 

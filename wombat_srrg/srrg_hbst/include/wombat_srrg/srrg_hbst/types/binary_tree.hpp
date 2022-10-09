@@ -154,7 +154,7 @@ namespace srrg_hbst {
 
     // ds shared pointer access wrappers
   public:
-    const uint64_t
+    uint64_t
     getNumberOfMatches(const std::shared_ptr<const MatchableVector> matchables_query_,
                        const uint32_t& maximum_distance_ = 25) const {
       return getNumberOfMatches(*matchables_query_, maximum_distance_);
@@ -166,7 +166,7 @@ namespace srrg_hbst {
       return getMatchingRatio(*matchables_query_, maximum_distance_);
     }
 
-    const uint64_t
+    uint64_t
     getNumberOfMatchesLazy(const std::shared_ptr<const MatchableVector> matchables_query_,
                            const uint32_t& maximum_distance_ = 25) const {
       return getNumberOfMatchesLazy(*matchables_query_, maximum_distance_);
@@ -196,7 +196,7 @@ namespace srrg_hbst {
     //! @brief returns database size (i.e. the number of added images/matchable vectors with unique
     //! identifiers)
     //! @returns number of added reference matchable vectors
-    const size_t size() const {
+    size_t size() const {
       assert(_header.number_of_training_entries == _added_identifiers_train.size());
       return _header.number_of_training_entries;
     }
@@ -207,14 +207,14 @@ namespace srrg_hbst {
 
     //! @brief returns the number of matchables added for training (before compression)
     //! @returns number of matchables
-    const size_t numberOfMatchablesUncompressed() const {
+    size_t numberOfMatchablesUncompressed() const {
       return _header.number_of_matchables_uncompressed;
     }
 
     //! @brief returns the actual number of stored matchable objects (after compression)
     //! this number is always equal to the uncompressed one if SRRG_MERGE_DESCRIPTORS is disabled
     //! @returns number of matchables
-    const size_t numberOfMatchablesCompressed() const {
+    size_t numberOfMatchablesCompressed() const {
       return _header.number_of_matchables_compressed;
     }
 
@@ -224,7 +224,7 @@ namespace srrg_hbst {
     }
 
     //! number of merged matchables in last call
-    const size_t numberOfMergedMatchablesLastTraining() const {
+    size_t numberOfMergedMatchablesLastTraining() const {
 #ifdef SRRG_MERGE_DESCRIPTORS
       return _number_of_merged_matchables_last_training;
 #else
@@ -243,7 +243,7 @@ namespace srrg_hbst {
     }
 #endif
 
-    const uint64_t getNumberOfMatches(const MatchableVector& matchables_query_,
+    uint64_t getNumberOfMatches(const MatchableVector& matchables_query_,
                                       const uint32_t& maximum_distance_ = 25) const {
       if (matchables_query_.empty()) {
         return 0;
@@ -352,7 +352,7 @@ namespace srrg_hbst {
       return scores_per_image;
     }
 
-    const uint64_t getNumberOfMatchesLazy(const MatchableVector& matchables_query_,
+    uint64_t getNumberOfMatchesLazy(const MatchableVector& matchables_query_,
                                           const uint32_t& maximum_distance_ = 25) const {
       if (matchables_query_.empty()) {
         return 0;
@@ -977,7 +977,8 @@ namespace srrg_hbst {
                      sizeof(uint64_t),
                      "BinaryTree::write|ERROR: unable to write number of objects");
           assert(matchable->number_of_objects == matchable->objects.size());
-          for (const ObjectMapElement& element : matchable->objects) {
+          // TODO: avoid copy here
+          for (const ObjectMapElement element : matchable->objects) {
             GUARDED_IO(outfile,
                        write,
                        reinterpret_cast<const char*>(&element.first),

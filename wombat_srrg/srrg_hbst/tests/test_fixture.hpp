@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <random>
 
-#include "srrg_hbst/types/binary_tree.hpp"
+#include "wombat_srrg/srrg_hbst/types/binary_tree.hpp"
 
 typedef srrg_hbst::BinaryTree256<size_t> Tree;
 
@@ -78,10 +78,6 @@ protected:
   static std::vector<Tree::real_type> matching_distances;
 };
 
-// ds come on c++11
-constexpr size_t HBST::number_of_images_query;
-constexpr size_t HBST::number_of_images_train;
-constexpr size_t HBST::number_of_matchables_per_image;
 std::mt19937 HBST::random_number_generator;
 
 // ds streaming "ground truth" assuming consistent random sampling on testing architectures

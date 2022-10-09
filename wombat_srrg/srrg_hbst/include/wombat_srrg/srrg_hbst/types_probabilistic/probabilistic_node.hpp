@@ -1,6 +1,6 @@
 #pragma once
 #include "probabilistic_matchable.hpp"
-#include "srrg_hbst/types/binary_node.hpp"
+#include "wombat_srrg/srrg_hbst/types/binary_node.hpp"
 
 namespace srrg_hbst {
 
