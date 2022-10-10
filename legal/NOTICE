@@ -4,8 +4,8 @@ The wombat software contains and derives from several third-party libraries, wit
 
 - srrg software: https://gitlab.com/srrg-software
   - srrg_hbst:
-    - Included with minor modifications.
-    - Licensed under BSD-3, provided in wombat/wombat_srrg/srrg_hbst/LICENSE
+    - Included with modifications.
+    - Licensed under BSD-3
   - srrg2_core:
-    - Included with minor modifications.
-    - Licensed under BSD-3, provided in wombat/wombat_srrg/srrg2_core/LICENSE
+    - Included with modifications.
+    - Licensed under BSD-3
