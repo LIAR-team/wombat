@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include "wombat_srrg/srrg_path_matrix/path_matrix_distance_search.h"
 
 namespace srrg2_core {

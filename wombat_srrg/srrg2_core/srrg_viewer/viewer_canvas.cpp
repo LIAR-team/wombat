@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include "viewer_canvas.h"
 #include "viewer_core/packets.h"
 

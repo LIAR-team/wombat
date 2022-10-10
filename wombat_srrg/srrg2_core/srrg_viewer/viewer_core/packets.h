@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 #include "packets/packet_array.h" //ia almost deprecated
 #include "packets/packet_base.h"

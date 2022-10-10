@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 
 // use this macro in to add default setters/getters

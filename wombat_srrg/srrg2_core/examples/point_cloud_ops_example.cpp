@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include <srrg_data_structures/matrix.h>
 #include <srrg_point_cloud/point_types.h>
 #include <srrg_point_cloud/point_transformer_affine.h>

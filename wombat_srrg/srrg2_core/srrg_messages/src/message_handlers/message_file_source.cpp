@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include "wombat_srrg/srrg_messages/message_handlers/message_file_source.h"
 #include "wombat_srrg/srrg_messages/messages/base_sensor_message.h"
 

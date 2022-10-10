@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 
 #include <string>
@@ -5,7 +8,7 @@
 #include <map>
 #include <limits>
 #include <stdexcept>
-#include "id_placeholder.h"
+#include "wombat_srrg/srrg_boss/id_placeholder.h"
 #include <Eigen/Core>
 
 namespace srrg2_core {
@@ -154,9 +157,15 @@ public:
   ValueData& operator[](size_t n) {
     return *_value.at(n);
   }
-  size_t size() {
+
+  size_t size()
+  {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnull-dereference"
     return _value.size();
+#pragma GCC diagnostic pop
   }
+
   void push_back(ValueData* value) {
     _value.push_back(value);
   }

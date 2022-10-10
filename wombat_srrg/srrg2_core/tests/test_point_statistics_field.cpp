@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include "wombat_srrg/srrg_pcl/point_intensity_descriptor.h"
 #include "wombat_srrg/srrg_pcl/point_normal.h"
 #include "wombat_srrg/srrg_test/test_helper.hpp"

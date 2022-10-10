@@ -7,45 +7,61 @@ target_link_libraries(
   wombat_srrg::srrg2_core::srrg_test
 )
 
+ament_add_gtest(test_cloud_intensity test_cloud_intensity.cpp)
+target_link_libraries(
+  test_cloud_intensity
+    wombat_srrg::srrg2_core::srrg_image
+    wombat_srrg::srrg2_core::srrg_pcl
+)
+
+ament_add_gtest(test_distance_map test_distance_map.cpp)
+target_link_libraries(
+  test_distance_map
+    wombat_srrg::srrg2_core::srrg_image
+    wombat_srrg::srrg2_core::srrg_path_matrix
+    wombat_srrg::srrg2_core::srrg_pcl
+    wombat_srrg::srrg2_core::srrg_system_utils
+)
+
 ament_add_gtest(test_geometry test_geometry.cpp)
 target_link_libraries(
   test_geometry
-  wombat_srrg::srrg2_core::srrg_geometry
-  wombat_srrg::srrg2_core::srrg_test
+    wombat_srrg::srrg2_core::srrg_geometry
+    wombat_srrg::srrg2_core::srrg_test
 )
 
 ament_add_gtest(test_kd_tree test_kd_tree.cpp)
 target_link_libraries(
   test_kd_tree
-  wombat_srrg::srrg2_core::srrg_data_structures
-  wombat_srrg::srrg2_core::srrg_geometry
-  wombat_srrg::srrg2_core::srrg_test
+    wombat_srrg::srrg2_core::srrg_data_structures
+    wombat_srrg::srrg2_core::srrg_geometry
+    wombat_srrg::srrg2_core::srrg_test
 )
 
 ament_add_gtest(test_image_data test_image_data.cpp)
 target_link_libraries(
   test_image_data
-  wombat_srrg::srrg2_core::srrg_image
-  wombat_srrg::srrg2_core::srrg_system_utils
-  wombat_srrg::srrg2_core::srrg_test
+    wombat_srrg::srrg2_core::srrg_image
+    wombat_srrg::srrg2_core::srrg_system_utils
+    wombat_srrg::srrg2_core::srrg_test
 )
 
 ament_add_gtest(test_matrix_bilinear_interpolation test_matrix_bilinear_interpolation.cpp)
 target_link_libraries(
   test_matrix_bilinear_interpolation
-  wombat_srrg::srrg2_core::srrg_data_structures
-  wombat_srrg::srrg2_core::srrg_pcl
-  wombat_srrg::srrg2_core::srrg_test
+    wombat_srrg::srrg2_core::srrg_data_structures
+    wombat_srrg::srrg2_core::srrg_pcl
+    wombat_srrg::srrg2_core::srrg_test
 )
 
-ament_add_gtest(test_streaming_configurable test_streaming_configurable.cpp)
-target_link_libraries(
-  test_streaming_configurable
-  wombat_srrg::srrg2_core::srrg_config
-  wombat_srrg::srrg2_core::srrg_property
-  wombat_srrg::srrg2_core::srrg_test
-)
-
+#ament_add_gtest(test_streaming_configurable test_streaming_configurable.cpp)
+#target_link_libraries(
+#  test_streaming_configurable
+#  wombat_srrg::srrg2_core::srrg_config
+#  wombat_srrg::srrg2_core::srrg_property
+#  wombat_srrg::srrg2_core::srrg_test
+#  dl
+#)
 
 #catkin_add_gtest(test_points test_points.cpp)
 #target_link_libraries(test_points

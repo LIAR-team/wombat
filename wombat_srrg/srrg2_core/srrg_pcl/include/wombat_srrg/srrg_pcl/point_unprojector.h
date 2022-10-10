@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 #include <limits>
 
@@ -58,7 +61,11 @@ namespace srrg2_core {
       _copyFields<dest_field_idx + 1, SrcMatrixChannelRestType...>(dest, r, c, rest...);
     }
     template <int dest_field_idx>
-    static inline void _copyFields(DestPointType& dest, int r, int c) {
+    static inline void _copyFields(DestPointType& dest, int r, int c)
+    {
+      (void)dest;
+      (void)r;
+      (void)c;
       // ds last iteration (nothing to copy)
     }
   };

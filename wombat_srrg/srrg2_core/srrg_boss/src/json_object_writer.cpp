@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 /*
     JSON object writer implementation
     Copyright (C) 2013  Daniele Baldassari <daniele@dikappa.org>

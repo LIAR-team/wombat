@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #define BOSS_TRUSTED_LOADER_H(ns)                        \
   namespace ns {                                         \
     class ns##_dummy_obj : public Serializable {         \

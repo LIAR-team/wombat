@@ -1,11 +1,14 @@
-#include <srrg_pcl/point.h>
-#include <srrg_pcl/point_color.h>
-#include <srrg_pcl/point_intensity.h>
-#include <srrg_pcl/point_normal.h>
-#include <srrg_pcl/point_normal_color.h>
-#include <srrg_pcl/point_normal_intensity.h>
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
 
-#include <srrg_viewer/viewer_core/color_palette.h>
+#include "wombat_srrg/srrg_pcl/point.h"
+#include "wombat_srrg/srrg_pcl/point_color.h"
+#include "wombat_srrg/srrg_pcl/point_intensity.h"
+#include "wombat_srrg/srrg_pcl/point_normal.h"
+#include "wombat_srrg/srrg_pcl/point_normal_color.h"
+#include "wombat_srrg/srrg_pcl/point_normal_intensity.h"
+
+#include "wombat_srrg/srrg_viewer/viewer_core/color_palette.h"
 
 #include <gtest/gtest.h>
 

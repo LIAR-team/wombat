@@ -1,8 +1,12 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
+#include <gtest/gtest.h>
 #include <iostream>
 #include <iterator>
-#include <srrg_image/image.h>
-#include <srrg_pcl/point_types.h>
-#include <srrg_pcl/point_unprojector.h>
+#include "wombat_srrg/srrg_image/image.h"
+#include "wombat_srrg/srrg_pcl/point_types.h"
+#include "wombat_srrg/srrg_pcl/point_unprojector.h"
 
 using namespace srrg2_core;
 using namespace std;
@@ -12,8 +16,8 @@ using MatrixCloudPointNormalIntensity3f=srrg2_core::PointCloud_<
   Matrix_<PointNormalIntensity3f, Eigen::aligned_allocator<PointNormalIntensity3f> > >;
 using Projector = PointUnprojectorPinhole_<PointNormalIntensity3fVectorCloud>;
 
-int main(void) {
-
+TEST(CloudIntensity, CloudIntensity)
+{
   ImageFloat depth;
   ImageFloat intensity;
 
@@ -21,7 +25,10 @@ int main(void) {
 
   Projector projector;
   projector.computeMatrix<WithNormals>(out, depth, intensity);
+}
 
-  return 0;
-
+int main(int argc, char ** argv)
+{
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 /*
     Copyright (C) 2013  Daniele Baldassari <daniele@dikappa.org>
     Copyright (C) 2013  Giorgio Grisetti   <grisetti@diag.uniroma1.it>

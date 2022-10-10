@@ -1,6 +1,8 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 
-#include "wombat_srrg/srrg_geometry/ad.h"
 #include "wombat_srrg/srrg_geometry/geometry2d.h"
 #include "wombat_srrg/srrg_geometry/geometry_defs.h"
 
@@ -238,7 +240,7 @@ namespace srrg2_core {
       Similiarity3_<Scalar_> sim_;
       sim_.translation()    = iso_.translation();
       sim_.linear()         = iso_.linear();
-      sim_.inverseScaling() = ad::exp(sim_vec_(6));
+      sim_.inverseScaling() = expf(sim_vec_(6));
       return sim_;
     }
 
@@ -256,7 +258,7 @@ namespace srrg2_core {
       iso_.linear()            = sim_.linear();
       Vector7_<Scalar_> sim_vec_;
       sim_vec_.template head<6>() = t2tnq(iso_);
-      sim_vec_(6)                 = ad::log(sim_.inverseScaling());
+      sim_vec_(6)                 = logf(sim_.inverseScaling());
       return sim_vec_;
     }
 

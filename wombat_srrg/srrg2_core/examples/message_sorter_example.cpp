@@ -1,8 +1,11 @@
-#include <srrg_messages/messages/imu_message.h>
-#include <srrg_messages/message_handlers/message_file_source.h>
-#include <srrg_messages/message_handlers/message_sorted_source.h>
-#include <srrg_messages/instances.h>
-#include <srrg_boss/serializer.h>
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
+#include "wombat_srrg/srrg_messages/messages/imu_message.h"
+#include "wombat_srrg/srrg_messages/message_handlers/message_file_source.h"
+#include "wombat_srrg/srrg_messages/message_handlers/message_sorted_source.h"
+#include "wombat_srrg/srrg_messages/instances.h"
+#include "wombat_srrg/srrg_boss/serializer.h"
 
 #define EXAMPLE_LOG std::cerr << "srrg2_core::examples::message_sorter_example| "
 

@@ -1,6 +1,8 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 
-#include "wombat_srrg/srrg_geometry/ad.h"
 #include "wombat_srrg/srrg_geometry/geometry3d.h"
 
 namespace srrg2_core {

@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 #include "wombat_srrg/srrg_pcl/point_base.h"
 #include "wombat_srrg/srrg_data_structures/matrix.h"

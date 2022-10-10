@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 #include "wombat_srrg/srrg_pcl/lidar_3d_utils/lidar_3d_lookup_projector.h"
 #include "wombat_srrg/srrg_pcl/point_unprojector.h"

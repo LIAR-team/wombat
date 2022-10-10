@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include <stdint.h>
 #include "wombat_srrg/srrg_boss/object_data.h"
 #include "wombat_srrg/srrg_boss/serializer.h"

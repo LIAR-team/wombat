@@ -1,11 +1,4 @@
-add_executable(app_test_distance_map test_distance_map.cpp)
-target_link_libraries(app_test_distance_map
-  srrg2_property_library
-  srrg2_config_library
-  srrg2_image_library
-  srrg2_point_cloud_library
-  srrg2_data_structures_library
-  srrg2_system_utils_library)
+
 
 #add_executable(test_platform_synthetic_joints test_platform_synthetic_joints.cpp)
 #target_link_libraries(test_platform_synthetic_joints
@@ -62,17 +55,6 @@ target_link_libraries(app_test_point_matrix_processor
   srrg2_property_library
   srrg2_config_library
   srrg2_system_utils_library)
-
-#bdc test intensity point
-add_executable(app_test_cloud_intensity test_cloud_intensity.cpp)
-target_link_libraries(app_test_cloud_intensity
-  srrg2_property_library
-  srrg2_config_library
-  srrg2_system_utils_library
-  srrg2_data_structures_library
-  srrg2_image_library
-)
-
 
 #add_executable(test_key_events test_key_events.cpp)
 #target_link_libraries(test_key_events

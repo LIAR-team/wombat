@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 #include "wombat_srrg/srrg_path_matrix/path_matrix_cost_search.h"
 #include "wombat_srrg/srrg_path_matrix/path_matrix_dijkstra_search.h"

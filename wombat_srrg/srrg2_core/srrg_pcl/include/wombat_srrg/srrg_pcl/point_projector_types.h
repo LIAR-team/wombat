@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 #include "wombat_srrg/srrg_pcl/point_projector_pinhole.h"
 #include "wombat_srrg/srrg_pcl/point_projector_polar.h"

@@ -1,16 +1,21 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include "wombat_srrg/srrg_geometry/geometry2d.h"
 #include "wombat_srrg/srrg_geometry/geometry3d.h"
 #include "wombat_srrg/srrg_system_utils/shell_colors.h>
-#include <srrg_test/test_helper.hpp>
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
 using namespace srrg2_test;
 
-int main(int argc_, char** argv_) {
+int main(int argc_, char** argv_)
+{
   return srrg2_test::runTests(argc_, argv_);
 }
 
-TEST(Similiarity, Sim3f) {
+TEST(Similiarity, Sim3f)
+{
   // ldg don't change any values here, cause there are hardcoded
   // ldg multiplication in order to test operators
   // ldg similiarity values
@@ -142,7 +147,8 @@ TEST(Similiarity, Sim3f) {
   ASSERT_LE(tas2s_sim.matrix().determinant() - sim.matrix().determinant(), 1e-6f);
 }
 
-TEST(Similiarity, Sim2f) {
+TEST(Similiarity, Sim2f)
+{
   // ldg don't change any values here, cause there are hardcoded
   // ldg multiplication in order to test operators
   // ldg similiarity values

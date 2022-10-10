@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #pragma once
 
 #include <cmath>
@@ -6,80 +9,16 @@
 
 namespace srrg2_core {
   namespace ad {
-    /**basic functions for float, redefined to please the compiler*/
-    inline float sin(float f) {
-      return sinf(f);
-    }
 
-    inline float cos(float f) {
-      return cosf(f);
-    }
-
-    inline float asin(float f) {
-      return asinf(f);
-    }
-
-    inline float acos(float f) {
-      return acosf(f);
-    }
-
-    inline float exp(float f) {
-      return expf(f);
-    }
-
-    inline float log(float f) {
-      return logf(f);
-    }
-
-    inline float sqrt(float f) {
-      return sqrtf(f);
-    }
-
-    inline float atan2(float y, float x) {
-      return atan2f(y, x);
-    }
-
-    inline float pow(float x, float y) {
-      return powf(x, y);
-    }
-
-    /**basic functions for double, redefined to please the compiler*/
-    inline double sin(double f) {
-      return sinl(f);
-    }
-
-    inline double cos(double f) {
-      return cosl(f);
-    }
-
-    inline double exp(double f) {
-      return expl(f);
-    }
-
-    inline double log(double f) {
-      return logl(f);
-    }
-
-    inline double sqrt(double f) {
-      return sqrtl(f);
-    }
-
-    inline double atan2(double y, double x) {
-      return atan2l(y, x);
-    }
-
-    inline double pow(double x, double y) {
-      return powl(x, y);
-    }
-
-    inline float normalizeAngle(const float& angle_) {
+    inline float normalizeAngle(const float& angle_)
+    {
       return atan2(sin(angle_), cos(angle_));
     }
   
-    inline double normalizeAngle(const double& angle_) {
+    inline double normalizeAngle(const double& angle_)
+    {
       return atan2(sin(angle_), cos(angle_));
     }
-
 
     /**dual value, stores the elements of autodiff
        it reperesent a pair

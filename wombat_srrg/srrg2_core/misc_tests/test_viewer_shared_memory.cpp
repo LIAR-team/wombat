@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include <iostream>
 #include <thread>
 #include "wombat_srrg/srrg_viewer/viewer_core/buffer_sink_shared.h"

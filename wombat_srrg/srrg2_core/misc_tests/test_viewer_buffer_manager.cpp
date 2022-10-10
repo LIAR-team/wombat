@@ -1,3 +1,6 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include "wombat_srrg/srrg_viewer/viewer_core/buffer_manager.h"
 #include "wombat_srrg/srrg_viewer/viewer_core/packet_deserializer.h"
 #include "wombat_srrg/srrg_viewer/viewer_core/packet_serializer.h"

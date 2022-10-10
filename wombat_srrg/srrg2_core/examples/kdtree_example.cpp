@@ -1,9 +1,12 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include <iostream>
 
 #include <stdio.h>
 #include <sys/time.h>
 
-#include <srrg_data_structures/kd_tree.h>
+#include "wombat_srrg/srrg_data_structures/kd_tree.h"
 #include "wombat_srrg/srrg_system_utils/system_utils.h>
 
 #define EXAMPLE_LOG std::cerr << "srrg2_core::examples::kdtree_example| "

@@ -1,8 +1,11 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include <iostream>
-#include <srrg_data_structures/matrix.h>
+#include "wombat_srrg/srrg_data_structures/matrix.h"
 #include "wombat_srrg/srrg_system_utils/system_utils.h>
 
-#include <srrg_image/image_data.h>
+#include "wombat_srrg/srrg_image/image_data.h"
 
 #include <vector>
 

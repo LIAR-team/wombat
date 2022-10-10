@@ -1,30 +1,33 @@
+// Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
+// Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
+
 #include "wombat_srrg/srrg_messages/instances.h"
-#include <srrg_data_structures/platform.h>
-#include <srrg_messages/instances.h>
-#include <srrg_messages/messages/grid_map_message.h>
+#include "wombat_srrg/srrg_data_structures/platform.h"
+#include "wombat_srrg/srrg_messages/instances.h"
+#include "wombat_srrg/srrg_messages/messages/grid_map_message.h"
 #include "wombat_srrg/srrg_property/property_container.h"
-#include <srrg_messages/messages/imu_message.h>
-#include <srrg_messages/messages/joints_message.h>
-#include <srrg_messages/messages/image_message.h>
-#include <srrg_messages/messages/laser_message.h>
-#include <srrg_messages/messages/range_message.h>
-#include <srrg_messages/messages/camera_info_message.h>
-#include <srrg_messages/messages/transform_events_message.h>
-#include <srrg_messages/messages/odometry_message.h>
-#include <srrg_messages/messages/point_cloud2_message.h>
-#include <srrg_messages/messages/point_stamped_message.h>
-#include <srrg_messages/messages/twist_stamped_message.h>
-#include <srrg_messages/messages/navsat_fix_message.h>
-#include <srrg_messages/messages/pose_stamped_message.h>
-#include <srrg_messages/messages/pose_with_covariance_stamped_message.h>
-#include <srrg_messages/messages/pose_array_message.h>
-#include <srrg_messages/messages/path_message.h>
-#include <srrg_messages/messages/cmd_vel_message.h>
-#include <srrg_messages/message_handlers/message_file_source.h>
-#include <srrg_messages/message_handlers/message_file_sink.h>
-#include <srrg_messages/message_handlers/message_sorted_source.h>
-#include <srrg_messages/message_handlers/message_synchronized_source.h>
-#include <srrg_messages/message_handlers/message_pack.h>
+#include "wombat_srrg/srrg_messages/messages/imu_message.h"
+#include "wombat_srrg/srrg_messages/messages/joints_message.h"
+#include "wombat_srrg/srrg_messages/messages/image_message.h"
+#include "wombat_srrg/srrg_messages/messages/laser_message.h"
+#include "wombat_srrg/srrg_messages/messages/range_message.h"
+#include "wombat_srrg/srrg_messages/messages/camera_info_message.h"
+#include "wombat_srrg/srrg_messages/messages/transform_events_message.h"
+#include "wombat_srrg/srrg_messages/messages/odometry_message.h"
+#include "wombat_srrg/srrg_messages/messages/point_cloud2_message.h"
+#include "wombat_srrg/srrg_messages/messages/point_stamped_message.h"
+#include "wombat_srrg/srrg_messages/messages/twist_stamped_message.h"
+#include "wombat_srrg/srrg_messages/messages/navsat_fix_message.h"
+#include "wombat_srrg/srrg_messages/messages/pose_stamped_message.h"
+#include "wombat_srrg/srrg_messages/messages/pose_with_covariance_stamped_message.h"
+#include "wombat_srrg/srrg_messages/messages/pose_array_message.h"
+#include "wombat_srrg/srrg_messages/messages/path_message.h"
+#include "wombat_srrg/srrg_messages/messages/cmd_vel_message.h"
+#include "wombat_srrg/srrg_messages/message_handlers/message_file_source.h"
+#include "wombat_srrg/srrg_messages/message_handlers/message_file_sink.h"
+#include "wombat_srrg/srrg_messages/message_handlers/message_sorted_source.h"
+#include "wombat_srrg/srrg_messages/message_handlers/message_synchronized_source.h"
+#include "wombat_srrg/srrg_messages/message_handlers/message_pack.h"
 #include "wombat_srrg/srrg_test/test_helper.hpp"
 
 using namespace srrg2_core;
