@@ -1,0 +1,9 @@
+{
+  "build": {
+    "asan": {
+      "cmake-args": [
+        "-DWOMBAT_SANITIZER_ASAN=ON",
+      ],
+    },
+  },
+}

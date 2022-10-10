@@ -1,6 +1,9 @@
 # Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
 # All Rights Reserved.
 
+include(CMakeParseArguments)
+include(${wombat_cmake_DIR}/BuildTypes.cmake)
+
 #
 # Standard Wombat project setup.
 # Call `wombat_package()` at the beginning of your Wombat CMake project in order
@@ -13,10 +16,16 @@
 # @public
 #
 macro(wombat_package)
-
-  include(${wombat_cmake_DIR}/BuildTypes.cmake)
+  cmake_parse_arguments(
+    ARG # prefix of output variables
+    "NO_SANITIZERS" # list of names of the boolean arguments (only defined ones will be true)
+    "" # list of names of mono-valued arguments
+    "" # list of names of multi-valued arguments (output variables are lists)
+    ${ARGN} # arguments of the function to parse, here we take the all original ones
+  )
 
   option(WOMBAT_COVERAGE "Enable code coverage" FALSE)
+  option(WOMBAT_SANITIZER_ASAN "Enable Address Sanitizer (ASAN)" FALSE)
 
   handle_cmake_build_type()
 
@@ -49,6 +58,19 @@ macro(wombat_package)
     add_compile_options(--coverage)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+  endif()
+
+  if(WOMBAT_SANITIZER_ASAN AND NOT ARG_NO_SANITIZERS)
+    # Set global flags to enable the sanitizer
+    add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+
+    set(ASAN_OPTIONS "abort_on_error=1:alloc_dealloc_mismatch=1:detect_leaks=1:new_delete_type_mismatch=0")
+    set(_ASAN_DEFAULT_OPTIONS_FUNC "const char *__asan_default_options(); const char *__asan_default_options() { return \"${ASAN_OPTIONS}\"; }")
+    configure_file(${wombat_cmake_DIR}/sanitizer-options.c.in ${CMAKE_CURRENT_BINARY_DIR}/sanitizer-options.c)
+    add_library(wombat-sanitizer-options OBJECT ${CMAKE_CURRENT_BINARY_DIR}/sanitizer-options.c)
+    link_libraries(wombat-sanitizer-options)
+    wombat_install_target(wombat-sanitizer-options)
   endif()
 
 endmacro()
