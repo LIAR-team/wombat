@@ -1,8 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(srrg2_solver)
 
-#ds help IDEs - uncomment on your machine if needed
-#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 #ia catkin package
 find_package(catkin REQUIRED COMPONENTS
