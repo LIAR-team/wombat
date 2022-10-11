@@ -38,6 +38,11 @@ docker build \
 WOMBAT_DIR=$(dirname ${THIS_DIR})
 DOCKER_HOME=/home/docker-dev
 DOCKER_WOMBAT_WS=${DOCKER_HOME}/wombat
+BASH_HISTORY_FILE=${THIS_DIR}/.bash_history
+
+if [ ! -f $BASH_HISTORY_FILE ]; then
+  touch ${BASH_HISTORY_FILE}
+fi
 
 # Check if we have display
 DISPLAY_ARGS=""
@@ -78,6 +83,7 @@ docker run -it --rm \
   --privileged \
   --user=${UID}:${UID} \
   --volume=${HOME}:${DOCKER_HOME}/host-home:rw \
+  --volume=${BASH_HISTORY_FILE}:${DOCKER_HOME}/.bash_history:rw \
   --volume=${HOME}/.gitconfig:${DOCKER_HOME}/.gitconfig:ro \
   --volume=${WOMBAT_DIR}:${DOCKER_WOMBAT_WS}:rw \
   --workdir ${DOCKER_WOMBAT_WS} \

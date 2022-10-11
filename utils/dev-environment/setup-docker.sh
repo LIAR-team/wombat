@@ -123,8 +123,13 @@ if [ ! -d $USER_DEVDOCKER ]; then
 fi
 # Symbolic link the run script
 RUN_SCRIPT="run.sh"
-if [ ! -L $USER_DEVDOCKER/$RUN_SCRIPT ]; then
-  ln -s $THIS_DIR/$RUN_SCRIPT $USER_DEVDOCKER/$RUN_SCRIPT 
+RUN_SCRIPT_LINK=$USER_DEVDOCKER/$RUN_SCRIPT
+if [ -e $RUN_SCRIPT_LINK ] && [ ! -L $RUN_SCRIPT_LINK ]; then
+  rm -rf $RUN_SCRIPT_LINK
+fi
+if [ ! -L $RUN_SCRIPT_LINK ]; then
+  ln -s $THIS_DIR/$RUN_SCRIPT $RUN_SCRIPT_LINK
+  chmod +x $RUN_SCRIPT_LINK
 fi
 # Create the user dockerfile
 USER_DOCKERFILE=$USER_DEVDOCKER/Dockerfile
