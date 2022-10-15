@@ -2,11 +2,21 @@ cmake_minimum_required(VERSION 3.5)
 
 project(wombat_cmake NONE)
 
-include(cmake/WombatInstall.cmake)
-
 find_package(ament_cmake REQUIRED)
-find_package(ament_cmake_core REQUIRED)
-find_package(ament_cmake_export_dependencies REQUIRED)
+
+# The scripts are meant to be used by packages that depend on this one,
+# so they assume that the following CMake variable is set (this is set when this package is found).
+set(wombat_cmake_DIR cmake)
+
+include(cmake/WombatInstall.cmake)
+include(cmake/WombatPackage.cmake)
+
+wombat_package()
+
+if(BUILD_TESTING)
+  include(cmake/WombatLinters.cmake)
+  wombat_linters()
+endif()
 
 install(DIRECTORY cmake DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY linters-config DESTINATION share/${PROJECT_NAME})

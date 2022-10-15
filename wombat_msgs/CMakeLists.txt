@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(wombat_msgs)
 
-find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(wombat_cmake REQUIRED)
 
