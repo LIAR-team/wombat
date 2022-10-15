@@ -43,14 +43,14 @@ jobs:
         run: |
           source /opt/ros/rolling/setup.sh \
           && source /opt/ros2_workspace_base/install/local_setup.sh \
-          && VERBOSE=1 colcon build --symlink-install
+          && VERBOSE=1 colcon build --symlink-install --event-handlers=console_cohesion+
       - name: Run unit-tests
         run: |
           source /opt/ros/rolling/setup.sh \
           && source /opt/ros2_workspace_base/install/local_setup.sh \
-          && VERBOSE=1 colcon test --mixin no-linters --return-code-on-test-failure
+          && VERBOSE=1 colcon test --mixin no-linters --return-code-on-test-failure --event-handlers=console_cohesion+
       - name: Run linters
         run: |
           source /opt/ros/rolling/setup.sh \
           && source /opt/ros2_workspace_base/install/local_setup.sh \
-          && VERBOSE=1 colcon test --mixin linters --return-code-on-test-failure
+          && VERBOSE=1 colcon test --mixin linters --return-code-on-test-failure --event-handlers=console_cohesion+
