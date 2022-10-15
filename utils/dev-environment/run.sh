@@ -37,11 +37,33 @@ docker build \
 # Define some useful directory names
 WOMBAT_DIR=$(dirname ${THIS_DIR})
 DOCKER_HOME=/home/docker-dev
-DOCKER_WOMBAT_WS=${DOCKER_HOME}/wombat
-BASH_HISTORY_FILE=${THIS_DIR}/.bash_history
+DOCKER_WOMBAT_DIR=${DOCKER_HOME}/wombat
 
-if [ ! -f $BASH_HISTORY_FILE ]; then
-  touch ${BASH_HISTORY_FILE}
+# Persistent bash history file
+BASH_HISTORY_FILE=${THIS_DIR}/.bash_history
+DOCKER_BASH_HISTORY_FILE=${DOCKER_HOME}/.bash_history
+if [ ! -f $BASH_HISTORY_FILE_PATH ]; then
+  touch ${BASH_HISTORY_FILE_PATH}
+fi
+BASH_HISTORY_ARGS="--volume=${BASH_HISTORY_FILE}:${DOCKER_BASH_HISTORY_FILE}:rw"
+
+# Persistent ccache directory
+CCACHE_DIR=${THIS_DIR}/.cache/ccache
+DOCKER_CCACHE_DIR=${DOCKER_HOME}/.cache/ccache
+if [ ! -d $CCACHE_DIR ]; then
+  mkdir -p ${CCACHE_DIR}
+fi
+CCACHE_ENV_ARG="--env CCACHE_DIR=${DOCKER_CCACHE_DIR}"
+CCACHE_VOLUME_ARG="--volume=${CCACHE_DIR}:${DOCKER_CCACHE_DIR}:rw"
+CCACHE_ARGS="${CCACHE_ENV_ARG} ${CCACHE_VOLUME_ARG}"
+
+# Check if we have gitconfig
+GITCONFIG=${HOME}/.gitconfig
+GITCONFIG_ARGS=""
+if [ -f $GITCONFIG ]; then
+  DOCKER_GITCONFIG=${DOCKER_HOME}/.gitconfig
+  # Make this volume read-only
+  GITCONFIG_ARGS="--volume=${GITCONFIG}:${DOCKER_GITCONFIG}:ro"
 fi
 
 # Check if we have display
@@ -65,6 +87,7 @@ if type "nvidia-container-cli" &> /dev/null && nvidia-container-cli info &> /dev
   GPU_ARGS="--gpus=all"
 fi
 
+# Check if we have ssh agent
 SSH_ARGS=""
 if [ -v SSH_AUTH_SOCK ]; then
   SSH_AGENT_DIR=$(readlink -f ${SSH_AUTH_SOCK})
@@ -76,16 +99,17 @@ fi
 
 # Run the developer's dockerfile
 docker run -it --rm \
+  ${BASH_HISTORY_ARGS} \
+  ${CCACHE_ARGS} \
   ${DISPLAY_ARGS} \
+  ${GITCONFIG_ARGS} \
   ${GPU_ARGS} \
   ${SSH_ARGS} \
   --network=host \
   --privileged \
   --user=${UID}:${UID} \
   --volume=${HOME}:${DOCKER_HOME}/host-home:rw \
-  --volume=${BASH_HISTORY_FILE}:${DOCKER_HOME}/.bash_history:rw \
-  --volume=${HOME}/.gitconfig:${DOCKER_HOME}/.gitconfig:ro \
-  --volume=${WOMBAT_DIR}:${DOCKER_WOMBAT_WS}:rw \
-  --workdir ${DOCKER_WOMBAT_WS} \
+  --volume=${WOMBAT_DIR}:${DOCKER_WOMBAT_DIR}:rw \
+  --workdir ${DOCKER_WOMBAT_DIR} \
   wombat-dev \
   $@
