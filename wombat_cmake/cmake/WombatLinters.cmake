@@ -35,7 +35,7 @@ function(wombat_linters)
   file(GLOB_RECURSE _python_files FOLLOW_SYMLINKS "*.py")
 
   # Linters for C/C++ files
-  if (_cpp_files)
+  if(_cpp_files)
     # Clang-tidy
     # C/C++ static analysis for various checks
     find_package(ament_cmake_clang_tidy REQUIRED)
@@ -61,7 +61,7 @@ function(wombat_linters)
     find_package(ament_cmake_uncrustify REQUIRED)
     set(_uncrustify_config ${_wombat_linters_dir}/uncrustify-style.cfg)
     ament_uncrustify(CONFIG_FILE ${_uncrustify_config})
-  
+
     # CPPlint
     # Check style for C/C++ files
     find_package(ament_cmake_cpplint REQUIRED)
@@ -70,7 +70,7 @@ function(wombat_linters)
   endif()
 
   # Linters for Python files
-  if (_python_files)
+  if(_python_files)
     # Flake8
     # Check style and correctness of Python files
     find_package(ament_cmake_flake8 REQUIRED)

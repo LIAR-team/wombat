@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(wombat_strategy)
 
-find_package(ament_cmake REQUIRED)
 find_package(wombat_cmake REQUIRED)
 
 find_package(nav2_costmap_2d REQUIRED)
@@ -24,19 +23,16 @@ if(BUILD_TESTING)
   wombat_linters()
 endif()
 
-wombat_install_export_targets()
-
-ament_export_dependencies(
-  geometry_msgs
-  nav_msgs
-  nav2_costmap_2d
-  nav2_util
-  rclcpp
-  tf2_eigen
-  tf2_ros
-  visualization_msgs
-  wombat_msgs
-  wombat_ops
+wombat_package_install(
+  EXPORT_DEPS
+    geometry_msgs
+    nav_msgs
+    nav2_costmap_2d
+    nav2_util
+    rclcpp
+    tf2_eigen
+    tf2_ros
+    visualization_msgs
+    wombat_msgs
+    wombat_ops
 )
-
-wombat_package_install()

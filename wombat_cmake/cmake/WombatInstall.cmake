@@ -73,7 +73,7 @@ function(wombat_install_target TARGET_NAME)
   # Find out if the target is an executable or a library
   get_target_property(type ${TARGET_NAME} TYPE)
 
-  if (${type} STREQUAL "EXECUTABLE")
+  if(${type} STREQUAL "EXECUTABLE")
     __wombat_install_executable_target(${TARGET_NAME})
   else()
     __wombat_install_library_target(${TARGET_NAME})
@@ -125,7 +125,16 @@ macro(wombat_package_install)
   endif()
 
   # Export package dependencies
-  if (ARG_EXPORT_DEPS)
+  if(ARG_EXPORT_DEPS)
+    # Make sure that all the dependencies that we are trying to export are valid.
+    # This requires that they have been find_package'd by this package CMakeLists.txt
+    foreach(_dep ${ARG_EXPORT_DEPS})
+      if(NOT ${_dep}_FOUND)
+        message(FATAL_ERROR "Trying to export ${_dep} but it was not found.")
+      endif()
+    endforeach()
+
+    find_package(ament_cmake_export_dependencies REQUIRED)
     ament_export_dependencies("${ARG_EXPORT_DEPS}")
   endif()
 
