@@ -13,6 +13,25 @@ include(cmake/WombatPackage.cmake)
 
 wombat_package()
 
+# Add a configure dependency on the githook files to detect when they are changed
+set_property(
+  DIRECTORY
+  APPEND
+  PROPERTY
+    CMAKE_CONFIGURE_DEPENDS
+    ${CMAKE_SOURCE_DIR}/githooks/install_hooks.sh
+    ${CMAKE_SOURCE_DIR}/githooks/pre-push.sh
+)
+# Install githooks as part of this package configuration
+execute_process(
+  COMMAND ${CMAKE_SOURCE_DIR}/githooks/install_hooks.sh
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  RESULT_VARIABLE install_hooks_ret
+)
+if(install_hooks_ret)
+  message(FATAL_ERROR "Failed to install git hook: '${install_hooks_ret}'")
+endif()
+
 if(BUILD_TESTING)
   include(cmake/WombatLinters.cmake)
   wombat_linters()
