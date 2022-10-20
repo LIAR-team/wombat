@@ -8,5 +8,6 @@ then
     echo "${protected_branch} is a protected branch, create PR to merge"
     exit 1 # push will not execute
 else
+    echo "${protected_branch} and ${current_branch}"
     exit 0 # push will execute
 fi
