@@ -1,0 +1,12 @@
+#!/bin/sh
+
+protected_branch='main'
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+if [ $protected_branch = $current_branch ]
+then
+  echo "ERROR: ${protected_branch} is a protected branch, create PR to merge"
+  exit 1 # push will not execute
+else
+  exit 0 # push will execute
+fi
