@@ -1,8 +1,6 @@
 #!/bin/sh
 
-echo "HELLO"
-
-protected_branch='master'
+protected_branch='asoragna/githooks'
 current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
 
 if [ $protected_branch = $current_branch ]
