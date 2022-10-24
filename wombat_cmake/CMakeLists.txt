@@ -8,29 +8,13 @@ find_package(ament_cmake REQUIRED)
 # so they assume that the following CMake variable is set (this is set when this package is found).
 set(wombat_cmake_DIR cmake)
 
+include(cmake/InstallHooks.cmake)
 include(cmake/WombatInstall.cmake)
 include(cmake/WombatPackage.cmake)
 
 wombat_package()
 
-# Add a configure dependency on the githook files to detect when they are changed
-set_property(
-  DIRECTORY
-  APPEND
-  PROPERTY
-    CMAKE_CONFIGURE_DEPENDS
-    ${CMAKE_SOURCE_DIR}/githooks/install_hooks.sh
-    ${CMAKE_SOURCE_DIR}/githooks/pre-push
-)
-# Install githooks as part of this package configuration
-execute_process(
-  COMMAND ${CMAKE_SOURCE_DIR}/githooks/install_hooks.sh
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  RESULT_VARIABLE install_hooks_ret
-)
-if(install_hooks_ret)
-  message(FATAL_ERROR "Failed to install git hook: '${install_hooks_ret}'")
-endif()
+run_install_githooks_script()
 
 if(BUILD_TESTING)
   include(cmake/WombatLinters.cmake)
