@@ -17,7 +17,7 @@ for file in $(ls -A ${THIS_DIR}); do
     echo "Skipping ${file}"
     continue
   elif [[ -x ${file_abs_path} ]] && [[ ! -d ${file_abs_path} ]]; then
-    # Symlink all the githooks.
+    # Symlink all the executable files found in the githooks directory.
     ln -rsf ${file_abs_path} ${GIT_HOOKS_DIR}
     echo "Installed ${file_abs_path} githook"
   else
