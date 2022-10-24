@@ -1,38 +1,48 @@
 #!/bin/bash
 
-THIS_DIR=$(dirname $(realpath -s $0))
+# Exit on errors
+# https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
+set -o errexit
+
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 SYMLINKED_DIR="$(dirname "$(readlink -f "$0")")"
 
-DOCKERFILE=$THIS_DIR/Dockerfile
-SETUP_SCRIPT=$SYMLINKED_DIR/setup-docker.sh
-EXPECTED_VERSION_FILE=$SYMLINKED_DIR/VERSION
+DOCKERFILE=${THIS_DIR}/Dockerfile
+SETUP_SCRIPT=${SYMLINKED_DIR}/setup-docker.sh
+UTILS_SCRIPT=${SYMLINKED_DIR}/utils.sh
+EXPECTED_VERSION_FILE=${SYMLINKED_DIR}/VERSION
 
-if [ ! -f $DOCKERFILE ]; then
-  echo "### - Error! $DOCKERFILE not found!"
-  echo "### - Run $SETUP_SCRIPT before this script"
+source ${UTILS_SCRIPT}
+
+if [ ! -f ${DOCKERFILE} ]; then
+  echo "### - Error! ${DOCKERFILE} not found!"
+  echo "### - Run ${SETUP_SCRIPT} before this script"
   exit 1
 fi
 
-if [ ! -f $EXPECTED_VERSION_FILE ]; then
-  echo "### - Error! $EXPECTED_VERSION_FILE not found!"
-  echo "### - Run $SETUP_SCRIPT before this script"
+if [ ! -f ${EXPECTED_VERSION_FILE} ]; then
+  echo "### - Error! ${EXPECTED_VERSION_FILE} not found!"
+  echo "### - Run ${SETUP_SCRIPT} before this script"
   exit 1
 fi
 
-EXPECTED_VERSION=$(head -n 1 $EXPECTED_VERSION_FILE)
-THIS_FROM_COMMAND=$(head -n 1 $DOCKERFILE)
-EXPECTED_FROM_COMMAND="FROM $EXPECTED_VERSION"
-if [ "$THIS_FROM_COMMAND" != "$EXPECTED_FROM_COMMAND" ]; then
+IS_UBUNTU_HOST=$(is_ubuntu_host)
+
+EXPECTED_VERSION=$(head -n 1 ${EXPECTED_VERSION_FILE})
+THIS_FROM_COMMAND=$(head -n 1 ${DOCKERFILE})
+EXPECTED_FROM_COMMAND="FROM ${EXPECTED_VERSION}"
+if [ "${THIS_FROM_COMMAND}" != "${EXPECTED_FROM_COMMAND}" ]; then
   echo "### - Warning! Your Dockerfile is not up-to-date. The build may fail."
-  echo "### - Run $SETUP_SCRIPT to update."
+  echo "### - Run ${SETUP_SCRIPT} to restore the expected base image."
 fi
 
 # Build the developer's dockerfile
-docker build \
-  --file $DOCKERFILE \
+# NOTE: disable buildkit which requires internet connection for building.
+DOCKER_BUILDKIT=0 docker build \
+  --file ${DOCKERFILE} \
   --network=host \
   --tag wombat-dev \
-  $THIS_DIR
+  ${THIS_DIR}
 
 # Define some useful directory names
 WOMBAT_DIR=$(dirname ${THIS_DIR})
@@ -42,7 +52,7 @@ DOCKER_WOMBAT_DIR=${DOCKER_HOME}/wombat
 # Persistent bash history file
 BASH_HISTORY_FILE=${THIS_DIR}/.bash_history
 DOCKER_BASH_HISTORY_FILE=${DOCKER_HOME}/.bash_history
-if [ ! -f $BASH_HISTORY_FILE_PATH ]; then
+if [ ! -f ${BASH_HISTORY_FILE_PATH} ]; then
   touch ${BASH_HISTORY_FILE_PATH}
 fi
 BASH_HISTORY_ARGS="--volume=${BASH_HISTORY_FILE}:${DOCKER_BASH_HISTORY_FILE}:rw"
@@ -68,7 +78,7 @@ fi
 
 # Check if we have display
 DISPLAY_ARGS=""
-if [ -v DISPLAY ]; then
+if [ ! -z "${DISPLAY}" ]; then
   # Make sure XAUTH exists
   XSOCK=/tmp/.X11-unix
   XAUTH=/tmp/.docker.xauth
@@ -83,18 +93,24 @@ fi
 
 # Check if we have GPUs
 GPU_ARGS=""
-if type "nvidia-container-cli" &> /dev/null && nvidia-container-cli info &> /dev/null; then 
-  GPU_ARGS="--gpus=all"
+if [ -n "${IS_UBUNTU_HOST}" ]; then
+  if type "nvidia-container-cli" &> /dev/null && nvidia-container-cli info &> /dev/null; then 
+    GPU_ARGS="--gpus=all"
+  fi
 fi
 
 # Check if we have ssh agent
 SSH_ARGS=""
-if [ -v SSH_AUTH_SOCK ]; then
-  SSH_AGENT_DIR=$(readlink -f ${SSH_AUTH_SOCK})
-
-  SSH_AGENT_ARGS="--volume=${SSH_AGENT_DIR}:/ssh-agent:ro --env SSH_AUTH_SOCK=/ssh-agent"
-  KNOWN_HOSTS="--volume=${HOME}/.ssh/known_hosts:${DOCKER_HOME}/.ssh/known_hosts:ro"
-  SSH_ARGS="${SSH_AGENT_ARGS} ${KNOWN_HOSTS}"
+if [ ! -z "${SSH_AUTH_SOCK}" ]; then
+  if [ -n "${IS_UBUNTU_HOST}" ]; then
+    SSH_AGENT_DIR=$(readlink -f ${SSH_AUTH_SOCK})
+    SSH_AGENT_ARGS="--volume=${SSH_AGENT_DIR}:/ssh-agent:ro --env SSH_AUTH_SOCK=/ssh-agent"
+    KNOWN_HOSTS="--volume=${HOME}/.ssh/known_hosts:${DOCKER_HOME}/.ssh/known_hosts:ro"
+    SSH_ARGS="${SSH_AGENT_ARGS} ${KNOWN_HOSTS}"
+  else
+    # Mounting the whole .ssh directory is not ideal, but it's the only solution I found that works on MacOS
+    SSH_ARGS="--volume=${HOME}/.ssh:${DOCKER_HOME}/.ssh:ro"
+  fi
 fi
 
 # Run the developer's dockerfile
