@@ -10,16 +10,12 @@ set(wombat_cmake_DIR cmake)
 
 include(cmake/InstallHooks.cmake)
 include(cmake/WombatInstall.cmake)
+include(cmake/WombatLinters.cmake)
 include(cmake/WombatPackage.cmake)
 
 wombat_package()
 
 run_install_githooks_script()
-
-if(BUILD_TESTING)
-  include(cmake/WombatLinters.cmake)
-  wombat_linters()
-endif()
 
 install(DIRECTORY cmake DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY linters-config DESTINATION share/${PROJECT_NAME})

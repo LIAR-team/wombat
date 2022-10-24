@@ -19,10 +19,6 @@ wombat_package()
 
 add_subdirectory(exploration)
 
-if(BUILD_TESTING)
-  wombat_linters()
-endif()
-
 wombat_package_install(
   EXPORT_DEPS
     geometry_msgs

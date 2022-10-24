@@ -11,7 +11,6 @@ add_subdirectory(costmap)
 add_subdirectory(geometry)
 
 if(BUILD_TESTING)
-  wombat_linters()
   add_subdirectory(test)
 endif()
 

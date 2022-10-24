@@ -21,8 +21,6 @@ add_executable(hello_world src/main.cpp)
 target_link_libraries(hello_world PRIVATE wombat_hello_world::hello_publisher)
 
 if(BUILD_TESTING)
-  wombat_linters()
-
   find_package(ament_cmake_gtest REQUIRED)
   ament_add_gtest(test_hello test/test_hello.cpp)
   target_link_libraries(test_hello wombat_hello_world::hello_publisher)

@@ -12,7 +12,6 @@ add_subdirectory(data_types)
 add_subdirectory(models)
 
 if(BUILD_TESTING)
-  wombat_linters()
   add_subdirectory(test)
 endif()
 
