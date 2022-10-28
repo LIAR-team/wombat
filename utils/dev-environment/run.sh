@@ -126,6 +126,7 @@ docker run -it --rm \
   --user=${UID}:${UID} \
   --volume=${HOME}:${DOCKER_HOME}/host-home:rw \
   --volume=${WOMBAT_DIR}:${DOCKER_WOMBAT_DIR}:rw \
+  --env COLCON_HOME=${DOCKER_WOMBAT_DIR}/.colcon \
   --workdir ${DOCKER_WOMBAT_DIR} \
   wombat-dev \
   $@
