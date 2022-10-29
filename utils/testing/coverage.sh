@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Exit on errors
+# https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
+set -o errexit
+
 THIS_DIR=$(dirname $(realpath -s $0))
 WOMBAT_DIR=$THIS_DIR/../..
 
