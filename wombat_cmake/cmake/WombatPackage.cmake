@@ -1,6 +1,8 @@
 # Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
 # All Rights Reserved.
 
+include(CMakeParseArguments)
+
 #
 # Standard Wombat project setup.
 # Call `wombat_package()` at the beginning of your Wombat CMake project in order
@@ -13,6 +15,13 @@
 # @public
 #
 macro(wombat_package)
+  cmake_parse_arguments(
+    ARG # prefix of output variables
+    "NO_WOMBAT_LINTERS" # list of names of the boolean arguments (only defined ones will be true)
+    "" # list of names of mono-valued arguments
+    "" # list of names of multi-valued arguments (output variables are lists)
+    ${ARGN} # arguments of the function to parse, here we take the all original ones
+  )
 
   include(${wombat_cmake_DIR}/BuildTypes.cmake)
 
@@ -49,6 +58,11 @@ macro(wombat_package)
     add_compile_options(--coverage)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+  endif()
+
+  # Automatically run linters
+  if(BUILD_TESTING AND NOT ARG_NO_WOMBAT_LINTERS)
+    wombat_linters()
   endif()
 
 endmacro()

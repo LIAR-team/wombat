@@ -8,15 +8,14 @@ find_package(ament_cmake REQUIRED)
 # so they assume that the following CMake variable is set (this is set when this package is found).
 set(wombat_cmake_DIR cmake)
 
+include(cmake/InstallHooks.cmake)
 include(cmake/WombatInstall.cmake)
+include(cmake/WombatLinters.cmake)
 include(cmake/WombatPackage.cmake)
 
 wombat_package()
 
-if(BUILD_TESTING)
-  include(cmake/WombatLinters.cmake)
-  wombat_linters()
-endif()
+run_install_githooks_script()
 
 install(DIRECTORY cmake DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY linters-config DESTINATION share/${PROJECT_NAME})
