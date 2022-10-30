@@ -9,8 +9,8 @@
 #include <limits>
 #include <queue>
 
-#include "wombat_ops/costmap/costmap.hpp"
-#include "wombat_ops/geometry/point.hpp"
+#include "wombat_core/costmap/costmap.hpp"
+#include "wombat_core/math/geometry_point.hpp"
 
 namespace wombat_strategy
 {
@@ -36,7 +36,7 @@ std::vector<Frontier> FrontierDetector::search_frontiers()
   std::vector<bool> touched_indices(map_size, false);
   std::vector<bool> already_included_frontier_indices(map_size, false);
 
-  unsigned int starting_idx = wombat_ops::world_to_index(m_robot_position, m_costmap);
+  unsigned int starting_idx = wombat_core::world_to_index(m_robot_position, m_costmap);
   // Create queue of indices to be visited, initialized with starting index
   std::queue<unsigned int> to_be_visited;
   to_be_visited.push(starting_idx);
@@ -79,7 +79,7 @@ Frontier FrontierDetector::build_frontier(
   Frontier f;
 
   // We consider the first frontier cell found as the closest to the robot
-  f.closest_point = wombat_ops::index_to_world(starting_cell_idx, m_costmap);
+  f.closest_point = wombat_core::index_to_world(starting_cell_idx, m_costmap);
 
   // Queue of contiguous frontier cells
   std::queue<unsigned int> to_be_visited;
@@ -91,7 +91,7 @@ Frontier FrontierDetector::build_frontier(
     unsigned int cell_idx = to_be_visited.front();
     to_be_visited.pop();
 
-    const auto frontier_point = wombat_ops::index_to_world(cell_idx, m_costmap);
+    const auto frontier_point = wombat_core::index_to_world(cell_idx, m_costmap);
     f.points.push_back(frontier_point);
 
     for (const auto neighbor_cell_idx : get_neighbors4(cell_idx)) {
@@ -127,7 +127,7 @@ void FrontierDetector::rank_frontiers(std::vector<Frontier> & frontiers)
     if (f.points.size() > max_size) {
       max_size = f.points.size();
     }
-    double distance = wombat_ops::points_distance(f.closest_point, m_robot_position);
+    double distance = wombat_core::points_distance_2d(f.closest_point, m_robot_position);
     distances[i] = distance;
     if (distance < min_distance) {
       min_distance = distance;
@@ -156,7 +156,7 @@ bool FrontierDetector::frontier_is_valid(const Frontier & f, bool trusted)
     num_frontier_cells = f.points.size();
   } else {
     for (const auto & point : f.points) {
-      const auto cell_idx = wombat_ops::world_to_index(point, m_costmap);
+      const auto cell_idx = wombat_core::world_to_index(point, m_costmap);
       if (is_frontier_cell(cell_idx)) {
         num_frontier_cells++;
       }
