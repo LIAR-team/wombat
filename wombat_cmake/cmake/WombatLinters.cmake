@@ -1,5 +1,7 @@
-# Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
+# Copyright 2021-2022 Soragna Alberto.
 # All Rights Reserved.
+# Unauthorized copying via any medium is strictly prohibited.
+# Proprietary and confidential.
 
 #
 # Setup and execute a set of linters depending on the files
@@ -81,5 +83,9 @@ function(wombat_linters)
   # Check style for CMake files
   find_package(ament_cmake_lint_cmake REQUIRED)
   ament_lint_cmake()
+
+  # Copyright linter
+  find_package(ament_cmake_copyright REQUIRED)
+  ament_copyright()
 
 endfunction()

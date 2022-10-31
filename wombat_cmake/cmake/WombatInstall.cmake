@@ -1,10 +1,12 @@
-# Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
+# Copyright 2022 Soragna Alberto.
 # All Rights Reserved.
+# Unauthorized copying via any medium is strictly prohibited.
+# Proprietary and confidential.
 
 include(CMakeParseArguments)
 
 #
-# Private function to install an executable target.
+# Private function to install an executable CMake target.
 # Users should call `wombat_install_target`
 #
 # @private
@@ -17,7 +19,7 @@ function(__wombat_install_executable_target TARGET_NAME)
 endfunction()
 
 #
-# Private function to install a library target.
+# Private function to install a library CMake target.
 # Users should call `wombat_install_target`
 #
 # @private
@@ -54,7 +56,7 @@ function(__wombat_install_library_target TARGET_NAME)
 endfunction()
 
 #
-# Installs a target and optionally also its include directories.
+# Installs a CMake target and optionally also its include directories.
 # The target is associated with a project-specific export.
 # The export is NOT installed by this function: see `wombat_install_export_targets`
 #

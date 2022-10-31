@@ -1,3 +1,8 @@
+# Copyright 2021-2022 Soragna Alberto.
+# All Rights Reserved.
+# Unauthorized copying via any medium is strictly prohibited.
+# Proprietary and confidential.
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
