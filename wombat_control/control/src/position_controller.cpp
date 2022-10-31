@@ -1,8 +1,13 @@
 // Copyright 2021 Azzollini Ilario, Gentilini Lorenzo, Soragna Alberto, Tazzari Roberto.
 // All Rights Reserved.
 
-#include "wombat_control/control/position_controller.hpp"
 #include <math.h>
+
+#include <tf2/utils.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+
+#include "wombat_control/control/position_controller.hpp"
+#include "wombat_core/math/utils.hpp"
 
 PosCtrl::PosCtrl(const Params & params)
 {
@@ -11,29 +16,27 @@ PosCtrl::PosCtrl(const Params & params)
   m_gain_y = params.gain_y;
 }
 
-VelCommands PosCtrl::input_function(const Eigen::Vector2d & error, const Pose2D & pose) const
+geometry_msgs::msg::Twist PosCtrl::input_function(
+  const Eigen::Vector2d & error,
+  const geometry_msgs::msg::Pose & pose) const
 {
-  VelCommands command;
+  double theta = tf2::getYaw(pose.orientation);
 
-  double e_x = error[0];
-  double e_y = error[1];
+  double stheta = std::sin(theta);
+  double ctheta = std::cos(theta);
 
-  double stheta = std::sin(pose.theta);
-  double ctheta = std::cos(pose.theta);
+  double fb_x = -m_gain_x * error.x();
+  double fb_y = -m_gain_y * error.y();
 
-  double fb_x = -m_gain_x * e_x;
-  double fb_y = -m_gain_y * e_y;
+  double v = fb_x * ctheta + fb_y * stheta;
+  double omega = (1 / m_len) * ((-fb_x * stheta) + (fb_y * ctheta));
 
-  command.v = fb_x * ctheta + fb_y * stheta;
-  command.omega = (1 / m_len) * ((-fb_x * stheta) + (fb_y * ctheta));
+  v = wombat_core::clamp_to_zero(v, 1e-5);
+  omega = wombat_core::clamp_to_zero(omega, 1e-5);
 
-  if (std::abs(command.v) <= 1e-5) {
-    command.v = 0;
-  }
-
-  if (std::abs(command.omega) <= 1e-5) {
-    command.omega = 0;
-  }
+  geometry_msgs::msg::Twist command;
+  command.linear.x = v;
+  command.angular.z = omega;
 
   return command;
 }

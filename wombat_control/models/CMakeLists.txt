@@ -5,7 +5,7 @@ add_library(wombat_control::models ALIAS models)
 target_sources(
   models
   PRIVATE
-    src/model_f_euler_dis.cpp
+    src/diff_drive_model.cpp
 )
 
 target_include_directories(
@@ -16,9 +16,10 @@ target_include_directories(
 
 target_link_libraries(
   models
-  PUBLIC
-    wombat_control::data_types
-    wombat_msgs::data_types
+  PRIVATE
+    tf2::tf2
+    tf2_geometry_msgs::tf2_geometry_msgs
 )
+ament_target_dependencies(models PUBLIC geometry_msgs)
 
 wombat_install_target(models)
