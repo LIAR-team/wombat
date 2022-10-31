@@ -120,16 +120,14 @@ fi
 if [ ! -d ${USER_DEVDOCKER} ]; then
   mkdir ${USER_DEVDOCKER}
 fi
-# Symbolic link the run script
-RUN_SCRIPT="run.sh"
-RUN_SCRIPT_LINK=${USER_DEVDOCKER}/${RUN_SCRIPT}
-if [ -e ${RUN_SCRIPT_LINK} ] && [ ! -L ${RUN_SCRIPT_LINK} ]; then
-  rm -rf ${RUN_SCRIPT_LINK}
-fi
-if [ ! -L ${RUN_SCRIPT_LINK} ]; then
-  ln -s ${THIS_DIR}/${RUN_SCRIPT} ${RUN_SCRIPT_LINK}
-  chmod +x ${RUN_SCRIPT_LINK}
-fi
+
+# Symbolic link files to the user devdocker directory
+for filename in "run.sh" ".dockerignore"; do
+  ORIGINAL_PATH=${THIS_DIR}/${filename}
+  SYMLINKED_PATH=${USER_DEVDOCKER}/${filename}
+  create_symlink ${ORIGINAL_PATH} ${SYMLINKED_PATH}
+done
+
 # Create the user dockerfile
 USER_DOCKERFILE=${USER_DEVDOCKER}/Dockerfile
 FROM_IMAGE_CMD="FROM ${DEVELOPER_IMAGE}"
