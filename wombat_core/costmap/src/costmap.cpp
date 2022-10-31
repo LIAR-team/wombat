@@ -5,9 +5,9 @@
 
 #include "geometry_msgs/msg/point.hpp"
 #include "nav2_costmap_2d/costmap_2d.hpp"
-#include "wombat_ops/costmap/costmap.hpp"
+#include "wombat_core/costmap/costmap.hpp"
 
-namespace wombat_ops
+namespace wombat_core
 {
 
 geometry_msgs::msg::Point index_to_world(
@@ -32,4 +32,4 @@ unsigned int world_to_index(
   return costmap->getIndex(mx, my);
 }
 
-}  // namespace wombat_ops
+}  // namespace wombat_core

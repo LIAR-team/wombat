@@ -4,9 +4,8 @@
 #pragma once
 
 #include "Eigen/Core"
-
-#include "wombat_msgs/pose2d.hpp"
-#include "wombat_control/data_types/vel_commands.hpp"
+#include "geometry_msgs/msg/pose.hpp"
+#include "geometry_msgs/msg/twist.hpp"
 
 class PosCtrl
 {
@@ -20,7 +19,9 @@ public:
 
   explicit PosCtrl(const Params & params);
 
-  VelCommands input_function(const Eigen::Vector2d & error, const Pose2D & pose) const;
+  geometry_msgs::msg::Twist input_function(
+    const Eigen::Vector2d & error,
+    const geometry_msgs::msg::Pose & pose) const;
 
 private:
   double m_len;

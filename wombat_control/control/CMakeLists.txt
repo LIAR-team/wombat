@@ -16,9 +16,12 @@ target_include_directories(
 target_link_libraries(
   control
   PUBLIC
-    wombat_control::data_types
-    wombat_msgs::data_types
     Eigen3::Eigen
+  PRIVATE
+    tf2::tf2
+    tf2_geometry_msgs::tf2_geometry_msgs
+    wombat_core::math
 )
+ament_target_dependencies(control PUBLIC geometry_msgs)
 
 wombat_install_target(control)

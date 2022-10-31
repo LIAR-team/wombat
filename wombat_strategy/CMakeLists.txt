@@ -8,7 +8,7 @@ find_package(nav2_util REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(tf2_eigen REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(wombat_ops REQUIRED)
+find_package(wombat_core REQUIRED)
 
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -29,6 +29,6 @@ wombat_package_install(
     tf2_eigen
     tf2_ros
     visualization_msgs
+    wombat_core
     wombat_msgs
-    wombat_ops
 )

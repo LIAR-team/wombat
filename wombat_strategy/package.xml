@@ -17,7 +17,7 @@
   <depend>rclcpp</depend>
   <depend>tf2_ros</depend>
   <depend>tf2_eigen</depend>
-  <depend>wombat_ops</depend>
+  <depend>wombat_core</depend>
 
   <depend>geometry_msgs</depend>
   <depend>nav_msgs</depend>

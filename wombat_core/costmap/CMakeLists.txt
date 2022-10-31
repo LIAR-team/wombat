@@ -1,6 +1,6 @@
 
 add_library(costmap SHARED)
-add_library(wombat_ops::costmap ALIAS costmap)
+add_library(wombat_core::costmap ALIAS costmap)
 
 target_sources(
   costmap
@@ -14,6 +14,6 @@ target_include_directories(
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
-ament_target_dependencies(costmap PUBLIC nav2_costmap_2d)
+ament_target_dependencies(costmap PUBLIC geometry_msgs nav2_costmap_2d)
 
 wombat_install_target(costmap)
