@@ -1,9 +1,9 @@
 #include <srrg_system_utils/shell_colors.h>
 
 #include "g2o_converter.h"
-#include "srrg_solver/variables_and_factors/types_2d/instances.h"
-#include "srrg_solver/variables_and_factors/types_3d/instances.h"
-#include "srrg_solver/variables_and_factors/types_calib/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_calib/instances.h"
 
 
 namespace srrg2_solver {

@@ -1,11 +1,11 @@
-#include "srrg_solver/solver_core/factor_graph.h"
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/iteration_algorithm_lm.h"
-#include "srrg_solver/solver_core/solver.h"
-#include "srrg_solver/variables_and_factors/types_2d/variable_se2.h"
-#include "srrg_solver/variables_and_factors/types_2d/variable_point2.h"
-#include "srrg_solver/variables_and_factors/types_2d/se2_pose_point_bearing_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_2d/se2_pose_pose_geodesic_error_factor.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_lm.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/variable_se2.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/variable_point2.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_pose_point_bearing_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_pose_pose_geodesic_error_factor.h"
 
 using namespace srrg2_core;
 using namespace srrg2_solver;

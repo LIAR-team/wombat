@@ -1,8 +1,8 @@
 #include "solver.h"
-#include "srrg_solver/solver_core/internals/sparse_block_matrix/matrix_block_factory.h"
+#include "wombat_srrg/srrg_solver/solver_core/internals/sparse_block_matrix/matrix_block_factory.h"
 #include <Eigen/Eigenvalues>
 #include <fstream>
-#include <srrg_config/configurable_command.h>
+#include <wombat_srrg/srrg_config/configurable_command.h>
 #include <srrg_system_utils/shell_colors.h>
 #include <srrg_system_utils/system_utils.h>
 #include <sstream>

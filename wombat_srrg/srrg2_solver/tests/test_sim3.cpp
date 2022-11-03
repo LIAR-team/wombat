@@ -4,9 +4,9 @@
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
 
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/variables_and_factors/types_projective/instances.h"
-#include "srrg_solver/variables_and_factors/types_projective/all_types.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/all_types.h"
 
 const std::string exe_name = "test_sim3";
 #define LOG std::cerr << exe_name + "|"

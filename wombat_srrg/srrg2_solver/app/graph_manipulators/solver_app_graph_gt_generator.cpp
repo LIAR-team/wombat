@@ -7,28 +7,28 @@
 #include <iomanip>
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_boss/deserializer.h>
-#include <srrg_config/configurable_manager.h>
+#include <wombat_srrg/srrg_config/configurable_manager.h>
 
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/factor_graph.h"
-#include "srrg_solver/variables_and_factors/types_2d/instances.h"
-#include "srrg_solver/variables_and_factors/types_2d/variable_se2_ad.h"
-#include "srrg_solver/variables_and_factors/types_2d/variable_point2_ad.h"
-#include "srrg_solver/variables_and_factors/types_2d/se2_pose_pose_geodesic_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_2d/se2_pose_point_error_factor.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/variable_se2_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/variable_point2_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_pose_pose_geodesic_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_pose_point_error_factor.h"
 
-#include "srrg_solver/variables_and_factors/types_3d/instances.h"
-#include "srrg_solver/variables_and_factors/types_3d/variable_se3_ad.h"
-#include "srrg_solver/variables_and_factors/types_3d/variable_point3_ad.h"
-#include "srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_3d/se3_pose_point_offset_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_se3_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_point3_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_point_offset_error_factor.h"
 
-#include "srrg_solver/variables_and_factors/types_projective/instances.h"
-#include "srrg_solver/variables_and_factors/types_projective/se3_pose_point_omni_ba_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/se3_pose_point_omni_ba_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
 
-#include "srrg_solver/utils/solver_evaluator.h"
-#include "srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/utils/solver_evaluator.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
 
 using namespace srrg2_core;
 using namespace srrg2_solver;

@@ -1,10 +1,10 @@
 #include "solver_evaluator.h"
-#include "srrg_solver/solver_core/solver.h"
-#include "srrg_solver/variables_and_factors/types_2d/all_types.h"
-#include "srrg_solver/variables_and_factors/types_3d/all_types.h"
-#include "srrg_solver/variables_and_factors/types_projective/all_types.h"
-#include "srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
 #include <srrg_geometry/geometry_defs.h>
 #include <iostream>
 

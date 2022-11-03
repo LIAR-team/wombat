@@ -1,4 +1,4 @@
-#include "srrg_solver/solver_incremental/solver_incremental_running_environment.h"
+#include "wombat_srrg/srrg_solver/solver_incremental/solver_incremental_running_environment.h"
 
 using namespace srrg2_core;
 using namespace srrg2_solver;

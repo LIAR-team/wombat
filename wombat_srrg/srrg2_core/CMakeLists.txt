@@ -22,11 +22,14 @@ endif()
 
 ## Missing to build 
 
-# add_subdirectory(srrg_viewer)
+# add_subdirectory(apps)
 # add_subdirectory(examples)
 # add_subdirectory(misc_tests)
-# add_subdirectory(apps)
-# add_subdirectory(tests)
+# add_subdirectory(srrg_benchmark)
+# add_subdirectory(srrg_messages_viewers)
+# add_subdirectory(srrg_viewer)
+
 
 ## Missing to complete
+
 # srrg_messages

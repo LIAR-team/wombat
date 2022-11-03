@@ -7,14 +7,14 @@
 #include <srrg_system_utils/shell_colors.h>
 
 // ldg include solver stuff (instances)
-#include "srrg_solver/solver_core/factor_graph.h"
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
 
 // ldg include variable stuff
-#include "srrg_solver/variables_and_factors/types_projective/instances.h"
-#include "srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
-#include "srrg_solver/variables_and_factors/types_projective/variable_sim3.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/variable_sim3.h"
 
 const std::string exe_name = "test_sim3_pgo";
 #define LOG std::cerr << exe_name + "|"

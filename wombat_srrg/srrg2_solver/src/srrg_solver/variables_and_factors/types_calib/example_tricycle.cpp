@@ -3,8 +3,8 @@
 #include <sstream>
 #include "tricycle_odom_sensor2d_error_factor_ad.h"
 #include "variable_point4_ad.h"
-#include "srrg_solver/variables_and_factors/types_2d/variable_se2_ad.h"
-#include "srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/variable_se2_ad.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 
 using namespace std;
 

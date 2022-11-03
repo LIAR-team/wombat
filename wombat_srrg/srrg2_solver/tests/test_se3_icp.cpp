@@ -4,11 +4,11 @@
 #include <srrg_system_utils/shell_colors.h>
 
 // ia include solver stuff (instances)
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
 // ia include types stuff (instances)
-#include "srrg_solver/variables_and_factors/types_3d/instances.h"
-#include "srrg_solver/variables_and_factors/types_3d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
 const std::string exe_name = "test_se3_icp";
 #define LOG std::cerr << exe_name + "|"

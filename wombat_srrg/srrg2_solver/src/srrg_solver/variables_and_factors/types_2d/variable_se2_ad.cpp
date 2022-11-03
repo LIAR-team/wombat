@@ -1,6 +1,6 @@
 #include "variable_se2_ad.h"
-#include "srrg_solver/solver_core/instance_macros.h"
-#include "srrg_solver/solver_core/variable_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
+#include "wombat_srrg/srrg_solver/solver_core/variable_impl.cpp"
 
 namespace srrg2_solver {
   using namespace srrg2_core;

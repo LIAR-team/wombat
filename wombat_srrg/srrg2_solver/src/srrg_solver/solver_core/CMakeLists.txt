@@ -1,4 +1,7 @@
 add_subdirectory(internals)
+
+return()
+
 add_library(srrg2_solver_core_library SHARED
   #common
   solver_action_base.h

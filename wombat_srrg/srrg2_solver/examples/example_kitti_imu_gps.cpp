@@ -1,13 +1,13 @@
 #include <iostream>
 #define _USE_MATH_DEFINES
-#include "srrg_solver/solver_core/factor_graph.h"
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/internals/linear_solvers/instances.h"
-#include "srrg_solver/solver_core/internals/sparse_block_matrix/matrix_block_factory.h"
-#include "srrg_solver/solver_core/solver.h"
-#include "srrg_solver/variables_and_factors/types_3d/all_types.h"
-#include "srrg_solver/variables_and_factors/types_3d/instances.h"
-#include <srrg_solver/solver_core/iteration_algorithm_dl.h>
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/internals/sparse_block_matrix/matrix_block_factory.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+#include <wombat_srrg/srrg_solver/solver_core/iteration_algorithm_dl.h>
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
 

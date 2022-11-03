@@ -12,6 +12,7 @@ wombat_package()
 
 add_subdirectory(srrg_hbst)
 add_subdirectory(srrg2_core)
+add_subdirectory(srrg2_solver)
 
 wombat_package_install(
   EXPORT_DEPS

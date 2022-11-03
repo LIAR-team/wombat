@@ -5,21 +5,21 @@
 #include <fstream>
 #include <iomanip>
 
-#include <srrg_config/configurable_manager.h>
+#include <wombat_srrg/srrg_config/configurable_manager.h>
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/internals/linear_solvers/instances.h"
-#include "srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholesky_csparse.h"
-#include "srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholmod_full.h"
-#include "srrg_solver/solver_core/iteration_algorithm_dl.h"
-#include "srrg_solver/solver_core/iteration_algorithm_lm.h"
-#include "srrg_solver/solver_core/solver.h"
-#include "srrg_solver/solver_core/termination_criteria.h"
-#include "srrg_solver/variables_and_factors/types_2d/instances.h"
-#include "srrg_solver/variables_and_factors/types_3d/instances.h"
-#include "srrg_solver/variables_and_factors/types_projective/instances.h"
-#include "srrg_solver/utils/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholesky_csparse.h"
+#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholmod_full.h"
+#include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_dl.h"
+#include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_lm.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/solver_core/termination_criteria.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/instances.h"
+#include "wombat_srrg/srrg_solver/utils/instances.h"
 
 using namespace srrg2_core;
 using namespace srrg2_solver;

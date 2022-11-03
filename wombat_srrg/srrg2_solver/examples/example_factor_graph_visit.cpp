@@ -1,12 +1,12 @@
 #include <srrg_system_utils/parse_command_line.h>
-#include <srrg_config/configurable_manager.h>
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/factor_graph.h"
-#include "srrg_solver/solver_core/variable.h"
-#include "srrg_solver/variables_and_factors/types_3d/all_types.h"
-#include "srrg_solver/utils/factor_graph_visit.h"
-#include "srrg_solver/utils/factor_graph_visit_policy.h"
-#include "srrg_solver/utils/factor_graph_visit_cost.h"
+#include <wombat_srrg/srrg_config/configurable_manager.h>
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/solver_core/variable.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_visit.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_visit_policy.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_visit_cost.h"
 
 using namespace srrg2_core;
 using namespace srrg2_solver;

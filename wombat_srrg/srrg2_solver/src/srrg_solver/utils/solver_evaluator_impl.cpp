@@ -1,7 +1,7 @@
-#include "srrg_solver/solver_core/solver.h"
-#include "srrg_solver/variables_and_factors/types_2d/all_types.h"
-#include "srrg_solver/variables_and_factors/types_3d/all_types.h"
-#include "srrg_solver/variables_and_factors/types_projective/all_types.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/all_types.h"
 #include <iostream>
 
 namespace srrg2_solver{

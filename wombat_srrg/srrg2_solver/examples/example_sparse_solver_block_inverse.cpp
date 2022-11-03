@@ -1,15 +1,15 @@
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/system_utils.h>
 
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/internals/linear_solvers/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/instances.h"
 
-#include "srrg_solver/variables_and_factors/types_2d/instances.h"
-#include "srrg_solver/variables_and_factors/types_3d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
 
-#include "srrg_solver/solver_core/iteration_algorithm_gn.h"
-#include "srrg_solver/solver_core/iteration_algorithm_lm.h"
-#include "srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_gn.h"
+#include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_lm.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
 
 #include "app/converter/g2o_converter.h"
 

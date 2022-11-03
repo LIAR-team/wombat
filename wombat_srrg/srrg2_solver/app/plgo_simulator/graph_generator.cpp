@@ -1,13 +1,13 @@
 #include "graph_generator.h"
-#include "srrg_solver/variables_and_factors/types_3d/variable_se3_ad.h"
-#include "srrg_solver/variables_and_factors/types_3d/variable_point3_ad.h"
-#include "srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_3d/se3_pose_point_offset_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_projective/variable_sim3_ad.h"
-#include "srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
-#include "srrg_solver/variables_and_factors/types_projective/se3_pose_point_omni_ba_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_projective/se3_pose_point_pinhole_ba_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_projective/se3_pose_point_rectified_stereo_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_se3_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_point3_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_point_offset_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/variable_sim3_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/se3_pose_point_omni_ba_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/se3_pose_point_pinhole_ba_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/se3_pose_point_rectified_stereo_error_factor.h"
 
 namespace srrg2_solver {
   using namespace std;

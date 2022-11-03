@@ -1,7 +1,7 @@
 #include "se3_pose_pose_geodesic_error_factor.h"
 #include "se3_pose_pose_geodesic_derivatives_helpers.h"
-#include "srrg_solver/solver_core/error_factor_impl.cpp"
-#include "srrg_solver/solver_core/instance_macros.h"
+#include "wombat_srrg/srrg_solver/solver_core/error_factor_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
 #include "variable_se3.h"
 
 namespace srrg2_solver {

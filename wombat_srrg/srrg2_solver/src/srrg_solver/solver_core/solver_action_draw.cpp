@@ -1,5 +1,5 @@
 #include "solver_action_draw.h"
-#include <srrg_solver/solver_core/solver.h>
+#include <wombat_srrg/srrg_solver/solver_core/solver.h>
 
 namespace srrg2_solver {
 

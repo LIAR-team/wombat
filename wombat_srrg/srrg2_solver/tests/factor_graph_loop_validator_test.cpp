@@ -1,7 +1,7 @@
-#include "srrg_solver/variables_and_factors/types_2d/all_types.h"
-//#include "srrg_solver/solver_core/internals/linear_solvers/instances.h"
-// #include "srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholesky_csparse.h"
-#include "srrg_solver/utils/factor_graph_closure_validator.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
+//#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/instances.h"
+// #include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholesky_csparse.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_closure_validator.h"
 
 using namespace srrg2_solver;
 using namespace srrg2_core;

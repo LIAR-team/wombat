@@ -1,5 +1,5 @@
 #include "variable_matrix.h"
-#include <srrg_solver/solver_core/instance_macros.h>
+#include <wombat_srrg/srrg_solver/solver_core/instance_macros.h>
 
 namespace srrg2_solver {
   template <int Rows_, int Cols_>

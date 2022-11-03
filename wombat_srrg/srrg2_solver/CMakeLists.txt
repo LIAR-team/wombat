@@ -1,19 +1,13 @@
 
 
-#ia catkin package
-find_package(catkin REQUIRED COMPONENTS
-  srrg_cmake_modules
-  srrg2_core
-  )
-
-include(${srrg_cmake_modules_INCLUDE_DIRS}/CMakeCompileOptions.txt)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror ") #-pedantic
-message("${PROJECT_NAME}|compiling with these CXX flags: ${CMAKE_CXX_FLAGS}")
-
-#ia find system stuff
 find_package(Eigen3 REQUIRED)
-find_package(SuiteSparse REQUIRED)
-find_package(Cholmod REQUIRED)
+#find_package(SuiteSparse REQUIRED)
+#find_package(Cholmod REQUIRED)
+
+add_subdirectory(src)
+
+return()
+
 
 #find_package(OpenCV REQUIRED)
 #message("${PROJECT_NAME}|OpenCV version ${OpenCV_VERSION} found in (${OpenCV_DIR})")
@@ -54,7 +48,6 @@ message("${PROJECT_NAME}|data dir    = ${CMAKE_CURRENT_SOURCE_DIR}/examples/data
 #ds in order to avoid linking against the catkin_LIBRARIES bulk everytime enable this so one can select single libraries
 link_directories(${catkin_LIBRARY_DIRS})
 
-add_subdirectory(src)
 if (SRRG_COMPILE_APPS OR SRRG_COMPILE_EXAMPLES)
   add_subdirectory(app)
 endif()

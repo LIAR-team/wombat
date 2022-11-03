@@ -1,13 +1,13 @@
 //! include all the types you declared here
 #include "instances.h"
 #include "all_types.h"
-#include "srrg_solver/solver_core/variable_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/variable_impl.cpp"
 #include "variable_vector_impl.cpp"
 #include "variable_vector_ad_impl.cpp"
 #include "variable_matrix_impl.cpp"
 #include "variable_matrix_ad_impl.cpp"
 
-#include <srrg_solver/solver_core/instance_macros.h>
+#include <wombat_srrg/srrg_solver/solver_core/instance_macros.h>
 //! we try to instantiate all solvers
 namespace srrg2_solver {
   using namespace srrg2_core;

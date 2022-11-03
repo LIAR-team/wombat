@@ -6,12 +6,12 @@
 #include <iomanip>
 #include <srrg_system_utils/parse_command_line.h>
 
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/factor_graph.h"
-#include "srrg_solver/variables_and_factors/types_3d/variable_se3_ad.h"
-#include "srrg_solver/variables_and_factors/types_3d/variable_point3_ad.h"
-#include "srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_3d/se3_pose_point_offset_error_factor.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_se3_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_point3_ad.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_point_offset_error_factor.h"
 #include "srrg_boss/serializer.h"
 
 #include "plgo_simulator.h"

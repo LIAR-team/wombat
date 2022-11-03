@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 
-#include "srrg_solver/solver_core/factor_graph.h"
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/iteration_algorithm_lm.h"
-#include "srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_lm.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
 
-#include "srrg_solver/variables_and_factors/types_2d/instances.h"
-#include "srrg_solver/variables_and_factors/types_2d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 
 using namespace srrg2_core;
 using namespace srrg2_solver;

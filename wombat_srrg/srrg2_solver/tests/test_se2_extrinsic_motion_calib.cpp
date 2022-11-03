@@ -7,13 +7,13 @@
 #include <srrg_system_utils/shell_colors.h>
 
 // ldg include solver stuff (instances)
-#include "srrg_solver/solver_core/factor_graph.h"
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/solver.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/solver.h"
 
 // ldg include types stuff (instances)
-#include "srrg_solver/variables_and_factors/types_calib/instances.h"
-#include "srrg_solver/variables_and_factors/types_calib/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_calib/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_calib/all_types.h"
 
 const std::string exe_name = "test_se2_extrinsic_motion_calib_ad";
 #define LOG std::cerr << exe_name + "|"
