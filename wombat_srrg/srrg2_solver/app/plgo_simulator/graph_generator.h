@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <iomanip>
 #include <memory>
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 #include "plgo_simulator.h"
 #include "sim_record.h"
 

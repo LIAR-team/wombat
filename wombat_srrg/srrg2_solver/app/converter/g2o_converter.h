@@ -1,8 +1,8 @@
 #pragma once
 #include "g2o_converter_actions.h"
-#include "srrg_solver/variables_and_factors/types_2d/instances.h"
-#include "srrg_solver/variables_and_factors/types_calib/instances.h"
-#include "srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_calib/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
 
 namespace srrg2_solver {
 

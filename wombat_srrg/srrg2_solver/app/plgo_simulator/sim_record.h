@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 #include <srrg_boss/serializable.h>
-#include "srrg_solver/solver_core/instances.h"
-#include "srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/solver_core/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 
 namespace srrg2_solver {
   using namespace srrg2_core;

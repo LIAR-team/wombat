@@ -1,5 +1,5 @@
 #pragma once
-#include "srrg_solver/solver_core/factor_graph.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 
 namespace srrg2_solver {
 

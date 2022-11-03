@@ -1,6 +1,6 @@
 #pragma once
 #include "g2o_converter_action_base.h"
-#include "srrg_solver/variables_and_factors/types_2d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 
 namespace srrg2_solver {
 
