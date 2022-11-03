@@ -2,7 +2,7 @@
 // Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
 
 #pragma once
-#include "message_sink_base.h"
+#include "wombat_srrg/srrg_messages/message_handlers/message_sink_base.h"
 #include "wombat_srrg/srrg_viewer/active_drawable.h"
 
 namespace srrg2_core {
