@@ -2,7 +2,7 @@
 #include <srrg_system_utils/system_utils.h>
 
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
-#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/linear_solvers/instances.h"
 
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"

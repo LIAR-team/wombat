@@ -1,5 +1,5 @@
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
-#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/linear_solvers/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/variable_se2.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_point2point_error_factor.h"

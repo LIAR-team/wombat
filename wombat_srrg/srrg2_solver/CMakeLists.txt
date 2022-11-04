@@ -1,10 +1,11 @@
 
 
 find_package(Eigen3 REQUIRED)
-#find_package(SuiteSparse REQUIRED)
-#find_package(Cholmod REQUIRED)
+find_package(SuiteSparse REQUIRED)
+find_package(Cholmod REQUIRED)
 
-add_subdirectory(src)
+#add_subdirectory(src)
+add_subdirectory(solver_core)
 
 return()
 

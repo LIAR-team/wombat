@@ -1,9 +1,9 @@
 #include <numeric>
-#include <wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholesky_cholmod.h>
-#include <wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholmod_full.h>
-#include <wombat_srrg/srrg_solver/solver_core/internals/sparse_block_matrix/matrix_block.h>
-#include <wombat_srrg/srrg_solver/solver_core/internals/sparse_block_matrix/matrix_block_factory.h>
-#include <wombat_srrg/srrg_solver/solver_core/internals/sparse_block_matrix/c_matrix_ops.hpp>
+#include <wombat_srrg/srrg_solver/solver_core/linear_solvers/sparse_block_linear_solver_cholesky_cholmod.h>
+#include <wombat_srrg/srrg_solver/solver_core/linear_solvers/sparse_block_linear_solver_cholmod_full.h>
+#include <wombat_srrg/srrg_solver/solver_core/sparse_block_matrix/matrix_block.h>
+#include <wombat_srrg/srrg_solver/solver_core/sparse_block_matrix/matrix_block_factory.h>
+#include <wombat_srrg/srrg_solver/solver_core/sparse_block_matrix/c_matrix_ops.hpp>
 #include <wombat_srrg/srrg_solver/solver_core/solver.h>
 #include <srrg_system_utils/system_utils.h>
 

@@ -2,7 +2,8 @@
 #include "g2o_converter_action_base.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
-namespace srrg2_solver {
+namespace srrg2_solver
+{
 
   template <typename Scalar_>
   Isometry3_<Scalar_> readG2OIsometry3(std::istream& stream_) {

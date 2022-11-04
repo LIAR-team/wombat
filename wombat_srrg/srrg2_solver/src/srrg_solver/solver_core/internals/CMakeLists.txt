@@ -1,3 +1,0 @@
-add_subdirectory(sparse_block_matrix)
-add_subdirectory(linear_solvers)
-

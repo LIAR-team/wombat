@@ -6,8 +6,8 @@
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
 
-#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/instances.h"
-#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholmod_full.h"
+#include "wombat_srrg/srrg_solver/solver_core/linear_solvers/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/linear_solvers/sparse_block_linear_solver_cholmod_full.h"
 #include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"

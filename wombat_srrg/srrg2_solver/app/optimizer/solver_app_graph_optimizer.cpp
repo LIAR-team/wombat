@@ -9,9 +9,9 @@
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
-#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/instances.h"
-#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholesky_csparse.h"
-#include "wombat_srrg/srrg_solver/solver_core/internals/linear_solvers/sparse_block_linear_solver_cholmod_full.h"
+#include "wombat_srrg/srrg_solver/solver_core/linear_solvers/instances.h"
+#include "wombat_srrg/srrg_solver/solver_core/linear_solvers/sparse_block_linear_solver_cholesky_csparse.h"
+#include "wombat_srrg/srrg_solver/solver_core/linear_solvers/sparse_block_linear_solver_cholmod_full.h"
 #include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_dl.h"
 #include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_lm.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
