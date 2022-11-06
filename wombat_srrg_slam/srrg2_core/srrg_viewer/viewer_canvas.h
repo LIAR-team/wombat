@@ -40,13 +40,13 @@ namespace srrg2_core {
 
     void putPoints(const Point3fVectorCloud& points_);
     void putPoints(const PointNormal3fVectorCloud& points_);
-    // ia TODO WORKAROUND WITH HIDDEN COPY
+    // TODO WORKAROUND WITH HIDDEN COPY
     void putPoints(const PointNormalCurvature3fVectorCloud& points_);
     void putPoints(const PointNormalColor3fVectorCloud& points_);
     void putPoints(const PointIntensityDescriptor3fVectorCloud& points_);
-    // ia TODO WORKAROUND WITH HIDDEN COPY
+    // TODO WORKAROUND WITH HIDDEN COPY
     void putPoints(const PointIntensity3fVectorCloud& points_);
-    // ia TODO WORKAROUND WITH HIDDEN COPY
+    // TODO WORKAROUND WITH HIDDEN COPY
     void putPoints(const PointNormalCurvatureColor3fVectorCloud& points_);
 
     void putPoints(const Point4fVectorCloud& points_);
@@ -61,11 +61,11 @@ namespace srrg2_core {
     void putPoints(const Point3fMatrixCloud& points_);
     void putPoints(const PointNormal3fMatrixCloud& points_);
     void putPoints(const PointNormalColor3fMatrixCloud& points_);
-    // ia TODO WORKAROUND WITH HIDDEN COPY
+    // TODO WORKAROUND WITH HIDDEN COPY
     void putPoints(const PointIntensity3fMatrixCloud& points_);
-    // ia TODO WORKAROUND WITH HIDDEN COPY
+    // TODO WORKAROUND WITH HIDDEN COPY
     void putPoints(const PointNormalCurvatureColor3fMatrixCloud& points_);
-    // ia TODO WORKAROUND WITH HIDDEN COPY
+    // TODO WORKAROUND WITH HIDDEN COPY
     void putPoints(const PointNormalCurvature3fMatrixCloud& points_);
 
     void putPoints(const Point4fMatrixCloud& points_);
@@ -124,7 +124,7 @@ namespace srrg2_core {
     //     void clearBuffer(const Vector3f& background_color_,
     //                             const float alpha_ = 0);
 
-    // ds FIXME
+    // FIXME
     //! @brief opencv raster image drawing
     void putImage(const cv::Mat& image_);
 

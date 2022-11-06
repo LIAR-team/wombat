@@ -102,9 +102,9 @@ namespace srrg2_solver {
     // clang-format on
 
     Matrix3_6f J_transform;
-    // ds translation
+    // translation
     J_transform.block<3, 3>(0, 0).setIdentity();
-    // ds rotation (euler)
+    // rotation (euler)
     J_transform.block<3, 3>(0, 3) = -2 * geometry3d::skew(moving);
 
     // TODO check

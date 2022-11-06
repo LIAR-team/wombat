@@ -9,7 +9,7 @@ namespace srrg2_core {
 
   Profiler::~Profiler() {
     if (Profiler::enable_logging) {
-      // ds show complete time statistics for all registered timers
+      // show complete time statistics for all registered timers
       for (auto& iterator : _runtimes_per_module) {
         const std::vector<double>& runtimes_seconds(iterator.second);
         const double total_runtime_seconds =
@@ -33,7 +33,7 @@ namespace srrg2_core {
   Profiler::Timer::~Timer() {
     assert(handle);
 
-    // ds store livetime in scope in the statistics buffer
+    // store livetime in scope in the statistics buffer
     const double duration_seconds = getTime() - start_time_seconds;
     assert(duration_seconds >= 0);
     auto iterator = handle->_runtimes_per_module.find(name);

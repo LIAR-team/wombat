@@ -55,14 +55,14 @@ namespace srrg2_core {
       //      return BaseClass::deserialize(buffer);
 
       BaseClass::clear();
-      // ia first get the number of elements
+      // first get the number of elements
       buffer = getFromBuffer(this->num_elements, buffer);
 
-      // ia allocate and copy
+      // allocate and copy
       this->data_vector = new EntryTypeVector();
       this->data_vector->reserve(this->num_elements);
 
-      // ia aux variables
+      // aux variables
       size_t extent_size         = 0;
       MatchableBase::Type m_type = MatchableBase::Type::Point;
 

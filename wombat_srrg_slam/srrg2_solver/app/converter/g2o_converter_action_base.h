@@ -39,13 +39,13 @@ namespace srrg2_solver {
     virtual void writeFromBoss(std::ofstream& stream_, void* object_) = 0;
 
   protected:
-    const std::string _tag; // ia tag is for G2O objects
-    uint64_t _hash;         // ia hash is for BOSS objects
+    const std::string _tag; // tag is for G2O objects
+    uint64_t _hash;         // hash is for BOSS objects
 
-    // ia pointer to the factor graph to populate
+    // pointer to the factor graph to populate
     FactorGraphPtr _graph_ptr = nullptr;
 
-    // ia pointer to the converter that creates the action
+    // pointer to the converter that creates the action
     G2OConverter* _converter_ptr = nullptr;
 
   public:
@@ -78,7 +78,7 @@ namespace srrg2_solver {
     }
 
     void writeFromBoss(std::ofstream& stream_, void* object_) final {
-      // ia does nothin
+      // does nothin
     }
 
   public:
@@ -99,7 +99,7 @@ namespace srrg2_solver {
     }
 
     virtual ~ConverterAction_() {
-      // ia empty
+      // empty
     }
 
     //! @brief this read from g2o file and creates a boss object

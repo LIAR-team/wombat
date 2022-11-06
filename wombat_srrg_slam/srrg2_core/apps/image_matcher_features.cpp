@@ -31,7 +31,7 @@ const char* banner[] = {"This program computes the BF feature matches between tw
 int main(int argc_, char** argv_) {
   messages_registerTypes();
 
-  // ds set up CLI parameters
+  // set up CLI parameters
   // clang-format off
   ParseCommandLine command_line_parser(argv_, banner);
   ArgumentString argument_query_image_file (
@@ -51,7 +51,7 @@ int main(int argc_, char** argv_) {
     return -1;
   }
 
-  // ds load images from disk in grayscale
+  // load images from disk in grayscale
   cv::Mat display_query_image(
     cv::imread(argument_query_image_file.value(), CV_LOAD_IMAGE_ANYCOLOR));
   cv::Mat display_reference_image(
@@ -61,9 +61,9 @@ int main(int argc_, char** argv_) {
   cv::cvtColor(display_query_image, query_image, cv::COLOR_BGR2GRAY);
   cv::cvtColor(display_reference_image, reference_image, cv::COLOR_BGR2GRAY);
 
-  // ds verify size
+  // verify size
   if (query_image.rows != reference_image.rows || query_image.cols != reference_image.cols) {
-    // ds check if we can scale the images to be the same size
+    // check if we can scale the images to be the same size
     const double scaling_factor = static_cast<double>(query_image.rows) / reference_image.rows;
     if (scaling_factor == static_cast<double>(query_image.cols) / reference_image.cols) {
       assert(scaling_factor != 1);
@@ -88,21 +88,21 @@ int main(int argc_, char** argv_) {
     }
   }
 
-  // ds detect keypoints for both images
+  // detect keypoints for both images
   std::vector<cv::KeyPoint> query_keypoints;
   std::vector<cv::KeyPoint> reference_keypoints;
   cv::Ptr<cv::FeatureDetector> detector(cv::ORB::create(500));
   detector->detect(query_image, query_keypoints);
   detector->detect(reference_image, reference_keypoints);
 
-  // ds compute descriptors for keypoints
+  // compute descriptors for keypoints
   cv::Ptr<cv::DescriptorExtractor> extractor(cv::ORB::create(500));
   cv::Mat query_descriptors;
   cv::Mat reference_descriptors;
   extractor->compute(query_image, query_keypoints, query_descriptors);
   extractor->compute(reference_image, reference_keypoints, reference_descriptors);
 
-  // ds draw detected keypoints
+  // draw detected keypoints
   for (const cv::KeyPoint& keypoint : query_keypoints) {
     cv::circle(display_query_image, keypoint.pt, 2, cv::Scalar(0, 255, 0), -1);
   }
@@ -110,12 +110,12 @@ int main(int argc_, char** argv_) {
     cv::circle(display_reference_image, keypoint.pt, 2, cv::Scalar(255, 0, 0), -1);
   }
 
-  // ds compute matches
+  // compute matches
   cv::BFMatcher matcher(cv::NORM_HAMMING, true /*crosscheck*/);
   std::vector<cv::DMatch> matches;
   matcher.match(query_descriptors, reference_descriptors, matches);
 
-  // ds filter matches by hamming distance
+  // filter matches by hamming distance
   size_t number_of_verified_matches = 0;
   for (const cv::DMatch& match : matches) {
     if (match.distance < maximum_descriptor_distance) {
@@ -136,7 +136,7 @@ int main(int argc_, char** argv_) {
   std::cerr << "query keypoints: " << query_keypoints.size() << std::endl;
   std::cerr << "reference keypoints: " << reference_keypoints.size() << std::endl;
 
-  // ds show images
+  // show images
   cv::imshow("query", display_query_image);
   cv::imshow("reference", display_reference_image);
   cv::imwrite("query.png", display_query_image);

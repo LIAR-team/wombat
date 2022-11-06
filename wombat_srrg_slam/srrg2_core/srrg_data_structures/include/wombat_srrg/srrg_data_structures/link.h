@@ -11,9 +11,9 @@ namespace srrg2_core {
   //! @brief friend access required to arrange and configure joints properly
   class Platform;
 
-  // ds readability
-  // ia never use shared pointer or goddamn enable_shared_from this.
-  // ia it's not our cup of tea.
+  // readability
+  // never use shared pointer or goddamn enable_shared_from this.
+  // it's not our cup of tea.
   class Link;
   using LinkPtr       = std::shared_ptr<Link>;
   using LinkVector    = std::vector<Link*>;
@@ -30,20 +30,20 @@ namespace srrg2_core {
   //! @class basic link class (i.e. transforms connecting other links) bless C++ for multiple
   //! inheritance
   class Link : public PropertyContainerIdentifiable {
-    // ds exported types
+    // exported types
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    enum InterpolationStatus {   // ds why not move to exceptions?
-      Ok                  = 0x0, // ds interpolation successful
-      ExtrapolationBottom = 0x1, // ds missing past information for interpolation
-      ExtrapolationTop    = 0x2, // ds missing future information for interpolation
-      NoData              = 0x4, // ds no events available for interpolation
-      TreeError           = 0x8  // ds invalid joint model
+    enum InterpolationStatus {   // why not move to exceptions?
+      Ok                  = 0x0, // interpolation successful
+      ExtrapolationBottom = 0x1, // missing past information for interpolation
+      ExtrapolationTop    = 0x2, // missing future information for interpolation
+      NoData              = 0x4, // no events available for interpolation
+      TreeError           = 0x8  // invalid joint model
     };
 
-    // ds construction
-    // ia TODO protectet link contruction. only platform can create goddamn link, since without
+    // construction
+    // TODO protectet link contruction. only platform can create goddamn link, since without
     // platform they are useless
   public:
     Link(const std::string& identifier_, const std::string& identifier_parent_ = "") :
@@ -78,7 +78,7 @@ namespace srrg2_core {
     //! @brief disable default construction
     Link() = delete;
 
-    // ds interface
+    // interface
   public:
     //! @brief this method has no effect on a basic link, but has an effect for a link with a joint
     virtual InterpolationStatus sample(const double& time_seconds_);

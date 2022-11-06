@@ -6,7 +6,7 @@
 
 using namespace srrg2_core;
 
-// ds the object we want to profile
+// the object we want to profile
 class Foo : public Profiler {
 public:
   Foo() {
@@ -28,7 +28,7 @@ int main(int argc_, char** argv_) {
   return srrg2_test::runTests(argc_, argv_);
 }
 
-// ds TODO enable actual unittests
+// TODO enable actual unittests
 TEST(Profiler, ObjectLife) {
   Foo foo;
 }

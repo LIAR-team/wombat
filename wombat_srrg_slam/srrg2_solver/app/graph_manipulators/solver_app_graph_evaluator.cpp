@@ -38,7 +38,7 @@ static const char* banner[] = {
 
 
   
-// ia THE PROGRAM
+// THE PROGRAM
 int main(int argc, char** argv) {
   using namespace std;
   ParseCommandLine cmd_line(argv, banner);

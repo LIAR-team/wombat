@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
   EXAMPLE_LOG << "Done" << std::endl;
 
   {
-    // ds test recursive field copying
+    // test recursive field copying
     Point3f point_base;
     point_base.coordinates().setZero();
     EXAMPLE_LOG << "base: " << point_base.coordinates().transpose() << std::endl;

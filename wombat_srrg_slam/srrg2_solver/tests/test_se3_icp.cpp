@@ -3,10 +3,10 @@
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
 
-// ia include solver stuff (instances)
+// include solver stuff (instances)
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
-// ia include types stuff (instances)
+// include types stuff (instances)
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
@@ -16,7 +16,7 @@ const std::string exe_name = "test_se3_icp";
 using namespace srrg2_core;
 using namespace srrg2_solver;
 
-// ia global data
+// global data
 const size_t n_meas       = 1000;
 const size_t n_iterations = 10;
 
@@ -57,7 +57,7 @@ TEST(DUMMY_DATA, SE3Point2PointErrorFactor) {
 
   solver.setGraph(graph);
 
-  // ia create two cloud that we want to align, and a vector of correspondences
+  // create two cloud that we want to align, and a vector of correspondences
   Point3fVectorCloud fixed_cloud;
   Point3fVectorCloud moving_cloud;
   CorrespondenceVector correspondences;
@@ -66,7 +66,7 @@ TEST(DUMMY_DATA, SE3Point2PointErrorFactor) {
   moving_cloud.reserve(n_meas);
   correspondences.reserve(n_meas);
   for (size_t i = 0; i < n_meas; ++i) {
-    // ia create dummy measurements
+    // create dummy measurements
     Point3f fixed_point, moving_point;
     fixed_point.coordinates().setRandom();
     moving_point = fixed_point.transform<TRANSFORM_CLASS::Isometry>(robot_in_world);
@@ -91,11 +91,11 @@ TEST(DUMMY_DATA, SE3Point2PointErrorFactor) {
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T    = pose->estimate();
   const Isometry3f diff_T    = estimated_T * robot_in_world;
   const Vector6f diff_vector = geometry3d::t2v(diff_T);
@@ -152,7 +152,7 @@ TEST(DUMMY_DATA, SE3Point2PointWithSensorErrorFactor) {
 
   solver.setGraph(graph);
 
-  // ia create two cloud that we want to align, and a vector of correspondences
+  // create two cloud that we want to align, and a vector of correspondences
   Point3fVectorCloud fixed_cloud;
   Point3fVectorCloud moving_cloud;
   CorrespondenceVector correspondences;
@@ -161,7 +161,7 @@ TEST(DUMMY_DATA, SE3Point2PointWithSensorErrorFactor) {
   moving_cloud.reserve(n_meas);
   correspondences.reserve(n_meas);
   for (size_t i = 0; i < n_meas; ++i) {
-    // ia create dummy measurements
+    // create dummy measurements
     Point3f fixed_point, moving_point;
     fixed_point.coordinates().setRandom();
     moving_point = fixed_point.transform<TRANSFORM_CLASS::Isometry>(sensor_in_world);
@@ -187,11 +187,11 @@ TEST(DUMMY_DATA, SE3Point2PointWithSensorErrorFactor) {
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T    = pose->estimate();
   const Isometry3f diff_T    = estimated_T * robot_in_world;
   const Vector6f diff_vector = geometry3d::t2v(diff_T);

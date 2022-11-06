@@ -38,7 +38,7 @@ namespace srrg2_solver {
 
       ADErrorVectorType e;
       e.setZero();
-      // bdc here extract the relative measures given period, current time delay and dataset
+      // here extract the relative measures given period, current time delay and dataset
       Isometry2adf sensor_relative = Isometry2adf::Identity();
       if (!getRelativeMeasure(sensor_relative,
                               _sensor_dataset,
@@ -72,12 +72,12 @@ namespace srrg2_solver {
       TimeIsometry2Map::iterator lower, upper;
       interpolated_ad.setIdentity();
 
-      // bdc get lower bound
+      // get lower bound
       lower = data_->lower_bound(time.value);
       if (lower == data_->end() || lower == data_->begin()) {
         return false;
       }
-      // bdc get previous element
+      // get previous element
       lower--;
       upper = data_->upper_bound(time.value);
       if (upper == data_->end() || upper == data_->begin()) {
@@ -87,15 +87,15 @@ namespace srrg2_solver {
       const DualValuef lower_time_ad(lower->first);
       const DualValuef upper_time_ad(upper->first);
 
-      // bdc compute relative interpolation time
+      // compute relative interpolation time
       const DualValuef start_interpolation_time =
         (time - lower_time_ad) / (upper_time_ad - lower_time_ad);
 
-      // bdc interpolate isometries at a certain time
+      // interpolate isometries at a certain time
       Matrix3adf m_start, m_end;
       convertMatrix(m_start, lower->second.matrix());
       convertMatrix(m_end, upper->second.matrix());
-      // bdc linear interpolation of matrices (in chordal fashion)
+      // linear interpolation of matrices (in chordal fashion)
       Matrix3adf interpolated = linearInterpolate(start_interpolation_time, m_start, m_end);
       Isometry2adf interpolated_result(interpolated);
       interpolated_ad = interpolated_result;
@@ -134,7 +134,7 @@ namespace srrg2_solver {
       if (!data_)
         throw std::runtime_error("[SE3PoseTimeErrorFunctorAD::interpolateMeasure]: missing data");
 
-      // bdc find starting isometry
+      // find starting isometry
       Isometry2adf start_iso;
       if (!interpolateInData(start_iso, data_, start))
         return false;

@@ -18,7 +18,7 @@ namespace srrg2_core {
   }
 
   bool ImageData::read(std::istream& is) {
-    // ia WHYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+    // WHYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
     // BaseImage* _image = image();
     std::vector<unsigned char> buf;
     const int block_size = 4096;
@@ -54,7 +54,7 @@ namespace srrg2_core {
 
   void ImageData::write(std::ostream& os) const {
     assert(_image_ptr != nullptr && "ImageData::write|ERROR, invalid image");
-    // ia WHYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+    // WHYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
     // const BaseImage* _image = image();
     std::vector<unsigned char> buf;
     cv::Mat image_to_write;
@@ -77,7 +77,7 @@ namespace srrg2_core {
 
   void ImageData::_encodeImage(std::ostream& os_) const {
     assert(_image_ptr != nullptr && "ImageData::_encodeImage|ERROR, invalid image");
-    // ia WHYYYYYYYYYYYYYYYY
+    // WHYYYYYYYYYYYYYYYY
     // const BaseImage* _image = image();
     ImageHeader header;
     header.type = _image_ptr->type();
@@ -96,15 +96,15 @@ namespace srrg2_core {
   }
 
   bool ImageData::_decodeImage(const std::vector<unsigned char>& buffer_) {
-    // ia read the header
+    // read the header
     ImageHeader* header = (ImageHeader*) &buffer_[0];
     std::vector<unsigned char> data_buffer(buffer_.begin() + sizeof(ImageHeader), buffer_.end());
 
     // const std::size_t element_size = CV_ELEM_SIZE(header->type);
     // const std::size_t vector_size = header->rows*header->cols;
 
-    // ia working with smart pointer, forget the goddamn .get method
-    // ia Mircolosi master of smart pointers from what I see below
+    // working with smart pointer, forget the goddamn .get method
+    // Mircolosi master of smart pointers from what I see below
     // BaseImage* _image = _image_ptr.get();
     // if (_image) {
     //   delete _image;
@@ -152,7 +152,7 @@ namespace srrg2_core {
 
   // TODO make extension() const in BLOB and avoid this shit down here
   const std::string& ImageData::const_extension() const {
-    // ia WHYYYYYYYYYYYYYYY
+    // WHYYYYYYYYYYYYYYY
     // const BaseImage* _image = image();
     switch (_image_ptr->type()) {
       case TYPE_8UC3:

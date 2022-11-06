@@ -49,30 +49,30 @@ namespace srrg2_solver {
   _factor_hash_param_tag_map.insert(std::make_pair(factor_typeid, param_tag));
 
   void G2OConverter::_registerConverterActions() {
-    // ia you cannot register both AD and non-AD actions.
-    // ia therefore you have to choose, I would prefer non AD things if present
+    // you cannot register both AD and non-AD actions.
+    // therefore you have to choose, I would prefer non AD things if present
     ADD_ACTION(ConverterActionTagFixed);
 
-    // ia 2d stuff, here you can choose between ad and non ad stuff
+    // 2d stuff, here you can choose between ad and non ad stuff
     ADD_ACTION(ConverterActionVariableSE2Right);
     ADD_ACTION(ConverterActionVariablePoint2);
     ADD_ACTION(ConverterActionSE2PosePoseGeodesicErrorFactor);
     ADD_ACTION(ConverterActionSE2PosePointErrorFactor);
     ADD_ACTION(ConverterActionSE2PosePointBearingErrorFactor);
 
-    // ia chordal stuff
+    // chordal stuff
     ADD_ACTION(ConverterActionVariableSE3EulerLeft);
     ADD_ACTION(ConverterActionSE3PosePoseChordalEulerLeftErrorFactor);
-    // ia standard pgo
+    // standard pgo
     ADD_ACTION(ConverterActionVariableSE3QuaternionRightAD);
     ADD_ACTION(ConverterActionSE3PosePoseGeodesicErrorFactor)
-    // ia standard pose point
+    // standard pose point
     ADD_ACTION(ConverterActionVariablePoint3AD);
     ADD_ACTION(ConverterActionSE3PosePointOffsetErrorFactor);
-    // ia matchables
+    // matchables
     ADD_ACTION(ConverterActionVariableMatchable)
     ADD_ACTION(ConverterActionSE3PoseMatchableErrorFactor);
-    // ia param for pose point
+    // param for pose point
     ADD_PARAM_ACTION(ConverterActionSE3PoseOffset, SE3PosePointOffsetErrorFactor);
 
     REGISTER_ALL_ACTIONS;
@@ -114,26 +114,26 @@ namespace srrg2_solver {
       throw std::runtime_error(CLASS_NAME + "loadGraph|invalid filename, exit");
     }
 
-    // ia check if we are reading from boss or from g2o
+    // check if we are reading from boss or from g2o
     if (input_graph_filename_.substr(input_graph_filename_.find_last_of(".")) == ".g2o") {
-      // ia set the right conversion modality
+      // set the right conversion modality
       _mode = ConversionDirection::G2O2Boss;
 
-      // ia open the stream and read from g2o file, populating the graph.
+      // open the stream and read from g2o file, populating the graph.
       std::ifstream graph_stream(input_graph_filename_);
       _loadG2OGraph(graph_stream);
 
-      // ia close input stream
+      // close input stream
       graph_stream.close();
     } else if (input_graph_filename_.substr(input_graph_filename_.find_last_of(".")) == ".boss") {
-      // ia set the right conversion modality
+      // set the right conversion modality
       _mode = ConversionDirection::Boss2G2O;
 
-      // ia here reading is simple, just read the graph
+      // here reading is simple, just read the graph
       _boss_graph.reset();
       _boss_graph = FactorGraph::read(input_graph_filename_);
 
-      // ia now analyze the graph and populate strange conversion tables
+      // now analyze the graph and populate strange conversion tables
       const auto& factors = _boss_graph->factors();
       for (auto e_it = factors.begin(); e_it != factors.end(); ++e_it) {
         const uint64_t e_hash  = typeid(*(e_it.value())).hash_code();
@@ -145,7 +145,7 @@ namespace srrg2_solver {
       }
     }
 
-    // ia log something
+    // log something
     std::cerr << CLASS_NAME + "loadGraph|"
               << "graph has [" << FG_YELLOW(_boss_graph->variables().size()) << "] variables and "
               << "[" << FG_YELLOW(_boss_graph->factors().size()) << "] edges\n";
@@ -161,8 +161,8 @@ namespace srrg2_solver {
     }
 
     switch (_mode) {
-      // ia simple case: writing in boss is done automatically. graph should have been populated
-      // ia while reading so it's already there
+      // simple case: writing in boss is done automatically. graph should have been populated
+      // while reading so it's already there
       case G2OConverter::ConversionDirection::G2O2Boss: {
         if (output_graph_filename_.substr(output_graph_filename_.find_last_of(".")) != ".boss") {
           std::cerr << CLASS_NAME + "writeGraph|WARINING extension does not match conversion type"
@@ -173,7 +173,7 @@ namespace srrg2_solver {
         break;
       }
 
-      // ia other case, we have to explicitely write the thing
+      // other case, we have to explicitely write the thing
       case G2OConverter::ConversionDirection::Boss2G2O: {
         if (output_graph_filename_.substr(output_graph_filename_.find_last_of(".")) != ".g2o") {
           std::cerr << CLASS_NAME + "writeGraph|WARINING extension does not match conversion type"
@@ -186,7 +186,7 @@ namespace srrg2_solver {
         break;
       }
 
-      // ia invalid and default, crashes
+      // invalid and default, crashes
       case G2OConverter::ConversionDirection::Invalid:
       default:
         throw std::runtime_error(CLASS_NAME + "writeGraph|invalid conversion modality");
@@ -195,25 +195,25 @@ namespace srrg2_solver {
   }
 
   void G2OConverter::_loadG2OGraph(std::ifstream& f_stream_) {
-    // ia if modality is not good exit
+    // if modality is not good exit
     if (_mode != G2OConverter::ConversionDirection::G2O2Boss) {
       throw std::runtime_error(CLASS_NAME + "_loadG2OGraph|invalid modality");
     }
 
-    // ia read the stream line by line
+    // read the stream line by line
     size_t line_counter = 0;
     std::string line;
     std::string element_tag;
     while (getline(f_stream_, line)) {
       std::stringstream ss(line);
 
-      // ia read the tag and check that has been registered
+      // read the tag and check that has been registered
       ss >> element_tag;
       if (_tag_action_map.count(element_tag) == 0) {
         throw std::runtime_error(CLASS_NAME + "_loadG2OGraph|unregistered tag [" + element_tag +
                                  "]");
       }
-      // ia find the proper action delegate to read this tag
+      // find the proper action delegate to read this tag
       ConverterActionBase* action = _tag_action_map.at(element_tag);
       assert(action && "loadG2OGraph|invalid action");
       action->readFromG2O(ss);
@@ -224,7 +224,7 @@ namespace srrg2_solver {
 
   //! @brief helper for writing a g2o file
   void G2OConverter::_writeG2OGraph(std::ofstream& f_stream_) {
-    // ia if not in the proper modality exit
+    // if not in the proper modality exit
     if (_mode != G2OConverter::ConversionDirection::Boss2G2O) {
       throw std::runtime_error(CLASS_NAME + "_writeG2OGraph|invalid modality");
     }
@@ -233,27 +233,27 @@ namespace srrg2_solver {
       throw std::runtime_error(CLASS_NAME + "_writeG2OGraph|invalid graph pointer");
     }
 
-    // ia take graph entries
+    // take graph entries
     const auto& variables = _boss_graph->variables();
     const auto& factors   = _boss_graph->factors();
 
-    // ia first we write variables
+    // first we write variables
     for (auto v_it = variables.begin(); v_it != variables.end(); ++v_it) {
-      // ia take vertex hash and check that is registered in the converter
+      // take vertex hash and check that is registered in the converter
       const uint64_t v_hash = typeid(*(v_it.value())).hash_code();
       if (_hash_action_map.count(v_hash) == 0) {
         throw std::runtime_error(CLASS_NAME + "_writeG2OGraph|unregistered hash [" +
                                  std::to_string(v_hash) + "] " + v_it.value()->className());
       }
 
-      // ia find the proper action delegate to write this hash
+      // find the proper action delegate to write this hash
       ConverterActionBase* action = _hash_action_map.at(v_hash);
       assert(action && "writeG2OGraph|invalid action");
 
-      // ia write the tag
+      // write the tag
       std::string tag = "";
       if (_param_id_param_tag_map.count(v_it.value()->graphId()) != 0) {
-        // ia call the param action related to this vertex
+        // call the param action related to this vertex
         tag = _param_id_param_tag_map.at(v_it.value()->graphId());
       } else {
         tag = action->tag();
@@ -264,20 +264,20 @@ namespace srrg2_solver {
       f_stream_ << "\n";
     }
 
-    // ia then we write the factors
+    // then we write the factors
     for (auto e_it = factors.begin(); e_it != factors.end(); ++e_it) {
-      // ia take factor hash and check that is registered in the converter
+      // take factor hash and check that is registered in the converter
       const uint64_t e_hash = typeid(*(e_it.value())).hash_code();
       if (_hash_action_map.count(e_hash) == 0) {
         throw std::runtime_error(CLASS_NAME + "_writeG2OGraph|unregistered hash [" +
                                  std::to_string(e_hash) + "] fuck you");
       }
 
-      // ia find the proper action delegate to write this hash
+      // find the proper action delegate to write this hash
       ConverterActionBase* action = _hash_action_map.at(e_hash);
       assert(action && "writeG2OGraph|invalid action");
 
-      // ia write the tag
+      // write the tag
       f_stream_ << action->tag() << " ";
       action->writeFromBoss(f_stream_, (void*) e_it.value());
       f_stream_ << "\n";

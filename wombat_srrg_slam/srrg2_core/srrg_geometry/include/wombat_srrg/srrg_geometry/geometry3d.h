@@ -13,7 +13,7 @@ namespace srrg2_core {
     // actually this(template variable) is allowed since c++14
     // should we use c++14 flag?
     // Without the c++14 flag, this delaration generates a warning
-    // ds does it make sense to have this templated? I would declare it as
+    // does it make sense to have this templated? I would declare it as
     // double and'e basta ia I took the Dominik path and sticazzi static const
     // double _epsilon = 1e-8; gg addeg c++14 flag :)
     template <typename Scalar_>
@@ -366,7 +366,7 @@ namespace srrg2_core {
       Vector7_<Scalar_> start_vector = t2w(start_);
       Vector7_<Scalar_> end_vector   = t2w(end_);
       Vector6_<Scalar_> result_vector;
-      // bdc linearly interpolate translation (TODO: fix since this sucks)
+      // linearly interpolate translation (TODO: fix since this sucks)
       const Scalar_ one_minus_t = Scalar_(1.0) - t_;
       result_vector(0)          = start_vector(0) * one_minus_t + end_vector(0) * t_;
       result_vector(1)          = start_vector(1) * one_minus_t + end_vector(1) * t_;
@@ -374,7 +374,7 @@ namespace srrg2_core {
       Quaternion_<Scalar_> start(
         start_vector(3), start_vector(4), start_vector(5), start_vector(6));
       Quaternion_<Scalar_> end(end_vector(3), end_vector(4), end_vector(5), end_vector(6));
-      // bdc slerp interpolation for rotation
+      // slerp interpolation for rotation
       Quaternion_<Scalar_> interpolated_quaterion = start.slerp(t_, end);
       result_vector(3)                            = interpolated_quaterion.x();
       result_vector(4)                            = interpolated_quaterion.y();

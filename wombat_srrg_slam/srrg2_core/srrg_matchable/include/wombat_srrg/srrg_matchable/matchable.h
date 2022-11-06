@@ -44,9 +44,9 @@ namespace srrg2_core {
     using Scalar             = Scalar_;
     using VectorType         = Vector3_<Scalar>;
     using MatrixType         = Matrix3_<Scalar>;
-    static constexpr int Dim = VectorType::RowsAtCompileTime + // ia origin
-                               MatrixType::RowsAtCompileTime + // ia direction
-                               1;                              // ia type
+    static constexpr int Dim = VectorType::RowsAtCompileTime + // origin
+                               MatrixType::RowsAtCompileTime + // direction
+                               1;                              // type
     using FullVectorType = Vector_<Scalar, Dim>;
 
     //! @brief empty ctor - sets everything to zero;
@@ -64,7 +64,7 @@ namespace srrg2_core {
       MatchableBase(type_),
       _origin(origin_),
       _rotation(rotation_) {
-      // ia reset the omega
+      // reset the omega
       resetOmegaFromType();
     }
 
@@ -99,12 +99,12 @@ namespace srrg2_core {
 
     //! @brief populates the matchable from [type; origin; direction_v]'.
     inline void fromVector(const FullVectorType& vector_) {
-      // ia reset the type
+      // reset the type
       _type = (MatchableBase::Type) vector_(0);
 
       resetOmegaFromType();
 
-      // ia set origin and rotation matrix
+      // set origin and rotation matrix
       _origin = vector_.template block<3, 1>(1, 0);
       setDirection(vector_.template block<3, 1>(4, 0));
     }
@@ -153,7 +153,7 @@ namespace srrg2_core {
 
       _origin.noalias() += other_._origin;
 
-      // ia we have to normalize the final direction
+      // we have to normalize the final direction
       if (_type != Type::Point) {
         VectorType sum_direction = direction() + other_.direction();
         sum_direction.normalize();
@@ -177,7 +177,7 @@ namespace srrg2_core {
 
       _origin.noalias() -= other_._origin;
 
-      // ia we have to normalize the final direction
+      // we have to normalize the final direction
       if (_type != Type::Point) {
         VectorType diff_direction = direction() - other_.direction();
         diff_direction.normalize();

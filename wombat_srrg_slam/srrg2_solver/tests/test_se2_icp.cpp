@@ -45,7 +45,7 @@ TEST(DUMMY_DATA, SE2Point2PointErrorFactor) {
 
   solver.setGraph(graph);
 
-  // ia create two cloud that we want to align, and a vector of correspondences
+  // create two cloud that we want to align, and a vector of correspondences
   Point2fVectorCloud fixed_cloud;
   Point2fVectorCloud moving_cloud;
   CorrespondenceVector correspondences;
@@ -54,7 +54,7 @@ TEST(DUMMY_DATA, SE2Point2PointErrorFactor) {
   moving_cloud.reserve(n_meas);
   correspondences.reserve(n_meas);
   for (size_t i = 0; i < n_meas; ++i) {
-    // ia create dummy measurements
+    // create dummy measurements
     Point2f fixed_point, moving_point;
     fixed_point.coordinates().setRandom();
     moving_point.coordinates() = inv_T * fixed_point.coordinates();
@@ -82,11 +82,11 @@ TEST(DUMMY_DATA, SE2Point2PointErrorFactor) {
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T    = pose->estimate();
   const Isometry2f diff_T    = estimated_T.inverse() * T;
   const Vector3f diff_vector = geometry2d::t2v(diff_T);
@@ -123,7 +123,7 @@ TEST(DUMMY_DATA, SE2Point2PointWithSensorErrorFactor) {
   graph->addVariable(pose);
   solver.setGraph(graph);
 
-  // ia create two cloud that we want to align, and a vector of correspondences
+  // create two cloud that we want to align, and a vector of correspondences
   Point2fVectorCloud fixed_cloud;
   Point2fVectorCloud moving_cloud;
   CorrespondenceVector correspondences;
@@ -132,7 +132,7 @@ TEST(DUMMY_DATA, SE2Point2PointWithSensorErrorFactor) {
   moving_cloud.reserve(n_meas);
   correspondences.reserve(n_meas);
   for (size_t i = 0; i < n_meas; ++i) {
-    // ia create dummy measurements
+    // create dummy measurements
     Point2f fixed_point, moving_point;
     moving_point.coordinates().setRandom();
     fixed_point.coordinates() = inv_T * moving_point.coordinates();
@@ -160,11 +160,11 @@ TEST(DUMMY_DATA, SE2Point2PointWithSensorErrorFactor) {
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T    = pose->estimate();
   const Isometry2f diff_T    = estimated_T * ground_truth_T;
   const Vector3f diff_vector = geometry2d::t2v(diff_T);

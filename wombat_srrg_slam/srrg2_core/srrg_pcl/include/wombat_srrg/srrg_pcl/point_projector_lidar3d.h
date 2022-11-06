@@ -54,5 +54,5 @@ namespace srrg2_core {
 
 } // namespace srrg2_core
 
-// bdc ugly template definitions
+// ugly template definitions
 #include "point_projector_lidar3d.hpp"

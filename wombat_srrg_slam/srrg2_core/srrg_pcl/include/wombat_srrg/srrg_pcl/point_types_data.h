@@ -98,7 +98,7 @@ namespace srrg2_core {
   using PointNormalCurvature3dVectorBLOBReference =
     BLOBReference<PointNormalCurvature3dVectorData>;
 
-  // ia serialization of shaslam points
+  // serialization of shaslam points
   using PointNormalCurvatureColor3fVectorData =
     VectorData_<PointNormalCurvatureColor3fVectorCloud>;
   using PointNormalCurvatureColor3fVectorBLOBReference =

@@ -89,7 +89,7 @@ static std::string sequence("");
 int main(int argc_, char** argv_) {
   messages_registerTypes();
 
-  // ds set up CLI parameters
+  // set up CLI parameters
   ParseCommandLine command_line_parser(argv_, banner);
   ArgumentString argument_sequence_name(
     &command_line_parser, "s", "sequence", "sequence name from TUM dataset", "");
@@ -127,7 +127,7 @@ int main(int argc_, char** argv_) {
                              " ]");
   }
 
-  // ds buffer ground truth data
+  // buffer ground truth data
   StdVectorEigenIsometry3f camera_poses_in_world;
   std::vector<double> timestamps_gt;
   loadGroundTruthPosesAndStamps(gt_file, camera_poses_in_world, timestamps_gt);
@@ -136,7 +136,7 @@ int main(int argc_, char** argv_) {
   }
   std::cerr << "loaded ground truth poses: " << timestamps_gt.size() << std::endl;
 
-  // ds read depth and RGB images and timestamps
+  // read depth and RGB images and timestamps
   std::vector<std::string> image_filenames_rgb;
   std::vector<double> timestamps_rgb;
   std::vector<std::string> image_filenames_depth;
@@ -147,7 +147,7 @@ int main(int argc_, char** argv_) {
                        image_filenames_depth,
                        timestamps_depth);
 
-  // ds TUM camera matrix and depth factor TODO load from disk
+  // TUM camera matrix and depth factor TODO load from disk
   Matrix3f camera_calibration_matrix;
   camera_calibration_matrix << 481.2, 0, 319.5, 0, -480, 239.5, 0, 0, 1;
   std::cerr << "current camera matrix: " << std::endl;
@@ -167,7 +167,7 @@ int main(int argc_, char** argv_) {
   //  std::cerr << "press [ENTER] to start conversion" << std::endl;
   //  getchar();
 
-  // ds determine initial, smallest timestamp
+  // determine initial, smallest timestamp
   double timestamp_oldest = std::numeric_limits<double>::max();
 
   if (timestamps_gt.size()) {
@@ -192,10 +192,10 @@ int main(int argc_, char** argv_) {
   sink.open(argument_output_file.value());
   SystemUsageCounter::tic();
 
-  // ds playback all buffers
+  // playback all buffers
   size_t processed_msgs = 0;
   while (true) {
-    // ds if we still have ground truth information available
+    // if we still have ground truth information available
     double first_timestamp = std::numeric_limits<double>::max();
     if (timestamps_gt.size()) {
       first_timestamp = std::min(first_timestamp, timestamps_gt[0]);
@@ -223,7 +223,7 @@ int main(int argc_, char** argv_) {
       ++processed_msgs;
     }
 
-    // ds if we have RGB data available
+    // if we have RGB data available
     if (timestamps_rgb.size() && timestamps_rgb.front() == first_timestamp) {
       serializeCameraImageAndInfo<ImageUInt8>(sink,
                                               index_rgb,
@@ -268,15 +268,15 @@ int main(int argc_, char** argv_) {
   std::cerr << "# converted GT messages: " << index_gt << std::endl;
   return 0;
   //
-  //  // ds parse associations by tokens
+  //  // parse associations by tokens
   //  while (input_file >> timestamp_depth >> path_image_depth >> timestamp_rgb >> path_image_rgb) {
-  //    // ds image messages
+  //    // image messages
   //    ImageMessagePtr image_message_depth(new ImageMessage(
   //      "/camera/depth/image", "/openni_rgb_optical_frame", timestamp_depth, timestamp_depth));
   //    ImageMessagePtr image_message_rgb(new ImageMessage(
   //      "/camera/rgb/image_color", "/openni_rgb_optical_frame", timestamp_rgb, timestamp_rgb));
   //
-  //    // ds load Depth image from disk and convert
+  //    // load Depth image from disk and convert
   //    cv::Mat image_opencv_depth = cv::imread(path_image_depth, CV_LOAD_IMAGE_ANYDEPTH);
   //    if (image_opencv_depth.rows <= 0 || image_opencv_depth.cols <= 0) {
   //      std::cerr << "\nWARNING: skipping invalid image: " << path_image_depth
@@ -292,7 +292,7 @@ int main(int argc_, char** argv_) {
   //    image_message_depth->image_cols.setValue(image_opencv_depth.cols);
   //    image_message_depth->image_rows.setValue(image_opencv_depth.rows);
   //
-  //    // ds load RGB image from disk and convert
+  //    // load RGB image from disk and convert
   //    const cv::Mat image_opencv_rgb = cv::imread(path_image_rgb, CV_LOAD_IMAGE_GRAYSCALE);
   //    if (image_opencv_rgb.rows <= 0 || image_opencv_rgb.cols <= 0) {
   //      std::cerr << "\nWARNING: skipping invalid image: " << path_image_rgb
@@ -307,13 +307,13 @@ int main(int argc_, char** argv_) {
   //    image_message_rgb->image_cols.setValue(image_opencv_rgb.cols);
   //    image_message_rgb->image_rows.setValue(image_opencv_rgb.rows);
   //
-  //    // ds display converted images
-  //    image_opencv_depth *= 5; // ds visibility
+  //    // display converted images
+  //    image_opencv_depth *= 5; // visibility
   //    cv::imshow("processed image Depth", image_opencv_depth);
   //    cv::imshow("processed image RGB", image_opencv_rgb);
   //    cv::waitKey(1);
   //
-  //    // ds camera calibration messages
+  //    // camera calibration messages
   //    CameraInfoMessagePtr camera_info_message_depth(
   //      new CameraInfoMessage(image_message_depth->topic.value() + "/info",
   //                            image_message_depth->frame_id.value(),
@@ -333,14 +333,14 @@ int main(int argc_, char** argv_) {
   //    camera_info_message_rgb->distortion_model.setValue("undistorted");
   //    camera_info_message_rgb->camera_matrix.setValue(camera_calibration_matrix);
   //
-  //    // ds write messages
+  //    // write messages
   //    serializer.writeObject(*image_message_depth);
   //    serializer.writeObject(*image_message_rgb);
   //    serializer.writeObject(*camera_info_message_depth);
   //    serializer.writeObject(*camera_info_message_rgb);
   //    std::cerr << "ID";
   //
-  //    // ds look for ground truth data (in RGB camera frame)
+  //    // look for ground truth data (in RGB camera frame)
   //    auto iterator = camera_poses_in_world.find(timestamp_rgb);
   //    if (iterator != camera_poses_in_world.end()) {
   //      TransformEventsMessagePtr transform_message(
@@ -396,7 +396,7 @@ void loadImageInformation(const std::string& associations_file_,
                           std::vector<double>& timestamps_rgb_,
                           std::vector<std::string>& image_filenames_depth_,
                           std::vector<double>& timestamps_depth_) {
-  // ds open file
+  // open file
   std::ifstream input_file(associations_file_);
   if (!input_file.good() || !input_file.is_open()) {
     throw std::runtime_error("ERROR: unable to open input file [" + associations_file_ + "]");
@@ -432,11 +432,11 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
                                  const std::string& file_path_image_,
                                  const Matrix3f& camera_matrix_,
                                  const float& depth_factor_) {
-  // ds create image message
+  // create image message
   ImageMessagePtr image_message(
     new ImageMessage("/camera/" + label_ + "/image_raw", label_, index_, timestamp_));
 
-  // ds load RGB image from disk and convert
+  // load RGB image from disk and convert
   cv::Mat image_opencv;
   if (depth_factor_ != 1.) {
     image_opencv = cv::imread(file_path_image_, CV_LOAD_IMAGE_ANYDEPTH);
@@ -452,14 +452,14 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
       std::to_string(image_opencv.cols));
   }
 
-  // ds map to srrg
+  // map to srrg
   ImageType_* base_image(new ImageType_());
   base_image->fromCv(image_opencv);
   image_message->setImage(base_image);
   image_message->image_cols.setValue(image_opencv.cols);
   image_message->image_rows.setValue(image_opencv.rows);
 
-  // ds create camera info message
+  // create camera info message
   CameraInfoMessagePtr camera_info_message(
     new CameraInfoMessage(image_message->topic.value() + "/info",
                           image_message->frame_id.value(),
@@ -473,7 +473,7 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
   camera_info_message->cols.setValue(image_opencv.cols);
   camera_info_message->rows.setValue(image_opencv.rows);
 
-  // ds write messages related to this image
+  // write messages related to this image
   sink_.putMessage(image_message);
   sink_.putMessage(camera_info_message);
 }

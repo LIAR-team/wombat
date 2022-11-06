@@ -6,7 +6,7 @@
 
 namespace srrg2_solver {
   void SE3PosePoseGeodesicErrorFactor::errorAndJacobian(bool error_only_) {
-    // ia take objects - static cast for speeeeeed
+    // take objects - static cast for speeeeeed
     VariableSE3QuaternionRight* v_from = _variables.at<0>();
     VariableSE3QuaternionRight* v_to   = _variables.at<1>();
     assert(v_from && v_to &&
@@ -16,7 +16,7 @@ namespace srrg2_solver {
     const auto& to_T        = v_to->estimate();
     const auto prediction_T = from_T.inverse() * to_T;
 
-    // ia compute the error as translation and normalized quaternion
+    // compute the error as translation and normalized quaternion
     const auto error_T = _inverse_measurement * prediction_T;
     _e                 = geometry3d::t2tnq(error_T);
 
@@ -24,13 +24,13 @@ namespace srrg2_solver {
       return;
     }
 
-    // ia compute analitic jacobians using super evil stuff that has been wisely hidden in this
-    // ia helper class that you don't want to open. never open it. never.
+    // compute analitic jacobians using super evil stuff that has been wisely hidden in this
+    // helper class that you don't want to open. never open it. never.
     srrg2_core::Matrix6_<Scalar> Ji, Jj;
     SE3PosePoseGeodesicErrorFactorJacobianHelper<Scalar>::computeGeodesicJacobians(
       _inverse_measurement, prediction_T, error_T, Ji, Jj);
 
-    // ia set this goddamn jacobian
+    // set this goddamn jacobian
     jacobian<0>() = Ji;
     jacobian<1>() = Jj;
   }

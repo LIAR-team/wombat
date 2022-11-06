@@ -32,7 +32,7 @@
 
 using namespace srrg2_core;
 
-// ds test helper function
+// test helper function
 void generateMessagesOnDisk(const std::string& file_name_,
                             const size_t number_of_messages_,
                             const std::vector<std::string> topics_,
@@ -78,7 +78,7 @@ TEST(MessageSynchronizedSource, ValidTopics_NoTimeOffset) {
   const std::vector<double> time_offsets = {0, 0};
   generateMessagesOnDisk(message_file_name, number_of_messages, topics, time_offsets);
 
-  // ds configure a synchronized message source
+  // configure a synchronized message source
   MessageFileSourcePtr source(new MessageFileSource());
   MessageSortedSourcePtr sorter(new MessageSortedSource());
   sorter->param_source.setValue(source);
@@ -89,12 +89,12 @@ TEST(MessageSynchronizedSource, ValidTopics_NoTimeOffset) {
   synchronized_source->param_topics.value().push_back(topics[1]);
   synchronized_source->param_time_interval.setValue(1e-5);
 
-  // ds open a synthetic message file
+  // open a synthetic message file
   source->open(message_file_name);
   ASSERT_TRUE(source->isOpen());
   ASSERT_EQ(source->param_filename.value(), message_file_name);
 
-  // ds process messages
+  // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
     // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?
@@ -117,7 +117,7 @@ TEST(MessageSynchronizedSource, InvalidTopics_NoTimeOffset) {
   const std::vector<double> time_offsets = {0, 0};
   generateMessagesOnDisk(message_file_name, number_of_messages, topics, time_offsets);
 
-  // ds configure a synchronized message source
+  // configure a synchronized message source
   MessageFileSourcePtr source(new MessageFileSource());
   MessageSortedSourcePtr sorter(new MessageSortedSource());
   sorter->param_source.setValue(source);
@@ -128,12 +128,12 @@ TEST(MessageSynchronizedSource, InvalidTopics_NoTimeOffset) {
   synchronized_source->param_topics.value().push_back("/micro");
   synchronized_source->param_time_interval.setValue(1e-5);
 
-  // ds open a synthetic message file
+  // open a synthetic message file
   source->open(message_file_name);
   ASSERT_TRUE(source->isOpen());
   ASSERT_EQ(source->param_filename.value(), message_file_name);
 
-  // ds process messages
+  // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
     // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?
@@ -142,7 +142,7 @@ TEST(MessageSynchronizedSource, InvalidTopics_NoTimeOffset) {
     ++number_of_processed_message_packs;
   }
   ASSERT_EQ(number_of_processed_message_packs, static_cast<size_t>(0));
-  ASSERT_EQ(synchronized_source->numDroppedMessages(), 0); // ds TODO no drops intended?
+  ASSERT_EQ(synchronized_source->numDroppedMessages(), 0); // TODO no drops intended?
 
   source->close();
   ASSERT_FALSE(source->isOpen());
@@ -156,7 +156,7 @@ TEST(MessageSynchronizedSource, ValidTopics_TolerableTimeOffset) {
   const std::vector<double> time_offsets = {-1e-6, 1e-6};
   generateMessagesOnDisk(message_file_name, number_of_messages, topics, time_offsets);
 
-  // ds configure a synchronized message source
+  // configure a synchronized message source
   MessageFileSourcePtr source(new MessageFileSource());
   MessageSortedSourcePtr sorter(new MessageSortedSource());
   sorter->param_source.setValue(source);
@@ -167,12 +167,12 @@ TEST(MessageSynchronizedSource, ValidTopics_TolerableTimeOffset) {
   synchronized_source->param_topics.value().push_back(topics[1]);
   synchronized_source->param_time_interval.setValue(1e-5);
 
-  // ds open a synthetic message file
+  // open a synthetic message file
   source->open(message_file_name);
   ASSERT_TRUE(source->isOpen());
   ASSERT_EQ(source->param_filename.value(), message_file_name);
 
-  // ds process messages
+  // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
     // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?
@@ -195,7 +195,7 @@ TEST(MessageSynchronizedSource, ValidTopics_IntolerableTimeOffset) {
   const std::vector<double> time_offsets = {-0.01, 0.01};
   generateMessagesOnDisk(message_file_name, number_of_messages, topics, time_offsets);
 
-  // ds configure a synchronized message source
+  // configure a synchronized message source
   MessageFileSourcePtr source(new MessageFileSource());
   MessageSortedSourcePtr sorter(new MessageSortedSource());
   sorter->param_source.setValue(source);
@@ -206,12 +206,12 @@ TEST(MessageSynchronizedSource, ValidTopics_IntolerableTimeOffset) {
   synchronized_source->param_topics.value().push_back(topics[1]);
   synchronized_source->param_time_interval.setValue(1e-5);
 
-  // ds open a synthetic message file
+  // open a synthetic message file
   source->open(message_file_name);
   ASSERT_TRUE(source->isOpen());
   ASSERT_EQ(source->param_filename.value(), message_file_name);
 
-  // ds process messages
+  // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
     // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?
@@ -220,7 +220,7 @@ TEST(MessageSynchronizedSource, ValidTopics_IntolerableTimeOffset) {
     ++number_of_processed_message_packs;
   }
   ASSERT_EQ(number_of_processed_message_packs, size_t(0));
-  // ds TODO why not 20 dropped messages?
+  // TODO why not 20 dropped messages?
   ASSERT_EQ(static_cast<size_t>(synchronized_source->numDroppedMessages()),
             2 * number_of_messages - 2);
 
@@ -236,7 +236,7 @@ TEST(MessageSynchronizedSource, ValidTopics_ShuffledTimeOffset) {
   const std::vector<double> time_offsets = {123456789.01, 123456789.02, 123456789.03};
   generateMessagesOnDisk(message_file_name, number_of_messages, topics, time_offsets, true);
 
-  // ds configure a synchronized message source
+  // configure a synchronized message source
   MessageFileSourcePtr source(new MessageFileSource());
   MessageSortedSourcePtr sorter(new MessageSortedSource());
   sorter->param_source.setValue(source);
@@ -248,12 +248,12 @@ TEST(MessageSynchronizedSource, ValidTopics_ShuffledTimeOffset) {
   synchronized_source->param_topics.value().push_back(topics[2]);
   synchronized_source->param_time_interval.setValue(0.05);
 
-  // ds open a synthetic message file
+  // open a synthetic message file
   source->open(message_file_name);
   ASSERT_TRUE(source->isOpen());
   ASSERT_EQ(source->param_filename.value(), message_file_name);
 
-  // ds process messages
+  // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
     // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?

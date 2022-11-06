@@ -18,7 +18,7 @@ int main(int argc_, char** argv_) {
 }
 
 TEST(DummyData, AbstractIntFloatMap) {
-  // ia I need this shitty vectors because I want also to check KEYS of the abstract map
+  // I need this shitty vectors because I want also to check KEYS of the abstract map
   std::vector<int> ref_indices({1, 5, 2});
   std::vector<float> ref_values({0.1f, 0.5f, 0.2f});
   std::vector<int> ref_indices_sorted  = ref_indices;
@@ -28,14 +28,14 @@ TEST(DummyData, AbstractIntFloatMap) {
 
   AbstractIntFloatMap m;
 
-  // ia populate
+  // populate
   {
     size_t i = 0;
     for (; i < ref_indices.size(); ++i) {
       m.insert(std::make_pair(ref_indices[i], ref_values[i]));
     }
 
-    // ia access
+    // access
     i = 0;
     for (auto it = m.begin(); it != m.end(); ++it, ++i) {
       ASSERT_EQ(ref_indices_sorted[i], (*it).first);
@@ -44,11 +44,11 @@ TEST(DummyData, AbstractIntFloatMap) {
   }
 
   {
-    // ia search
+    // search
     auto it = m.find(3);
     ASSERT_TRUE(it == m.end());
 
-    // ia erase
+    // erase
     const auto ref_key   = ref_indices[1];
     const auto ref_value = ref_values[1];
 
@@ -73,7 +73,7 @@ TEST(DummyData, AbstractIntFloatMap) {
     ASSERT_EQ(m.size(), ref_values.size());
   }
 
-  // ia final check
+  // final check
   {
     size_t i = 0;
     for (auto it = m.begin(); it != m.end(); ++it, ++i) {
@@ -93,7 +93,7 @@ TEST(DummyData, AbstractIntFloatPtrMap) {
 
   AbstractIntFloatPtrMap m;
 
-  // ia populate
+  // populate
   {
     size_t i = 0;
     for (; i < ref_indices.size(); ++i) {
@@ -101,7 +101,7 @@ TEST(DummyData, AbstractIntFloatPtrMap) {
       m.insert(std::make_pair(ref_indices[i], std::make_shared<float>(val)));
     }
 
-    // ia access
+    // access
     i = 0;
     for (auto it = m.begin(); it != m.end(); ++it, ++i) {
       ASSERT_EQ(ref_indices_sorted[i], (*it).first);
@@ -110,11 +110,11 @@ TEST(DummyData, AbstractIntFloatPtrMap) {
   }
 
   {
-    // ia search
+    // search
     auto it = m.find(3);
     ASSERT_TRUE(it == m.end());
 
-    // ia erase
+    // erase
     const auto ref_key   = ref_indices[1];
     const auto ref_value = ref_values[1];
 
@@ -139,7 +139,7 @@ TEST(DummyData, AbstractIntFloatPtrMap) {
     ASSERT_EQ(m.size(), ref_values.size());
   }
 
-  // ia final check
+  // final check
   {
     size_t i = 0;
     for (auto it = m.begin(); it != m.end(); ++it, ++i) {
@@ -159,7 +159,7 @@ TEST(DummyData, AbstractIntFloatRawPtrMap) {
 
   AbstractIntFloatRawPtrMap m;
 
-  // ia populate
+  // populate
   {
     size_t i = 0;
     for (; i < ref_indices.size(); ++i) {
@@ -167,7 +167,7 @@ TEST(DummyData, AbstractIntFloatRawPtrMap) {
       m.insert(std::make_pair(ref_indices[i], new float(val)));
     }
 
-    // ia access
+    // access
     i = 0;
     for (auto it = m.begin(); it != m.end(); ++it, ++i) {
       ASSERT_EQ(ref_indices_sorted[i], (*it).first);
@@ -176,11 +176,11 @@ TEST(DummyData, AbstractIntFloatRawPtrMap) {
   }
 
   {
-    // ia search
+    // search
     auto it = m.find(3);
     ASSERT_TRUE(it == m.end());
 
-    // ia erase
+    // erase
     const auto ref_key   = ref_indices[1];
     const auto ref_value = ref_values[1];
 
@@ -199,7 +199,7 @@ TEST(DummyData, AbstractIntFloatRawPtrMap) {
     ASSERT_FALSE(it == m.end());
     ASSERT_EQ(it.key(), ref_key);
     ASSERT_EQ(*it.value(), ref_value);
-    // ia remember to deallocate memory
+    // remember to deallocate memory
     delete it.value();
 
     m.erase(it);
@@ -207,13 +207,13 @@ TEST(DummyData, AbstractIntFloatRawPtrMap) {
     ASSERT_EQ(m.size(), ref_values.size());
   }
 
-  // ia final check
+  // final check
   {
     size_t i = 0;
     for (auto it = m.begin(); it != m.end(); ++it, ++i) {
       ASSERT_EQ(ref_indices[i], (*it).first);
       ASSERT_EQ(ref_values[i], *(*it).second);
-      // ia remember to deallocate memory
+      // remember to deallocate memory
       delete it.value();
     }
   }

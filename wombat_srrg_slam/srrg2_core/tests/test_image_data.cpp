@@ -57,15 +57,15 @@ TEST(DummyData, ImageUInt8) {
     }
   }
 
-  // ia image changes ownership to the ImageData
+  // image changes ownership to the ImageData
   ImageDataPtr image_data(new ImageData);
   image_data->setImagePtr(std::move(image));
 
-  // ia save
+  // save
   const std::string image_filename = "image_uint8." + image_data->const_extension();
   writeImageData(image_filename, image_data);
 
-  // ia reload and check
+  // reload and check
   ImageDataPtr b_image_data(new ImageData);
   b_image_data->setImagePtr(std::unique_ptr<ImageType>(new ImageType));
   readImageData(image_filename, b_image_data);
@@ -104,15 +104,15 @@ TEST(DummyData, ImageUInt16) {
     }
   }
 
-  // ia image changes ownership to the ImageData
+  // image changes ownership to the ImageData
   ImageDataPtr image_data(new ImageData);
   image_data->setImagePtr(std::move(image));
 
-  // ia save
+  // save
   const std::string image_filename = "image_uint16." + image_data->const_extension();
   writeImageData(image_filename, image_data);
 
-  // ia reload and check
+  // reload and check
   ImageDataPtr b_image_data(new ImageData);
   b_image_data->setImagePtr(std::unique_ptr<ImageType>(new ImageType));
   readImageData(image_filename, b_image_data);
@@ -151,15 +151,15 @@ TEST(DummyData, ImageInt32) {
     }
   }
 
-  // ia image changes ownership to the ImageData
+  // image changes ownership to the ImageData
   ImageDataPtr image_data(new ImageData);
   image_data->setImagePtr(std::move(image));
 
-  // ia save
+  // save
   const std::string image_filename = "image_int32." + image_data->const_extension();
   writeImageData(image_filename, image_data);
 
-  // ia reload and check
+  // reload and check
   ImageDataPtr b_image_data(new ImageData);
   b_image_data->setImagePtr(std::unique_ptr<ImageType>(new ImageType));
   readImageData(image_filename, b_image_data);
@@ -197,15 +197,15 @@ TEST(DummyData, ImageFloat32) {
     }
   }
 
-  // ia image changes ownership to the ImageData
+  // image changes ownership to the ImageData
   ImageDataPtr image_data(new ImageData);
   image_data->setImagePtr(std::move(image));
 
-  // ia save
+  // save
   const std::string image_filename = "image_float32." + image_data->const_extension();
   writeImageData(image_filename, image_data);
 
-  // ia reload and check
+  // reload and check
   ImageDataPtr b_image_data(new ImageData);
   b_image_data->setImagePtr(std::unique_ptr<ImageType>(new ImageType));
   readImageData(image_filename, b_image_data);
@@ -243,15 +243,15 @@ TEST(DummyData, ImageFloat64) {
     }
   }
 
-  // ia image changes ownership to the ImageData
+  // image changes ownership to the ImageData
   ImageDataPtr image_data(new ImageData);
   image_data->setImagePtr(std::move(image));
 
-  // ia save
+  // save
   const std::string image_filename = "image_float64." + image_data->const_extension();
   writeImageData(image_filename, image_data);
 
-  // ia reload and check
+  // reload and check
   ImageDataPtr b_image_data(new ImageData);
   b_image_data->setImagePtr(std::unique_ptr<ImageType>(new ImageType));
   readImageData(image_filename, b_image_data);
@@ -290,15 +290,15 @@ TEST(DummyData, ImageVec3UInt8) {
     }
   }
 
-  // ia image changes ownership to the ImageData
+  // image changes ownership to the ImageData
   ImageDataPtr image_data(new ImageData);
   image_data->setImagePtr(std::move(image));
 
-  // ia save
+  // save
   const std::string image_filename = "image_vec3uc." + image_data->const_extension();
   writeImageData(image_filename, image_data);
 
-  // ia reload and check
+  // reload and check
   ImageDataPtr b_image_data(new ImageData);
   b_image_data->setImagePtr(std::unique_ptr<ImageType>(new ImageType));
   readImageData(image_filename, b_image_data);
@@ -337,15 +337,15 @@ TEST(DummyData, ImageVec4UInt8) {
     }
   }
 
-  // ia image changes ownership to the ImageData
+  // image changes ownership to the ImageData
   ImageDataPtr image_data(new ImageData);
   image_data->setImagePtr(std::move(image));
 
-  // ia save
+  // save
   const std::string image_filename = "image_vec4uc." + image_data->const_extension();
   writeImageData(image_filename, image_data);
 
-  // ia reload and check
+  // reload and check
   ImageDataPtr b_image_data(new ImageData);
   b_image_data->setImagePtr(std::unique_ptr<ImageType>(new ImageType));
   readImageData(image_filename, b_image_data);
@@ -383,15 +383,15 @@ TEST(DummyData, ImageVec3float32) {
     }
   }
 
-  // ia image changes ownership to the ImageData
+  // image changes ownership to the ImageData
   ImageDataPtr image_data(new ImageData);
   image_data->setImagePtr(std::move(image));
 
-  // ia save
+  // save
   const std::string image_filename = "image_vec3f." + image_data->const_extension();
   writeImageData(image_filename, image_data);
 
-  // ia reload and check
+  // reload and check
   ImageDataPtr b_image_data(new ImageData);
   b_image_data->setImagePtr(std::unique_ptr<ImageType>(new ImageType));
   readImageData(image_filename, b_image_data);
@@ -429,15 +429,15 @@ TEST(DummyData, ImageVec4float32) {
     }
   }
 
-  // ia image changes ownership to the ImageData
+  // image changes ownership to the ImageData
   ImageDataPtr image_data(new ImageData);
   image_data->setImagePtr(std::move(image));
 
-  // ia save
+  // save
   const std::string image_filename = "image_vec4f." + image_data->const_extension();
   writeImageData(image_filename, image_data);
 
-  // ia reload and check
+  // reload and check
   ImageDataPtr b_image_data(new ImageData);
   b_image_data->setImagePtr(std::unique_ptr<ImageType>(new ImageType));
   readImageData(image_filename, b_image_data);

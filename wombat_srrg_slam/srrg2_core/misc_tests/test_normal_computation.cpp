@@ -39,12 +39,12 @@ int main(int argc, char** argv) {
   LOG << "image size = " << raw_depth.rows() << "x" << raw_depth.cols() << std::endl;
   cv::imshow("depth image", cv_raw_depth * 5);
 
-  // ia converting depth image to Matrix float
+  // converting depth image to Matrix float
   // we need to generate channel matrices for our output
   // by extracting them from the result of projection
   // extract the depths from the result of projection
   ImageFloat depth_image;
-  raw_depth.convertTo(depth_image, 1e-3); // ia pass millimeters to meters
+  raw_depth.convertTo(depth_image, 1e-3); // pass millimeters to meters
   Matrix3f pinhole_camera_matrix;
   pinhole_camera_matrix << 269.853, 0, 157.051, 0, 269.733, 113.118, 0, 0, 1;
 
@@ -57,13 +57,13 @@ int main(int argc, char** argv) {
   unprojected_matrix.resize(raw_depth.rows(), raw_depth.cols());
   unprojected_matrix.fill(PointNormal3f());
 
-  // ia unproject
+  // unproject
   unprojector.computeMatrix<WithNormals>(unprojected_matrix, depth_image);
 
   ImageVector3f point_image;
   point_image.resize(raw_depth.rows(), raw_depth.cols());
 
-  // ia copy the point to bgr values
+  // copy the point to bgr values
   for (size_t r = 0; r < point_image.rows(); ++r) {
     for (size_t c = 0; c < point_image.cols(); ++c) {
       point_image.at(r, c) << unprojected_matrix.at(r, c).coordinates();
@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
   point_image.toCv(cv_color_image);
   cv::imshow("points unprojected", cv_color_image);
 
-  // ia cross product normals
+  // cross product normals
   LOG << "normal computation: from a matrix cloud using cross product\n";
   NormalComputator2DCrossProduct<UnprojectedMatrixType, 1> normal_computator_cross;
   SystemUsageCounter::tic();
@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
   normal_image_cp.toCv(cv_normal_image_cp);
   cv::imshow("normals - cross product", cv_normal_image_cp);
 
-  // ia sliding window normals
+  // sliding window normals
   LOG << "normal computation: from a matrix cloud using slinding window\n";
   unprojected_matrix.fill(PointNormal3f());
   unprojector.computeMatrix<WithNormals>(unprojected_matrix, depth_image);
@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
   normal_image_sl.toCv(cv_normal_image_sl);
   cv::imshow("normals - sliding window", cv_normal_image_sl);
 
-  // ia unorganized pointcloud
+  // unorganized pointcloud
   LOG << "normal computation: from a vector cloud using slinding window\n";
   PointNormal3fVectorCloud unprojected_cloud;
   NormalComputator1DSlidingWindow<PointNormal3fVectorCloud, 1> normal_computator_cloud;

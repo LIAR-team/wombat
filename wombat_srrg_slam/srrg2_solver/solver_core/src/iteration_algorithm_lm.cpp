@@ -85,7 +85,7 @@ namespace srrg2_solver {
       updateDiagonal();
       
       istat.lambda = _lambda;
-      // tg try to solver the system with the current value of lambda
+      // try to solver the system with the current value of lambda
       if (!solveQuadraticForm(istat)) {
         // if fail set actual chi to max
         temp_chi = std::numeric_limits<float>::max();
@@ -100,15 +100,15 @@ namespace srrg2_solver {
       getRHS(_b);
       float scale = computeScale();
       scale += 1e-3;
-      // tg compute actual chi variation
+      // compute actual chi variation
       chi_delta = (current_chi - temp_chi) / scale;
-      // tg if the solution is good
+      // if the solution is good
       if (chi_delta > 0 && std::isfinite(current_chi)) {
-        // tg compute actual reduction ratio for lambda
+        // compute actual reduction ratio for lambda
         float proposed_scale = 1. - pow((2 * chi_delta - 1), 3);
-        // tg crop it between predefined values (see the params)
+        // crop it between predefined values (see the params)
         cropScale(proposed_scale);
-        // tg reset correction factor and scale lambda
+        // reset correction factor and scale lambda
         _ni = 2;
         _lambda *= proposed_scale;
         current_chi = temp_chi;
@@ -117,10 +117,10 @@ namespace srrg2_solver {
         iterationStats().push_back(istat);
         return true;
       } else {
-        // tg apply lambda correction factor and increase it
+        // apply lambda correction factor and increase it
         _lambda *= _ni;
         _ni *= 2;
-        // tg remove current state
+        // remove current state
         pop();
         if (!std::isfinite(_lambda)) {
           break;
@@ -131,7 +131,7 @@ namespace srrg2_solver {
 
     setDiagonal(_diagonal);
     istat.num_internal_iteration = lm_iteration;
-    // ia in this way we have a single stat for outer LM iter
+    // in this way we have a single stat for outer LM iter
     iterationStats().push_back(istat);
 
     if (chi_delta == 0) {

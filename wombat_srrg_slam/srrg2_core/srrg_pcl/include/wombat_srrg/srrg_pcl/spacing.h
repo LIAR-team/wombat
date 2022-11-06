@@ -19,16 +19,16 @@ namespace srrg2_core {
 
     class RegularSpacing : public Spacing {
     public:
-      // ia disable empty ctor
+      // disable empty ctor
       RegularSpacing() = delete;
       RegularSpacing(float start_angle_rad_,
                      float stop_angle_rad_,
                      const size_t& number_of_pixels_);
 
-      // ia default dtor
+      // default dtor
       ~RegularSpacing() = default;
 
-      // ia overriding functions
+      // overriding functions
       bool getImageIndex(float angle_rad_, size_t& idx_) final;
       bool getAngleRAD(const size_t& idx_, float& angle_rad_) final;
 
@@ -44,10 +44,10 @@ namespace srrg2_core {
 
     class IrregularSpacing : public Spacing {
     public:
-      // ia disable empty ctor
+      // disable empty ctor
       IrregularSpacing() = delete;
 
-      // ia only ctor with parameter is allowed
+      // only ctor with parameter is allowed
       template <class InputIteratorT>
       IrregularSpacing(InputIteratorT angle_rad_begin_,
                        InputIteratorT angle_rad_end_,
@@ -61,10 +61,10 @@ namespace srrg2_core {
         _pix_size_sign = (_avg_pix_size_rad < 0.0) ? -1.0 : 1.0;
       }
 
-      // ia default dtor
+      // default dtor
       virtual ~IrregularSpacing() = default;
 
-      // ia overriding functions
+      // overriding functions
       bool getImageIndex(float angle_rad_, size_t& idx_) final;
       bool getAngleRAD(const size_t& idx_, float& angle_rad_) final;
 

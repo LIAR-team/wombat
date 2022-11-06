@@ -51,7 +51,7 @@ namespace srrg2_core {
     // of a destination container
     template <int src_idx, typename DestRawType_>
     void copyRawFieldTo(DestRawType_& dest) const {
-      // ia this is a shit, because if the point cloud is a vector you must use
+      // this is a shit, because if the point cloud is a vector you must use
       // size ia if it is a matrix you must use capacity
       assert(dest.size() == this->size());
       auto dest_it = dest.begin();

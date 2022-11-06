@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 }
 
 TEST(Viewer, PacketSerialization) {
-  // ds TODO split this test into individual packets
+  // TODO split this test into individual packets
   const size_t num_points = 20;
   Vector3f* points        = new Vector3f[num_points];
   Vector3f* normals       = new Vector3f[num_points];
@@ -36,7 +36,7 @@ TEST(Viewer, PacketSerialization) {
     pd_vector[i].coordinates().setRandom();
   }
 
-  // ia matchables
+  // matchables
   const size_t num_matchables = 20;
   MatchablefVector matchable_vector;
   matchable_vector.reserve(num_matchables);
@@ -68,39 +68,39 @@ TEST(Viewer, PacketSerialization) {
 
   std::cerr << "buffer_start: " << (size_t) buffer_start << std::endl << std::endl;
 
-  // ia payload packets
+  // payload packets
   PacketPayloadPoints p_pack(num_points, points);
   PacketPayloadPoints pn_pack(num_points, points, normals);
 
-  // ia attribute packet
+  // attribute packet
   PacketAttributeColorRGBA color_pack(Vector4f(1, 0, 0, 1));
   PacketAttributePointSize p_size_pack(2.0f);
 
-  // ia command packet
+  // command packet
   PacketCommandPushColor push_color_pack;
   PacketCommandPopAttribute pop_color_attrib;
 
-  // ia object packet
+  // object packet
   PacketObjectSphere sphere_pack(2.0f);
   PacketObjectPyramidWireframe pyr_wf_pack(Vector2f(2.0f, 1.0f));
 
-  // ia transform packet
+  // transform packet
   PacketTransformMultMatrix transf_pack(Matrix4f::Random());
 
-  // ia pointcloud packet
+  // pointcloud packet
   PacketPointNormalColor3fVectorCloud point_cloud_pack(&point_vector);
   PacketPointIntensityDescriptor2fVectorCloud point_intensity_cloud_pack(&pd_vector);
 
-  // ia machable vector
+  // machable vector
   PacketMatchablefVector matchable_pack(&matchable_vector);
 
-  // ia visual matchable vector
+  // visual matchable vector
   PacketVisualMatchablefVector visual_matchable_pack(&visual_matchable_vector);
 
-  // ia info packet
+  // info packet
   PacketInfoEndEpoch end_pack;
 
-  // ia serialize
+  // serialize
   char* buffer_end = buffer_start;
 
   buffer_end = p_pack.serialize(buffer_end);
@@ -134,7 +134,7 @@ TEST(Viewer, PacketSerialization) {
   std::cerr << "buffer_end END_PACK: " << (size_t) buffer_end << std::endl;
   std::cerr << std::endl << std::endl;
 
-  // ia deserialize
+  // deserialize
   PacketPayloadPoints p_recv_pack;
   PacketPayloadPoints pn_recv_pack;
   PacketAttributeColorRGBA color_recv_pack(Vector4f::Zero());
@@ -199,19 +199,19 @@ TEST(Viewer, PacketSerialization) {
   delete[] normals;
 }
 
-// ia cv image packets
+// cv image packets
 TEST(ViewerPacketSerialization, PacketCvMat) {
-  // ds input images
+  // input images
   cv::Mat example_image(100, 100, CV_8U);
   cv::randu(example_image, cv::Scalar(0), cv::Scalar(100));
   cv::Mat example_image_color(100, 100, CV_8UC3);
   cv::randu(example_image_color, cv::Scalar(0, 0, 0), cv::Scalar(100, 100, 100));
 
-  // ds stream buffer
+  // stream buffer
   char* buffer = new char[max_buffer_size];
   PacketInfoEndEpoch end_pack;
 
-  // ds write
+  // write
   PacketCvMat image_packet_write(example_image);
   PacketCvMat image_color_packet_write(example_image_color);
   char* write_buffer = buffer;
@@ -219,17 +219,17 @@ TEST(ViewerPacketSerialization, PacketCvMat) {
   write_buffer       = image_color_packet_write.serialize(write_buffer);
   end_pack.serialize(write_buffer);
 
-  // ds read
+  // read
   PacketCvMat image_packet_read;
   PacketCvMat image_color_packet_read;
   const char* read_buffer = buffer;
   read_buffer             = image_packet_read.deserialize(read_buffer);
   read_buffer             = image_color_packet_read.deserialize(read_buffer);
 
-  // ds free buffer
+  // free buffer
   delete buffer;
 
-  // ds verify symmetric serialization
+  // verify symmetric serialization
   ASSERT_EQ(image_packet_read.data.type(), example_image.type());
   ASSERT_EQ(image_packet_read.data.rows, example_image.rows);
   ASSERT_EQ(image_packet_read.data.cols, example_image.cols);

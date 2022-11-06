@@ -22,11 +22,11 @@ namespace srrg2_core {
 
     //! @brief default ctor (calls base class)
     PacketPointVector_(const EntryTypeVector* point_vector_ = nullptr) : BaseClass(point_vector_) {
-      // ia empty
+      // empty
     }
 
     //! @brief ctor that copies a subset of fields only
-    // ds create an adapted packet vector of EntryType from a different
+    // create an adapted packet vector of EntryType from a different
     // SourceEntryType_ ds this is useful to visualize only a subset of the
     // elements of SourceEntryType_ ds it is required that SourceEntryType_ is a
     // subclass of EntryType
@@ -34,17 +34,17 @@ namespace srrg2_core {
     PacketPointVector_(
       const std::vector<SourceEntryType_, Eigen::aligned_allocator<SourceEntryType_>>*
         point_vector_ = nullptr) {
-      // ia initialize type
+      // initialize type
       this->type = PacketType_;
 
       if (point_vector_) {
         this->num_elements = point_vector_->size();
 
-        // ds populate adapted vector element by element
+        // populate adapted vector element by element
         this->data_vector = new EntryTypeVector();
         this->data_vector->reserve(this->num_elements);
         for (const auto& point_source : *point_vector_) {
-          // ds copy over all shared fields from the source into the destination
+          // copy over all shared fields from the source into the destination
           // point
           PointType point;
           point.template copyFields<SourceEntryType_>(point_source);

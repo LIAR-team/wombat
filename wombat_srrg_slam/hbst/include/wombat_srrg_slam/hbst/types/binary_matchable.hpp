@@ -6,26 +6,27 @@
 #include <stdint.h>
 #include <vector>
 
-// ds if opencv is present on building system
+// if opencv is present on building system
 #ifdef SRRG_HBST_HAS_OPENCV
 #include <opencv2/core/version.hpp>
 #include <opencv2/opencv.hpp>
 #endif
 
-namespace srrg_hbst {
+namespace srrg_hbst
+{
 
   //! @class default matching object (wraps the input descriptors and more)
   //! @param descriptor_size_bits_ number of bits for the native descriptor
   template <typename ObjectType_, uint32_t descriptor_size_bits_ = 256>
-  class BinaryMatchable {
-    // ds exports
+  class BinaryMatchable
+  {
   public:
     //! @brief descriptor type (extended by augmented bits, no effect if zero)
     using Descriptor = std::bitset<descriptor_size_bits_>;
     using ObjectType = ObjectType_;
     using ObjectMap  = std::map<uint64_t, ObjectType>;
 
-    // ds shared properties
+    // shared properties
   public:
     //! @brief descriptor size in bits (for all matchables)
     static constexpr uint32_t descriptor_size_bits = descriptor_size_bits_;
@@ -34,7 +35,7 @@ namespace srrg_hbst {
     //! bits)
     static constexpr uint32_t raw_descriptor_size_bytes = descriptor_size_bits_ / 8;
 
-    //! @brief descriptor size, bits in whole bytes (corresponds to descriptor_size_bits for a
+    //! @brief descriptor size, bits in whole bytes (corresponto descriptor_size_bits for a
     //! byte-wise descriptor)
     static constexpr uint32_t descriptor_size_bits_in_bytes = raw_descriptor_size_bytes * 8;
 
@@ -42,7 +43,7 @@ namespace srrg_hbst {
     static constexpr uint32_t descriptor_size_bits_overflow =
       descriptor_size_bits - descriptor_size_bits_in_bytes;
 
-    // ds ctor/dtor
+    // ctor/dtor
   public:
     //! @brief default constructor: DISABLED
     BinaryMatchable() = delete;
@@ -74,8 +75,8 @@ namespace srrg_hbst {
       assert(number_of_objects == objects.size());
     }
 
-// ds wrapped constructors - only available if OpenCV is present on building system
-// ds this choice is slower since we have to perform a conversion: getDescriptor()
+// wrapped constructors - only available if OpenCV is present on building system
+// this choice is slower since we have to perform a conversion: getDescriptor()
 #ifdef SRRG_HBST_HAS_OPENCV
 
     //! @brief constructor with an object pointer for association
@@ -95,7 +96,7 @@ namespace srrg_hbst {
       objects.clear();
     }
 
-    // ds functionality
+    // functionality
   public:
     //! @brief computes the classic Hamming descriptor distance between this and another matchable
     //! @param[in] matchable_query_ the matchable to compare this against
@@ -145,28 +146,28 @@ namespace srrg_hbst {
     //! @brief descriptor wrapping - only available if OpenCV is present on building system
     //! @param[in] descriptor_cv_ opencv descriptor to convert into HBST format
     static inline Descriptor getDescriptor(const cv::Mat& descriptor_cv_) {
-      // ds buffer
+      // buffer
       Descriptor binary_descriptor(descriptor_size_bits_);
 
-      // ds set original descriptor string after augmentation
+      // set original descriptor string after augmentation
       for (uint64_t byte_index = 0; byte_index < raw_descriptor_size_bytes; ++byte_index) {
         const uint32_t bit_index_start = byte_index * 8;
 
-        // ds grab a byte and convert it to a bitset so we can access the single bits
+        // grab a byte and convert it to a bitset so we can access the single bits
         const std::bitset<8> descriptor_byte(descriptor_cv_.at<uchar>(byte_index));
 
-        // ds set bitstring
+        // set bitstring
         for (uint8_t v = 0; v < 8; ++v) {
           binary_descriptor[bit_index_start + v] = descriptor_byte[v];
         }
       }
 
-      // ds check if we have extra bits (less than 1 byte i.e. <= 7 bits)
+      // check if we have extra bits (less than 1 byte i.e. <= 7 bits)
       if (descriptor_size_bits_overflow > 0) {
-        // ds get last byte (not fully set)
+        // get last byte (not fully set)
         const std::bitset<8> descriptor_byte(descriptor_cv_.at<uchar>(raw_descriptor_size_bytes));
 
-        // ds only set the remaining bits
+        // only set the remaining bits
         for (uint32_t v = 0; v < descriptor_size_bits_overflow; ++v) {
           binary_descriptor[descriptor_size_bits_in_bytes + v] =
             descriptor_byte[8 - descriptor_size_bits_overflow + v];
@@ -176,7 +177,7 @@ namespace srrg_hbst {
     }
 #endif
 
-    // ds attributes
+    // attributes
   public:
     //! @brief descriptor data string vector
     const Descriptor descriptor;
@@ -188,7 +189,7 @@ namespace srrg_hbst {
     //! @brief quick access to the number of contained objects/image_identifiers (default: 1)
     uint64_t number_of_objects;
 
-    // ds fast access (for a matchable with only single values, internal only)
+    // fast access (for a matchable with only single values, internal only)
   protected:
     //! @brief single value access only: linked object to group of descriptors (e.g. an image or
     //! image index)

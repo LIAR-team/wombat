@@ -20,7 +20,7 @@ const std::string exe_name = "test_sparse_block_linear_solver_cholmod_full";
 using namespace srrg2_core;
 using namespace srrg2_solver;
 
-// ia global data
+// global data
 const float sensing_radius = 2.5f;
 const size_t n_poses       = 200;
 const size_t n_iterations  = 25;
@@ -42,7 +42,7 @@ TEST(SYNTHETIC_DATA, SparseBlockLinearSolverCholmodFull) {
   Isometry3fVector gt_trajectory;
   createGTTrajectory(n_poses, gt_trajectory);
 
-  // ia create a graph
+  // create a graph
   FactorGraphPtr graph(new FactorGraph);
   createFactorGraph(gt_trajectory, graph, true);
 
@@ -60,27 +60,27 @@ TEST(SYNTHETIC_DATA, SparseBlockLinearSolverCholmodFull) {
   solver.param_max_iterations.pushBack(n_iterations);
   solver.setGraph(graph);
 
-  // ia do the optimization
+  // do the optimization
   solver.compute();
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
   ASSERT_EQ(stats.size(), n_iterations);
   LOG << "stats:\n\n" << stats << std::endl;
 
-  // ia assert that chi2 is ok
+  // assert that chi2 is ok
   ASSERT_LT(final_chi2, 1e-6);
 
-  // ia assert final pose is the same as the original one
+  // assert final pose is the same as the original one
   const auto& final_estimated_pose =
     static_cast<VariableSE3QuaternionRight*>(graph->variable(n_poses - 1))->estimate();
   const auto& final_gt_pose = gt_trajectory[n_poses - 1];
   const auto diff           = geometry3d::t2tnq(final_estimated_pose.inverse() * final_gt_pose);
-  ASSERT_LT(diff[0], 1e-5); // ia X
-  ASSERT_LT(diff[1], 1e-5); // ia Y
-  ASSERT_LT(diff[2], 1e-5); // ia Z
-  ASSERT_LT(diff[3], 1e-5); // ia qx
-  ASSERT_LT(diff[4], 1e-5); // ia qy
-  ASSERT_LT(diff[5], 1e-5); // ia qz
+  ASSERT_LT(diff[0], 1e-5); // X
+  ASSERT_LT(diff[1], 1e-5); // Y
+  ASSERT_LT(diff[2], 1e-5); // Z
+  ASSERT_LT(diff[3], 1e-5); // qx
+  ASSERT_LT(diff[4], 1e-5); // qy
+  ASSERT_LT(diff[5], 1e-5); // qz
 }
 
 void createGTTrajectory(const size_t& n_poses_, Isometry3fVector& gt_trajectory_) {

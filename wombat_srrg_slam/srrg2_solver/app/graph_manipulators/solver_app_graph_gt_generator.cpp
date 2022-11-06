@@ -127,7 +127,7 @@ bool assign(FactorBase* factor) {
   return false;
 }
 
-// ia register types
+// register types
 void initTypes() {
   variables_and_factors_2d_registerTypes();
   variables_and_factors_3d_registerTypes();
@@ -136,7 +136,7 @@ void initTypes() {
 }
 
   
-// ia THE PROGRAM
+// THE PROGRAM
 int main(int argc, char** argv) {
   initTypes();
   constructAssigners();
@@ -164,7 +164,7 @@ int main(int argc, char** argv) {
   ConfigurableManager manager;
   manager.read(config_file.value());
 
-  // ia check if solver with this specific name exists
+  // check if solver with this specific name exists
   LOG << "loading solver [ " << config_file.value() << " ]\n";
   SolverPtr solver = manager.getByName<Solver>(solver_name.value());
   if (!solver) {

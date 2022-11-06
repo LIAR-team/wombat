@@ -5,30 +5,35 @@
 
 #include "wombat_srrg_slam/hbst/types/binary_tree.hpp"
 
-typedef srrg_hbst::BinaryTree256<size_t> Tree;
+using Tree = srrg_hbst::BinaryTree256<size_t>;
 
-// ds hbst test fixture
-class HBST : public ::testing::Test {
+// hbst test fixture
+class HBST : public ::testing::Test
+{
 protected:
-  void SetUp() override {
-    Tree::Node::maximum_partitioning = 0.45;            // ds noisy, synthetic case
-    random_number_generator          = std::mt19937(0); // ds locked seed for reproducibility
+  void SetUp() override
+  {
+    Tree::Node::maximum_partitioning = 0.45;            // noisy, synthetic case
+    random_number_generator          = std::mt19937(0); // locked seed for reproducibility
     generateMatchables(matchables_train_per_image, number_of_images_train, 0);
     generateMatchables(matchables_query_per_image, number_of_images_query, number_of_images_train);
   }
 
-  void TearDown() override {
-    // ds training matchables are already freed by the tree
+  void TearDown() override
+  {
+    // training matchables are already freed by the tree
     freeMatchablesQuery();
   }
 
-  void generateMatchables(std::vector<Tree::MatchableVector>& matchables_per_image_,
-                          const size_t& number_of_images_,
-                          const size_t& image_number_start_) {
+  void generateMatchables(
+    std::vector<Tree::MatchableVector>& matchables_per_image_,
+    const size_t& number_of_images_,
+    const size_t& image_number_start_)
+  {
     matchables_per_image_.clear();
     matchables_per_image_.reserve(number_of_images_);
 
-    // ds populate matchable vectors
+    // populate matchable vectors
     for (size_t index_image = 0; index_image < number_of_images_; ++index_image) {
       Tree::MatchableVector matchables;
       matchables.reserve(number_of_matchables_per_image);
@@ -44,7 +49,8 @@ protected:
     }
   }
 
-  void freeMatchablesQuery() {
+  void freeMatchablesQuery()
+  {
     for (const Tree::MatchableVector& matchables : matchables_query_per_image) {
       for (const Tree::Matchable* matchable : matchables) {
         delete matchable;
@@ -53,7 +59,8 @@ protected:
     matchables_query_per_image.clear();
   }
 
-  void flipBits(Tree::Descriptor& descriptor_) {
+  void flipBits(Tree::Descriptor & descriptor_)
+  {
     for (size_t flips = 0; flips < number_of_bits_to_flip; ++flips) {
       std::uniform_int_distribution<uint32_t> bit_index_to_flip(
         0, Tree::Matchable::descriptor_size_bits - 1);
@@ -82,7 +89,7 @@ protected:
 
 std::mt19937 HBST::random_number_generator;
 
-// ds streaming "ground truth" assuming consistent random sampling on testing architectures
+// streaming "ground truth" assuming consistent random sampling on testing architectures
 std::vector<size_t> HBST::identifiers_query = {
   58,  78,  91,  108, 109, 116, 122, 127, 144, 146, 149, 150, 151, 159, 183, 187,
   190, 192, 200, 212, 217, 241, 247, 258, 259, 266, 309, 312, 320, 340, 349, 360,

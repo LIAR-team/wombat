@@ -15,11 +15,11 @@ namespace srrg2_core {
       _pose_in_parent = _events.rbegin()->second;
       return Link::InterpolationStatus::Ok;
     }
-    // ds search two events for interpolating the specified time
+    // search two events for interpolating the specified time
     TransformQueue::const_iterator event_bot = _events.cend();
     TransformQueue::const_iterator event_top = _events.cend();
 
-    // ds if interpolation is successful
+    // if interpolation is successful
     if (_setInterpolationData(time_seconds_, event_bot, event_top) == InterpolationStatus::Ok) {
       if (event_bot == _events.cend() && event_top == _events.cend()) {
         return InterpolationStatus::NoData;
@@ -35,16 +35,16 @@ namespace srrg2_core {
         _pose_in_parent = event_top->second;
         return _sampled_status;
       }
-      // ds interpolate between the two events at the specified time
+      // interpolate between the two events at the specified time
       const double normalized_time = (time_seconds_ - t_bot) / (t_top - t_bot);
 
-      // ds interpolate translation - TODO check
+      // interpolate translation - TODO check
       const Vector3f& translation_top = transform_top.translation();
       const Vector3f& translation_bot = transform_bot.translation();
       _pose_in_parent.translation() =
         translation_top + normalized_time * (translation_top - translation_bot);
 
-      // tg interpolate rotation
+      // interpolate rotation
       const Quaternionf q_bot(transform_bot.linear());
       const Quaternionf q_top(transform_top.linear());
       _pose_in_parent.linear() = q_bot.slerp(normalized_time, q_top).toRotationMatrix();
@@ -58,11 +58,11 @@ namespace srrg2_core {
       return;
     }
 
-    // ds set parent
+    // set parent
     _parent            = link_;
     _identifier_parent = _parent->_identifier;
 
-    // ds add ourself to the parents children
+    // add ourself to the parents children
     //    _parent->_children.insert(this);
   }
 
@@ -71,7 +71,7 @@ namespace srrg2_core {
       return false;
     }
 
-    // ds if it worked and the identifiers match - keep the event - otherwise ignore it
+    // if it worked and the identifiers match - keep the event - otherwise ignore it
     if (event_->identifier() == _identifier) {
       if (!_identifier_parent.length() && event_->identifierParent().length()) {
         _identifier_parent = event_->identifierParent();
@@ -82,7 +82,7 @@ namespace srrg2_core {
                   << std::endl;
         throw std::runtime_error("mismatching parents");
       }
-      // ds in case we have at least two events in the link (minimum for interpolation)
+      // in case we have at least two events in the link (minimum for interpolation)
       if (_events.size() > 1) {
         TransformQueue::reverse_iterator event_last = _events.rbegin();
         TransformQueue::iterator event_first        = _events.begin();
@@ -99,7 +99,7 @@ namespace srrg2_core {
                                    "transform are present with the same timestamp");
         }
       } else {
-        // ds add always first event
+        // add always first event
         _events[event_->timeSeconds()] = event_->transform();
       }
       return true;
@@ -146,7 +146,7 @@ namespace srrg2_core {
   Link::_setInterpolationData(const double& time_seconds_,
                               TransformQueue::const_iterator& event_bottom_,
                               TransformQueue::const_iterator& event_top_) {
-    // ds we require at least 2 events to interpolate - check for failure
+    // we require at least 2 events to interpolate - check for failure
     if (_events.size() < 2) {
       _sampled_status = InterpolationStatus::NoData;
       return _sampled_status;
@@ -176,7 +176,7 @@ namespace srrg2_core {
       return _sampled_status;
     }
 
-    // ds done
+    // done
     _sampled_status = InterpolationStatus::Ok;
     return _sampled_status;
   }

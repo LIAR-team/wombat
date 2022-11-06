@@ -37,7 +37,7 @@ namespace srrg2_solver {
 
   void SE3PosePoseChordalHessianFactor::setMeasurement(const Isometry3f& measurement_) {
     _measurement = measurement_;
-    // tg recompute projected information matrix based on the new measurement
+    // recompute projected information matrix based on the new measurement
     Matrix6f omega = _pose_omega;
     setInformationMatrix(omega);
   }
@@ -50,7 +50,7 @@ namespace srrg2_solver {
     }
     const VariableSE3EulerLeft* from = _variables.at<0>();
     const VariableSE3EulerLeft* to   = _variables.at<1>();
-    // tg extract quantities required for jacobian/hessian computation
+    // extract quantities required for jacobian/hessian computation
     const Isometry3f& Ti = from->estimate();
     const Matrix3f& Ri   = Ti.linear();
     const Isometry3f& Tj = to->estimate();
@@ -59,18 +59,18 @@ namespace srrg2_solver {
     if (!isValid()) {
       return;
     }
-    // tg compute matrix error
+    // compute matrix error
     const Isometry3f prediction = Ti.inverse() * Tj;
     Isometry3f error            = Isometry3f::Identity();
     error.matrix()              = prediction.matrix() - _measurement.matrix();
-    // tg flatten
+    // flatten
     ErrorVectorType e           = srrg2_core::geometry3d::flattenByCols(error);
     this->_stats.chi            = e.transpose() * _omega * e;
     this->robustify();
     if (chi_only) {
       return;
     }
-    // tg compute jacobian
+    // compute jacobian
     JacobianMatrixType J;
     J.setZero();
     const Matrix3f dR_x = Ri.transpose() * Rx0 * Rj;
@@ -87,7 +87,7 @@ namespace srrg2_solver {
     J.block<9, 1>(0, 5) = dr_z_flattened;
     J.block<3, 3>(9, 0) = Ri.transpose();
     J.block<3, 3>(9, 3) = -Ri.transpose() * geometry3d::skew(tj);
-    // tg robustify H and b
+    // robustify H and b
     const float& w      = this->_kernel_scales[1];
     Matrix6f H          = w * J.transpose() * _omega * J;
     Vector6f b          = w * J.transpose() * _omega * e;

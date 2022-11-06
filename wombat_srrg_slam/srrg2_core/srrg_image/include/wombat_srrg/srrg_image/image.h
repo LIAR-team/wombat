@@ -42,7 +42,7 @@ namespace srrg2_core {
     TWENTYFIVE_PIXELS = 25
   };
 
-  // bdc to be compliant w/ opencv, we need a cv::Size equivalent
+  // to be compliant w/ opencv, we need a cv::Size equivalent
   struct ImageSize {
     size_t width;
     size_t height;
@@ -307,5 +307,5 @@ namespace srrg2_core {
 
 } // namespace srrg2_core
 
-// bdc includes implementation of template methods
+// includes implementation of template methods
 #include "image.hpp"

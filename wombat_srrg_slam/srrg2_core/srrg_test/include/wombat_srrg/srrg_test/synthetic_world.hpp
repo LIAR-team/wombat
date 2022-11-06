@@ -9,7 +9,7 @@
 
 namespace srrg2_test {
 
-  // ds test fixture
+  // test fixture
   template <size_t Dimension_,
             typename RealType_,
             typename PointType_          = srrg2_core::Point_<Dimension_, RealType_>,
@@ -43,7 +43,7 @@ namespace srrg2_test {
                      const SensorType& type_) {
       ASSERT_GT(projection_matrix.norm(), 0);
 
-      // ds sample world points
+      // sample world points
       points_in_world.clear();
       points_in_world.reserve(number_of_points_);
       for (size_t i = 0; i < number_of_points_; ++i) {
@@ -52,15 +52,15 @@ namespace srrg2_test {
         points_in_world.emplace_back(point_in_world);
       }
 
-      // ds if no sensor poses are set we sample the first one at identity
+      // if no sensor poses are set we sample the first one at identity
       if (sensor_poses.empty()) {
         sensor_poses.push_back(TransformType::Identity());
       }
       const size_t number_of_poses = sensor_poses.size();
 
-      // ds compute projective baseline (assuming no rotation)
+      // compute projective baseline (assuming no rotation)
       baseline_to_second_sensor_pixelmeters = projection_matrix * offset_second_sensor;
-      // ds sample scenario for each sensor pose
+      // sample scenario for each sensor pose
       points_in_sensor.resize(number_of_poses);
       points_in_sensor_projected_homo.resize(number_of_poses);
       points_in_sensor_projected_homo_second.resize(number_of_poses);
@@ -77,7 +77,7 @@ namespace srrg2_test {
         const TransformType& sensor_in_local_map = sensor_poses[index_pose];
         const TransformType local_map_in_sensor  = sensor_in_local_map.inverse();
 
-        // ds current sensor pose
+        // current sensor pose
         points_in_sensor[index_pose].reserve(number_of_points_);
         points_in_sensor_projected_homo[index_pose].reserve(number_of_points_);
         points_in_sensor_projected_homo_second[index_pose].reserve(number_of_points_);
@@ -89,11 +89,11 @@ namespace srrg2_test {
         correspondences_canvas_to_sensor[index_pose].reserve(number_of_points_);
         correspondences_canvas_to_world[index_pose].reserve(number_of_points_);
 
-        // ds pinhole camera check - we can only have a measurement per pixel (no depth buffer)
+        // pinhole camera check - we can only have a measurement per pixel (no depth buffer)
         std::set<size_t> occupied_rows;
         std::set<size_t> occupied_cols;
 
-        // ds transform and project points into sensor frame
+        // transform and project points into sensor frame
         for (size_t i = 0; i < number_of_points_; ++i) {
           PointType point_in_sensor;
           point_in_sensor.coordinates() = local_map_in_sensor * points_in_world[i].coordinates();
@@ -106,17 +106,17 @@ namespace srrg2_test {
           point_in_sensor_projected_homo_second.coordinates() =
             point_in_sensor_projected_homo.coordinates() - baseline_to_second_sensor_pixelmeters;
 
-          // ds check visibility criteria depending on sensor type TODO proper implementation
+          // check visibility criteria depending on sensor type TODO proper implementation
           PointProjectedType point_projected;
           PointProjectedType point_projected_second;
           if (type_ == SensorType::Laser) {
-            // ds assuming laser - range measurement must be positive
+            // assuming laser - range measurement must be positive
             if (point_in_sensor_projected_homo.coordinates()(0) <= 0 ||
                 point_in_sensor_projected_homo_second.coordinates()(0) <= 0) {
               continue;
             }
 
-            // ds set range measurement
+            // set range measurement
             for (size_t j = 0; j < Dimension_ - 1; ++j) {
               point_projected.coordinates()(j) = point_in_sensor_projected_homo.coordinates()(j);
               if (point_projected.coordinates()(j) > maximum_projection_value[index_pose]) {
@@ -128,13 +128,13 @@ namespace srrg2_test {
                 point_in_sensor_projected_homo_second.coordinates()(j);
             }
           } else if (type_ == SensorType::Camera) {
-            // ds assuming pinhole camera - all homogeneous values must be positive
+            // assuming pinhole camera - all homogeneous values must be positive
             if (point_in_sensor.coordinates()(0) <= 0 || point_in_sensor.coordinates()(1) <= 0 ||
                 point_in_sensor.coordinates()(2) <= min_camera_depth) {
               continue;
             }
 
-            // ds perform homogeneous division for raw measurements
+            // perform homogeneous division for raw measurements
             const RealType_ normalizer =
               point_in_sensor_projected_homo.coordinates()(Dimension_ - 1);
             assert(normalizer ==
@@ -149,8 +149,8 @@ namespace srrg2_test {
                 point_in_sensor_projected_homo_second.coordinates()(j) / normalizer;
             }
 
-            // ds check if the pixel is still not available for addition (TODO multidim)
-            // ds this is kind of a depth buffer uagh
+            // check if the pixel is still not available for addition (TODO multidim)
+            // this is kind of a depth buffer uagh
             const size_t col = std::round(point_projected.coordinates()(0));
             const size_t row = std::round(point_projected.coordinates()(1));
             if (occupied_rows.count(row) != 0 && occupied_cols.count(col) != 0) {
@@ -161,7 +161,7 @@ namespace srrg2_test {
             }
           }
 
-          // ds point is valid if still here
+          // point is valid if still here
           const size_t index_moving = points_in_sensor[index_pose].size();
           points_in_sensor[index_pose].emplace_back(point_in_sensor);
           points_in_sensor_projected_homo[index_pose].emplace_back(point_in_sensor_projected_homo);
@@ -172,11 +172,11 @@ namespace srrg2_test {
           correspondences_sensor_to_world[index_pose].emplace_back(
             srrg2_core::Correspondence(index_moving, i));
 
-          // ds canvas check - since image coordinates are not normalized and centered
-          // dsthey are positive including 0
+          // canvas check - since image coordinates are not normalized and centered
+          //they are positive including 0
           bool is_inside_canvas = true;
           for (size_t j = 0; j < Dimension_ - 1; ++j) {
-            // ds if either projection is outside of the available image plane
+            // if either projection is outside of the available image plane
             if (point_projected.coordinates()(j) >= canvas_size(j) ||
                 point_projected_second.coordinates()(j) >= canvas_size(j)) {
               is_inside_canvas = false;
@@ -204,13 +204,13 @@ namespace srrg2_test {
       sensor_poses.reserve(number_of_poses_);
       sensor_poses.emplace_back(start_);
 
-      // ds compute total translation and orientation delta required to arrive at goal
+      // compute total translation and orientation delta required to arrive at goal
       if (number_of_poses_ > 2) {
         const TransformType motion(start_.inverse() * goal_);
         const VectorType translation_step(motion.translation() / (number_of_poses_ - 1));
         TransformType pose(start_);
 
-        // ds slerp along
+        // slerp along
         for (size_t i = 0; i < number_of_poses_ - 2; ++i) {
           pose.translation() += generator.getRandomVector(translation_step, standard_deviation_);
           sensor_poses.emplace_back(pose);
@@ -279,24 +279,24 @@ namespace srrg2_test {
     void TearDown() override {
     }
 
-    // ds current world points
+    // current world points
     VectorPointCloudType points_in_world;
 
-    // ds sensor projective matrix (from world to sensor frame)
+    // sensor projective matrix (from world to sensor frame)
     MatrixType projection_matrix = MatrixType::Zero();
 
-    // ds secondary projective sensor offset (w.r.t. first sensor)
-    // ds can be used to generate a rigid stereo scenario (redundant if not used)
+    // secondary projective sensor offset (w.r.t. first sensor)
+    // can be used to generate a rigid stereo scenario (redundant if not used)
     VectorType offset_second_sensor                  = VectorType::Zero();
     VectorType baseline_to_second_sensor_pixelmeters = VectorType::Zero();
     RealType_ min_camera_depth                       = 1;
 
-    // ds sensor poses w.r.t. world
+    // sensor poses w.r.t. world
     VectorTransformType sensor_poses;
     srrg2_core::Isometry3_<RealType_> sensor_in_robot;
     srrg2_core::Isometry3_<RealType_> robot_in_sensor;
 
-    // ds current sensor points before/after projection
+    // current sensor points before/after projection
     std::vector<VectorPointCloudType> points_in_sensor;
     std::vector<VectorPointCloudType> points_in_sensor_projected_homo;
     std::vector<VectorPointCloudType> points_in_sensor_projected_homo_second;
@@ -304,17 +304,17 @@ namespace srrg2_test {
     std::vector<VectorPointProjectedCloudType> points_in_sensor_projected_second;
     std::vector<srrg2_core::CorrespondenceVector> correspondences_sensor_to_world;
 
-    // ds optional canvas size and points that land within it
+    // optional canvas size and points that land within it
     VectorProjectedType canvas_size = VectorProjectedType::Zero();
     std::vector<VectorPointProjectedCloudType> points_in_sensor_projected_in_canvas;
     std::vector<VectorPointProjectedCloudType> points_in_sensor_projected_in_canvas_second;
     std::vector<srrg2_core::CorrespondenceVector> correspondences_canvas_to_sensor;
     std::vector<srrg2_core::CorrespondenceVector> correspondences_canvas_to_world;
 
-    // ds maximum single, projected value obtained
+    // maximum single, projected value obtained
     std::vector<RealType_> maximum_projection_value;
 
-    // ds random number generator
+    // random number generator
     srrg2_test::RandomNumberGeneratorUniform<RealType_> generator;
     /*
         // srrg messages

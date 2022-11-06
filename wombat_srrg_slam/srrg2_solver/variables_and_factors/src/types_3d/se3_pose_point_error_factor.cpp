@@ -14,11 +14,11 @@ namespace srrg2_solver {
       return;
     }
     _J.setZero();
-    // tg jacobian with respect to pose
+    // jacobian with respect to pose
     _J.block<3, 3>(0, 0) = -1.f * Matrix3f::Identity();
     // srrg this is multiplied by 2.f because we use quaternions
     _J.block<3, 3>(0, 3) = 2.f * geometry3d::skew(predicted_point);
-    // tg jacobian with respect to point
+    // jacobian with respect to point
     _J.block<3, 3>(0, 6) = X.linear().transpose();
   }
 

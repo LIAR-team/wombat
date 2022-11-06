@@ -74,7 +74,7 @@ namespace srrg2_core {
       return true;
     }
 
-    // ia operator overload for easy printing
+    // operator overload for easy printing
     std::ostream& operator<<(std::ostream& stream_,
                              const srrg2_core::srrg2_lidar3d_utils::RegularSpacing& spacing_) {
       stream_ << "RegularSpacing parameters:" << std::endl;

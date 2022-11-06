@@ -28,12 +28,12 @@ namespace srrg2_core {
           throw std::runtime_error("Lidar3DUtils::generateRings|ERROR, empty src cloud");
         }
 
-        // ia instanciate a LidarSensor
+        // instanciate a LidarSensor
         Lidar3DSensor_<lidar_type_> lidar;
         const float interpolation_factor = float(lidar.verticalResolution() - 1) /
                                            (lidar.verticalFOVUpper() - lidar.verticalFOVLower());
 
-        // ia compute start and ending angle of the ring
+        // compute start and ending angle of the ring
         float start_ori = -atan2(cloud_[0].coordinates().y(), cloud_[0].coordinates().x());
         float end_ori   = -atan2(cloud_[cloud_size - 1].coordinates().y(),
                                cloud_[cloud_size - 1].coordinates().x()) +
@@ -44,38 +44,38 @@ namespace srrg2_core {
           end_ori += 2 * M_PI;
         }
 
-        // ia we need an empty thing
+        // we need an empty thing
         if (rings_.size()) {
           rings_.clear();
         }
 
-        // ia we know the exact number of rings
+        // we know the exact number of rings
         rings_.resize(lidar.verticalResolution());
 
-        // ia we suppose that there are a certain amount of points per ring
+        // we suppose that there are a certain amount of points per ring
         const size_t target_number_of_points_per_ring = 4100;
         for (auto& r : rings_) {
           r.reserve(target_number_of_points_per_ring);
         }
 
-        // ia new point
+        // new point
         srrg2_core::Point3f point;
         bool half_passed = false;
 
-        // bdc extract valid points from input cloud
+        // extract valid points from input cloud
         for (size_t i = 0; i < cloud_size; i++) {
-          // bdc rotate velodyne points to be camera compliant
+          // rotate velodyne points to be camera compliant
           point.coordinates().x() = cloud_[i].coordinates().y();
           point.coordinates().y() = cloud_[i].coordinates().z();
           point.coordinates().z() = cloud_[i].coordinates().x();
 
-          // bdc skip NaN and INF valued points
+          // skip NaN and INF valued points
           if (std::isnan(point.coordinates().x()) || std::isnan(point.coordinates().y()) ||
               std::isnan(point.coordinates().z())) {
             continue;
           }
 
-          // bdc skip zero valued points
+          // skip zero valued points
           if (point.coordinates().x() * point.coordinates().x() +
                 point.coordinates().y() * point.coordinates().y() +
                 point.coordinates().z() * point.coordinates().z() <
@@ -83,7 +83,7 @@ namespace srrg2_core {
             continue;
           }
 
-          // bdc calculate vertical point angle and scan ID
+          // calculate vertical point angle and scan ID
           const float angle =
             atan(point.coordinates().y() / sqrt(point.coordinates().x() * point.coordinates().x() +
                                                 point.coordinates().z() * point.coordinates().z()));
@@ -118,7 +118,7 @@ namespace srrg2_core {
           //    float realTime = 0.1 * (ori - startOri) / (endOri - startOri);
           //    projectPointToStartOfSweep(point, relTime);
 
-          // ia put the new point inside the proper ring
+          // put the new point inside the proper ring
           rings_[ring_idx].emplace_back(point);
         }
       }
@@ -133,7 +133,7 @@ namespace srrg2_core {
                                     const float& ground_distance_threshold_) {
         const size_t& rows = organized_cloud_.rows();
         const size_t& cols = organized_cloud_.cols();
-        // bdc super inefficient, but it's exactly how's described in sple paper
+        // super inefficient, but it's exactly how's described in sple paper
         // (Serafin, Olson, Grisetti)
         srrg2_core::Matrix_<int8_t> vertical;
         vertical.resize(rows, cols);

@@ -83,7 +83,7 @@ namespace srrg2_core {
     return returned_path;
   }
 
-  // ds timing
+  // timing
   double SystemUsageCounter::_time_seconds_last_tic = 0;
 
   using namespace std;
@@ -103,17 +103,17 @@ namespace srrg2_core {
   }
 
   std::string getTimestamp() {
-    // ds obtain current time as count
+    // obtain current time as count
     timeval time_value;
     gettimeofday(&time_value, 0);
 
-    // ds compute milliseconds
+    // compute milliseconds
     const int milliseconds = time_value.tv_usec / 1000;
 
-    // ds obtain structured time information (hours, minutes, seconds)
+    // obtain structured time information (hours, minutes, seconds)
     struct tm* time_info = localtime(&time_value.tv_sec);
 
-    // ds stream to formatted string
+    // stream to formatted string
     char buffer[13];
     std::snprintf(buffer,
                   13,
@@ -181,10 +181,10 @@ namespace srrg2_core {
   }
 
   bool isAccessible(const std::string& file_or_directory_) {
-    // ds stat handle
+    // stat handle
     struct stat info;
 
-    // ds check if element on disk is accessible
+    // check if element on disk is accessible
     if (stat(file_or_directory_.c_str(), &info) == 0) {
       return true;
     } else {

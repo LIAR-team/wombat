@@ -111,7 +111,7 @@ bool gt_present = false;
 int main(int argc_, char** argv_) {
   messages_registerTypes();
 
-  // ds set up CLI parameters
+  // set up CLI parameters
   ParseCommandLine command_line_parser(argv_, banner);
   ArgumentString argument_sequence_number(
     &command_line_parser,
@@ -236,7 +236,7 @@ int main(int argc_, char** argv_) {
   LOG << FG_BBLUE("Starting conversion...") << std::endl;
   LOG << FG_BBLUE("messages: " << timestamps.size() + 1) << std::endl;
   std::cerr << std::setprecision(16);
-  // ia start to create messages and write them to file
+  // start to create messages and write them to file
   LOG << "writing output to [ " << FG_YELLOW(argument_output_file.value()) << " ]\n";
   MessageFileSink sink;
   sink.open(argument_output_file.value());
@@ -311,7 +311,7 @@ int main(int argc_, char** argv_) {
   LOG << "converted [ " << reading_idx << " ] messages in [ " << t << " ] s -- FPS [ "
       << (float) reading_idx / t << " ] Hz\n";
 
-  // ia done
+  // done
   sink.close();
   return 0;
 }
@@ -492,7 +492,7 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
                                  const std::string& file_name_,
                                  const std::string& distortion_model_name_,
                                  const Matrix3f& calibration_matrix_) {
-  // ds create image message
+  // create image message
   ImageMessagePtr image_message(
     new ImageMessage("/" + topic_name_ + "/image_raw", topic_name_, index_, timestamp_));
 
@@ -503,14 +503,14 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
                              " x " + std::to_string(image_opencv.cols));
   }
 
-  // ds map to srrg
+  // map to srrg
   ImageUInt8* base_image(new ImageUInt8());
   base_image->fromCv(image_opencv);
   image_message->setImage(base_image);
   image_message->image_cols.setValue(image_opencv.cols);
   image_message->image_rows.setValue(image_opencv.rows);
 
-  // ds create camera info message
+  // create camera info message
   CameraInfoMessagePtr camera_info_message(
     new CameraInfoMessage(image_message->topic.value() + "/info",
                           image_message->frame_id.value(),
@@ -540,7 +540,7 @@ void serializeVelodyne(MessageFileSink& sink_,
     throw std::runtime_error(exe_name + "|ERROR, invalid filename [ " + file_name_ + " ]");
   }
 
-  // ia read the bulky binary file
+  // read the bulky binary file
   stream.seekg(0, std::ios::end);
   const size_t num_points = stream.tellg() / (4 * sizeof(float));
   stream.seekg(0, std::ios::beg);
@@ -548,7 +548,7 @@ void serializeVelodyne(MessageFileSink& sink_,
   stream.read((char*) &values[0], 4 * num_points * sizeof(float));
   stream.close();
 
-  // ia now organize data
+  // now organize data
   PointIntensity3fVectorCloud cloud;
   cloud.reserve(num_points);
 
@@ -568,7 +568,7 @@ void serializeVelodyne(MessageFileSink& sink_,
                              file_name_ + " ]");
   }
 
-  // ia TODO do we need this normalization?
+  // TODO do we need this normalization?
   if (normalize_intensities_) {
     const float inv_max_intensity = 1.f / max_intensity;
     for (auto& p : cloud) {
@@ -576,7 +576,7 @@ void serializeVelodyne(MessageFileSink& sink_,
     }
   }
 
-  // ia now we have to create the message
+  // now we have to create the message
   lidar_msg->setPointCloud(cloud);
   sink_.putMessage(lidar_msg);
 }

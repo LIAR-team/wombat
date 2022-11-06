@@ -10,7 +10,7 @@
 
 using namespace srrg2_core;
 
-// ds arbitrary test objects
+// arbitrary test objects
 constexpr int test_value = 42;
 class TestConfiguration : public Configurable {
 public:
@@ -33,7 +33,7 @@ public:
 
 TEST(WriteAndRead, Parameter) {
   {
-    // ds write configurable to disk
+    // write configurable to disk
     PropertyContainerManager manager;
     std::shared_ptr<TestConfiguration> test_configuration =
       manager.create<TestConfiguration>("test");
@@ -43,7 +43,7 @@ TEST(WriteAndRead, Parameter) {
     manager.write("test_param.conf");
   }
 
-  // ds verify correct write the hard way
+  // verify correct write the hard way
   std::ifstream configuration_file("test_param.conf");
   ASSERT_TRUE(configuration_file.is_open());
   ASSERT_TRUE(configuration_file.good());
@@ -56,21 +56,21 @@ TEST(WriteAndRead, Parameter) {
   ASSERT_NE(line_buffers[5].find("\"parameter\" : 42"), std::string::npos);
 
   {
-    // ds read configurable from disk again
+    // read configurable from disk again
     PropertyContainerManager manager;
     manager.read("test_param.conf");
     std::shared_ptr<TestConfiguration> test_class =
       manager.getByName<TestConfiguration>("test");
     ASSERT_NOTNULL(test_class);
 
-    // ds verify the state of the configurable
+    // verify the state of the configurable
     ASSERT_EQ(test_class->param_test.value(), test_value);
   }
 }
 
 TEST(WriteAndRead, Module) {
   {
-    // ds write configurable to disk
+    // write configurable to disk
     PropertyContainerManager manager;
     std::shared_ptr<TestModule> test_module =
       manager.create<TestModule>("test");
@@ -86,7 +86,7 @@ TEST(WriteAndRead, Module) {
     manager.write("test_module.conf");
   }
 
-  // ds verify correct write the hard way
+  // verify correct write the hard way
   std::ifstream configuration_file("test_module.conf");
   ASSERT_TRUE(configuration_file.is_open());
   ASSERT_TRUE(configuration_file.good());
@@ -100,14 +100,14 @@ TEST(WriteAndRead, Module) {
   ASSERT_NE(line_buffers[5].find("\"parameter\" : 42"), std::string::npos);
 
   {
-    // ds read configurable from disk again
+    // read configurable from disk again
     PropertyContainerManager manager;
     manager.read("test_module.conf");
     std::shared_ptr<TestModule> test_module =
       manager.getByName<TestModule>("test");
     ASSERT_NOTNULL(test_module);
 
-    // ds verify the state of the configurable
+    // verify the state of the configurable
     ASSERT_NOTNULL(test_module->param_test_config.value());
     ASSERT_EQ(test_module->param_test_config->param_test.value(), test_value);
   }
@@ -115,7 +115,7 @@ TEST(WriteAndRead, Module) {
 
 TEST(WriteAndRead, System) {
   {
-    // ds write configurable to disk
+    // write configurable to disk
     PropertyContainerManager manager;
     std::shared_ptr<TestSystem> test_system =
       manager.create<TestSystem>("test");
@@ -136,7 +136,7 @@ TEST(WriteAndRead, System) {
     manager.write("test_system.conf");
   }
 
-  // ds verify correct write the hard way
+  // verify correct write the hard way
   std::ifstream configuration_file("test_module.conf");
   ASSERT_TRUE(configuration_file.is_open());
   ASSERT_TRUE(configuration_file.good());
@@ -150,14 +150,14 @@ TEST(WriteAndRead, System) {
   ASSERT_NE(line_buffers[5].find("\"parameter\" : 42"), std::string::npos);
 
   {
-    // ds read configurable from disk again
+    // read configurable from disk again
     PropertyContainerManager manager;
     manager.read("test_system.conf");
     std::shared_ptr<TestSystem> test_system =
       manager.getByName<TestSystem>("test");
     ASSERT_NOTNULL(test_system);
 
-    // ds verify the state of the configurable
+    // verify the state of the configurable
     ASSERT_NOTNULL(test_system->param_test_module.value());
     ASSERT_NOTNULL(test_system->param_test_module->param_test_config.value());
     ASSERT_EQ(

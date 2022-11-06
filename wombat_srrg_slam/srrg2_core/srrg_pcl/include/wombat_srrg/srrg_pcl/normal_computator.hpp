@@ -78,7 +78,7 @@ namespace srrg2_core {
         const VectorType& point_left  = (row - col_gap)->template value<0>();
         const VectorType& point_right = (row + col_gap)->template value<0>();
 
-        // ia shitty way of handling 2D and 3D points
+        // shitty way of handling 2D and 3D points
         if (Dim > 2) {
           if (point_up.z() == 0.f)
             continue;
@@ -128,7 +128,7 @@ namespace srrg2_core {
 
         const VectorType& coordinates = point.template value<0>();
 
-        // ia shitty way of handling 2D and 3D points
+        // shitty way of handling 2D and 3D points
         if (Dim > 2) {
           if (coordinates.z() == 0.f)
             continue;
@@ -194,7 +194,7 @@ namespace srrg2_core {
 
     //      std::cerr << "point cloud size = " << size << std::endl;
 
-    // ia for all the points in the cloud (vector)
+    // for all the points in the cloud (vector)
     for (size_t i = 0; i < size; ++i) {
       // std::cerr << "index = " << i << std::endl;
 
@@ -207,11 +207,11 @@ namespace srrg2_core {
       VectorType& normal            = point.template value<idx_>();
       normal.setZero();
 
-      // ia create a sliding window based on the distance from the current
+      // create a sliding window based on the distance from the current
       // point
       size_t index_min = i, index_max = i;
 
-      // ia compute the bottom of the window
+      // compute the bottom of the window
       while (index_min > 0) {
         const auto& p1_coords = point_cloud_vector_[index_min].template value<0>();
         if ((p1_coords - coordinates).squaredNorm() >= normal_point_distance) {
@@ -221,7 +221,7 @@ namespace srrg2_core {
         --index_min;
       }
 
-      // ia compute the top of the window
+      // compute the top of the window
       while (index_max < size) {
         const auto& p1_coords = point_cloud_vector_[index_max].template value<0>();
         if ((p1_coords - coordinates).squaredNorm() >= normal_point_distance) {
@@ -233,14 +233,14 @@ namespace srrg2_core {
       //        std::cerr << "index min = " << index_min << std::endl;
       //        std::cerr << "index max = " << index_max << std::endl;
 
-      // ia if there aren't enough point -> normal is null
+      // if there aren't enough point -> normal is null
       int num_selected_points        = index_max - index_min;
       Scalar inv_num_selected_points = 1. / num_selected_points;
       if (num_selected_points < normal_min_points) {
         point.status = Invalid;
         continue;
       }
-      // ia start accumulating points in the window
+      // start accumulating points in the window
       VectorType mean     = VectorType::Zero();
       MatrixType variance = MatrixType::Zero();
 
@@ -251,12 +251,12 @@ namespace srrg2_core {
         variance.noalias() += pp_coords * pp_coords.transpose();
       }
 
-      // ia compute mean and variance
+      // compute mean and variance
       mean *= inv_num_selected_points;
       variance *= inv_num_selected_points;
       variance.noalias() -= mean * mean.transpose();
 
-      // ia compute the normal as the eigenvector relative to the lower
+      // compute the normal as the eigenvector relative to the lower
       // eigenvalue ia take the normal directed toward the camera
       eigen_solver.compute(variance);
 

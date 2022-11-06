@@ -26,7 +26,7 @@ namespace srrg2_core {
     }
 
     virtual ~PacketEigen_() {
-      // ia empty
+      // empty
     }
 
     char* serialize(char* buffer) const override {
@@ -45,7 +45,7 @@ namespace srrg2_core {
     }
 
   protected:
-    // ia needed for the goddamn factory
+    // needed for the goddamn factory
     PacketEigen_() : PacketBase(PacketType_) {
       data.setZero();
     }

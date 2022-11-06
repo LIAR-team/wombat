@@ -9,7 +9,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -46,7 +46,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -79,7 +79,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -117,7 +117,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -154,7 +154,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Zero();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -191,7 +191,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Zero();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -229,15 +229,15 @@ namespace srrg2_solver {
     BossType::MeasurementType measurement = BossType::MeasurementType::Identity();
     BossType::InformationMatrixType omega = BossType::InformationMatrixType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id_0 = -1;
     int graph_id_1 = -1;
     stream_ >> graph_id_0 >> graph_id_1;
 
-    // ia read the measurement
+    // read the measurement
     measurement = readG2OIsometry2<Scalar>(stream_);
 
-    // ia read the omega
+    // read the omega
     for (int i = 0; i < omega.rows() && stream_.good(); i++) {
       for (int j = i; j < omega.cols() && stream_.good(); j++) {
         stream_ >> omega(i, j);
@@ -284,15 +284,15 @@ namespace srrg2_solver {
     BossType::MeasurementType measurement = BossType::MeasurementType::Zero();
     BossType::InformationMatrixType omega = BossType::InformationMatrixType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id_0 = -1;
     int graph_id_1 = -1;
     stream_ >> graph_id_0 >> graph_id_1;
 
-    // ia read the measurement
+    // read the measurement
     stream_ >> measurement.x() >> measurement.y();
 
-    // ia read the omega
+    // read the omega
     for (int i = 0; i < omega.rows() && stream_.good(); i++) {
       for (int j = i; j < omega.cols() && stream_.good(); j++) {
         stream_ >> omega(i, j);
@@ -320,10 +320,10 @@ namespace srrg2_solver {
 
     stream_ << _boss_object->variableId(0) << " " << _boss_object->variableId(1) << " ";
 
-    // ia write the measurement
+    // write the measurement
     stream_ << _boss_object->measurement().x() << " " << _boss_object->measurement().y() << " ";
 
-    // ia write information
+    // write information
     const auto& omega = _boss_object->informationMatrix();
     for (int i = 0; i < omega.rows(); i++) {
       for (int j = i; j < omega.cols(); j++) {
@@ -342,15 +342,15 @@ namespace srrg2_solver {
     BossType::MeasurementType measurement = BossType::MeasurementType::Zero();
     BossType::InformationMatrixType omega = BossType::InformationMatrixType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id_0 = -1;
     int graph_id_1 = -1;
     stream_ >> graph_id_0 >> graph_id_1;
 
-    // ia read the measurement
+    // read the measurement
     stream_ >> measurement.x();
 
-    // ia read the omega
+    // read the omega
     for (int i = 0; i < omega.rows() && stream_.good(); i++) {
       for (int j = i; j < omega.cols() && stream_.good(); j++) {
         stream_ >> omega(i, j);
@@ -378,10 +378,10 @@ namespace srrg2_solver {
 
     stream_ << _boss_object->variableId(0) << " " << _boss_object->variableId(1) << " ";
 
-    // ia write the measurement
+    // write the measurement
     stream_ << _boss_object->measurement().x() << " ";
 
-    // ia write information
+    // write information
     const auto& omega = _boss_object->informationMatrix();
     for (int i = 0; i < omega.rows(); i++) {
       for (int j = i; j < omega.cols(); j++) {

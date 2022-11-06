@@ -24,11 +24,11 @@ namespace srrg2_core {
     using DescriptorType = DescriptorType_;
 
     DescriptorOwner_() {
-      // ia does nothing
+      // does nothing
     }
 
     ~DescriptorOwner_() {
-      // ia does nothing
+      // does nothing
     }
 
     //! @brief accessors
@@ -102,7 +102,7 @@ namespace srrg2_core {
     //! @brief computes distance between two guys [placeholder]
     inline int distance(const ThisType& other_) const
     {
-      // ia TODO
+      // TODO
       return (this->descriptor ^ other_.descriptor).count();
     }
 
@@ -143,8 +143,8 @@ namespace srrg2_core {
     {
       const DescriptorType& other_desc = other_.descriptor;
 
-      // ds TODO move to reduce in C++17
-      // ds TODO optimize for architecture
+      // TODO move to reduce in C++17
+      // TODO optimize for architecture
       DescriptorType difference;
       std::set_difference(this->descriptor.begin(),
                           this->descriptor.end(),
@@ -159,8 +159,8 @@ namespace srrg2_core {
     //! @brief computes distance between another descriptor of same type
     inline int distance(const DescriptorType& desc_) const
     {
-      // ds TODO move to reduce in C++17
-      // ds TODO optimize for architecture
+      // TODO move to reduce in C++17
+      // TODO optimize for architecture
       DescriptorType difference;
       std::set_difference(this->descriptor.begin(),
                           this->descriptor.end(),

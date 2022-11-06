@@ -168,7 +168,7 @@ void writeConfig(ostream& os, StringOverwriteMap& ovt) {
   }
 }
 
-// ia THE PROGRAM
+// THE PROGRAM
 int main(int argc, char** argv) {
   initOverwriters();
   ParseCommandLine cmd_line(argv, banner);

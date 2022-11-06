@@ -20,16 +20,16 @@ namespace srrg2_solver {
     BOSS_REGISTER_CLASS(VariableSE3EulerLeftAD);
     BOSS_REGISTER_CLASS(SE3PoseMotionErrorFactorDataDriven);
 
-    // ia pose pose
+    // pose pose
     BOSS_REGISTER_CLASS(SE3PosePoseChordalEulerLeftErrorFactor);
     BOSS_REGISTER_CLASS(SE3PosePoseChordalHessianFactor);
     BOSS_REGISTER_CLASS(SE3PosePoseGeodesicErrorFactor);
 
-    // ia pose point
+    // pose point
     BOSS_REGISTER_CLASS(SE3PosePointOffsetErrorFactor);
     BOSS_REGISTER_CLASS(SE3PosePointErrorFactor);
 
-    // // ia pose matchables
+    // // pose matchables
     BOSS_REGISTER_CLASS(SE3PoseMatchableEulerLeftErrorFactor);
     BOSS_REGISTER_CLASS(SE3Matchable2MatchableEulerLeftErrorFactor);
     BOSS_REGISTER_CLASS(SE3Matchable2MatchableEulerLeftErrorFactorCorrespondenceDriven);

@@ -84,7 +84,7 @@ TEST(DUMMY_DATA, SE3PriorOffsetErrorFactorAD) {
   const Vector3f t      = Vector3f::Random();
   Quaternionf q(0.9f, 0.1f, 0.2f, 0.2f);
   q.normalize();
-  // tg choose an offset
+  // choose an offset
   Vector6f v        = Vector6f::Random();
   Isometry3f offset = geometry3d::v2t(v);
 

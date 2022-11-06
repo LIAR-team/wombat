@@ -16,7 +16,7 @@ namespace srrg2_solver {
     using JacobianIMatrixType = Eigen::Matrix<Scalar, 7, 6>;
     using JacobianJMatrixType = Eigen::Matrix<Scalar, 7, 5>;
 
-    // ia error and jacobian
+    // error and jacobian
     VariableSE3EulerLeft* v_from = _variables.at<0>();
     VariableMatchable* v_to      = _variables.at<1>();
 
@@ -44,7 +44,7 @@ namespace srrg2_solver {
 
     JacobianIMatrixType Ji = JacobianIMatrixType::Zero();
     JacobianJMatrixType Jj = JacobianJMatrixType::Zero();
-    // ia compute Ji - components
+    // compute Ji - components
     Vector3 v      = R * pz + t;
     Matrix3 dep_dt = Rl.transpose();
     Matrix3 dep_dR = -Rl.transpose() * srrg2_core::geometry3d::skew(v);
@@ -63,7 +63,7 @@ namespace srrg2_solver {
     Ji.block<3, 3>(3, 3) = ded_dR;
     Ji.block<1, 3>(6, 3) = deo_dR.transpose();
 
-    // ia compute Jj - components
+    // compute Jj - components
     v                 = Rl.transpose() * (R * pz + t - pl);
     Matrix3 dep_dpl   = -Rl.transpose();
     Matrix3_2 dep_dRl = srrg2_core::geometry3d::skew(v).block<3, 2>(0, 1);
@@ -89,13 +89,13 @@ namespace srrg2_solver {
   //! @brief serializes the factor
   void SE3PoseMatchableEulerLeftErrorFactor::serializeMeasurement(ObjectData& odata, IdContext& context) {
 
-    // ia array data to serialize origin
+    // array data to serialize origin
     ArrayData* origin_data = new ArrayData;
     for (uint8_t k = 0; k < _measurement.origin().rows(); ++k) {
       origin_data->add(_measurement.origin()[k]);
     }
 
-    // ia array data to serialize rotation matrix
+    // array data to serialize rotation matrix
     ArrayData* rotation_data = new ArrayData;
     for (uint8_t r = 0; r < _measurement.rotation().rows(); ++r) {
       for (uint8_t c = 0; c < _measurement.rotation().cols(); ++c) {
@@ -103,7 +103,7 @@ namespace srrg2_solver {
       }
     }
 
-    // ia write data
+    // write data
     odata.setInt("type", _measurement.type());
     odata.setField("origin", origin_data);
     odata.setField("rotation", rotation_data);
@@ -111,7 +111,7 @@ namespace srrg2_solver {
 
   //! @brief deserializes the factor
   void SE3PoseMatchableEulerLeftErrorFactor::deserializeMeasurement(ObjectData& odata, IdContext& context) {
-    // ia now meat - read the object type
+    // now meat - read the object type
     MatchableBase::Type m_type = (MatchableBase::Type)(odata.getInt("type"));
     if (m_type > MatchableBase::Type::Surfel) {
       throw std::runtime_error("VariableMatchable::deserialize|invalid matchable type [" +
@@ -119,13 +119,13 @@ namespace srrg2_solver {
     }
     _measurement.setType(m_type);
 
-    // ia now meat - read the object origin
+    // now meat - read the object origin
     ArrayData* origin_data = dynamic_cast<ArrayData*>(odata.getField("origin"));
     for (uint8_t k = 0; k < _measurement.origin().rows(); ++k) {
       _measurement.origin()[k] = (*origin_data)[k].getFloat();
     }
 
-    // ia now meat - read the object rotation
+    // now meat - read the object rotation
     ArrayData* rotation_data = dynamic_cast<ArrayData*>(odata.getField("rotation"));
     uint8_t i                = 0;
     for (uint8_t r = 0; r < _measurement.rotation().rows(); ++r) {

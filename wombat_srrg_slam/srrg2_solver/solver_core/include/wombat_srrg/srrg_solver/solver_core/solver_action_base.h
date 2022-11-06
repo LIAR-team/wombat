@@ -37,7 +37,7 @@ namespace srrg2_solver {
   using SolverActionBasePtrSet    = std::set<SolverActionBasePtr>;
 
   
-  // ia talking action
+  // talking action
   class SolverVerboseAction : public SolverActionBase {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

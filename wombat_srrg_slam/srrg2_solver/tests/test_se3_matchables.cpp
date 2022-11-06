@@ -6,12 +6,12 @@
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
 
-// ia include solver stuff (instances)
+// include solver stuff (instances)
 #include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_lm.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
-// ia include types stuff (instances)
+// include types stuff (instances)
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
@@ -22,7 +22,7 @@ const std::string data_folder(SRRG2_SOLVER_DATA_FOLDER);
 using namespace srrg2_core;
 using namespace srrg2_solver;
 
-// ia global data
+// global data
 const size_t n_points = 10;
 const size_t n_lines  = 10;
 const size_t n_planes = 10;
@@ -34,9 +34,9 @@ int main(int argc, char** argv) {
   return RUN_ALL_TESTS();
 }
 
-// tg Vinia is happy 
+// Vinia is happy 
 TEST(EXAMPLE_GRAPH, SE3PoseMatchableEulerLeftErrorFactor) {
-  // ia test data, contains no noise in the edges, but every node has been zeroed previously
+  // test data, contains no noise in the edges, but every node has been zeroed previously
   const std::string input_file = data_folder + "/matchable_graph.boss";
   LOG << "Try to read graph" << std::endl;
   FactorGraphPtr graph = FactorGraph::read(input_file);
@@ -67,9 +67,9 @@ TEST(DUMMY_DATA, SE3Matchable2MatchableEulerLeftErrorFactor) {
   const Isometry3f T       = geometry3d::ta2t(minimal_T);
   // const Isometry3f inv_T   = T.inverse();
 
-  // ia construct two identic clouds
-  MatchablefVector cloud_moving; // ia the map
-  MatchablefVector cloud_fixed;  // ia new frame
+  // construct two identic clouds
+  MatchablefVector cloud_moving; // the map
+  MatchablefVector cloud_fixed;  // new frame
 
   cloud_fixed.reserve(n_matchables);
   for (size_t k = 0; k < n_points; ++k) {
@@ -123,27 +123,27 @@ TEST(DUMMY_DATA, SE3Matchable2MatchableEulerLeftErrorFactor) {
   solver.param_termination_criteria.setValue(nullptr);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ia set initial guess and compute
+  // set initial guess and compute
   pose->setEstimate(Isometry3f::Identity());
   solver.compute();
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
 
   LOG << stats << std::endl;
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T = pose->estimate();
 
   const auto diff_T      = estimated_T.inverse() * T;
   const auto diff_vector = geometry3d::t2tnq(diff_T);
-  ASSERT_LT(diff_vector[0], 1e-5); // ia X
-  ASSERT_LT(diff_vector[1], 1e-5); // ia Y
-  ASSERT_LT(diff_vector[2], 1e-5); // ia Z
-  ASSERT_LT(diff_vector[3], 1e-5); // ia qx
-  ASSERT_LT(diff_vector[4], 1e-5); // ia qy
-  ASSERT_LT(diff_vector[5], 1e-5); // ia qz
+  ASSERT_LT(diff_vector[0], 1e-5); // X
+  ASSERT_LT(diff_vector[1], 1e-5); // Y
+  ASSERT_LT(diff_vector[2], 1e-5); // Z
+  ASSERT_LT(diff_vector[3], 1e-5); // qx
+  ASSERT_LT(diff_vector[4], 1e-5); // qy
+  ASSERT_LT(diff_vector[5], 1e-5); // qz
 }

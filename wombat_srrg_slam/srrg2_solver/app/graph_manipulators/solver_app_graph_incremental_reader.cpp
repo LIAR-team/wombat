@@ -44,7 +44,7 @@ const char* banner[] = {
   0
 };
 
-// ia register types
+// register types
 void initTypes() {
   variables_and_factors_2d_registerTypes();
   variables_and_factors_3d_registerTypes();
@@ -53,7 +53,7 @@ void initTypes() {
   solver_registerTypes();
 }
 
-// ia THE PROGRAM
+// THE PROGRAM
 int main(int argc, char** argv) {
   initTypes();
   

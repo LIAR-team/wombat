@@ -38,7 +38,7 @@ static const char* banner[] = {
   0
 };
 
-// ia THE PROGRAM
+// THE PROGRAM
 int main(int argc, char** argv) {
   ParseCommandLine cmd_line(argv, banner);
   ArgumentString input_file          (&cmd_line, "i",    "input-file",             "file where to read the input ", "");

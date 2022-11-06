@@ -11,7 +11,7 @@ namespace srrg2_core {
     ~ColorPalette() {
     }
 
-    // ia basic colors
+    // basic colors
     static Vector3f color3fRed() {
       return Vector3f(0.90, 0.10, 0.10);
     }
@@ -119,7 +119,7 @@ namespace srrg2_core {
       return Vector4f(0.05, 0.05, 0.30, alpha_);
     }
 
-    // ia particular colors
+    // particular colors
     static Vector3f color3fMint() {
       return Vector3f(0.72, 0.86, 0.85);
     }
@@ -151,7 +151,7 @@ namespace srrg2_core {
       return Vector4f(0.18, 0.19, 0.22, alpha_);
     }
 
-    // ia interpolators to create gradients
+    // interpolators to create gradients
     static Vector3f gradientGreenBlue(const size_t& current_sample_,
                                       const size_t& max_samples_) {
       return Vector3f(0.f,

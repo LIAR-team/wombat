@@ -31,7 +31,7 @@ const char* banner[] = {"This program computes the Frobenius distance norm betwe
 int main(int argc_, char** argv_) {
   messages_registerTypes();
 
-  // ds set up CLI parameters
+  // set up CLI parameters
   // clang-format off
   ParseCommandLine command_line_parser(argv_, banner);
   ArgumentString argument_query_image_file (
@@ -50,14 +50,14 @@ int main(int argc_, char** argv_) {
     return -1;
   }
 
-  // ds load images from disk in grayscale
+  // load images from disk in grayscale
   cv::Mat query_image(cv::imread(argument_query_image_file.value(), CV_LOAD_IMAGE_GRAYSCALE));
   cv::Mat reference_image(
     cv::imread(argument_reference_image_file.value(), CV_LOAD_IMAGE_GRAYSCALE));
 
-  // ds verify size
+  // verify size
   if (query_image.rows != reference_image.rows || query_image.cols != reference_image.cols) {
-    // ds check if we can scale the images to be the same size
+    // check if we can scale the images to be the same size
     const double scaling_factor = static_cast<double>(query_image.rows) / reference_image.rows;
     if (scaling_factor == static_cast<double>(query_image.cols) / reference_image.cols) {
       assert(scaling_factor != 1);
@@ -77,7 +77,7 @@ int main(int argc_, char** argv_) {
     }
   }
 
-  // ds compute sum of squared intensity deltas
+  // compute sum of squared intensity deltas
   size_t sum_of_squared_intensity_deltas = 0;
   for (size_t r = 0; r < static_cast<size_t>(query_image.rows); ++r) {
     for (size_t c = 0; c < static_cast<size_t>(query_image.cols); ++c) {
@@ -90,7 +90,7 @@ int main(int argc_, char** argv_) {
   std::cerr << "total number of distances: " << query_image.rows * query_image.cols << std::endl;
   std::cerr << "Frobenius norm: " << std::sqrt(sum_of_squared_intensity_deltas) << std::endl;
 
-  // ds show images
+  // show images
   cv::imshow("query", query_image);
   cv::imshow("reference", reference_image);
   return cv::waitKey(0);

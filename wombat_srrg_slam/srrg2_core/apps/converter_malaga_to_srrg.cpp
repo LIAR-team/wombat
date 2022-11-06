@@ -126,7 +126,7 @@ static std::string sequence("");
 int main(int argc_, char** argv_) {
   messages_registerTypes();
 
-  // ds set up CLI parameters
+  // set up CLI parameters
   ParseCommandLine command_line_parser(argv_, banner);
   ArgumentString argument_sequence_number(
     &command_line_parser,
@@ -188,7 +188,7 @@ int main(int argc_, char** argv_) {
                              " ]");
   }
 
-  // ds buffer ground truth data
+  // buffer ground truth data
   StdVectorEigenIsometry3f gps_poses_in_world;
   std::vector<double> timestamps_gt;
   loadGroundTruthPosesAndStamps(gps_file, gps_poses_in_world, timestamps_gt);
@@ -196,7 +196,7 @@ int main(int argc_, char** argv_) {
     throw std::runtime_error("ERROR: no ground truth poses loaded");
   }
 
-  // ds save ground truth in kitti format (for benchmarking)
+  // save ground truth in kitti format (for benchmarking)
   std::ofstream ground_truth_kitti_format("gt.txt", std::ofstream::out);
   std::ofstream ground_truth_timestamps_kitti_format("times.txt", std::ofstream::out);
   ground_truth_kitti_format << std::fixed;
@@ -206,7 +206,7 @@ int main(int argc_, char** argv_) {
   Isometry3f gps_from_camera(Isometry3f::Identity());
   gps_from_camera.linear() << 1, 0, 0, 0, 0, -1, 0, 1, 0;
   for (size_t i = 0; i < timestamps_gt.size(); ++i) {
-    // ds move to kitti origin uagh
+    // move to kitti origin uagh
     const Isometry3f world_from_camera(gps_from_camera * gps_poses_in_world[i]);
     for (size_t r = 0; r < 3; ++r) {
       for (size_t c = 0; c < 4; ++c) {
@@ -220,13 +220,13 @@ int main(int argc_, char** argv_) {
   ground_truth_timestamps_kitti_format.close();
   std::cerr << "saved GT information to 'gt.txt' and 'times.txt' (KITTI style)" << std::endl;
 
-  // ds read depth and RGB images and timestamps
+  // read depth and RGB images and timestamps
   std::vector<std::string> image_file_paths_camera_left;
   std::vector<double> timestamps_camera_left;
   std::vector<std::string> image_file_paths_camera_right;
   std::vector<double> timestamps_camera_right;
 
-  // ds parse image information
+  // parse image information
   loadImageInformation(images_folder,
                        image_file_paths_camera_left,
                        timestamps_camera_left,
@@ -236,7 +236,7 @@ int main(int argc_, char** argv_) {
     throw std::runtime_error("ERROR: no left camera image information retrieved");
   }
 
-  // ds load camera calibration data from files
+  // load camera calibration data from files
   Matrix3f camera_calibration_matrix_left(Matrix3f::Zero());
   Vector5d distortion_coefficients_left(Vector5d::Zero());
   Matrix3f camera_calibration_matrix_right(Matrix3f::Zero());
@@ -252,10 +252,10 @@ int main(int argc_, char** argv_) {
   std::cerr << "camera LEFT w.r.t. RIGHT: " << std::endl;
   std::cerr << camera_left_to_right.matrix() << std::endl;
 
-  // ds common parameters for all sequences
+  // common parameters for all sequences
   const std::string distortion_model_name = "undistorted";
 
-  // ds TODO load IMU information
+  // TODO load IMU information
   std::vector<double> timestamps_imu;
   StdVectorEigenVector3d angular_velocities;
   StdVectorEigenVector3d linear_accelerations;
@@ -294,11 +294,11 @@ int main(int argc_, char** argv_) {
                               timestamps_imu.size() + timestamps_camera_left.size() +
                               timestamps_camera_right.size();
 
-  // ds stop before starting to allow for a quick configuration inspection
+  // stop before starting to allow for a quick configuration inspection
   //  std::cerr << "press [ENTER] to start conversion" << std::endl;
   //  getchar();
 
-  // ds playback configuration UAGHS
+  // playback configuration UAGHS
   size_t index_gt           = 0;
   size_t index_camera_left  = 0;
   size_t index_camera_right = 0;
@@ -309,7 +309,7 @@ int main(int argc_, char** argv_) {
   size_t index_hokuyo_2     = 0;
   size_t index_hokuyo_3     = 0;
 
-  // ds determine initial, smallest timestamp
+  // determine initial, smallest timestamp
   double timestamp_oldest = std::numeric_limits<double>::max();
   timestamp_oldest        = std::min(timestamp_oldest, timestamps_gt[0]);
   timestamp_oldest        = std::min(timestamp_oldest, sick_front.begin()->first);
@@ -332,7 +332,7 @@ int main(int argc_, char** argv_) {
     buildStaticTfTree(timestamp_oldest, camera_left_to_right);
   sink.putMessage(tf_static_message);
 
-  // ds playback all buffers
+  // playback all buffers
   size_t processed_msgs = 0;
   while (true) {
     double first_timestamp = std::numeric_limits<double>::max();
@@ -510,16 +510,16 @@ void loadGroundTruthPosesAndStamps(const std::string& ground_truth_file_,
   gps_poses_in_world_.clear();
   timestamps_seconds_gt_.clear();
 
-  // ds load ground truth text file
+  // load ground truth text file
   std::ifstream stream_ground_truth(ground_truth_file_, std::ifstream::in);
 
-  // ds check failure
+  // check failure
   if (!stream_ground_truth.is_open() || !stream_ground_truth.good()) {
     throw std::runtime_error("loadGroundTruthPosesAndStamps|ERROR: unable to open file: '" +
                              ground_truth_file_ + "'");
   }
 
-  // ds reading buffers - skip the first line (header line)
+  // reading buffers - skip the first line (header line)
   double timestamp_seconds      = 0;
   double latitude_radians       = 0;
   double longitude_radians      = 0;
@@ -531,16 +531,16 @@ void loadGroundTruthPosesAndStamps(const std::string& ground_truth_file_,
   std::string line_buffer("");
   std::getline(stream_ground_truth, line_buffer);
 
-  // ds start parsing all poses to the last line
+  // start parsing all poses to the last line
   Isometry3d pose_gps_previous(Isometry3d::Identity());
   const Vector3d orientation_car(0, 0, 1);
 
-  // ds reading buffers
+  // reading buffers
   line_buffer = "";
   while (std::getline(stream_ground_truth, line_buffer) && !line_buffer.empty()) {
     std::istringstream stream(line_buffer);
 
-    // ds parse in fixed order
+    // parse in fixed order
     stream >> timestamp_seconds;
     stream >> latitude_radians;
     stream >> longitude_radians;
@@ -550,13 +550,13 @@ void loadGroundTruthPosesAndStamps(const std::string& ground_truth_file_,
     stream >> speed_knots;
     stream >> heading_degrees;
 
-    // ds parse pose matrix directly from file
+    // parse pose matrix directly from file
     Isometry3d pose(Isometry3d::Identity());
     for (uint8_t u = 0; u < 3; ++u) {
       stream >> pose(u, 3);
     }
 
-    // ds compute relative orientation (have nothing else)
+    // compute relative orientation (have nothing else)
     const Vector3d translation_delta = pose.translation() - pose_gps_previous.translation();
     Vector3d translation_delta_normalized(Vector3d::Zero());
     if (translation_delta.norm() > 0) {
@@ -565,23 +565,23 @@ void loadGroundTruthPosesAndStamps(const std::string& ground_truth_file_,
         Quaterniond::FromTwoVectors(orientation_car, translation_delta_normalized);
       pose.linear() = orientation.toRotationMatrix();
 
-      // ds check if we can update the initial orientation
+      // check if we can update the initial orientation
       if (gps_poses_in_world_.size() == 1) {
         gps_poses_in_world_.front().linear() = pose.linear().cast<float>();
       }
     }
 
-    // ds set pose
+    // set pose
     gps_poses_in_world_.push_back(pose.cast<float>());
     pose_gps_previous = pose;
 
-    // ds sanity check
+    // sanity check
     if (!timestamps_seconds_gt_.empty() && timestamp_seconds < timestamps_seconds_gt_.back()) {
       throw std::runtime_error("loadGroundTruthPosesAndStamps|invalid timestamp (s): " +
                                std::to_string(timestamp_seconds));
     }
 
-    // ds keep timestamp
+    // keep timestamp
     timestamps_seconds_gt_.push_back(timestamp_seconds);
   }
   stream_ground_truth.close();
@@ -599,14 +599,14 @@ void loadImageInformation(const std::string& folder_images_,
   image_filenames_right_.clear();
   timestamps_seconds_right_.clear();
 
-  // ds obtain list of image filenames in the folder
+  // obtain list of image filenames in the folder
   std::vector<std::string> image_file_names;
   image_file_names.reserve(10000);
   DIR* directory;
   struct dirent* entry;
   if ((directory = opendir(folder_images_.c_str()))) {
     while ((entry = readdir(directory))) {
-      // ds ignore linux fake directories
+      // ignore linux fake directories
       if (entry->d_name[0] != '.') {
         image_file_names.emplace_back(entry->d_name);
       }
@@ -614,17 +614,17 @@ void loadImageInformation(const std::string& folder_images_,
   }
   closedir(directory);
 
-  // ds order input by timestamps
+  // order input by timestamps
   std::sort(image_file_names.begin(), image_file_names.end());
 
-  // ds parse string into tokens
-  // ds parse image information by tokens
+  // parse string into tokens
+  // parse image information by tokens
   double timestamp_previous_seconds = 0;
   for (const std::string& image_file_name : image_file_names) {
-    // ds parse timestamp TODO less hardcoding hehe
+    // parse timestamp TODO less hardcoding hehe
     const double timestamp_seconds = std::stod(image_file_name.substr(12, 17));
 
-    // ds sanity check
+    // sanity check
     if (timestamp_seconds < timestamp_previous_seconds) {
       throw std::runtime_error("loadImageInformation|ERROR: inconsistent timestamp (s): " +
                                std::to_string(timestamp_seconds) + " < " +
@@ -633,7 +633,7 @@ void loadImageInformation(const std::string& folder_images_,
       timestamp_previous_seconds = timestamp_seconds;
     }
 
-    // ds parse based on tag
+    // parse based on tag
     if (image_file_name.find("left") != std::string::npos) {
       image_filenames_left_.push_back(folder_images_ + "/" + image_file_name);
       timestamps_seconds_left_.push_back(timestamp_seconds);
@@ -661,40 +661,40 @@ void loadCameraCalibration(const std::string& file_path_camera_calibration_,
                              file_path_camera_calibration_);
   }
 
-  // ds evil parsing - skip lines until we hit the transform 'data' line
+  // evil parsing - skip lines until we hit the transform 'data' line
   std::string buffer;
   for (size_t i = 0; i < 7; ++i) {
     std::getline(stream, buffer);
   }
 
-  // ds read left camera parameters
-  camera_calibration_matrix_left_(0, 2) = std::stod(buffer.substr(3)); // ds c_x
+  // read left camera parameters
+  camera_calibration_matrix_left_(0, 2) = std::stod(buffer.substr(3)); // c_x
   std::getline(stream, buffer);
-  camera_calibration_matrix_left_(1, 2) = std::stod(buffer.substr(3)); // ds c_y
+  camera_calibration_matrix_left_(1, 2) = std::stod(buffer.substr(3)); // c_y
   std::getline(stream, buffer);
-  camera_calibration_matrix_left_(0, 0) = std::stod(buffer.substr(3)); // ds f_x
+  camera_calibration_matrix_left_(0, 0) = std::stod(buffer.substr(3)); // f_x
   std::getline(stream, buffer);
-  camera_calibration_matrix_left_(1, 1) = std::stod(buffer.substr(3)); // ds f_y
+  camera_calibration_matrix_left_(1, 1) = std::stod(buffer.substr(3)); // f_y
   camera_calibration_matrix_left_(2, 2) = 1;
   distortion_coefficients_left_.setZero();
 
-  // ds skip lines
+  // skip lines
   for (size_t i = 0; i < 8; ++i) {
     std::getline(stream, buffer);
   }
 
-  // ds read right camera parameters
-  camera_calibration_matrix_right_(0, 2) = std::stod(buffer.substr(3)); // ds c_x
+  // read right camera parameters
+  camera_calibration_matrix_right_(0, 2) = std::stod(buffer.substr(3)); // c_x
   std::getline(stream, buffer);
-  camera_calibration_matrix_right_(1, 2) = std::stod(buffer.substr(3)); // ds c_y
+  camera_calibration_matrix_right_(1, 2) = std::stod(buffer.substr(3)); // c_y
   std::getline(stream, buffer);
-  camera_calibration_matrix_right_(0, 0) = std::stod(buffer.substr(3)); // ds f_x
+  camera_calibration_matrix_right_(0, 0) = std::stod(buffer.substr(3)); // f_x
   std::getline(stream, buffer);
-  camera_calibration_matrix_right_(1, 1) = std::stod(buffer.substr(3)); // ds f_y
+  camera_calibration_matrix_right_(1, 1) = std::stod(buffer.substr(3)); // f_y
   camera_calibration_matrix_right_(2, 2) = 1;
   distortion_coefficients_right_.setZero();
 
-  // ds skip lines
+  // skip lines
   for (size_t i = 0; i < 7; ++i) {
     std::getline(stream, buffer);
   }
@@ -702,7 +702,7 @@ void loadCameraCalibration(const std::string& file_path_camera_calibration_,
   const size_t index_begin = buffer.find_last_of('[') + 1;
   const size_t index_end   = buffer.find_last_of(']');
 
-  // ds parse transform by tokens
+  // parse transform by tokens
   camera_right_from_left_.setIdentity();
   std::stringstream stream_trans(buffer.substr(index_begin, index_end - index_begin));
   Vector_<float, 7> translation_orientation(Vector_<float, 7>::Zero());
@@ -715,7 +715,7 @@ void loadCameraCalibration(const std::string& file_path_camera_calibration_,
     throw std::runtime_error("baseline bx must be positive");
   }
 
-  //  // ds TODO implement actual transforms
+  //  // TODO implement actual transforms
   //  imu_from_camera_left_.setIdentity();
   //  imu_from_camera_right_.setIdentity();
   //  imu_from_camera_left_.translation()  = -camera_right_from_left.translation() / 2.0;
@@ -753,14 +753,14 @@ void loadIMUInformation(const std::string& file_imu_data_,
     throw std::runtime_error("loadIMUInformation|ERROR: unable to open file: " + file_imu_data_);
   }
 
-  // ds skip first line (header)
+  // skip first line (header)
   std::string buffer;
   std::getline(stream, buffer);
   std::cerr << "loadIMUInformation|<header>" << std::endl;
   std::cerr << buffer << std::endl;
   std::cerr << "loadIMUInformation|<header>" << std::endl;
 
-  // ds parse by tokens
+  // parse by tokens
   angular_velocities_.reserve(100000);
   linear_accelerations_.reserve(100000);
   orientations_.reserve(100000);
@@ -788,11 +788,11 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
                                  const std::string& distortion_model_name_,
                                  const Vector5d& distortion_coefficients_,
                                  const Matrix3f& camera_matrix_) {
-  // ds create image message
+  // create image message
   ImageMessagePtr image_message(
     new ImageMessage("/" + label_ + "/image_raw", "/" + label_, index_, timestamp_));
 
-  // ds load RGB image from disk and convert
+  // load RGB image from disk and convert
   cv::Mat image_opencv = cv::imread(file_path_image_, CV_LOAD_IMAGE_GRAYSCALE);
   if (image_opencv.rows <= 0 || image_opencv.cols <= 0) {
     throw std::runtime_error(
@@ -801,14 +801,14 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
       std::to_string(image_opencv.cols));
   }
 
-  // ds map to srrg
+  // map to srrg
   ImageUInt8* base_image(new ImageUInt8());
   base_image->fromCv(image_opencv);
   image_message->setImage(base_image);
   image_message->image_cols.setValue(image_opencv.cols);
   image_message->image_rows.setValue(image_opencv.rows);
 
-  // ds create camera info message
+  // create camera info message
   CameraInfoMessagePtr camera_info_message(
     new CameraInfoMessage(image_message->topic.value() + "/info",
                           image_message->frame_id.value(),
@@ -821,7 +821,7 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
   camera_info_message->cols.setValue(image_opencv.cols);
   camera_info_message->rows.setValue(image_opencv.rows);
 
-  // ds write messages related to this image
+  // write messages related to this image
   sink_.putMessage(image_message);
   sink_.putMessage(camera_info_message);
 }

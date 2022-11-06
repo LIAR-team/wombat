@@ -8,7 +8,7 @@
 namespace srrg2_core {
 
   //! @breif stateless class, container of methods basically
-  // ia name is crap
+  // name is crap
   class PointMatrixProcessor {
   public:
     PointMatrixProcessor() = delete;
@@ -100,7 +100,7 @@ namespace srrg2_core {
       }
 
       //! @brief stream operators
-      // ia works to be checked
+      // works to be checked
       friend std::ostream& operator<<(std::ostream& os_,
                                       const Accumulator_<Dim_>& acc_) {
         os_ << "{";
@@ -118,7 +118,7 @@ namespace srrg2_core {
       const Matrix_<PointType_, Eigen::aligned_allocator<PointType_>>& src_);
 
     //! @brief compute integral image of an organized point cloud - only a field
-    // ia come hai fatto a farlo andare nonno linux? 
+    // come hai fatto a farlo andare nonno linux? 
     template <int idx_, typename PointType_>
     static void computeIntegralImage(
       Matrix_<Accumulator_<PointType_::template TypeAt<idx_>::Dim>,

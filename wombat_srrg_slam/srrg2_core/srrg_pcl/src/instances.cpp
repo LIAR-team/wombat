@@ -91,7 +91,7 @@ namespace srrg2_core {
 
     BOSS_REGISTER_CLASS(NormalComputator1DSlidingWindowNormal);
 
-    // ia lidar projectors ouster
+    // lidar projectors ouster
     BOSS_REGISTER_CLASS(Point3fProjectorOS1_64);
     BOSS_REGISTER_CLASS(PointNormal3fProjectorOS1_64);
     BOSS_REGISTER_CLASS(PointIntensity3fProjectorOS1_64);
@@ -102,16 +102,16 @@ namespace srrg2_core {
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3fProjectorOS1_16);
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3fProjectorOS1_64);
 
-    // ia lidar projector kitti
+    // lidar projector kitti
     BOSS_REGISTER_CLASS(PointIntensity3fProjectorHDL64E);
 
-    // ia misc projectors
+    // misc projectors
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3dProjectorOS1_64);
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3fProjectorVLP16);
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3fProjectorHDL32);
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3fProjectorHDL64E);
 
-    // ia lidar unprojectors
+    // lidar unprojectors
     BOSS_REGISTER_CLASS(Point3fUnprojectorOS1_64);
     BOSS_REGISTER_CLASS(PointNormal3fUnprojectorOS1_64);
     BOSS_REGISTER_CLASS(PointIntensity3fUnprojectorOS1_64);
@@ -121,19 +121,19 @@ namespace srrg2_core {
     BOSS_REGISTER_CLASS(PointIntensityDescriptor3fUnprojectorOS1_64);
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3fUnprojectorOS1_64);
 
-    // ia lidar unprojector kitti
+    // lidar unprojector kitti
     BOSS_REGISTER_CLASS(PointIntensity3fUnprojectorHDL64E);
 
-    // ia misc unprojectors
+    // misc unprojectors
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3dUnprojectorOS1_64);
 
-    // ia shaslam auxiliary projectors
+    // shaslam auxiliary projectors
     BOSS_REGISTER_CLASS(Point3fProjectorOS1_16);
     BOSS_REGISTER_CLASS(Point3fProjectorVLP16);
     BOSS_REGISTER_CLASS(Point3fProjectorHDL32);
     BOSS_REGISTER_CLASS(Point3fProjectorHDL64E);
 
-    // ia shaslam auxiliary unprojectors
+    // shaslam auxiliary unprojectors
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3fUnprojectorOS1_16);
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3fUnprojectorVLP16);
     BOSS_REGISTER_CLASS(PointNormalCurvatureColor3fUnprojectorHDL32);

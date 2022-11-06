@@ -53,10 +53,10 @@ struct BinaryMatch
 
   //! @brief attributes
   const Matchable* matchable_query;
-  // ds multiple references are possible for identical matching distance
+  // multiple references are possible for identical matching distance
   std::vector<const Matchable*> matchable_references;
   ObjectType object_query;
-  // ds multiple references are possible for identical matching distance
+  // multiple references are possible for identical matching distance
   std::vector<ObjectType> object_references;
   real_type distance;
 };

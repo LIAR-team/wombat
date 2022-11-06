@@ -46,7 +46,7 @@ namespace srrg2_core {
 
       PacketBase(type_) {
       allocate(size_, normals_ ? size_ : 0);
-      // tg memcpy makes gcc 9.3 sgotting
+      // memcpy makes gcc 9.3 sgotting
       if(points_){
         for (size_t i = 0; i < num_points; ++i) {
           points[i] = points_[i];

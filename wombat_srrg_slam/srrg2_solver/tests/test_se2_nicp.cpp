@@ -3,10 +3,10 @@
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
 
-// ia include solver stuff (instances)
+// include solver stuff (instances)
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
-// ia include types stuff (instances)
+// include types stuff (instances)
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 
@@ -69,17 +69,17 @@ TEST(DUMMY_DATA, SE2Plane2PlaneErrorFactor) {
   factor->setCorrespondences(correspondences);
 
   graph->addFactor(factor);
-  // ia set initial guess and compute
+  // set initial guess and compute
   solver.setGraph(graph);
   solver.compute();
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T    = pose->estimate();
   const Isometry2f diff_T    = estimated_T * T;
   const Vector3f diff_vector = geometry2d::t2v(diff_T);
@@ -139,17 +139,17 @@ TEST(DUMMY_DATA, SE2Plane2PlaneWithSensorErrorFactor) {
   FactorGraphPtr graph(new FactorGraph);
   graph->addVariable(pose);
   graph->addFactor(factor);
-  // ia set initial guess and compute
+  // set initial guess and compute
   solver.setGraph(graph);
   solver.compute();
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T    = pose->estimate();
   const Isometry2f diff_T    = estimated_T * ground_truth_T;
   const Vector3f diff_vector = geometry2d::t2v(diff_T);

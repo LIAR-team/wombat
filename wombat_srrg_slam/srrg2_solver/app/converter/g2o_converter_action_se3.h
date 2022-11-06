@@ -39,11 +39,11 @@ namespace srrg2_solver
     ConverterActionVariableSE3QuaternionRight(const FactorGraphPtr& graph_ptr_,
                                               G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE3:QUAT", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionVariableSE3QuaternionRight() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -69,11 +69,11 @@ namespace srrg2_solver
     ConverterActionVariableSE3QuaternionRightAD(const FactorGraphPtr& graph_ptr_,
                                                 G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE3:QUAT", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionVariableSE3QuaternionRightAD() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -97,11 +97,11 @@ namespace srrg2_solver
     ConverterActionVariableSE3EulerRight(const FactorGraphPtr& graph_ptr_,
                                          G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE3:QUAT", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionVariableSE3EulerRight() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -125,11 +125,11 @@ namespace srrg2_solver
     ConverterActionVariableSE3EulerRightAD(const FactorGraphPtr& graph_ptr_,
                                            G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE3:QUAT", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionVariableSE3EulerRightAD() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -153,11 +153,11 @@ namespace srrg2_solver
     ConverterActionVariableSE3EulerLeft(const FactorGraphPtr& graph_ptr_,
                                         G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE3:EULERPERT", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionVariableSE3EulerLeft() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -181,11 +181,11 @@ namespace srrg2_solver
     ConverterActionVariableSE3EulerLeftAD(const FactorGraphPtr& graph_ptr_,
                                           G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE3:EULERPERT", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionVariableSE3EulerLeftAD() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -203,7 +203,7 @@ namespace srrg2_solver
   class ConverterActionSE3PoseOffset : public ConverterActionBase {
   public:
     using BaseClass = ConverterActionBase;
-    using BossType  = VariableSE3QuaternionRight; // ia hardcoded type since it's an action :)
+    using BossType  = VariableSE3QuaternionRight; // hardcoded type since it's an action :)
     ConverterActionSE3PoseOffset(const FactorGraphPtr& graph_ptr_, G2OConverter* converter_ptr_) :
       BaseClass("PARAMS_SE3OFFSET", graph_ptr_, converter_ptr_) {
       _hash = 1;
@@ -212,11 +212,11 @@ namespace srrg2_solver
     ~ConverterActionSE3PoseOffset() {
     }
 
-    // ia this is the cpp
+    // this is the cpp
     void readFromG2O(std::istream& stream_) final;
 
     void writeFromBoss(std::ofstream& stream_, void* object_) final {
-      // ia does nothin
+      // does nothin
     }
 
   protected:
@@ -232,7 +232,7 @@ namespace srrg2_solver
   class ConverterActionSE3PoseOffsetAD : public ConverterActionBase {
   public:
     using BaseClass = ConverterActionBase;
-    using BossType  = VariableSE3QuaternionRightAD; // ia hardcoded type since it's an action :)
+    using BossType  = VariableSE3QuaternionRightAD; // hardcoded type since it's an action :)
     ConverterActionSE3PoseOffsetAD(const FactorGraphPtr& graph_ptr_, G2OConverter* converter_ptr_) :
       BaseClass("PARAMS_SE3OFFSET", graph_ptr_, converter_ptr_) {
       _hash = 1;
@@ -241,11 +241,11 @@ namespace srrg2_solver
     ~ConverterActionSE3PoseOffsetAD() {
     }
 
-    // ia this is the cpp
+    // this is the cpp
     void readFromG2O(std::istream& stream_) final;
 
     void writeFromBoss(std::ofstream& stream_, void* object_) final {
-      // ia does nothin
+      // does nothin
     }
 
   protected:
@@ -268,11 +268,11 @@ namespace srrg2_solver
     ConverterActionSE3PosePoseGeodesicErrorFactor(const FactorGraphPtr& graph_ptr_,
                                                             G2OConverter* converter_ptr_) :
       BaseClass("EDGE_SE3:QUAT", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionSE3PosePoseGeodesicErrorFactor() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -297,11 +297,11 @@ namespace srrg2_solver
     ConverterActionSE3PosePoseChordalEulerLeftErrorFactor(const FactorGraphPtr& graph_ptr_,
                                                       G2OConverter* converter_ptr_) :
       BaseClass("EDGE_SE3:CHORD-A", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionSE3PosePoseChordalEulerLeftErrorFactor() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -326,11 +326,11 @@ namespace srrg2_solver
     ConverterActionSE3PosePointOffsetErrorFactor(const FactorGraphPtr& graph_ptr_,
                                                  G2OConverter* converter_ptr_) :
       BaseClass("EDGE_SE3_TRACKXYZ", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionSE3PosePointOffsetErrorFactor() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object - defined in the cpp
@@ -354,11 +354,11 @@ namespace srrg2_solver
     ConverterActionVariablePoint3AD(const FactorGraphPtr& graph_ptr_,
                                     G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_TRACKXYZ", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionVariablePoint3AD() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -381,11 +381,11 @@ namespace srrg2_solver
 
     ConverterActionVariablePoint3(const FactorGraphPtr& graph_ptr_, G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_TRACKXYZ", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionVariablePoint3() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -409,11 +409,11 @@ namespace srrg2_solver
     ConverterActionVariableMatchable(const FactorGraphPtr& graph_ptr_,
                                      G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_MATCHABLE", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionVariableMatchable() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -438,11 +438,11 @@ namespace srrg2_solver
     ConverterActionSE3PoseMatchableErrorFactor(const FactorGraphPtr& graph_ptr_,
                                                G2OConverter* converter_ptr_) :
       BaseClass("EDGE_SE3_MATCHABLE", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionSE3PoseMatchableErrorFactor() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object

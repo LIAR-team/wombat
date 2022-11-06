@@ -14,7 +14,7 @@ using namespace std;
 int main(int argc, char** argv) {
   static constexpr uint64_t maximum_buffer_size = 1024 * 1024 * 256;
 
-  // ia popolate things
+  // popolate things
   const int num_points = 100;
   Vector3f* points     = new Vector3f[num_points];
   Vector3f* normals    = new Vector3f[num_points];
@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     normals[i] = points[i];
   }
 
-  // ia matchables
+  // matchables
   const size_t num_matchables = 20;
   MatchablefVector matchable_vector;
   matchable_vector.reserve(num_matchables);
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     visual_matchable_vector.emplace_back(v_matchable);
   }
 
-  // ia create some packets
+  // create some packets
   PacketPayloadPoints p_packet(num_points, points);
   PacketPayloadLines ln_packet(num_points, points, normals);
   PacketObjectPyramidWireframe pyr_wf_packet(Vector2f(2.0, 1.0f));
@@ -61,11 +61,11 @@ int main(int argc, char** argv) {
   PacketVisualMatchablefVector visual_matchable_pack(&visual_matchable_vector);
   PacketInfoEndEpoch end_packet;
 
-  // ia create a buffer
+  // create a buffer
   BufferMemory* buffer_send = new BufferMemory();
   buffer_send->allocate(maximum_buffer_size);
 
-  // ia create a packet serializer that will serialize things into its buffer
+  // create a packet serializer that will serialize things into its buffer
   PacketSerializer* serializer = new PacketSerializer();
   serializer->setBuffer(buffer_send);
   serializer->putPacket(p_packet);
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
   serializer->putPacket(visual_matchable_pack);
   serializer->putPacket(end_packet);
 
-  // ia clone the buffer to simulate a socket
+  // clone the buffer to simulate a socket
   BufferMemory* buffer_rec         = buffer_send->clone();
   PacketDeserializer* deserializer = new PacketDeserializer();
   deserializer->setBuffer(buffer_rec);

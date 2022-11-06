@@ -16,7 +16,7 @@ namespace srrg2_core {
     _num_buffers(buffer_num_),
     _argc(argc_),
     _argv(argv_) {
-    // ia do nothin
+    // do nothin
   }
 
   ViewerCoreBase::~ViewerCoreBase() {
@@ -51,10 +51,10 @@ namespace srrg2_core {
       throw std::runtime_error("ViewerCoreBase::getCanvas|unable to create valid canvas");
     }
 
-    // ia never do shit with []operator. inserting a new canvas, not yet binded to any viewport
-    // ia single view, of the canvas. if you want to have multiple views of the same canvas
-    // ia you can either use the specific function (in shared mode) or start multiple clients
-    // ia (if you are in ros mode).
+    // never do shit with []operator. inserting a new canvas, not yet binded to any viewport
+    // single view, of the canvas. if you want to have multiple views of the same canvas
+    // you can either use the specific function (in shared mode) or start multiple clients
+    // (if you are in ros mode).
     _canvas_viewport_map.insert(std::make_pair(canvas_name_, new CanvasViews(1)));
     return canvas;
   }
@@ -78,15 +78,15 @@ namespace srrg2_core {
           }
           assert(viewport && "ViewerCoreBase::_updateLoop|invalid viewport");
 
-          // ia if the viewport is active, do the rendering.
-          // ia if not, unbind it from the context
+          // if the viewport is active, do the rendering.
+          // if not, unbind it from the context
           if (viewport->isActive()) {
             viewport->update();
             ++num_active_viewports;
           } else {
-            // ia unbind the viewport
+            // unbind the viewport
             _viewer_manager->unbindViewport(viewport, c_it->first);
-            // ia remove it from the view
+            // remove it from the view
             canvas_view->viewports.erase(canvas_view->viewports.begin() + v);
             canvas_view->num_views--;
           }
@@ -94,7 +94,7 @@ namespace srrg2_core {
         ++c_it;
       }
 
-      // ia if no viewport is active shutdown everything
+      // if no viewport is active shutdown everything
       if (!num_active_viewports) {
         usleep(10000);
         ViewerCoreBase::stop();

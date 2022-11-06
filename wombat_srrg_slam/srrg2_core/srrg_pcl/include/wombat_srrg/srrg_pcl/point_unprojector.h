@@ -66,7 +66,7 @@ namespace srrg2_core {
       (void)dest;
       (void)r;
       (void)c;
-      // ds last iteration (nothing to copy)
+      // last iteration (nothing to copy)
     }
   };
 
@@ -234,7 +234,7 @@ namespace srrg2_core {
     size_t compute(const PointCloudType_& points_image_coordinates_depth_,
                    PointCloudType_& points_in_camera_frame_) {
       // PROFILE_TIME("PointUnprojector::compute(sparse)");
-      // ds prepare compute cache
+      // prepare compute cache
       points_in_camera_frame_.clear();
       points_in_camera_frame_.reserve(points_image_coordinates_depth_.size());
       const UnprojectionType projective_transform = computeProjectiveTransform();
@@ -242,21 +242,21 @@ namespace srrg2_core {
       const float& minimum_depth_meters = this->param_range_min.value();
       const float& maximum_depth_meters = this->param_range_max.value();
 
-      // ds for all input points
+      // for all input points
       for (const DestPointType& point_in_image : points_image_coordinates_depth_) {
         const float& depth_meters = point_in_image.template value<0>()(ProjectedDim);
         assert(depth_meters >= 0);
 
-        // ds skip points that lie out of the unprojection range
+        // skip points that lie out of the unprojection range
         if (depth_meters < minimum_depth_meters || depth_meters > maximum_depth_meters) {
           continue;
         }
 
-        // ds copy all fields (we will overwrite the coordinates with the
+        // copy all fields (we will overwrite the coordinates with the
         // unprojection)
         DestPointType point_in_camera_frame = point_in_image;
 
-        // ds compute unprojected coordinates
+        // compute unprojected coordinates
         point_in_camera_frame.status = Valid;
         point_in_camera_frame.template value<0>().head(ProjectedDim) =
           point_in_image.template value<0>().head(ProjectedDim);
@@ -266,7 +266,7 @@ namespace srrg2_core {
         point_in_camera_frame.template transformInPlace<0, TRANSFORM_CLASS::Isometry, IsometryType>(
           _camera_in_world);
 
-        // ds store in result buffer
+        // store in result buffer
         points_in_camera_frame_.emplace_back(point_in_camera_frame);
       }
       if (points_in_camera_frame_.empty()) {

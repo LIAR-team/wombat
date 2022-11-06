@@ -71,7 +71,7 @@ static const char* banner[] = {
   0
 };
 
-// ia THE PROGRAM
+// THE PROGRAM
 int main(int argc, char** argv) {
   initNoiseAdders();
   ParseCommandLine cmd_line(argv, banner);

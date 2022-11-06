@@ -117,7 +117,7 @@ namespace srrg2_core {
     setValue(odata.getInt(this->_name));
   }
 
-  // bdc uint8_t
+  // uint8_t
   PropertyUInt8::Property_(const std::string& name_,
                            const std::string& description_,
                            PropertyContainerBase* config_,
@@ -145,7 +145,7 @@ namespace srrg2_core {
     setValue(odata.getUnsignedInt(this->_name));
   }
 
-  // ia unsegned int
+  // unsegned int
   PropertyUnsignedInt::Property_(const std::string& name_,
                                  const std::string& description_,
                                  PropertyContainerBase* config_,
@@ -173,7 +173,7 @@ namespace srrg2_core {
     setValue(odata.getUnsignedInt(this->_name));
   }
 
-  // ia property bool
+  // property bool
   PropertyBool::Property_(const std::string& name_,
                           const std::string& description_,
                           PropertyContainerBase* config_,

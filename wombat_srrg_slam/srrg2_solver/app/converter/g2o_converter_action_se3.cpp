@@ -9,7 +9,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -46,11 +46,11 @@ namespace srrg2_solver {
            "ConverterActionVariableSE3QuaternionRightAD::readFromG2O|invalid graph pointer");
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
-    // ia read the estimate
+    // read the estimate
     estimate = readG2OIsometry3<Scalar>(stream_);
 
     _boss_object = new BossType();
@@ -85,7 +85,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -121,11 +121,11 @@ namespace srrg2_solver {
            "ConverterActionVariableSE3EulerRightAD::readFromG2O|invalid graph pointer");
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
-    // ia read the estimate
+    // read the estimate
     estimate = readG2OIsometry3<Scalar>(stream_);
 
     _boss_object = new BossType();
@@ -160,7 +160,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -197,7 +197,7 @@ namespace srrg2_solver {
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -229,13 +229,13 @@ namespace srrg2_solver {
   // ------------------------------------------------------------------------------------------- //
   // ------------------------------------------------------------------------------------------- //
   void ConverterActionSE3PoseOffset::readFromG2O(std::istream& stream_) {
-    // ia read the parameter as a normal variable
+    // read the parameter as a normal variable
     assert(_graph_ptr != nullptr &&
            "ConverterActionSE3PoseOffset::readFromG2O|invalid graph pointer");
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -244,7 +244,7 @@ namespace srrg2_solver {
     _boss_object = new BossType();
     _boss_object->setEstimate(estimate);
 
-    // ia now change status and the graph id
+    // now change status and the graph id
     _boss_object->setStatus(VariableBase::Status::Fixed);
     const size_t boss_parameter_id = _converter_ptr->registerG2OParameterId(graph_id);
     _boss_object->setGraphId(boss_parameter_id);
@@ -255,13 +255,13 @@ namespace srrg2_solver {
   // ------------------------------------------------------------------------------------------- //
   // ------------------------------------------------------------------------------------------- //
   void ConverterActionSE3PoseOffsetAD::readFromG2O(std::istream& stream_) {
-    // ia read the parameter as a normal variable
+    // read the parameter as a normal variable
     assert(_graph_ptr != nullptr &&
            "ConverterActionSE3PoseOffset::readFromG2O|invalid graph pointer");
 
     BossType::EstimateType estimate = BossType::EstimateType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
@@ -270,7 +270,7 @@ namespace srrg2_solver {
     _boss_object = new BossType();
     _boss_object->setEstimate(estimate);
 
-    // ia now change status and the graph id
+    // now change status and the graph id
     _boss_object->setStatus(VariableBase::Status::Fixed);
     const size_t boss_parameter_id = _converter_ptr->registerG2OParameterId(graph_id);
 
@@ -290,15 +290,15 @@ namespace srrg2_solver {
     BossType::MeasurementType measurement = BossType::MeasurementType::Identity();
     BossType::InformationMatrixType omega = BossType::InformationMatrixType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id_0 = -1;
     int graph_id_1 = -1;
     stream_ >> graph_id_0 >> graph_id_1;
 
-    // ia read the measurement
+    // read the measurement
     measurement = readG2OIsometry3<Scalar>(stream_);
 
-    // ia read the omega
+    // read the omega
     for (int i = 0; i < omega.rows() && stream_.good(); i++) {
       for (int j = i; j < omega.cols() && stream_.good(); j++) {
         stream_ >> omega(i, j);
@@ -346,15 +346,15 @@ namespace srrg2_solver {
     BossType::MeasurementType measurement = BossType::MeasurementType::Identity();
     BossType::InformationMatrixType omega = BossType::InformationMatrixType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id_0 = -1;
     int graph_id_1 = -1;
     stream_ >> graph_id_0 >> graph_id_1;
 
-    // ia read the measurement
+    // read the measurement
     measurement = readG2OIsometry3<Scalar>(stream_);
 
-    // ia read the omega
+    // read the omega
     for (int i = 0; i < omega.rows() && stream_.good(); i++) {
       for (int j = i; j < omega.cols() && stream_.good(); j++) {
         stream_ >> omega(i, j);
@@ -401,7 +401,7 @@ namespace srrg2_solver {
     BossType::MeasurementType measurement = BossType::MeasurementType::Zero();
     BossType::InformationMatrixType omega = BossType::InformationMatrixType::Identity();
 
-    // ia read the ID
+    // read the ID
     int graph_id_0        = -1;
     int graph_id_1        = -1;
     int graph_id_offset_v = -1;
@@ -414,10 +414,10 @@ namespace srrg2_solver {
     assert(graph_id_offset_v >= 0 &&
            "ConverterActionSE3PosePointOffsetErrorFactor::readFromG2O|invalid graph_id_offset_v");
 
-    // ia get the boss offset graph id
+    // get the boss offset graph id
     const size_t& boss_graph_id_offset_v = _converter_ptr->getBossParameterId(graph_id_offset_v);
 
-    // ia read the measurement
+    // read the measurement
     for (size_t i = 0; i < 3; i++) {
       stream_ >> measurement[i];
     }
@@ -471,11 +471,11 @@ namespace srrg2_solver {
            "ConverterActionVariablePoint3AD::readFromG2O|invalid graph pointer");
     BossType::EstimateType estimate = BossType::EstimateType::Zero();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
-    // ia read the estimate
+    // read the estimate
     for (size_t i = 0; i < 3; i++) {
       stream_ >> estimate[i];
     }
@@ -512,11 +512,11 @@ namespace srrg2_solver {
            "ConverterActionVariablePoint3::readFromG2O|invalid graph pointer");
     BossType::EstimateType estimate = BossType::EstimateType::Zero();
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
-    // ia read the estimate
+    // read the estimate
     for (size_t i = 0; i < 3; i++) {
       stream_ >> estimate[i];
     }
@@ -552,11 +552,11 @@ namespace srrg2_solver {
     assert(_graph_ptr != nullptr &&
            "ConverterActionVariableMatchable::readFromG2O|invalid graph pointer");
 
-    // ia read the ID
+    // read the ID
     int graph_id = 0;
     stream_ >> graph_id;
 
-    // ia read the estimate
+    // read the estimate
     int type                                    = -1;
     BossType::EstimateType::VectorType origin   = BossType::EstimateType::VectorType::Zero();
     BossType::EstimateType::MatrixType rotation = BossType::EstimateType::MatrixType::Zero();
@@ -589,7 +589,7 @@ namespace srrg2_solver {
 
     stream_ << _boss_object->graphId() << " ";
 
-    // ia write estimate
+    // write estimate
     const auto& origin = _boss_object->estimate().origin();
     const auto& R      = _boss_object->estimate().rotation();
 
@@ -610,12 +610,12 @@ namespace srrg2_solver {
     assert(_graph_ptr != nullptr &&
            "ConverterActionSE3PoseMatchableErrorFactor::readFromG2O|invalid graph pointer");
 
-    // ia read the ID
+    // read the ID
     int graph_id_0 = -1;
     int graph_id_1 = -1;
     stream_ >> graph_id_0 >> graph_id_1;
 
-    // ia read the measurement
+    // read the measurement
     int type                                       = -1;
     BossType::MeasurementType::VectorType origin   = BossType::MeasurementType::VectorType::Zero();
     BossType::MeasurementType::MatrixType rotation = BossType::MeasurementType::MatrixType::Zero();
@@ -634,7 +634,7 @@ namespace srrg2_solver {
     BossType::MeasurementType measurement(
       (BossType::MeasurementType::Type)(type), origin, rotation);
 
-    // ia read the omega
+    // read the omega
     BossType::InformationMatrixType omega = BossType::InformationMatrixType::Identity();
     for (int i = 0; i < omega.rows() && stream_.good(); i++) {
       for (int j = i; j < omega.cols() && stream_.good(); j++) {
@@ -663,7 +663,7 @@ namespace srrg2_solver {
            "ConverterActionSE3PoseMatchableErrorFactor::writeFromBoss|invalid boss object");
 
     stream_ << _boss_object->variableId(0) << " " << _boss_object->variableId(1) << " ";
-    // ia write estimate
+    // write estimate
     const auto& origin = _boss_object->measurement().origin();
     const auto& R      = _boss_object->measurement().rotation();
 

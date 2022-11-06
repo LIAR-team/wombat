@@ -34,7 +34,7 @@ namespace srrg2_core {
     PointUnprojectorLidar3D_<srrg2_lidar3d_utils::LIDAR_TYPE::VLP_16,
                              PointNormalCurvatureColor3dVectorCloud>;
 
-  // ia shared ptr
+  // shared ptr
   using PointIntensityDescriptor3fUnprojectorVLP16Ptr =
     std::shared_ptr<PointIntensityDescriptor3fUnprojectorVLP16>;
   using PointNormalCurvatureColor3fUnprojectorVLP16Ptr =
@@ -67,7 +67,7 @@ namespace srrg2_core {
     PointUnprojectorLidar3D_<srrg2_lidar3d_utils::LIDAR_TYPE::HDL_32,
                              PointNormalCurvatureColor3dVectorCloud>;
 
-  // ia shared ptr
+  // shared ptr
   using PointIntensityDescriptor3fUnprojectorHDL32Ptr =
     std::shared_ptr<PointIntensityDescriptor3fUnprojectorHDL32>;
   using PointNormalCurvatureColor3fUnprojectorHDL32Ptr =
@@ -100,7 +100,7 @@ namespace srrg2_core {
     PointUnprojectorLidar3D_<srrg2_lidar3d_utils::LIDAR_TYPE::HDL_64E,
                              PointNormalCurvatureColor3dVectorCloud>;
 
-  // ia shared ptr
+  // shared ptr
   using PointIntensityDescriptor3fUnprojectorHDL64EPtr =
     std::shared_ptr<PointIntensityDescriptor3fUnprojectorHDL64E>;
   using PointNormalCurvatureColor3fUnprojectorHDL64EPtr =
@@ -133,7 +133,7 @@ namespace srrg2_core {
     PointUnprojectorLidar3D_<srrg2_lidar3d_utils::LIDAR_TYPE::OS1_16,
                              PointNormalCurvatureColor3dVectorCloud>;
 
-  // ia shared ptr
+  // shared ptr
   using PointIntensityDescriptor3fUnprojectorOS1_16Ptr =
     std::shared_ptr<PointIntensityDescriptor3fUnprojectorOS1_16>;
   using PointNormalCurvatureColor3fUnprojectorOS1_16Ptr =
@@ -166,7 +166,7 @@ namespace srrg2_core {
     PointUnprojectorLidar3D_<srrg2_lidar3d_utils::LIDAR_TYPE::OS1_64,
                              PointNormalCurvatureColor3dVectorCloud>;
 
-  // ia shared ptr
+  // shared ptr
   using PointIntensityDescriptor3fUnprojectorOS1_64Ptr =
     std::shared_ptr<PointIntensityDescriptor3fUnprojectorOS1_64>;
   using PointNormalCurvatureColor3fUnprojectorOS1_64Ptr =

@@ -168,7 +168,7 @@ namespace srrg2_core {
   using Similiarity2f = Similiarity2_<float>;
   using Similiarity2d = Similiarity2_<double>;
 
-  // ds TODO move?
+  // TODO move?
   template <typename Scalar_>
   using Matrix1_3_ = Eigen::Matrix<Scalar_, 1, 3>;
   using Matrix1_3f = Matrix1_3_<float>;
@@ -224,7 +224,7 @@ namespace srrg2_core {
   using Matrix6_3f = Matrix6_3_<float>;
   using Matrix6_3d = Matrix6_3_<double>;
 
-  // ds bunch of Eigen aligned STL container types
+  // bunch of Eigen aligned STL container types
 #define DEFINE_ALIGNED_CONTAINERS(EIGEN_TYPE_)                                                   \
   using StdVectorEigen##EIGEN_TYPE_ =                                                            \
     std::vector<EIGEN_TYPE_, Eigen::aligned_allocator<EIGEN_TYPE_>>;                             \
@@ -266,7 +266,7 @@ namespace srrg2_core {
     R -= 0.5 * R * E;
   }
 
-  // bdc, please do not templatize them, otherwise we can get weird behaviour
+  //, please do not templatize them, otherwise we can get weird behaviour
   // i.e.
   //
   // template <typename Type_>

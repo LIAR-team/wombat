@@ -42,11 +42,11 @@ protected:
   // @returns: the status (SolutionGood or SolutionBad)
   Status updateSolution() override;
 
-  // tg name are choosen in order to not collapse with mother class attributes
+  // name are choosen in order to not collapse with mother class attributes
   // @brief parameter settings, statistics, and workspace used internally by cholmod
   cholmod_common _cholmodCommon;
 
-  // tg i use NULL to make it consistent with the output of cholmod_free_stuff
+  // i use NULL to make it consistent with the output of cholmod_free_stuff
   // @brief system matrix in cholmod sparse format
   cholmod_sparse* _B = nullptr;
   // @brief target vector in cholmod dense format
@@ -56,7 +56,7 @@ protected:
   // @brief Cholesky factor in cholmod format
   cholmod_factor* _L = nullptr;
 
-  // tg data structure for marginal covariance computation
+  // data structure for marginal covariance computation
   // @brief cache matrix elements and inverse diagonal (elimination tree)
   using MatrixElementsCache = std::unordered_map<int, double>;
   MatrixElementsCache _elements_cache;

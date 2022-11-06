@@ -19,7 +19,7 @@ namespace srrg2_solver {
       return;
     }
 
-    // tg Jacobian of the bearing prediction with respect to the predicted point
+    // Jacobian of the bearing prediction with respect to the predicted point
     Vector2f J_norm = predicted_point;
     J_norm /= predicted_point.norm();
     auto J_pose              = jacobian<0>();

@@ -24,9 +24,6 @@ wombat_install_target(srrg_hbst)
 #this flag is recommended for large-scale datasets and lifelong recognition applications
 
 if(BUILD_TESTING)
-  # TODO: enable linters
-  # wombat_linters()
-
   find_package(ament_cmake_gtest REQUIRED)
 
   ament_add_gtest(test_search tests/test_search.cpp)

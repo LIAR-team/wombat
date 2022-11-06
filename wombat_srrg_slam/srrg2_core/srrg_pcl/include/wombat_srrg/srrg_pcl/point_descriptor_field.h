@@ -28,7 +28,7 @@ namespace srrg2_core {
 
   //! deprecated
   struct PointDescriptorFieldCvMatBinary {
-    static constexpr int Dim = 1; // ds INVALID for cv::Mat
+    static constexpr int Dim = 1; // INVALID for cv::Mat
     using ValueType          = cv::Mat;
     using TraitsType         = PointDescriptorFieldTraits_<ValueType>;
     ValueType value;
@@ -39,7 +39,7 @@ namespace srrg2_core {
 
   //! deprecated
   struct PointDescriptorFieldCvMatFloat {
-    static constexpr int Dim = 1; // ds INVALID for cv::Mat
+    static constexpr int Dim = 1; // INVALID for cv::Mat
     using ValueType          = cv::Mat;
     using TraitsType         = PointDescriptorFieldTraits_<ValueType>;
     ValueType value;

@@ -6,9 +6,9 @@
 
 namespace srrg2_core {
 
-  // ds 3D benchmark wrapper for:
+  // 3D benchmark wrapper for:
   // https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets
-  // ds this dataset contains stereo vision and IMU data in SE(3)
+  // this dataset contains stereo vision and IMU data in SE(3)
   class SLAMBenchmarkSuiteEuRoC : public SLAMBenchmarkSuiteKITTI {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -45,7 +45,7 @@ namespace srrg2_core {
       sorter->param_source.setValue(source);
       sorter->param_time_interval.setValue(0.1);
 
-      // ds open ground truth file in EuRoC format
+      // open ground truth file in EuRoC format
       std::ifstream ground_truth_stream(filepath_, std::ios::in);
       if (!ground_truth_stream.good() || !ground_truth_stream.is_open()) {
         throw std::runtime_error(
@@ -53,21 +53,21 @@ namespace srrg2_core {
           filepath_);
       }
 
-      // ds skip the first line (EuRoC format header information)
+      // skip the first line (EuRoC format header information)
       std::string buffer;
       std::getline(ground_truth_stream, buffer);
 
-      // ds relative estimate computation
+      // relative estimate computation
       _relative_ground_truth_poses.clear();
       double previous_timestamp_seconds          = 0;
       double previous_timestamp_absolute_seconds = 0;
       Isometry3f previous_pose(Isometry3f::Identity());
 
-      // ds simultaneously populate absolute poses at 30 Hz (1.5x camera frequency)
+      // simultaneously populate absolute poses at 30 Hz (1.5x camera frequency)
       constexpr double minimum_timestamp_delta_for_absolute_poses = 1 / 30.0;
       _absolute_ground_truth_poses.reserve(10000);
       Isometry3f transform_shift_to_origin(Isometry3f::Identity());
-      // ds read file by tokens
+      // read file by tokens
       double timestamp_seconds = 0;
 
       bool first_message           = true;
@@ -81,7 +81,7 @@ namespace srrg2_core {
 
           Isometry3f pose = odom_ptr->pose.value();
           if (timestamp_seconds - previous_timestamp_seconds > 0) {
-            // ds insertion must succeed otherwise there are duplicates!
+            // insertion must succeed otherwise there are duplicates!
             _relative_ground_truth_poses.push_back(RelativeEstimateStamped(
               pose.inverse() * previous_pose, previous_timestamp_seconds, timestamp_seconds));
 
@@ -95,7 +95,7 @@ namespace srrg2_core {
                 << std::endl;
               std::cerr << transform_shift_to_origin.matrix() << std::endl;
             } else {
-              // ds compute new absolute estimate if timestamp delta is sufficient
+              // compute new absolute estimate if timestamp delta is sufficient
               if (timestamp_seconds - previous_timestamp_absolute_seconds >
                   minimum_timestamp_delta_for_absolute_poses) {
                 _absolute_ground_truth_poses.emplace_back(
@@ -117,13 +117,13 @@ namespace srrg2_core {
     }
 
     void writeTrajectoryToFile(const std::string& filename_ = "trajectory.txt") const override {
-      // ds write estimated trajectory to file (TUM format)
+      // write estimated trajectory to file (TUM format)
       _writeTrajectoryToFileTUM(filename_, _estimated_poses);
       std::cerr << "SLAMBenchmarkSuiteEuRoC::writeTrajectoryToFile|stored SLAM estimates in TUM "
                    "format: '"
                 << filename_ << "' (messages: " << _estimated_poses.size() << ")" << std::endl;
 
-      // ds create gt outfile (TUM format)
+      // create gt outfile (TUM format)
       _writeTrajectoryToFileTUM("gt.txt", _absolute_ground_truth_poses);
       std::cerr
         << "SLAMBenchmarkSuiteEuRoC::writeTrajectoryToFile|stored EuRoC GT in TUM format: 'gt.txt'"
@@ -131,7 +131,7 @@ namespace srrg2_core {
     }
 
   protected:
-    // ds TODO move helpers up and blast code
+    // TODO move helpers up and blast code
     void
     _writeTrajectoryToFileTUM(const std::string& filename_,
                               const AbsoluteEstimateStampedVector& poses_and_timestamps_) const {

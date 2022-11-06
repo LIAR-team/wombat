@@ -17,7 +17,7 @@ namespace srrg2_solver
     uint64_t h = hash(r, c);
     auto it    = _allocators.find(h);
     if (it == _allocators.end()) {
-      // ia if you end up here you probably have to add your allocator in the SparseSolver ctor
+      // if you end up here you probably have to add your allocator in the SparseSolver ctor
       std::cerr
         << "MatrixBlockFactory::createBlock|please create an allocator in for blocks of dimension <"
         << r << ", " << c << ">";

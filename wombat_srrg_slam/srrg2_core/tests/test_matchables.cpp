@@ -65,7 +65,7 @@ TEST(DUMMY_DATA, MatchableBasics) {
   const Vector3f zero_origin        = Vector3f::Zero();
   m_float_assignment_0.setDirection(direction_float);
 
-  // ia assign to the identity
+  // assign to the identity
   m_float_assignment_0 = Matchablef::Identity();
   // ai copy ctor
   Matchablef m_float_assignment_1(m_float_assignment_0);
@@ -95,7 +95,7 @@ TEST(DUMMY_DATA, MatchableOperators) {
   T.linear()      = rot_z;
   T.translation() = translation;
 
-  // ia transform
+  // transform
   Matchablef matchable_p1              = matchable_p0.transform(T);
   const Vector3f expected_origin_p1    = rot_z * matchable_p0.origin() + translation;
   const Vector3f expected_direction_p1 = matchable_p0.direction();
@@ -104,14 +104,14 @@ TEST(DUMMY_DATA, MatchableOperators) {
     ASSERT_FLOAT_EQ(expected_direction_p1(i), matchable_p1.direction()(i));
   }
 
-  // ia transform in place w/ point
+  // transform in place w/ point
   matchable_p0.transformInPlace(T);
   for (size_t i = 0; i < 3; ++i) {
     ASSERT_FLOAT_EQ(expected_origin_p1(i), matchable_p0.origin()(i));
     ASSERT_FLOAT_EQ(expected_direction_p1(i), matchable_p0.direction()(i));
   }
 
-  // ia transform
+  // transform
   Matchablef matchable_l1              = matchable_l0.transform(T);
   const Vector3f expected_origin_l1    = rot_z * matchable_l0.origin() + translation;
   const Vector3f expected_direction_l1 = (rot_z * rot_y).col(0);
@@ -120,7 +120,7 @@ TEST(DUMMY_DATA, MatchableOperators) {
     ASSERT_FLOAT_EQ(expected_direction_l1(i), matchable_l1.direction()(i));
   }
 
-  // ia transform in place w/ line
+  // transform in place w/ line
   matchable_l0.transformInPlace(T);
   for (size_t i = 0; i < 3; ++i) {
     ASSERT_FLOAT_EQ(expected_origin_l1(i), matchable_l0.origin()(i));
@@ -142,7 +142,7 @@ TEST(DUMMY_DATA, VisualMatchable) {
     Eigen::AngleAxisf(0.25 * M_PI, Vector3f::UnitY()).toRotationMatrix();
   const Vector3f direction_line = rotation_line.col(0);
 
-  // ia basics
+  // basics
   VisualMatchablef m_point(type_point, origin_point);
   m_point.setDirection(direction_point);
   ASSERT_FLOAT_EQ(type_point, m_point.type());
@@ -158,7 +158,7 @@ TEST(DUMMY_DATA, VisualMatchable) {
     ASSERT_FLOAT_EQ(direction_line(i), m_line.direction()(i));
   }
 
-  // ia transformation
+  // transformation
   const Matrix3f rot_y       = AngleAxisf(M_PI, Vector3f::UnitY()).toRotationMatrix();
   const Matrix3f rot_z       = AngleAxisf(M_PI, Vector3f::UnitZ()).toRotationMatrix();
   const Vector3f translation = Vector3f(1.0, 0.0, 0.0);
@@ -169,7 +169,7 @@ TEST(DUMMY_DATA, VisualMatchable) {
   T.linear()      = rot_z;
   T.translation() = translation;
 
-  // ia transform and operators
+  // transform and operators
   VisualMatchablef m_l1                = m_l0.transform(T);
   const Vector3f expected_origin_l1    = rot_z * m_l0.origin() + translation;
   const Vector3f expected_direction_l1 = (rot_z * rot_y).col(0);
@@ -178,7 +178,7 @@ TEST(DUMMY_DATA, VisualMatchable) {
     ASSERT_FLOAT_EQ(expected_direction_l1(i), m_l1.direction()(i));
   }
 
-  // ia transform in place w/ line
+  // transform in place w/ line
   m_l0.transformInPlace(T);
   for (size_t i = 0; i < 3; ++i) {
     ASSERT_FLOAT_EQ(expected_origin_l1(i), m_l0.origin()(i));
@@ -186,7 +186,7 @@ TEST(DUMMY_DATA, VisualMatchable) {
   }
 
   VisualMatchablef m_l2(m_l0);
-  // ia should fall back to unstable situation and return [0 0 1]
+  // should fall back to unstable situation and return [0 0 1]
   VisualMatchablef m_l3                = m_l2 - m_l0;
   const Vector3f expected_direction_l3 = Vector3f::UnitZ();
   for (size_t i = 0; i < 3; ++i) {
@@ -194,7 +194,7 @@ TEST(DUMMY_DATA, VisualMatchable) {
     ASSERT_FLOAT_EQ(expected_direction_l3(i), m_l3.direction()(i));
   }
 
-  // ia still operators
+  // still operators
   VisualMatchablef m_l4(m_l0);
   VisualMatchablef m_l5 = m_l4 + m_l0;
   VisualMatchablef m_l6 = m_l0 * 2.0f;
@@ -218,7 +218,7 @@ TEST(DUMMY_DATA, VisualMatchable) {
     ASSERT_FLOAT_EQ(expected_direction_l6(i), m_l4.direction()(i));
   }
 
-  // ia transformation also of the support cloud
+  // transformation also of the support cloud
   VisualMatchablef m_pl0(MatchableBase::Type::Plane, Vector3f::Zero());
   const size_t target_support_size = 10000;
   m_pl0.support().reserve(target_support_size);
@@ -229,7 +229,7 @@ TEST(DUMMY_DATA, VisualMatchable) {
   }
   ASSERT_EQ(static_cast<size_t>(m_pl0.support().size()), target_support_size);
 
-  // ia fake transform
+  // fake transform
   VisualMatchablef m_pl0_transf = m_pl0.transformSupport(Isometry3f::Identity());
   ASSERT_EQ(static_cast<size_t>(m_pl0_transf.support().size()), target_support_size);
   for (size_t i = 0; i < 3; ++i) {
@@ -247,7 +247,7 @@ TEST(DUMMY_DATA, VisualMatchable) {
     ASSERT_FLOAT_EQ(p.curvature(), p_t.curvature());
   }
 
-  // ia actual transform
+  // actual transform
   VisualMatchablef m_pl0_transf_2 = m_pl0.transformSupport(T);
   ASSERT_EQ(static_cast<size_t>(m_pl0_transf_2.support().size()), target_support_size);
   const Vector3f expected_orgin_m_pl0_transf_2     = rot_z * m_pl0.origin() + translation;

@@ -12,14 +12,14 @@ namespace srrg2_solver {
     JacobianMatrixType& Jj_) {
     using Matrix3 = srrg2_core::Matrix3_<Scalar>;
 
-    // ia compute the goddamn jacobian - evil starts here
+    // compute the goddamn jacobian - evil starts here
     Ji_.setZero();
     Jj_.setZero();
 
-    const auto inverse_meas_R = inverse_Z_T_.linear();       // ia Ra
-    const auto predition_R    = prediction_T_.linear();      // ia Rb
-    const auto error_R        = error_T_.linear();           // ia Re
-    const auto prediction_t   = prediction_T_.translation(); // ia tb
+    const auto inverse_meas_R = inverse_Z_T_.linear();       // Ra
+    const auto predition_R    = prediction_T_.linear();      // Rb
+    const auto error_R        = error_T_.linear();           // Re
+    const auto prediction_t   = prediction_T_.translation(); // tb
 
     PartialDerivativeMatrixType dq_dR = PartialDerivativeMatrixType::Zero();
     compute_dq_dR(dq_dR,
@@ -48,7 +48,7 @@ namespace srrg2_solver {
 
     // dte/dqj: this is zero
 
-    // ia super evil here
+    // super evil here
     Scalar buf[27];
     Eigen::Map<Eigen::Matrix<Scalar, 9, 3, Eigen::ColMajor>> M(buf);
     Matrix3 Sxt, Syt, Szt;

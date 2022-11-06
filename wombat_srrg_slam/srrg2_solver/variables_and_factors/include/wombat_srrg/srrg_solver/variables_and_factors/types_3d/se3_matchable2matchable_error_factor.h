@@ -19,7 +19,7 @@ namespace srrg2_solver {
     using BaseType     = ErrorFactor_<7, VariableSE3EulerLeft>;
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    // ia required to not complain
+    // required to not complain
     SE3Matchable2MatchableEulerLeftErrorFactor();
     virtual ~SE3Matchable2MatchableEulerLeftErrorFactor();
 
@@ -43,8 +43,8 @@ namespace srrg2_solver {
     void errorAndJacobian(bool error_only_) final;
 
   protected:
-    const Matchablef* _fixed_matchable  = nullptr; // ia new matchables
-    const Matchablef* _moving_matchable = nullptr; // ia map matchables
+    const Matchablef* _fixed_matchable  = nullptr; // new matchables
+    const Matchablef* _moving_matchable = nullptr; // map matchables
 
   private:
     /**
@@ -67,9 +67,9 @@ namespace srrg2_solver {
       }
     };
 
-    // ia map key is <fixed_type, moving_type>
+    // map key is <fixed_type, moving_type>
     using MatchableTypePair = std::pair<int, int>;
-    // ia actual map type
+    // actual map type
     using MatchableTypePairActiveComponentsMap =
       std::unordered_map<MatchableTypePair, ActiveComponents, PairHasher>;
 

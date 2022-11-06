@@ -40,7 +40,7 @@ namespace srrg2_core {
              "PacketMatrix_::allocate|bad allocate");
     }
 
-    // ia default argument for ctor is required for the factory
+    // default argument for ctor is required for the factory
     PacketPointMatrix_(const EntryTypeMatrix* point_matrix_ = 0) :
       PacketBase(PacketType_) {
       if (point_matrix_) {
@@ -60,11 +60,11 @@ namespace srrg2_core {
 
     char* serialize(char* buffer) const override {
       assert(data_matrix && "PacketMatrix_::serialize|invalid data matrix");
-      // ia first put the size
+      // first put the size
       buffer            = putInBuffer(buffer, rows);
       buffer            = putInBuffer(buffer, cols);
       const size_t size = data_matrix->size();
-      // ia then put the meat - worst line of code ever (I really hate matrix
+      // then put the meat - worst line of code ever (I really hate matrix
       // pointclouds)
       std::memcpy((void*) buffer,
                   (const void*) data_matrix->data().data(),
@@ -75,12 +75,12 @@ namespace srrg2_core {
 
     const char* deserialize(const char* buffer) override {
       clear();
-      // ia first get the size
+      // first get the size
       buffer = getFromBuffer(rows, buffer);
       buffer = getFromBuffer(cols, buffer);
 
-      // ia allocate and copy
-      allocate(rows, cols); // ia this will also reindex the matrix
+      // allocate and copy
+      allocate(rows, cols); // this will also reindex the matrix
       const size_t size = data_matrix->size();
 
       std::memcpy((void*) data_matrix->data().data(),

@@ -23,11 +23,11 @@ namespace srrg2_core {
   void NavsatFixMessage::getPosition(Vector3f& position_xyz_) {
     position_xyz_.setZero();
 
-    // ia earth constants
-    const double rad = 6378137.0f;         // ia earth radius
-    const double f   = 1.0f / 298.257224f; // ia flattening parameter
+    // earth constants
+    const double rad = 6378137.0f;         // earth radius
+    const double f   = 1.0f / 298.257224f; // flattening parameter
 
-    // ia computing stuff according to [ http://mathforum.org/library/drmath/view/51832.html ]
+    // computing stuff according to [ http://mathforum.org/library/drmath/view/51832.html ]
     const double cos_lat = std::cos(latitude.value() * M_PI / 180.0f);
     const double sin_lat = std::sin(latitude.value() * M_PI / 180.0f);
     const double cos_lon = std::cos(longitude.value() * M_PI / 180.0f);
@@ -36,7 +36,7 @@ namespace srrg2_core {
       1.0f / std::sqrt(cos_lat * cos_lat + (1.f - f) * (1.f - f) * sin_lat * sin_lat);
     const double S = (1.f - f) * (1.f - f) * C;
 
-    // ia check if we have also altitude informations
+    // check if we have also altitude informations
     double h = 0.0;
     if (has_altitude.value()) {
       h = altitude.value();

@@ -12,7 +12,7 @@ namespace srrg2_core {
     : public srrg2_core::PointUnprojectorBase_<DestPointCloudType_>,
       public srrg2_lidar3d_utils::Lidar3DLookupProjector_<lidar3d_type_> {
   public:
-    // ia a lot of usings
+    // a lot of usings
     using ThisType               = PointUnprojectorLidar3D_<lidar3d_type_, DestPointCloudType_>;
     using BaseType               = srrg2_core::PointUnprojectorBase_<DestPointCloudType_>;
     using LidarProjectorBaseType = srrg2_lidar3d_utils::Lidar3DLookupProjector_<lidar3d_type_>;

@@ -21,15 +21,15 @@ namespace srrg2_solver {
     const Vector2f predicted_point = transformation.inverse() * landmark;
     const float predicted_angle    = std::atan2(predicted_point(1), predicted_point(0));
 
-    // tg equivalent to trace(I - R_z^T * R_prediction) [box-minus]
+    // equivalent to trace(I - R_z^T * R_prediction) [box-minus]
     _e(0) = 2.f * (1 - cos(predicted_angle - angle));
     if (error_only_) {
       return;
     }
 
-    // tg derivative of the trace with respect to the predicted angle
+    // derivative of the trace with respect to the predicted angle
     float dtrace_dprediction = 2.f * sin(predicted_angle - angle);
-    // tg Jacobian of the bearing prediction with respect to the predicted point
+    // Jacobian of the bearing prediction with respect to the predicted point
     Vector2f J_atan = -1.0f * geometry2d::skew(predicted_point);
     J_atan /= predicted_point.squaredNorm();
     auto J_pose              = jacobian<0>();

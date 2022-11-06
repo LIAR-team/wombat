@@ -5,7 +5,7 @@ namespace srrg2_solver {
 
   SparseBlockLinearSolverCholmodFull::SparseBlockLinearSolverCholmodFull() {
     cholmod_start(&_cholmodCommon);
-    // tg set up cholmod parameters
+    // set up cholmod parameters
     _cholmodCommon.nmethods           = 0;
     _cholmodCommon.method[0].ordering = CHOLMOD_GIVEN;
     _cholmodCommon.supernodal         = CHOLMOD_AUTO;
@@ -13,7 +13,7 @@ namespace srrg2_solver {
   }
 
   SparseBlockLinearSolverCholmodFull::~SparseBlockLinearSolverCholmodFull() {
-    // tg free workspace and terminate cholmod
+    // free workspace and terminate cholmod
     cholmod_free_sparse(&_B, &_cholmodCommon);
     cholmod_free_dense(&_c, &_cholmodCommon);
     cholmod_free_dense(&_solution, &_cholmodCommon);
@@ -54,11 +54,11 @@ namespace srrg2_solver {
   }
 
   SparseBlockLinearSolver::Status SparseBlockLinearSolverCholmodFull::updateStructure() {
-    // tg check if the system matrix has a symmetric layout
+    // check if the system matrix has a symmetric layout
     if (!_A->isLayoutSymmetric()) {
       return SparseBlockLinearSolver::StructureBad;
     }
-    // tg free the relevant cholmod matricies
+    // free the relevant cholmod matricies
     if (_B != nullptr) {
       cholmod_free_sparse(&_B, &_cholmodCommon);
     }
@@ -68,7 +68,7 @@ namespace srrg2_solver {
     if (_L != nullptr) {
       cholmod_free_factor(&_L, &_cholmodCommon);
     }
-    // tg allocate cholmod dense for target vector _c
+    // allocate cholmod dense for target vector _c
     const size_t num_rows = static_cast<size_t>(_b->rows());
     const size_t num_cols = static_cast<size_t>(_b->cols());
 
@@ -76,7 +76,7 @@ namespace srrg2_solver {
            "SparseBlockLinearSolverCholmodFull::updateStructure| b vector should have one column");
     _c = cholmod_zeros(num_rows, num_cols, CHOLMOD_REAL, &_cholmodCommon);
 
-    // tg allocate cholmod sparse for the system matrix
+    // allocate cholmod sparse for the system matrix
     size_t rows = _A->rows();
     size_t cols = _A->cols();
     size_t nnz  = _A->numNonZeros();
@@ -93,18 +93,18 @@ namespace srrg2_solver {
     std::iota(null_permutation, null_permutation + rows, 0);
     _L = cholmod_analyze_p(_B, null_permutation, NULL, 0, &_cholmodCommon);
 
-    // tg allocate solution in SparseBlockMatrix format
+    // allocate solution in SparseBlockMatrix format
     _x = SparseBlockMatrix(_b->blockRowDims(), _b->blockColDims());
 
     return SparseBlockLinearSolver::StructureGood;
   }
 
   SparseBlockLinearSolver::Status SparseBlockLinearSolverCholmodFull::updateCoefficients() {
-    // tg copy system matrix in cholmod format
+    // copy system matrix in cholmod format
     _A->fillCCS((double*) _B->x);
     cholmod_factorize(_B, _L, &_cholmodCommon);
 
-    // tg check if matrix is positive definite
+    // check if matrix is positive definite
     if (_cholmodCommon.status == CHOLMOD_NOT_POSDEF) {
       return SparseBlockLinearSolver::CoefficientsBad;
     }
@@ -113,15 +113,15 @@ namespace srrg2_solver {
   }
 
   SparseBlockLinearSolver::Status SparseBlockLinearSolverCholmodFull::updateSolution() {
-    // tg delete previous solution
+    // delete previous solution
     if (_solution != nullptr) {
       cholmod_free_dense(&_solution, &_cholmodCommon);
     }
 
-    // tg fill target vector and solve the linear system
+    // fill target vector and solve the linear system
     _b->fillCCS((double*) _c->x, false);
     _solution = cholmod_solve(CHOLMOD_A, _L, _c, &_cholmodCommon);
-    // tg need to cast back to float to make it compatible with SparseBlockMatrix
+    // need to cast back to float to make it compatible with SparseBlockMatrix
     // check if solution containts nan of inf
     const double* data = (double*) (_solution->x);
     for (int row_block_idx = 0; row_block_idx < _x.blockRows(); ++row_block_idx) {
@@ -147,7 +147,7 @@ namespace srrg2_solver {
     const int dim    = ordering.size();
     const size_t nnz = layout.size();
 
-    // tg convert the block structure to cholmod triplets
+    // convert the block structure to cholmod triplets
     cholmod_triplet triplet;
 
     triplet.itype = CHOLMOD_INT;
@@ -178,9 +178,9 @@ namespace srrg2_solver {
       j_temp[i] = c;
       x_temp[i] = 1;
     }
-    // tg needed to use AMD ordering and free sparse matrix
+    // needed to use AMD ordering and free sparse matrix
     cholmod_common* cc_no_const = const_cast<cholmod_common*>(&_cholmodCommon);
-    // tg convert triplets to sparse matrix
+    // convert triplets to sparse matrix
     cholmod_sparse* ch_sparse = cholmod_triplet_to_sparse(&triplet, triplet.nnz, cc_no_const);
     ch_sparse->xtype          = CHOLMOD_PATTERN;
 
@@ -232,17 +232,17 @@ namespace srrg2_solver {
                 << std::endl;
       return false;
     }
-    // tg set the matrix elements to be computed starting from the
+    // set the matrix elements to be computed starting from the
     // block pattern
     std::vector<IntPair> elements_to_compute;
-    // tg for each block extract starting absolute indices and block dimensions
+    // for each block extract starting absolute indices and block dimensions
     for (const IntPair& block_indices : blocks_layout) {
       const IntPair block_offsets    = _A->blockOffsets(block_indices.first, block_indices.second);
       const IntPair block_dimensions = _A->blockDims(block_indices.first, block_indices.second);
 
       for (int r = 0; r < block_dimensions.first; ++r) {
         for (int c = 0; c < block_dimensions.second; ++c) {
-          // tg compute absolute element indices
+          // compute absolute element indices
           int row_idx_block_matrix = r + block_offsets.first;
           int col_idx_block_matrix = c + block_offsets.second;
 
@@ -255,19 +255,19 @@ namespace srrg2_solver {
       }
     }
 
-    // tg sort the elements so that elements at last columns
+    // sort the elements so that elements at last columns
     // are processed before
     std::sort(elements_to_compute.begin(),
               elements_to_compute.end(),
               [](const IntPair& a, const IntPair& b) -> bool {
                 return a.second > b.second || (a.second == b.second && a.first > b.first);
               });
-    // tg compute the required matrix elements
+    // compute the required matrix elements
     for (const IntPair& elem : elements_to_compute) {
       _computeMatrixEntry(elem.first, elem.second);
     }
 
-    // tg fill the blocks with the values
+    // fill the blocks with the values
     for (const IntPair& block_idx : blocks_layout) {
       MatrixBlockBase* block      = inverse_blocks.blockAt(block_idx.first, block_idx.second, true);
       const IntPair block_offsets = _A->blockOffsets(block_idx.first, block_idx.second);

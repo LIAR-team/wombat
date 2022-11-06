@@ -1,8 +1,8 @@
 // Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
 // Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
 
-// ds THIS CODE WAS CREATED BASED ON: http://kitti.is.tue.mpg.de/kitti/devkit_odometry.zip
-// ds minimally modified to avoid C++11 warnings and provided a brief result dump to stdout
+// THIS CODE WAS CREATED BASED ON: http://kitti.is.tue.mpg.de/kitti/devkit_odometry.zip
+// minimally modified to avoid C++11 warnings and provided a brief result dump to stdout
 
 #include <Eigen/Geometry>
 #include <fstream>
@@ -12,7 +12,7 @@
 #include "wombat_srrg/srrg_system_utils/system_utils.h>
 #include <vector>
 
-// ds readability
+// readability
 typedef Eigen::Matrix<float, 4, 4> Matrix4f;
 typedef std::vector<Matrix4f, Eigen::aligned_allocator<Matrix4f>> Matrix4fVector;
 
@@ -42,16 +42,16 @@ struct errors {
 Matrix4fVector loadPoses(std::string file_name) {
   Matrix4fVector poses;
 
-  // ds going modern
+  // going modern
   std::ifstream pose_file(file_name, std::ifstream::in);
 
-  // ds grab a line from the ground truth
+  // grab a line from the ground truth
   std::string buffer_line;
   while (std::getline(pose_file, buffer_line)) {
-    // ds get it to a std::stringstream
+    // get it to a std::stringstream
     std::istringstream buffer_stream(buffer_line);
 
-    // ds information fields (KITTI format)
+    // information fields (KITTI format)
     Matrix4f pose(Matrix4f::Identity());
     for (uint8_t u = 0; u < 3; ++u) {
       for (uint8_t v = 0; v < 4; ++v) {
@@ -145,7 +145,7 @@ std::vector<errors> calcSequenceErrors(Matrix4fVector& poses_gt, Matrix4fVector&
     }
   }
 
-  // ds check sample distribution
+  // check sample distribution
   size_t number_of_valid_lengths = 0;
   for (size_t i = 0; i < static_cast<size_t>(num_lengths); ++i) {
     if (evaluated_lengths.count(static_cast<size_t>(lengths[i])) > 6) {
@@ -155,7 +155,7 @@ std::vector<errors> calcSequenceErrors(Matrix4fVector& poses_gt, Matrix4fVector&
     }
   }
 
-  // ds if we did not manage to sample enough lengths and are not running on small samples already
+  // if we did not manage to sample enough lengths and are not running on small samples already
   if (number_of_valid_lengths < 3 && lengths != lengths_small) {
     std::cerr << "calcSequenceErrors|not enough samples, switching to smaller intervals"
               << std::endl;
@@ -254,7 +254,7 @@ int32_t plotPathPlot(std::string dir, std::vector<int32_t>& roi, int32_t idx) {
   sprintf(file_name, "%02d.gp", idx);
   std::string full_name = dir + "/" + file_name;
 
-  // ds system calls
+  // system calls
   int32_t result = 0;
 
   // create png + eps
@@ -341,7 +341,7 @@ void saveErrorPlots(std::vector<errors>& seq_err, std::string plot_error_dir, co
       }
     }
 
-    // ds we require at least 2 lengths to be evaluated
+    // we require at least 2 lengths to be evaluated
     if (num > 1) {
       fprintf(fp_tl, "%f %f\n", lengths[i], t_err / num);
       fprintf(fp_rl, "%f %f\n", lengths[i], r_err / num);
@@ -349,7 +349,7 @@ void saveErrorPlots(std::vector<errors>& seq_err, std::string plot_error_dir, co
       total_error_translation += t_err / num * 100;
       ++number_of_lengths;
 
-      // ds info
+      // info
       std::printf("length: %f error rotation (deg/100m): %9.6f error translation (%%): %9.6f\n",
                   lengths[i],
                   r_err / num * (180 / M_PI) * 100,
@@ -379,7 +379,7 @@ void saveErrorPlots(std::vector<errors>& seq_err, std::string plot_error_dir, co
   //      }
   //    }
   //
-  //    // ds we require at least 2 lengths to be evaluated
+  //    // we require at least 2 lengths to be evaluated
   //    if (num > 1) {
   //      fprintf(fp_ts, "%f %f\n", speed, t_err / num);
   //      fprintf(fp_rs, "%f %f\n", speed, r_err / num);
@@ -396,7 +396,7 @@ void saveErrorPlots(std::vector<errors>& seq_err, std::string plot_error_dir, co
 int32_t plotErrorPlots(std::string dir, const char* prefix) {
   char command[1024];
 
-  // ds system calls
+  // system calls
   int32_t result = 0;
 
   // for all four error plots do
@@ -551,7 +551,7 @@ int eval(const std::string& file_trajectory_test_,
   Matrix4fVector poses_gt     = loadPoses(file_trajectory_ground_truth_);
   Matrix4fVector poses_result = loadPoses(file_trajectory_test_);
 
-  // ds parse sequence number
+  // parse sequence number
   const std::string sequence_number_literal = file_sequence_.substr(0, 2);
   const uint32_t sequence_number            = std::stoi(sequence_number_literal);
 
@@ -603,27 +603,27 @@ const std::string banner =
   "-seq <string>               sequence number, e.g. '00.txt' if not set, then seq=gt\n"
   "-h                          this help\n";
 
-// ds parameters
+// parameters
 std::string file_tracked_odometry = "";
 std::string file_ground_truth     = "";
 std::string file_sequence         = "";
 
-// ds parse parameters
+// parse parameters
 int c = 1;
 
 int32_t main(int32_t argc, char** argv) {
-  // ds always expects 6 arguments
+  // always expects 6 arguments
   if (argc != 7) {
     std::cerr << banner << std::endl;
     return -1;
   }
 
-  // ds parameters
+  // parameters
   std::string file_tracked_odometry = "";
   std::string file_ground_truth     = "";
   std::string file_sequence         = "";
 
-  // ds parse parameters
+  // parse parameters
   int c = 1;
   while (c < argc) {
     if (!strcmp(argv[c], "-h")) {
@@ -642,7 +642,7 @@ int32_t main(int32_t argc, char** argv) {
     c++;
   }
 
-  // ds input validation
+  // input validation
   if (file_sequence.empty())
     file_sequence = file_ground_truth;
 
@@ -652,7 +652,7 @@ int32_t main(int32_t argc, char** argv) {
     return -1;
   }
 
-  // ds configuration
+  // configuration
   std::cerr << "file_ground_truth: " << file_ground_truth << std::endl;
   std::cerr << "file_tracked_odometry: " << file_tracked_odometry << std::endl;
   std::cerr << "file_sequence: " << file_sequence << std::endl;

@@ -17,7 +17,7 @@ const std::string exe_name = "test_sim3_icp";
 using namespace srrg2_core;
 using namespace srrg2_solver;
 
-// ia global data
+// global data
 const size_t n_meas       = 1000;
 const size_t n_iterations = 10;
 

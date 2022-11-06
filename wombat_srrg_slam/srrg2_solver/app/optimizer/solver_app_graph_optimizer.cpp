@@ -25,13 +25,13 @@ using namespace srrg2_core;
 using namespace srrg2_solver;
 using namespace std;
 
-// ia checks whether file exists
+// checks whether file exists
 inline bool checkFile(const std::string& name_) {
   struct stat buffer;
   return (stat(name_.c_str(), &buffer) == 0);
 }
 
-// ia register types
+// register types
 void initTypes() {
   variables_and_factors_2d_registerTypes();
   variables_and_factors_3d_registerTypes();
@@ -44,10 +44,10 @@ void initTypes() {
 const std::string exe_name = environ[0];
 #define LOG std::cerr << exe_name << "|"
 
-// ia generate a default config
+// generate a default config
 void generateConfig(const std::string& config_file_, const std::string& solver_name_);
 
-// ia THE PROGRAM
+// THE PROGRAM
 int main(int argc, char** argv) {
   initTypes();
 
@@ -74,31 +74,31 @@ int main(int argc, char** argv) {
   ArgumentString output_file(&cmd_line, "o", "output-file", "file where to save the output", "");
   cmd_line.parse();
 
-  // ia generate config and exit
+  // generate config and exit
   if (param_gen_config.isSet()) {
     generateConfig(param_config_file.value(), param_solver_name.value());
     LOG << "exit\n";
     return 0;
   }
 
-  // ia check if input is provided
+  // check if input is provided
   if (!param_input_file.isSet()) {
     std::cerr << cmd_line.options() << std::endl;
     throw std::runtime_error(exe_name + "|ERROR, no input file specified");
   }
 
-  // ia check if config file exists
+  // check if config file exists
   if (!checkFile(param_config_file.value())) {
     throw std::runtime_error(exe_name + "|ERROR, cannot find configuration [ " +
                              param_config_file.value() + " ]");
   }
 
-  // ia configurable manager to read config
+  // configurable manager to read config
   LOG << "loading configuration [ " << param_config_file.value() << " ]\n";
   ConfigurableManager manager;
   manager.read(param_config_file.value());
 
-  // ia check if solver with this specific name exists
+  // check if solver with this specific name exists
   LOG << "loading solver [ " << param_config_file.value() << " ]\n";
   SolverPtr solver = manager.getByName<Solver>(param_solver_name.value());
   if (!solver) {
@@ -107,53 +107,53 @@ int main(int argc, char** argv) {
                              param_config_file.value() + " ]");
   }
 
-  // ia loading graph
+  // loading graph
   const std::string& input_file = param_input_file.value();
   FactorGraphPtr graph          = FactorGraph::read(input_file);
   if (!graph) {
     throw std::runtime_error(exe_name + "|ERROR, invalid graph file [ " + input_file + " ]");
   }
 
-  // ia talk
+  // talk
   LOG << "loaded [ " << FG_YELLOW(input_file) << " ] ----- "
       << "variables [ " << FG_YELLOW(graph->variables().size()) << " ] | "
       << "factors [ " << FG_YELLOW(graph->factors().size()) << " ]" << std::endl;
 
 
-  // ia if we want to be verbose, then we install a talking action
+  // if we want to be verbose, then we install a talking action
   if (param_verbose.isSet()) {
     solver->param_actions.pushBack(SolverVerboseActionPtr(new SolverVerboseAction));
   }
 
-  // ia provide a graph to the solver and run it
+  // provide a graph to the solver and run it
   LOG << FG_YELLOW("BRACE YOURSELF! running solver") << std::endl;
   solver->setGraph(graph);
   solver->compute();
 
 #ifndef NDEBUG
-  // ia just in case
+  // just in case
   solver->printAllocation();
 #endif
 
-  // ia check optimization status
+  // check optimization status
   if (solver->status() == Solver::SolverStatus::Success) {
     LOG << FG_GREEN("optimization succeeded :)") << std::endl;
   } else if (solver->status() == Solver::SolverStatus::Error) {
     LOG << FG_YELLOW("optimization failed :(") << std::endl;
   }
 
-  // ia write stats
+  // write stats
   if (param_stats_file.isSet() && !param_stats_file.value().empty()) {
     LOG << "saving stats in [ " << FG_YELLOW(param_stats_file.value()) << " ]" << std::endl;
     std::ofstream stream(param_stats_file.value());
     for (const auto& s : solver->iterationStats()) {
       stream << s << std::endl;
     }
-    // ia good old manners
+    // good old manners
     stream.close();
   }
 
-  // ia write optimized graph
+  // write optimized graph
   if (output_file.isSet() && !output_file.value().empty()) {
     LOG << "saving output in [ " << FG_YELLOW(output_file.value()) << " ]" << std::endl;
     graph->write(output_file.value());
@@ -169,33 +169,33 @@ int main(int argc, char** argv) {
 void generateConfig(const std::string& config_file_, const std::string& solver_name_) {
   ConfigurableManager manager;
 
-  // ia create backup linear solver (default is cholmod)
+  // create backup linear solver (default is cholmod)
   auto linear_solver_csparse =
     manager.create<SparseBlockLinearSolverCholeskyCSparse>("linear_solver_csparse");
 
-  // ia create default iteration algorithm (default is GN)
+  // create default iteration algorithm (default is GN)
   auto algorithm_gn = manager.create<IterationAlgorithmGN>("gauss-newton");
   algorithm_gn->param_damping.setValue(0.f);
 
-  // ia create backup iteration algorithm (backup is LM)
+  // create backup iteration algorithm (backup is LM)
   auto algorithm_lm = manager.create<IterationAlgorithmLM>("levemberg");
   algorithm_lm->param_lm_iterations_max.setValue(10);
   auto algorithm_dl = manager.create<IterationAlgorithmDL>("dogleg");
 
-  // ia create default term criteria that stops if the delta_chi < thres (NOT used by default)
+  // create default term criteria that stops if the delta_chi < thres (NOT used by default)
   auto term_criteria = manager.create<SimpleTerminationCriteria>("termination_criterium");
   term_criteria->param_epsilon.setValue(1e-3);
 
-  // ia create default robustifier for 2D Pose-Bearing edges
+  // create default robustifier for 2D Pose-Bearing edges
   auto bearing_robustifier = manager.create<RobustifierCauchy>();
   bearing_robustifier->param_chi_threshold.setValue(1.0);
 
-  // ia create robustifier policy for 2D Pose-Bearing edges
+  // create robustifier policy for 2D Pose-Bearing edges
   auto bearing_policy = manager.create<RobustifierPolicyByType>();
   bearing_policy->param_factor_class_name.setValue("SE2PosePointBearingErrorFactor");
   bearing_policy->param_robustifier.setValue(bearing_robustifier);
 
-  // ia finally create the solver and setup all the parameters
+  // finally create the solver and setup all the parameters
   auto solver = manager.create<Solver>(solver_name_);
   solver->param_linear_solver.setName("linear_solver_cholmod");
   solver->param_max_iterations.value().push_back(10);
@@ -203,7 +203,7 @@ void generateConfig(const std::string& config_file_, const std::string& solver_n
   solver->param_robustifier_policies.pushBack(RobustifierPolicyBasePtr(bearing_policy));
   solver->param_termination_criteria.setValue(nullptr);
 
-  // ia DONE, save and exit
+  // DONE, save and exit
   manager.write(config_file_);
   LOG << "created default (hackable) configuration in [ " << config_file_ << " ]\n";
 }

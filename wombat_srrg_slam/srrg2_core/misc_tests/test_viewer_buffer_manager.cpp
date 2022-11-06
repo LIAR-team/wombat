@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
   manager.param_max_num_buffers.setValue(10);
   manager.init();
 
-  // ia popolate things
+  // popolate things
   const int num_points = 10;
   Vector3f* points     = new Vector3f[num_points];
   Vector3f* normals    = new Vector3f[num_points];
@@ -24,27 +24,27 @@ int main(int argc, char** argv) {
     normals[i] = points[i];
   }
 
-  // ia create some packets
+  // create some packets
   PacketPayloadPoints p_packet(num_points, points);
   PacketPayloadLines ln_packet(num_points, points, normals);
   PacketInfoEndEpoch end_packet;
 
-  // ia create a packet serializer that will serialize things into its buffer
+  // create a packet serializer that will serialize things into its buffer
   PacketSerializer serializer;
 
   std::cerr << "get a free buffer" << std::endl;
-  BufferMemory* buffer_send = manager.getBuffer(); // ia a free buffer
+  BufferMemory* buffer_send = manager.getBuffer(); // a free buffer
   std::cerr << (size_t) buffer_send << std::endl;
   serializer.setBuffer(buffer_send);
   serializer.putPacket(p_packet);
   serializer.putPacket(ln_packet);
   serializer.putPacket(end_packet);
 
-  // ia ready to be shipped
+  // ready to be shipped
   manager.releaseBuffer(buffer_send);
 
-  // ia get a ready buffer ready
-  BufferMemory* buffer_rec = manager.getBuffer(true); // ia a read buffer
+  // get a ready buffer ready
+  BufferMemory* buffer_rec = manager.getBuffer(true); // a read buffer
   std::cerr << (size_t) buffer_rec << std::endl;
 
   PacketDeserializer deserializer;

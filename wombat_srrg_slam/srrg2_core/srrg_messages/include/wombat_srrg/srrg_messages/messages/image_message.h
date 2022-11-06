@@ -34,8 +34,8 @@ namespace srrg2_core {
 
     virtual void serialize(ObjectData& odata, IdContext& context);
 
-    // ds image dimension access without need to load image from disk
-    // ds TODO spread use of this and update THIS constructor
+    // image dimension access without need to load image from disk
+    // TODO spread use of this and update THIS constructor
     PropertyUnsignedInt image_rows;
     PropertyUnsignedInt image_cols;
 

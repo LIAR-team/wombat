@@ -44,7 +44,7 @@ namespace srrg2_core
 
   void messages_registerTypes()
   {
-    BOSS_REGISTER_CLASS(PointCloud2DataBLOBReference); // bdc, no idea if it should be CLASS or BLOB
+    BOSS_REGISTER_CLASS(PointCloud2DataBLOBReference); //, no idea if it should be CLASS or BLOB
 
     BOSS_REGISTER_CLASS(CameraInfoMessage);
     BOSS_REGISTER_CLASS(ImageMessage);

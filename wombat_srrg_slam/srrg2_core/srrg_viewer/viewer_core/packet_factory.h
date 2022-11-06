@@ -154,7 +154,7 @@ namespace srrg2_core {
       add_packet_type(PacketVisualMatchablefVector);
       add_packet_type(PacketVisualMatchabledVector);
 
-      // ia cv image packet
+      // cv image packet
       add_packet_type(PacketCvMat);
 
       add_packet_type(PacketInfoEndEpoch);

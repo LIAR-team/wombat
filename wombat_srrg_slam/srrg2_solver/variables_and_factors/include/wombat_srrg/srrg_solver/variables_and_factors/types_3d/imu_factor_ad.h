@@ -52,7 +52,7 @@ namespace srrg2_solver {
         Ri.transpose() * (pj - pi - (vi + 0.5 * _g * _delta_t) * _delta_t);
       const Vector3_<DualValuef> v_hat = Ri.transpose() * (vj - vi - _g * _delta_t);
 
-      // tg bias variation
+      // bias variation
       const Vector3_<DualValuef>& delta_bias_omega = bias_i.head<3>() - _bias_omega_hat;
       const Vector3_<DualValuef>& delta_bias_acc   = bias_i.tail<3>() - _bias_acc_hat;
       // ldg delta measurement due to bias variation
@@ -61,7 +61,7 @@ namespace srrg2_solver {
         _dpij_dba * delta_bias_acc + _dpij_dbg * delta_bias_omega;
       const Vector3_<DualValuef> delta_v_bias =
         _dvij_dba * delta_bias_acc + _dvij_dbg * delta_bias_omega;
-      // tg apply to measurements
+      // apply to measurements
       const Matrix3_<DualValuef> R_meas = _R_meas_biased * geometry3d::expMapSO3(delta_R_bias);
       const Vector3_<DualValuef> p_meas = _p_meas_biased + delta_p_bias;
       const Vector3_<DualValuef> v_meas = _v_meas_biased + delta_v_bias;

@@ -37,7 +37,7 @@ namespace srrg2_core {
   }
 
   void PropertyContainerBase::addProperty(PropertyBase* property) {
-    // ds commented as per holy decree of the madonna c.c.c.n.i.c.
+    // commented as per holy decree of the madonna c.c.c.n.i.c.
     //    assert(_properties.find(property->name()) == _properties.end() &&
     //           "a parameter with same name already exists");
     _properties.insert(std::make_pair(property->name(), property));

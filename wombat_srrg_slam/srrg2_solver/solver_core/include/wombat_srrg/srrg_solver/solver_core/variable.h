@@ -146,8 +146,8 @@ namespace srrg2_solver {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using BaseVariableType               = VariableGeneric_<PerturbationDim_, EstimateType_>;
-    using EstimateType                   = EstimateType_<float>;      // ia this sucks
-    using ADEstimateType                 = EstimateType_<DualValuef>; // ia this sucks
+    using EstimateType                   = EstimateType_<float>;      // this sucks
+    using ADEstimateType                 = EstimateType_<DualValuef>; // this sucks
     static constexpr int PerturbationDim = PerturbationDim_;
     using PerturbationVectorType =
       typename Eigen::Matrix<float, PerturbationDim_, 1>; /*!< Euclidian perturbation of the

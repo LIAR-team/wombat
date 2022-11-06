@@ -6,7 +6,7 @@ namespace srrg2_solver {
   void SE3PosePoseChordalEulerLeftErrorFactor::errorAndJacobian(bool error_only_) {
     using JacobianMatrixType = Eigen::Matrix<Scalar, 12, 6>;
 
-    // ia take objects - static cast for speeeeeed
+    // take objects - static cast for speeeeeed
     VariableSE3EulerLeft* v_from = _variables.at<0>();
     VariableSE3EulerLeft* v_to   = _variables.at<1>();
     assert(v_from && v_to &&
@@ -16,7 +16,7 @@ namespace srrg2_solver {
     const Isometry3_<Scalar>& pose_j      = v_to->estimate();
     const Isometry3_<Scalar> prediction_T = pose_i.inverse() * pose_j;
 
-    // ia compute the error
+    // compute the error
     Isometry3_<Scalar> error_T = Isometry3_<Scalar>::Identity();
     error_T.matrix()           = prediction_T.matrix() - _measurement.matrix();
     _e                         = geometry3d::flattenByCols(error_T);
@@ -25,7 +25,7 @@ namespace srrg2_solver {
       return;
     }
 
-    // ia compute the jacobians
+    // compute the jacobians
     srrg2_core::Matrix3_<Scalar> Rx0, Ry0, Rz0;
     Rx0 << 0, 0, 0, 0, 0, -1, 0, 1, 0;
     Ry0 << 0, 0, 1, 0, 0, 0, -1, 0, 0;
@@ -53,7 +53,7 @@ namespace srrg2_solver {
     Jj.block<3, 3>(9, 0) = Ri.transpose();
     Jj.block<3, 3>(9, 3) = -Ri.transpose() * geometry3d::skew(tj);
 
-    // ia assign the jacobians
+    // assign the jacobians
     jacobian<0>() = -Jj;
     jacobian<1>() = Jj;
 

@@ -77,11 +77,11 @@ namespace srrg2_core {
     bool _run = true;
     volatile bool _ready = false;
 
-        // ia pointer to the canvas (to draw things)
+        // pointer to the canvas (to draw things)
     std::map<std::string, ViewerCanvasPtr> canvases;
     std::map<ViewerCanvasPtr, ConfigurablePtr> canvas_config_map;
 
-    // ia RAW pointer to the viewer core (it's instanciated in the main so raw pointer is ok to
+    // RAW pointer to the viewer core (it's instanciated in the main so raw pointer is ok to
     // avoid wrong deletion ordering)
     ViewerCoreBase* viewer_core;
 

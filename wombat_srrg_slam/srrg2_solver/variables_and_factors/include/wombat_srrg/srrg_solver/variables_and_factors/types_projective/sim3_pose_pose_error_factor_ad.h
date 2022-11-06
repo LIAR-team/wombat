@@ -25,7 +25,7 @@ namespace srrg2_solver {
 
       Similiarity3_<DualValuef> prediction = from.inverse() * to;
 
-      // ia do the computation (all in dual value)
+      // do the computation (all in dual value)
       return geometry3d::s2v(_inverse_measurement * prediction);
     }
 

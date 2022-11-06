@@ -41,7 +41,7 @@ namespace srrg2_core {
 
   protected:
     PacketScalar_() : PacketBase(PacketType_), data(0) {
-      // ia empty
+      // empty
     }
   };
 

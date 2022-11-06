@@ -18,9 +18,9 @@ namespace srrg2_core {
       _drawImpl(gl_canvas_);
       _need_redraw = false;
     }
-    // ia now disabled, everything goes trough the same canvas - TODO rethink
+    // now disabled, everything goes trough the same canvas - TODO rethink
     // virtual void draw(cv::Mat& cv_canvas_) const {
-    //   // ds optional overriding
+    //   // optional overriding
     // }
     virtual ~DrawableBase();
     inline bool needRedraw() const {
@@ -32,7 +32,7 @@ namespace srrg2_core {
 
   protected:
     virtual void _drawImpl(ViewerCanvasPtr gl_canvas_) const {
-      // ds optional overriding
+      // optional overriding
     }
     bool _need_redraw = true;
   };

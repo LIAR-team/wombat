@@ -101,7 +101,7 @@ static std::string sequence("");
 int main(int argc_, char** argv_) {
   messages_registerTypes();
 
-  // ds set up CLI parameters
+  // set up CLI parameters
   ParseCommandLine command_line_parser(argv_, banner);
   ArgumentString argument_sequence_name(
     &command_line_parser, "s", "sequence", "sequence name from TUM dataset", "");
@@ -159,7 +159,7 @@ int main(int argc_, char** argv_) {
     throw std::runtime_error(exe_name + "|ERROR cannot depth_file file [ " + depth_file + " ]");
   }
 
-  // ds buffer ground truth data
+  // buffer ground truth data
   StdVectorEigenIsometry3f camera_poses_in_world;
   std::vector<double> timestamps_gt;
   loadGroundTruthPosesAndStamps(gt_file, camera_poses_in_world, timestamps_gt);
@@ -168,13 +168,13 @@ int main(int argc_, char** argv_) {
   }
   std::cerr << "loaded ground truth poses: " << timestamps_gt.size() << std::endl;
 
-  // ds read depth and RGB images and timestamps
+  // read depth and RGB images and timestamps
   std::vector<std::string> image_filenames_rgb;
   std::vector<double> timestamps_rgb;
   std::vector<std::string> image_filenames_depth;
   std::vector<double> timestamps_depth;
 
-  // ds parse image information
+  // parse image information
   loadImageInformation(rgb_file, image_filenames_rgb, timestamps_rgb);
   if (timestamps_rgb.empty()) {
     throw std::runtime_error("ERROR: no RGB image information retrieved");
@@ -184,7 +184,7 @@ int main(int argc_, char** argv_) {
     throw std::runtime_error("ERROR: no Depth image information retrieved");
   }
 
-  // ds TUM calibration TODO load from disk instead of hardcoded switch
+  // TUM calibration TODO load from disk instead of hardcoded switch
   Matrix3f camera_calibration_matrix;
   Vector_<double, 5> distortion_coefficients;
 
@@ -216,7 +216,7 @@ int main(int argc_, char** argv_) {
 
   //  std::cerr << undistort_rectify_maps[0] << std::endl;
   //  std::cerr << undistort_rectify_maps[1] << std::endl;
-  // ds common parameters for all TUM sequences TODO verify
+  // common parameters for all TUM sequences TODO verify
   const std::string distortion_model_name = "radial_tangential";
   const float factor_to_srrg_depth        = 1.0f / 5.0f;
 
@@ -237,7 +237,7 @@ int main(int argc_, char** argv_) {
   size_t index_depth = 0;
   size_t index_imu   = 0;
 
-  // ds determine initial, smallest timestamp
+  // determine initial, smallest timestamp
   double timestamp_oldest = std::numeric_limits<double>::max();
 
   if (timestamps_gt.size()) {
@@ -264,10 +264,10 @@ int main(int argc_, char** argv_) {
   sink.open(argument_output_file.value());
   SystemUsageCounter::tic();
 
-  // ds playback all buffers
+  // playback all buffers
   size_t processed_msgs = 0;
   while (true) {
-    // ds if we still have ground truth information available
+    // if we still have ground truth information available
     double first_timestamp = std::numeric_limits<double>::max();
     if (timestamps_gt.size()) {
       first_timestamp = std::min(first_timestamp, timestamps_gt[0]);
@@ -296,7 +296,7 @@ int main(int argc_, char** argv_) {
       ++processed_msgs;
     }
 
-    // ds if we have RGB data available
+    // if we have RGB data available
     if (timestamps_rgb.size() && timestamps_rgb.front() == first_timestamp) {
       serializeCameraImageAndInfo<ImageUInt8>(sink,
                                               index_rgb,
@@ -375,7 +375,7 @@ void loadImageInformation(const std::string& infile_name_,
   image_filenames_.clear();
   timestamps_seconds_.clear();
 
-  // ds skip the first 3 lines (TUM format header information)
+  // skip the first 3 lines (TUM format header information)
   std::cerr << "loadImageInformation|<header>" << std::endl;
   std::string buffer;
   std::getline(infile, buffer);
@@ -386,7 +386,7 @@ void loadImageInformation(const std::string& infile_name_,
   std::cerr << buffer << std::endl;
   std::cerr << "loadImageInformation|</header>" << std::endl;
 
-  // ds parse image information by tokens
+  // parse image information by tokens
   double timestamp_seconds;
   std::string filename;
   while (infile >> timestamp_seconds >> filename) {
@@ -406,7 +406,7 @@ void loadGroundTruthPosesAndStamps(const std::string& ground_truth_file_,
     throw std::runtime_error("ERROR: unable to open ground truth file");
   }
 
-  // ds skip the first 3 lines (TUM format header information)
+  // skip the first 3 lines (TUM format header information)
   std::cerr << "<header>" << std::endl;
   std::string buffer;
   std::getline(ground_truth_file, buffer);
@@ -443,7 +443,7 @@ void loadIMUInformation(const std::string& file_imu_data_,
     throw std::runtime_error("loadIMUInformation|ERROR: unable to open file: " + file_imu_data_);
   }
 
-  // ds skip first line (header)
+  // skip first line (header)
   std::string buffer;
   std::cerr << "loadIMUInformation|<header>" << std::endl;
   std::getline(stream, buffer);
@@ -454,7 +454,7 @@ void loadIMUInformation(const std::string& file_imu_data_,
   std::cerr << buffer << std::endl;
   std::cerr << "loadIMUInformation|<header>" << std::endl;
 
-  // ds parse by tokens
+  // parse by tokens
   linear_accelerations_.reserve(100000);
   double timestamp_seconds = 0;
   double IMU_X_ACC, IMU_Y_ACC, IMU_Z_ACC;
@@ -478,11 +478,11 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
                                  const Matrix3f& camera_matrix_,
                                  const cv::Mat* undistort_rectify_maps_,
                                  const float& depth_factor_) {
-  // ds create image message
+  // create image message
   ImageMessagePtr image_message(
     new ImageMessage("/camera/" + label_ + "/image_raw", label_, index_, timestamp_));
 
-  // ds load RGB image from disk and convert
+  // load RGB image from disk and convert
   cv::Mat image_opencv;
   if (depth_factor_ != 1.) {
     image_opencv = cv::imread(file_path_image_, CV_LOAD_IMAGE_ANYDEPTH);
@@ -498,14 +498,14 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
       std::to_string(image_opencv.cols));
   }
 
-  // ds map to srrg
+  // map to srrg
   ImageType_* base_image(new ImageType_());
   base_image->fromCv(image_opencv);
   image_message->setImage(base_image);
   image_message->image_cols.setValue(image_opencv.cols);
   image_message->image_rows.setValue(image_opencv.rows);
 
-  // ds create camera info message
+  // create camera info message
   CameraInfoMessagePtr camera_info_message(
     new CameraInfoMessage(image_message->topic.value() + "/info",
                           image_message->frame_id.value(),
@@ -521,7 +521,7 @@ void serializeCameraImageAndInfo(MessageFileSink& sink_,
   camera_info_message->cols.setValue(image_opencv.cols);
   camera_info_message->rows.setValue(image_opencv.rows);
 
-  // ds write messages related to this image
+  // write messages related to this image
   sink_.putMessage(image_message);
   sink_.putMessage(camera_info_message);
 }
@@ -530,13 +530,13 @@ void initializeUndistortion(const Matrix3f& camera_calibration_matrix_,
                             const Vector5d& distortion_coefficients_,
                             const cv::Size& opencv_image_size_,
                             cv::Mat* undistort_rectify_maps_) {
-  // ds rectification
+  // rectification
   cv::Mat opencv_camera_calibration_matrix(cv::Mat::eye(3, 3, CV_64F));
   cv::Mat opencv_distortion_coefficients(cv::Mat::zeros(4, 1, CV_64F));
   cv::Mat opencv_projection_matrix(cv::Mat::eye(3, 4, CV_64F));
   cv::Mat opencv_rectification_matrix(cv::Mat::eye(3, 3, CV_64F));
 
-  // ds buffer matrices to opencv
+  // buffer matrices to opencv
   for (size_t r = 0; r < 3; ++r) {
     for (size_t c = 0; c < 3; ++c) {
       opencv_camera_calibration_matrix.at<double>(r, c) = camera_calibration_matrix_(r, c);
@@ -546,12 +546,12 @@ void initializeUndistortion(const Matrix3f& camera_calibration_matrix_,
     opencv_distortion_coefficients.at<double>(i) = distortion_coefficients_(i);
   }
 
-  // ds check if failed
+  // check if failed
   if (cv::norm(opencv_projection_matrix) == 0) {
     throw std::runtime_error("ERROR: rectification parameter retrieval failed");
   }
 
-  // ds compute undistorted and rectified mappings
+  // compute undistorted and rectified mappings
   cv::initUndistortRectifyMap(opencv_camera_calibration_matrix,
                               opencv_distortion_coefficients,
                               opencv_rectification_matrix,
@@ -561,7 +561,7 @@ void initializeUndistortion(const Matrix3f& camera_calibration_matrix_,
                               undistort_rectify_maps_[0],
                               undistort_rectify_maps_[1]);
 
-  // ds check if rectification failed
+  // check if rectification failed
   if (cv::norm(undistort_rectify_maps_[0]) == 0 || cv::norm(undistort_rectify_maps_[1]) == 0) {
     throw std::runtime_error("ERROR: unable to undistort and rectify camera left");
   }

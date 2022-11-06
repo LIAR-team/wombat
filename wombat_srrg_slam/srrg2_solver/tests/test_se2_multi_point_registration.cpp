@@ -33,7 +33,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
   using Vector2fVector       = std::vector<Vector2f, Eigen::aligned_allocator<Vector2f>>;
   using Isometry2fVector     = std::vector<Isometry2f, Eigen::aligned_allocator<Isometry2f>>;
 
-  // tg containers
+  // containers
   VariableSE2Vector poses;
   poses.reserve(num_poses);
   VariablePoint2Vector landmarks;
@@ -50,7 +50,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
 
   FactorGraphPtr graph(new FactorGraph);
 
-  // tg create an anchor for the graph
+  // create an anchor for the graph
   VariablePoseType* v = new VariablePoseType;
   pose_vector.setZero();
   Isometry2f T = geometry2d::v2t(pose_vector);
@@ -60,7 +60,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
   poses.emplace_back(v);
   graph->addVariable(VariableBasePtr(v));
 
-  // tg generate random poses
+  // generate random poses
   for (size_t pose_idx = 1; pose_idx < num_poses; ++pose_idx) {
     pose_vector.setRandom();
     T = geometry2d::v2t(pose_vector);
@@ -74,7 +74,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
   ASSERT_EQ(poses.size(), ground_truth_poses.size());
   ASSERT_EQ(poses.size(), num_poses);
 
-  // tg generate random landmarks
+  // generate random landmarks
   VariablePointType* point = nullptr;
   for (size_t landmark_idx = 0; landmark_idx < num_landmarks; ++landmark_idx) {
     landmark.setRandom();
@@ -89,7 +89,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
   ASSERT_EQ(landmarks.size(), ground_truth_landmarks.size());
   ASSERT_EQ(landmarks.size(), num_landmarks);
 
-  // tg all landmark are visible from every pose
+  // all landmark are visible from every pose
   FactorType* f = nullptr;
   FactorVector factors;
   factors.reserve(num_poses * num_landmarks);
@@ -108,7 +108,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
 
   ASSERT_EQ(factors.size(), num_poses * num_landmarks);
 
-  // tg optimize graph
+  // optimize graph
   Solver solver;
   solver.param_max_iterations.pushBack(num_iterations);
   solver.param_termination_criteria.setValue(nullptr);
@@ -119,7 +119,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
   const float chi_square = stats.back().chi_inliers;
   LOG << stats << std::endl;
 
-  // tg assert chi square is good
+  // assert chi square is good
   ASSERT_LT(chi_square, 1e-6);
 }
 
@@ -133,7 +133,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor) {
   using Vector2fVector       = std::vector<Vector2f, Eigen::aligned_allocator<Vector2f>>;
   using Isometry2fVector     = std::vector<Isometry2f, Eigen::aligned_allocator<Isometry2f>>;
 
-  // tg containers
+  // containers
   VariableSE2Vector poses;
   poses.reserve(num_poses);
   VariablePoint2Vector landmarks;
@@ -151,7 +151,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor) {
 
   FactorGraphPtr graph(new FactorGraph);
 
-  // tg create an anchor for the graph
+  // create an anchor for the graph
   VariablePoseType* v = new VariablePoseType;
   pose_vector.setRandom();
   Isometry2f T = geometry2d::v2t(pose_vector);
@@ -161,7 +161,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor) {
   poses.emplace_back(v);
   graph->addVariable(VariableBasePtr(v));
 
-  // tg generate random poses
+  // generate random poses
   for (size_t pose_idx = 1; pose_idx < num_poses; ++pose_idx) {
     pose_vector.setRandom();
     T = geometry2d::v2t(pose_vector);
@@ -176,7 +176,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor) {
   ASSERT_EQ(poses.size(), ground_truth_poses.size());
   ASSERT_EQ(poses.size(), num_poses);
 
-  // tg generate random landmarks
+  // generate random landmarks
   VariablePointType* point = nullptr;
   for (size_t landmark_idx = 0; landmark_idx < num_landmarks; ++landmark_idx) {
     landmark.setRandom();
@@ -191,7 +191,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor) {
   ASSERT_EQ(landmarks.size(), ground_truth_landmarks.size());
   ASSERT_EQ(landmarks.size(), num_landmarks);
 
-  // tg all landmark are visible from every pose
+  // all landmark are visible from every pose
   FactorType* f = nullptr;
   FactorVector factors;
   factors.reserve(num_poses * num_landmarks);
@@ -212,7 +212,7 @@ TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor) {
 
   ASSERT_EQ(factors.size(), num_poses * num_landmarks);
 
-  // tg optimize graph
+  // optimize graph
   Solver solver;
   solver.param_max_iterations.pushBack(num_iterations * 100);
   solver.param_termination_criteria.setValue(nullptr);
@@ -225,6 +225,6 @@ TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor) {
   const float chi_square = stats.back().chi_inliers;
 
   LOG << stats << std::endl;
-  // tg assert chi square is good
+  // assert chi square is good
   ASSERT_LT(chi_square, 1e-6);
 }

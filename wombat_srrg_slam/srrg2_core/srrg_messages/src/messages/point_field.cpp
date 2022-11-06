@@ -19,7 +19,7 @@ namespace srrg2_core {
     SETUP_PROPERTY(offset, 0),
     SETUP_PROPERTY(datatype, 0),
     SETUP_PROPERTY(count, 0) {
-    // ia nothin to do here
+    // nothin to do here
   }
 
   PointField::PointField(const PointField& cp_) :
@@ -27,7 +27,7 @@ namespace srrg2_core {
     SETUP_PROPERTY(offset, cp_.offset.value()),
     SETUP_PROPERTY(datatype, cp_.datatype.value()),
     SETUP_PROPERTY(count, cp_.count.value()) {
-    // ia nothin to do here
+    // nothin to do here
   }
 
   std::ostream& operator<<(std::ostream& stream_, const PointField& point_field_) {

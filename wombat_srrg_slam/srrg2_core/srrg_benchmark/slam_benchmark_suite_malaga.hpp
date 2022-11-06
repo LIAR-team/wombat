@@ -7,8 +7,8 @@
 
 namespace srrg2_core {
 
-  // ds 3D benchmark wrapper for: https://www.mrpt.org/MalagaUrbanDataset
-  // ds this dataset contains stereo vision, IMU and laser data
+  // 3D benchmark wrapper for: https://www.mrpt.org/MalagaUrbanDataset
+  // this dataset contains stereo vision, IMU and laser data
   class SLAMBenchmarkSuiteMalaga : public SLAMBenchmarkSuiteKITTI {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -47,11 +47,11 @@ namespace srrg2_core {
 
       _relative_ground_truth_poses.clear();
 
-      // ds relative estimate computation
+      // relative estimate computation
       double previous_timestamp_seconds = std::numeric_limits<double>::max();
       Isometry3f previous_pose(Isometry3f::Identity());
 
-      // ds read file by tokens
+      // read file by tokens
       double timestamp_seconds = 0;
 
       BaseSensorMessagePtr message = nullptr;
@@ -66,7 +66,7 @@ namespace srrg2_core {
           _absolute_ground_truth_poses.push_back(pose);
 
           if (timestamp_seconds - previous_timestamp_seconds > 0) {
-            // ds insertion must succeed otherwise there are duplicates!
+            // insertion must succeed otherwise there are duplicates!
             _relative_ground_truth_poses.push_back(RelativeEstimateStamped(
               pose.inverse() * previous_pose, previous_timestamp_seconds, timestamp_seconds));
           }
@@ -75,7 +75,7 @@ namespace srrg2_core {
         }
       }
 
-      // ds GPS poses have extremely low frequency (1-2 Hz)
+      // GPS poses have extremely low frequency (1-2 Hz)
       _maximum_timestamp_delta_seconds = 0.5;
       std::cerr << "SLAMBenchmarkSuiteMalaga::loadGroundTruth|loaded relative poses: "
                 << _relative_ground_truth_poses.size() << std::endl;
@@ -101,26 +101,26 @@ namespace srrg2_core {
           "SLAMBenchmarkSuiteMalaga::writeTrajectoryToFile|ERROR: inconsistent number of poses");
       }
 
-      // ds since the malaga gt trajectory is quite rough, we need to align our guess first
+      // since the malaga gt trajectory is quite rough, we need to align our guess first
       Isometry3f transform_estimate_to_ground_truth(Isometry3f::Identity());
       constexpr size_t number_of_iterations = 100;
-      constexpr float maximum_error_kernel  = 1; // ds (m^2)
+      constexpr float maximum_error_kernel  = 1; // (m^2)
       Matrix6f H;
       Vector6f b;
 
-      // ds perform least squares optimization
+      // perform least squares optimization
       size_t number_of_inliers  = 0;
       float total_error_squared = 0;
       for (size_t iteration = 0; iteration < number_of_iterations; ++iteration) {
-        // ds initialize setup
+        // initialize setup
         H.setZero();
         b.setZero();
         number_of_inliers   = 0;
         total_error_squared = 0;
 
-        // ds for all SLAM trajectory poses
+        // for all SLAM trajectory poses
         for (size_t index_pose = 0; index_pose < estimated_poses_subsampled.size(); ++index_pose) {
-          // ds compute current error
+          // compute current error
           const Vector3f& measured_point_in_reference =
             _absolute_ground_truth_poses[index_pose].translation();
           const Vector3f sampled_point_in_reference =
@@ -128,10 +128,10 @@ namespace srrg2_core {
             estimated_poses_subsampled[index_pose].translation();
           const Vector3f error = sampled_point_in_reference - measured_point_in_reference;
 
-          // ds update chi
+          // update chi
           const float error_squared = error.transpose() * error;
 
-          // ds check if outlier
+          // check if outlier
           float weight = 1.0;
           if (error_squared > maximum_error_kernel) {
             weight = maximum_error_kernel / error_squared;
@@ -140,25 +140,25 @@ namespace srrg2_core {
           }
           total_error_squared += error_squared;
 
-          // ds get the jacobian of the transform part = [I -2*skew(T*modelPoint)]
+          // get the jacobian of the transform part = [I -2*skew(T*modelPoint)]
           Matrix3_6f jacobian;
           jacobian.block<3, 3>(0, 0).setIdentity();
           jacobian.block<3, 3>(0, 3) = -2 * geometry3d::skew(sampled_point_in_reference);
 
-          // ds precompute transposed
+          // precompute transposed
           const Matrix6_3f jacobian_transposed(jacobian.transpose());
 
-          // ds accumulate
+          // accumulate
           H += weight * jacobian_transposed * jacobian;
           b += weight * jacobian_transposed * error;
         }
 
-        // ds solve the system and update the estimate
+        // solve the system and update the estimate
         transform_estimate_to_ground_truth =
           geometry3d::v2t(static_cast<const Vector6f&>(H.ldlt().solve(-b))) *
           transform_estimate_to_ground_truth;
 
-        // ds enforce rotation matrix
+        // enforce rotation matrix
         const Matrix3f rotation   = transform_estimate_to_ground_truth.linear();
         Matrix3f rotation_squared = rotation.transpose() * rotation;
         rotation_squared.diagonal().array() -= 1;
@@ -171,7 +171,7 @@ namespace srrg2_core {
       std::cerr << "final chi2: " << total_error_squared << " # inliers: " << number_of_inliers
                 << " / " << estimated_poses_subsampled.size() << std::endl;
 
-      // ds transform estimated poses brutally and write them to disk
+      // transform estimated poses brutally and write them to disk
       std::ofstream outfile(filename_, std::ofstream::out);
       if (!outfile.good() || !outfile.is_open()) {
         throw std::runtime_error(
@@ -195,7 +195,7 @@ namespace srrg2_core {
     }
 
   protected:
-    // ds ground truth log for hacky subsampled/aligned (!) output
+    // ground truth log for hacky subsampled/aligned (!) output
     StdDequeEigenIsometry3f _absolute_ground_truth_poses;
     std::vector<double> _timestamps_seconds_ground_truth;
   }; // namespace srrg2_core

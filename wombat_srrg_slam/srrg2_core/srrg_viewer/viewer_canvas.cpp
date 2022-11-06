@@ -181,7 +181,7 @@ namespace srrg2_core {
   void ViewerCanvas::translate(const Vector3f& translation) {
     if (!_setup())
       return;
-    // ia create a packet object
+    // create a packet object
     _serializer.putPacket(PacketTransformMultTraslation(translation));
   }
 
@@ -281,7 +281,7 @@ namespace srrg2_core {
     _serializer.putPacket(PacketVisualMatchablefVector(&matchables_));
   }
 
-  // ds FIXME
+  // FIXME
   void ViewerCanvas::putImage(const cv::Mat& image_) {
     if (!_setup()) {
       return;
@@ -289,13 +289,13 @@ namespace srrg2_core {
     _serializer.putPacket(PacketCvMat(image_));
   }
 
-  // ia TODO workaround
+  // TODO workaround
   void ViewerCanvas::putPoints(const PointIntensity3fVectorCloud& points_) {
     if (!_setup()) {
       return;
     }
 
-    // ia copy everything in a normal vector cloud
+    // copy everything in a normal vector cloud
     Point3fVectorCloud copy;
     copy.reserve(points_.size());
 
@@ -308,13 +308,13 @@ namespace srrg2_core {
     _serializer.putPacket(PacketPoint3fVectorCloud(&copy));
   }
 
-  // ia TODO workaround
+  // TODO workaround
   void ViewerCanvas::putPoints(const PointNormalCurvatureColor3fVectorCloud& points_) {
     if (!_setup()) {
       return;
     }
 
-    // ia copy everything in a normal vector cloud
+    // copy everything in a normal vector cloud
     PointNormalColor3fVectorCloud copy;
     copy.reserve(points_.size());
 
@@ -326,7 +326,7 @@ namespace srrg2_core {
       copy.emplace_back(copy_p);
     }
 
-    // ia packet
+    // packet
     _serializer.putPacket(PacketPointNormalColor3fVectorCloud(&copy));
   }
   void ViewerCanvas::putPoints(const PointNormalCurvature3fVectorCloud& points_) {
@@ -334,7 +334,7 @@ namespace srrg2_core {
       return;
     }
 
-    // ia copy everything in a normal vector cloud
+    // copy everything in a normal vector cloud
     PointNormalColor3fVectorCloud copy;
     copy.reserve(points_.size());
     for (const auto& p : points_) {
@@ -356,13 +356,13 @@ namespace srrg2_core {
     _serializer.putPacket(PacketPointNormalColor3fVectorCloud(&copy));
   }
 
-  // ia TODO workaround
+  // TODO workaround
   void ViewerCanvas::putPoints(const PointIntensity3fMatrixCloud& points_) {
     if (!_setup()) {
       return;
     }
 
-    // ia copy everything in a normal vector cloud
+    // copy everything in a normal vector cloud
     Point3fVectorCloud copy;
     copy.reserve(points_.size());
 
@@ -378,12 +378,12 @@ namespace srrg2_core {
     _serializer.putPacket(PacketPoint3fVectorCloud(&copy));
   }
 
-  // ia TODO workaround
+  // TODO workaround
   void ViewerCanvas::putPoints(const PointNormalCurvatureColor3fMatrixCloud& points_) {
     if (!_setup()) {
       return;
     }
-    // ia copy everything in a normal vector cloud
+    // copy everything in a normal vector cloud
     PointNormalColor3fVectorCloud copy;
     copy.reserve(points_.size());
 
@@ -402,7 +402,7 @@ namespace srrg2_core {
       return;
     }
 
-    // ia copy everything in a normal vector cloud
+    // copy everything in a normal vector cloud
     PointNormalColor3fVectorCloud copy;
     copy.reserve(points_.size());
     for (const auto& p : points_) {
@@ -431,21 +431,21 @@ namespace srrg2_core {
     if (!_setup())
       return;
 
-    // ia send an end epoch
+    // send an end epoch
     _serializer.putPacket(PacketInfoEndEpoch());
 
-    // ia throw the buffer somewhere
+    // throw the buffer somewhere
     param_buffer_sink_ptr->putBuffer(_current_buffer);
     _current_buffer = 0;
   }
 
   bool ViewerCanvas::_setup() {
-    // ia if nobody is attached to this canvas, simply do nothing (bench mode)
+    // if nobody is attached to this canvas, simply do nothing (bench mode)
     if (!param_buffer_sink_ptr.value())
       return false;
 
-    // ia check connection to the viewport (if its up again maybe)
-    param_buffer_sink_ptr.value()->checkConnection(); // ia this check is heavy :(
+    // check connection to the viewport (if its up again maybe)
+    param_buffer_sink_ptr.value()->checkConnection(); // this check is heavy :(
 
     if (!param_buffer_sink_ptr->isActive())
       return false;
@@ -453,7 +453,7 @@ namespace srrg2_core {
     if (!param_buffer_manager_ptr.value())
       throw std::runtime_error("ViewerCanvas::_setup|please set a valid BufferManager");
 
-    // ia check if I have a buffer otherwise get one
+    // check if I have a buffer otherwise get one
     if (!_current_buffer) {
       _current_buffer = param_buffer_manager_ptr->getBuffer();
       _serializer.setBuffer(_current_buffer);

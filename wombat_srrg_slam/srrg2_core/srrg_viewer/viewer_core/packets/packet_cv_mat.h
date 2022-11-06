@@ -16,8 +16,8 @@ namespace srrg2_core {
     using PayloadType                   = cv::Mat;
     PayloadType data;
 
-    // ds data header (mirrored from opencv)
-    int matrix_type = -1; // ds type is already taken by base NGHGNNGNGNGN
+    // data header (mirrored from opencv)
+    int matrix_type = -1; // type is already taken by base NGHGNNGNGNGN
     int channels = -1;
     int rows     = -1;
     int cols     = -1;
@@ -45,12 +45,12 @@ namespace srrg2_core {
     
     char* serialize(char* buffer) const override {
       assert(buffer);
-      // ds copy matrix header information
+      // copy matrix header information
       writeInBuffer(buffer, matrix_type);
       writeInBuffer(buffer, channels);
       writeInBuffer(buffer, rows);
       writeInBuffer(buffer, cols);
-      // ds determine data write size
+      // determine data write size
       const size_t number_of_data_bytes_to_write(getNumberOfDataBytes(matrix_type));
       std::memcpy((char*) buffer, (const char*) data.data, number_of_data_bytes_to_write);
       buffer += number_of_data_bytes_to_write;
@@ -66,11 +66,11 @@ namespace srrg2_core {
       readFromBuffer(channels, buffer);
       readFromBuffer(rows, buffer);
       readFromBuffer(cols, buffer);
-      // ds initialize matrix
+      // initialize matrix
       data = cv::Mat(rows, cols, matrix_type);
       assert(data.channels() == channels);
 
-      // ds determine data read size
+      // determine data read size
       const size_t number_of_data_bytes_to_read(getNumberOfDataBytes(matrix_type));
       std::memcpy((char*) data.data, (const char*) buffer, number_of_data_bytes_to_read);
       buffer += number_of_data_bytes_to_read;
@@ -80,7 +80,7 @@ namespace srrg2_core {
     size_t getNumberOfDataBytes(const int& matrix_type_) const {
       size_t number_of_data_bytes = 0;
 
-      // ds conversion from: http://dovgalecs.com/blog/opencv-matrix-types/
+      // conversion from: http://dovgalecs.com/blog/opencv-matrix-types/
       switch (matrix_type_) {
         case CV_8UC1:
         case CV_8UC2:

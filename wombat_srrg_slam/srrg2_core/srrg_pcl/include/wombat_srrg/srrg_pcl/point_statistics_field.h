@@ -26,13 +26,13 @@ namespace srrg2_core {
   struct PointStatisticsField_ {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     static constexpr size_t Dim   = StateDim_;
-    static constexpr size_t DimSE = (Dim <= 3) ? Dim : 3; // ds capped at SE(3) space
+    static constexpr size_t DimSE = (Dim <= 3) ? Dim : 3; // capped at SE(3) space
     using StateVectorType         = Vector_<Scalar_, Dim>;
     using StateMatrixType         = MatrixN_<Scalar_, Dim>;
     using ProjectionVectorType    = Vector_<Scalar_, Dim - 1>;
     using IsometryType            = Isometry_<Scalar_, DimSE>;
     size_t unique_id=0;
-    // ds stored properties NGHGHGN
+    // stored properties NGHGHGN
     struct CameraMeasurement {
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       CameraMeasurement() = delete;
@@ -69,18 +69,18 @@ namespace srrg2_core {
     using ValueType  = std::shared_ptr<Statistics>;
     using TraitsType = PointStatisticsFieldTraits_<ValueType>;
 
-    // ds storage (must be instanciated only once for all points in the same track!)
+    // storage (must be instanciated only once for all points in the same track!)
     ValueType value;
 
-    // ds method to allocate the value field (should only be used when creating a landmark!)
-    // ds for all points that relate to the same statistics the value can be simply assigned
+    // method to allocate the value field (should only be used when creating a landmark!)
+    // for all points that relate to the same statistics the value can be simply assigned
     void allocate() {
       assert(value == nullptr);
       value = ValueType(new Statistics());
       value->measurements.reserve(100);
     }
 
-    // ds adds a new entry to the statistics (state update)
+    // adds a new entry to the statistics (state update)
     void addOptimizationResult(const StateVectorType& state_,
                                const StateMatrixType& covariance_ = StateMatrixType::Zero()) {
       setState(state_);

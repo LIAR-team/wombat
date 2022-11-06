@@ -4,7 +4,7 @@
 
 namespace srrg2_solver {
 
-  // ia aux function to read and write isometries
+  // aux function to read and write isometries
   template <typename Scalar_>
   Isometry2_<Scalar_> readG2OIsometry2(std::istream& stream_) {
     Vector3_<Scalar_> reading = Vector3_<Scalar_>::Zero();
@@ -38,11 +38,11 @@ namespace srrg2_solver {
     ConverterActionVariableSE2RightAD(const FactorGraphPtr& graph_ptr_,
                                       G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE2", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     virtual ~ConverterActionVariableSE2RightAD() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -67,11 +67,11 @@ namespace srrg2_solver {
     ConverterActionVariableSE2Right(const FactorGraphPtr& graph_ptr_,
                                     G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE2", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     virtual ~ConverterActionVariableSE2Right() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -95,11 +95,11 @@ namespace srrg2_solver {
     ConverterActionVariableSE2LeftAD(const FactorGraphPtr& graph_ptr_,
                                      G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE2", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     virtual ~ConverterActionVariableSE2LeftAD() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -123,11 +123,11 @@ namespace srrg2_solver {
 
     ConverterActionVariableSE2Left(const FactorGraphPtr& graph_ptr_, G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_SE2", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     virtual ~ConverterActionVariableSE2Left() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -152,11 +152,11 @@ namespace srrg2_solver {
     ConverterActionVariablePoint2AD(const FactorGraphPtr& graph_ptr_,
                                     G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_XY", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     virtual ~ConverterActionVariablePoint2AD() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -180,11 +180,11 @@ namespace srrg2_solver {
 
     ConverterActionVariablePoint2(const FactorGraphPtr& graph_ptr_, G2OConverter* converter_ptr_) :
       BaseClass("VERTEX_XY", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     virtual ~ConverterActionVariablePoint2() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -210,11 +210,11 @@ namespace srrg2_solver {
     ConverterActionSE2PosePoseGeodesicErrorFactor(const FactorGraphPtr& graph_ptr_,
                                                   G2OConverter* converter_ptr_) :
       BaseClass("EDGE_SE2", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionSE2PosePoseGeodesicErrorFactor() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -239,11 +239,11 @@ namespace srrg2_solver {
     ConverterActionSE2PosePointErrorFactor(const FactorGraphPtr& graph_ptr_,
                                            G2OConverter* converter_ptr_) :
       BaseClass("EDGE_SE2_XY", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionSE2PosePointErrorFactor() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object
@@ -269,11 +269,11 @@ namespace srrg2_solver {
     ConverterActionSE2PosePointBearingErrorFactor(const FactorGraphPtr& graph_ptr_,
                                                   G2OConverter* converter_ptr_) :
       BaseClass("EDGE_BEARING_SE2_XY", graph_ptr_, converter_ptr_) {
-      // ia nothin to do
+      // nothin to do
     }
 
     ~ConverterActionSE2PosePointBearingErrorFactor() {
-      // ia nothin to do
+      // nothin to do
     }
 
     //! @brief this read from g2o file and creates a boss object

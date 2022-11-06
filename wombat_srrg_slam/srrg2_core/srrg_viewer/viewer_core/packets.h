@@ -4,7 +4,7 @@
 #pragma once
 #include "packets/packet_array.h" //ia almost deprecated
 #include "packets/packet_base.h"
-#include "packets/packet_cv_mat.h" // ds FIXME
+#include "packets/packet_cv_mat.h" // FIXME
 #include "packets/packet_eigen_object.h"
 #include "packets/packet_matchable_vector_cloud.h"
 #include "packets/packet_point_matrix_cloud.h"
@@ -37,4 +37,4 @@
  * - 0xE*      -> array packets (almost deprecated)
  */
 
-// ds ADD YOUR PACKET TYPE in packet_factory.h
+// ADD YOUR PACKET TYPE in packet_factory.h

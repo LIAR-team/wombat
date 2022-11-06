@@ -34,14 +34,14 @@ namespace srrg2_solver {
     odata.setInt("graph_id", this->graphId());
     odata.setInt("status", this->status());
 
-    // ia -std=c++Giorgio
+    // -std=c++Giorgio
     //    using EstimateType = typeof(this->estimate());
     //    odata.setEigen<EstimateType>("estimate", this->_estimate);
 
-    // ia -std=c++14
+    // -std=c++14
     odata.setEigen<decltype(this->_estimate)>("estimate", this->_estimate);
 
-    // ia old serialization of eigen data
+    // old serialization of eigen data
     //  const int e_rows = this->_estimate.matrix().rows();
     //  const int e_cols = this->_estimate.matrix().cols();
     //  ArrayData* adata = new ArrayData;
@@ -75,17 +75,17 @@ namespace srrg2_solver {
     }
     this->setStatus(st);
 
-    // ia -std=c++Giorgio
+    // -std=c++Giorgio
     //    using EstimateType = typeof(this->_estimate);
     //    EstimateType est;
     //    est = odata.getEigen<EstimateType>("estimate");
 
-    // ia -std=c++14
+    // -std=c++14
     auto est = odata.getEigen<decltype(this->_estimate)>("estimate");
 
     this->setEstimate(est);
 
-    // ia old serialization of eigen data
+    // old serialization of eigen data
     //    ArrayData* adata = dynamic_cast<ArrayData*>(odata.getField("estimate"));
     //    int k            = 0;
     //    const int e_rows = this->_estimate.matrix().rows();

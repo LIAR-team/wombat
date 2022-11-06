@@ -12,14 +12,14 @@
 using namespace srrg2_core;
 using namespace srrg2_solver;
 
-// ds TODO add proper noise on projections
-// ds TODO add unittest for mean disparity weighted jacs
+// TODO add proper noise on projections
+// TODO add unittest for mean disparity weighted jacs
 
 int main(int argc_, char** argv_) {
   return srrg2_test::runTests(argc_, argv_);
 }
 
-// ds projective monocular and rectified stereo test fixture
+// projective monocular and rectified stereo test fixture
 class Pinhole : public ::testing::Test {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -27,16 +27,16 @@ public:
   void SetUp() override {
     std::srand(0);
 
-    // ds setup solver ..
+    // setup solver ..
     ASSERT_NOTNULL(solver.param_algorithm.value());
     ASSERT_NOTNULL(solver.param_linear_solver.value());
     solver.param_termination_criteria.setValue(nullptr);
     solver.param_max_iterations.pushBack(maximum_number_of_iterations);
 
-    // ds .. and robustifiers
+    // .. and robustifiers
     robustifier_saturated.param_chi_threshold.setValue(25 * 25);
 
-    // ds setup graph
+    // setup graph
     graph = FactorGraphPtr(new FactorGraph());
 
     // create a variable, set an id and add it to the graph
@@ -45,44 +45,44 @@ public:
     graph->addVariable(X);
     solver.setGraph(graph);
 
-    // ds set target transform between the two states
+    // set target transform between the two states
     robot_in_world.setIdentity();
 
-    // ds walking backwards
+    // walking backwards
     robot_in_world.translation() = Vector3f(1, 2, 3);
 
-    // ds rotate 18 degrees around principal camera axis
+    // rotate 18 degrees around principal camera axis
     robot_in_world.rotate(AngleAxisf(0.1 * M_PI, Vector3f::UnitZ()));
 
-    // ds set camera matrix
+    // set camera matrix
     camera_calibration_matrix << 500, 0, 400, 0, 500, 200, 0, 0, 1;
 
-    // ds compute baseline to right camera (parallel optical axis)
+    // compute baseline to right camera (parallel optical axis)
     baseline_pixels = camera_calibration_matrix * baseline_meters;
   }
 
   void TearDown() override {
-    // ds no dynamic memory
+    // no dynamic memory
   }
 
   void generateProblemPnP(const size_t& number_of_measurements_,
                           const float noise_magnitude_      = 0,
                           const size_t& number_of_outliers_ = 0) {
-    // ds noise generation that is applied to measurements (fixed)
+    // noise generation that is applied to measurements (fixed)
     std::default_random_engine generator;
     std::uniform_real_distribution<float> distribution(0.0f, noise_magnitude_ * 1.0);
 
     // srrg add sensor's offset
     Isometry3f camera_in_world = robot_in_world * sensor_in_robot;
 
-    // ds generate points and measurements until we have the target number
+    // generate points and measurements until we have the target number
     uint32_t index_point     = 0;
-    size_t outlier_frequency = number_of_measurements_ + 1; // ds default no outliers
+    size_t outlier_frequency = number_of_measurements_ + 1; // default no outliers
     if (number_of_outliers_ > 0) {
       outlier_frequency = number_of_measurements_ / number_of_outliers_;
     }
     while (index_point < number_of_measurements_) {
-      // ds obtain a 3D point in the camera frame with positive depth
+      // obtain a 3D point in the camera frame with positive depth
       Point3f point_in_world;
       point_in_world.coordinates()     = Vector3f::Random() * 100.0f;
       point_in_world.coordinates().z() = std::fabs(point_in_world.coordinates().z());
@@ -91,11 +91,11 @@ public:
 
       const Vector3f point_in_camera(camera_in_world.inverse() * point_in_world.coordinates());
 
-      // ds project the 3D point into the left and right camera image planes
+      // project the 3D point into the left and right camera image planes
       const Vector3f coordinates_homogeneous_left  = camera_calibration_matrix * point_in_camera;
       const Vector3f coordinates_homogeneous_right = coordinates_homogeneous_left - baseline_pixels;
 
-      // ds obtain image coordinates of left and right projection
+      // obtain image coordinates of left and right projection
       Point4f fixed_point;
       fixed_point.coordinates()(0) =
         coordinates_homogeneous_left.x() / coordinates_homogeneous_left.z();
@@ -108,15 +108,15 @@ public:
       assert(fixed_point.coordinates()(1) == fixed_point.coordinates()(3) &&
              "assuming rectified stereo");
 
-      // ds add noise to feature position measurements
+      // add noise to feature position measurements
       fixed_point.coordinates()(0) += distribution(generator);
       fixed_point.coordinates()(1) += distribution(generator);
       fixed_point.coordinates()(2) += distribution(generator);
 
-      // ds set the same noise to v coordinates to mimic a rectified rigid stereo scenario)
+      // set the same noise to v coordinates to mimic a rectified rigid stereo scenario)
       fixed_point.coordinates()(3) = fixed_point.coordinates()(1);
 
-      // ds check if the point is out of the field of view (i.e. not measurable) - keep sampling
+      // check if the point is out of the field of view (i.e. not measurable) - keep sampling
       if (fixed_point.coordinates()(0) < 0 || fixed_point.coordinates()(0) > image_dimension.x() ||
           fixed_point.coordinates()(1) < 0 || fixed_point.coordinates()(1) > image_dimension.y() ||
           fixed_point.coordinates()(2) < 0 || fixed_point.coordinates()(2) > image_dimension.x() ||
@@ -124,25 +124,25 @@ public:
         continue;
       }
 
-      // ds monocular view
+      // monocular view
       Point2f fixed_point_left;
       fixed_point_left.coordinates()(0) = fixed_point.coordinates()(0);
       fixed_point_left.coordinates()(1) = fixed_point.coordinates()(1);
 
-      // ds monocular view with depth
+      // monocular view with depth
       Point3f fixed_point_left_with_depth;
       fixed_point_left_with_depth.coordinates()(0) = fixed_point_left.coordinates()(0);
       fixed_point_left_with_depth.coordinates()(1) = fixed_point_left.coordinates()(1);
       fixed_point_left_with_depth.coordinates()(2) =
-        point_in_camera(2) + distribution(generator) / 100.0; // ds fraction of pixel noise on depth
+        point_in_camera(2) + distribution(generator) / 100.0; // fraction of pixel noise on depth
 
-      // ds store generated point and its projections with correspondence information
+      // store generated point and its projections with correspondence information
       points_fixed_mono.push_back(fixed_point_left);
       points_fixed_mono_depth.push_back(fixed_point_left_with_depth);
       points_fixed_stereo.push_back(fixed_point);
       points_moving.push_back(point_in_world);
 
-      // ds check if we have to generate an outlier (including duplicate associations)
+      // check if we have to generate an outlier (including duplicate associations)
       if ((index_point + 1) % outlier_frequency == 0) {
         const size_t index_invalid = std::rand() % number_of_measurements_;
         correspondences.push_back(Correspondence(index_point, index_invalid));
@@ -155,35 +155,35 @@ public:
   }
 
 protected:
-  // ds variable to optimize
+  // variable to optimize
   std::shared_ptr<VariableSE3QuaternionRightAD> X;
 
-  // ds solver used in all tests
+  // solver used in all tests
   Solver solver;
 
-  // ds maximum number of iterations
+  // maximum number of iterations
   static constexpr size_t maximum_number_of_iterations = 25;
 
-  // ds graph handle
+  // graph handle
   FactorGraphPtr graph = nullptr;
 
-  // ds optional robustifier that can be hooked to factors
+  // optional robustifier that can be hooked to factors
   RobustifierSaturated robustifier_saturated;
 
-  // ds sampling configuration
+  // sampling configuration
   Isometry3f robot_in_world = Isometry3f::Identity();
 
-  // ds image dimension (rows, cols) - used for world generation
+  // image dimension (rows, cols) - used for world generation
   Vector2f image_dimension = Vector2f(1000, 1000);
 
-  // ds pinhole camera matrix
+  // pinhole camera matrix
   Matrix3f camera_calibration_matrix;
 
-  // ds base line in physical and camera
+  // base line in physical and camera
   Vector3f baseline_meters = Vector3f(1, 0, 0);
   Vector3f baseline_pixels = Vector3f::Zero();
 
-  // ds point clouds, information and correspondences
+  // point clouds, information and correspondences
   Point2fVectorCloud points_fixed_mono;
   Point3fVectorCloud points_fixed_mono_depth;
   Point4fVectorCloud points_fixed_stereo;
@@ -195,16 +195,16 @@ protected:
 };
 
 TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven_NastyConfiguration) {
-  // ds move world origin
+  // move world origin
   robot_in_world.linear() = geometry3d::a2r(Vector3f(M_PI / 4, 0, 0));
   std::cerr << "origin transform: \n" << robot_in_world.matrix() << std::endl;
   std::cerr << "origin euler: " << geometry3d::t2ta(robot_in_world).transpose() << std::endl;
   std::cerr << "origin quaternion: " << geometry3d::t2tnq(robot_in_world).transpose() << std::endl;
 
-  // ds generate world
+  // generate world
   generateProblemPnP(1000 /*number of measurements*/, 0 /*noise magnitude*/, 0 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3ProjectiveErrorFactorCorrespondenceDriven> factor(
     new SE3ProjectiveErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -220,23 +220,23 @@ TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven_NastyConfiguration)
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   Isometry3f initial_guess(Isometry3f::Identity());
-  initial_guess.linear() = robot_in_world.linear(); // ds be gentle in orientation
+  initial_guess.linear() = robot_in_world.linear(); // be gentle in orientation
   X->setEstimate(initial_guess.inverse());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   //  ASSERT_LT(stats.back().chi_inliers, 2 /*ayyyy*/);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -249,7 +249,7 @@ TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven_NastyConfiguration)
 TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven) {
   generateProblemPnP(1000 /*number of measurements*/, 0 /*noise magnitude*/, 0 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3ProjectiveErrorFactorCorrespondenceDriven> factor(
     new SE3ProjectiveErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -265,21 +265,21 @@ TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven) {
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 1e-5);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -291,7 +291,7 @@ TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven) {
 TEST_F(Pinhole, SE3ProjectiveDepthErrorFactorCorrespondenceDriven) {
   generateProblemPnP(1000 /*number of measurements*/, 0 /*noise magnitude*/, 0 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3ProjectiveDepthErrorFactorCorrespondenceDriven> factor(
     new SE3ProjectiveDepthErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -304,25 +304,25 @@ TEST_F(Pinhole, SE3ProjectiveDepthErrorFactorCorrespondenceDriven) {
   factor->setMoving(points_moving);
   factor->setCorrespondences(correspondences);
   Matrix3f information_matrix(Matrix3f::Identity());
-  information_matrix(2, 2) = 10; // ds weight depth error higher (meters vs pixels)
+  information_matrix(2, 2) = 10; // weight depth error higher (meters vs pixels)
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 1e-5);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -334,7 +334,7 @@ TEST_F(Pinhole, SE3ProjectiveDepthErrorFactorCorrespondenceDriven) {
 TEST_F(Pinhole, SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven) {
   generateProblemPnP(1000 /*number of measurements*/, 0 /*noise magnitude*/, 0 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven> factor(
     new SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -348,25 +348,25 @@ TEST_F(Pinhole, SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven) {
   factor->setMoving(points_moving);
   factor->setCorrespondences(correspondences);
   Matrix3f information_matrix(Matrix3f::Identity());
-  information_matrix(1, 1) = 2; // ds weight error in v twice (rectified)
+  information_matrix(1, 1) = 2; // weight error in v twice (rectified)
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 1e-5);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -378,7 +378,7 @@ TEST_F(Pinhole, SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven) {
 TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven_Noise) {
   generateProblemPnP(1000 /*number of measurements*/, 1 /*noise magnitude*/, 0 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3ProjectiveErrorFactorCorrespondenceDriven> factor(
     new SE3ProjectiveErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -394,21 +394,21 @@ TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven_Noise) {
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 250);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -420,7 +420,7 @@ TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven_Noise) {
 TEST_F(Pinhole, SE3ProjectiveDepthErrorFactorCorrespondenceDriven_Noise) {
   generateProblemPnP(1000 /*number of measurements*/, 1 /*noise magnitude*/, 0 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3ProjectiveDepthErrorFactorCorrespondenceDriven> factor(
     new SE3ProjectiveDepthErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -433,25 +433,25 @@ TEST_F(Pinhole, SE3ProjectiveDepthErrorFactorCorrespondenceDriven_Noise) {
   factor->setMoving(points_moving);
   factor->setCorrespondences(correspondences);
   Matrix3f information_matrix(Matrix3f::Identity());
-  information_matrix(2, 2) = 10; // ds weight depth error higher (meters vs pixels)
+  information_matrix(2, 2) = 10; // weight depth error higher (meters vs pixels)
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 250);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -463,7 +463,7 @@ TEST_F(Pinhole, SE3ProjectiveDepthErrorFactorCorrespondenceDriven_Noise) {
 TEST_F(Pinhole, SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven_Noise) {
   generateProblemPnP(1000 /*number of measurements*/, 1 /*noise magnitude*/, 0 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven> factor(
     new SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -477,25 +477,25 @@ TEST_F(Pinhole, SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven_Nois
   factor->setMoving(points_moving);
   factor->setCorrespondences(correspondences);
   Matrix3f information_matrix(Matrix3f::Identity());
-  information_matrix(1, 1) = 2; // ds weight error in v twice (rectified)
+  information_matrix(1, 1) = 2; // weight error in v twice (rectified)
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 500);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -507,7 +507,7 @@ TEST_F(Pinhole, SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven_Nois
 TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven_Noise_Outliers) {
   generateProblemPnP(1000 /*number of measurements*/, 1 /*noise magnitude*/, 100 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3ProjectiveErrorFactorCorrespondenceDriven> factor(
     new SE3ProjectiveErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -523,24 +523,24 @@ TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven_Noise_Outliers) {
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds we have outliers - set robustifier
+  // we have outliers - set robustifier
   factor->setRobustifier(&robustifier_saturated);
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   //  ASSERT_LT(stats.back().chi_inliers, 250);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -552,7 +552,7 @@ TEST_F(Pinhole, SE3ProjectiveErrorFactorCorrespondenceDriven_Noise_Outliers) {
 TEST_F(Pinhole, SE3ProjectiveDepthErrorFactorCorrespondenceDriven_Noise_Outliers) {
   generateProblemPnP(1000 /*number of measurements*/, 1 /*noise magnitude*/, 100 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3ProjectiveDepthErrorFactorCorrespondenceDriven> factor(
     new SE3ProjectiveDepthErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -565,28 +565,28 @@ TEST_F(Pinhole, SE3ProjectiveDepthErrorFactorCorrespondenceDriven_Noise_Outliers
   factor->setMoving(points_moving);
   factor->setCorrespondences(correspondences);
   Matrix3f information_matrix(Matrix3f::Identity());
-  information_matrix(2, 2) = 10; // ds weight depth error higher (meters vs pixels)
+  information_matrix(2, 2) = 10; // weight depth error higher (meters vs pixels)
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds we have outliers - set robustifier
+  // we have outliers - set robustifier
   factor->setRobustifier(&robustifier_saturated);
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 250);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -598,7 +598,7 @@ TEST_F(Pinhole, SE3ProjectiveDepthErrorFactorCorrespondenceDriven_Noise_Outliers
 TEST_F(Pinhole, SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven_Noise_Outliers) {
   generateProblemPnP(1000 /*number of measurements*/, 1 /*noise magnitude*/, 100 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven> factor(
     new SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -612,28 +612,28 @@ TEST_F(Pinhole, SE3RectifiedStereoProjectiveErrorFactorCorrespondenceDriven_Nois
   factor->setMoving(points_moving);
   factor->setCorrespondences(correspondences);
   Matrix3f information_matrix(Matrix3f::Identity());
-  information_matrix(1, 1) = 2; // ds weight error in v twice (rectified)
+  information_matrix(1, 1) = 2; // weight error in v twice (rectified)
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds we have outliers - set robustifier
+  // we have outliers - set robustifier
   factor->setRobustifier(&robustifier_saturated);
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 500);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -647,7 +647,7 @@ TEST_F(Pinhole, SE3ProjectiveWithSensorErrorFactorCorrespondenceDriven) {
   sensor_in_robot.linear()      = geometry3d::a2r(Vector3f(0, M_PI * 0.05, 0));
 
   generateProblemPnP(1000 /*number of measurements*/, 0 /*noise magnitude*/, 0 /*# outliers*/);
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3ProjectiveWithSensorErrorFactorCorrespondenceDriven> factor(
     new SE3ProjectiveWithSensorErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -664,21 +664,21 @@ TEST_F(Pinhole, SE3ProjectiveWithSensorErrorFactorCorrespondenceDriven) {
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 1e-5);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()
@@ -693,7 +693,7 @@ TEST_F(Pinhole, SE3ProjectiveDepthWithSensorErrorFactorCorrespondenceDriven) {
 
   generateProblemPnP(1000 /*number of measurements*/, 0 /*noise magnitude*/, 0 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3ProjectiveDepthWithSensorErrorFactorCorrespondenceDriven> factor(
     new SE3ProjectiveDepthWithSensorErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -707,25 +707,25 @@ TEST_F(Pinhole, SE3ProjectiveDepthWithSensorErrorFactorCorrespondenceDriven) {
   factor->setCorrespondences(correspondences);
   factor->setSensorInRobot(sensor_in_robot);
   Matrix3f information_matrix(Matrix3f::Identity());
-  information_matrix(2, 2) = 10; // ds weight depth error higher (meters vs pixels)
+  information_matrix(2, 2) = 10; // weight depth error higher (meters vs pixels)
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(robot_in_world);
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 1e-5);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
 
@@ -742,7 +742,7 @@ TEST_F(Pinhole, SE3RectifiedStereoProjectiveWithSensorErrorFactorCorrespondenceD
 
   generateProblemPnP(1000 /*number of measurements*/, 0 /*noise magnitude*/, 0 /*# outliers*/);
 
-  // ds create a stereo posit factor
+  // create a stereo posit factor
   std::shared_ptr<SE3RectifiedStereoProjectiveWithSensorErrorFactorCorrespondenceDriven> factor(
     new SE3RectifiedStereoProjectiveWithSensorErrorFactorCorrespondenceDriven());
   factor->setVariableId(0, 0);
@@ -757,25 +757,25 @@ TEST_F(Pinhole, SE3RectifiedStereoProjectiveWithSensorErrorFactorCorrespondenceD
   factor->setCorrespondences(correspondences);
   factor->setSensorInRobot(sensor_in_robot);
   Matrix3f information_matrix(Matrix3f::Identity());
-  information_matrix(1, 1) = 2; // ds weight error in v twice (rectified)
+  information_matrix(1, 1) = 2; // weight error in v twice (rectified)
   factor->setInformationMatrix(information_matrix);
   ASSERT_EQ(factor->size(), correspondences.size());
 
-  // ds hook up factor, graph and solver
+  // hook up factor, graph and solver
   graph->addFactor(factor);
   ASSERT_EQ(graph->factors().size(), static_cast<size_t>(1));
 
-  // ds set initial guess and optimize!
+  // set initial guess and optimize!
   X->setEstimate(Isometry3f::Identity());
   solver.compute();
 
-  // ds validate optimization
+  // validate optimization
   const auto& stats = solver.iterationStats();
   std::cerr << stats << std::endl;
   ASSERT_EQ(stats.size(), static_cast<size_t>(maximum_number_of_iterations));
   ASSERT_LT(stats.back().chi_inliers, 1e-4);
 
-  // ds evaluate estimation error
+  // evaluate estimation error
   Isometry3f estimated_T        = X->estimate();
   const Vector6f relative_error = geometry3d::t2tnq(estimated_T * robot_in_world);
   std::cerr << "robot_in_world_est : " << geometry3d::t2v(estimated_T.inverse()).transpose()

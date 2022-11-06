@@ -42,7 +42,7 @@ namespace srrg2_core {
       bool found = false;
       std::string complete_path;
 
-      // ia for each path
+      // for each path
       for (const auto& p_it : so_paths.value()) {
         // construct full path and replaces the env vars
         complete_path = p_it + "/" + so_it;
@@ -51,7 +51,7 @@ namespace srrg2_core {
         std::cerr << "DynamicLoaderConfig|looking for file [" << complete_path << " ] ... ";
         //#endif
 
-        // ia check if path exists ( fastest way :) )
+        // check if path exists ( fastest way :) )
         if (srrg2_core::isAccessible(complete_path)) {
           complete_paths.push_back(complete_path);
           found = true;
@@ -116,7 +116,7 @@ namespace srrg2_core {
       }
     }
 
-    // ia log something
+    // log something
     std::cerr << "PropertyContainerManager::initFactory|opened [ "
               << FG_YELLOW(so_opened << "/" << total_so_to_open) << " ] libraries\n";
 
@@ -318,7 +318,7 @@ namespace srrg2_core {
               << std::endl;
     for (PropertyContainerIdentifiablePtr r : reachable) {
       std::cerr << "PropertyContainerManager::add|renaming [ " << r << " ] to ''" << std::endl;
-      r->setName(""); // ds TODO is overwriting the name intended?
+      r->setName(""); // TODO is overwriting the name intended?
       _instances.insert(r);
       _objects.insert(r);
     }

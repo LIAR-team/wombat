@@ -3,7 +3,7 @@
 
 #pragma once
 #include <stdint.h>
-// ia deg2rad and so on
+// deg2rad and so on
 #include "wombat_srrg/srrg_geometry/geometry_defs.h"
 
 namespace srrg2_core {

@@ -172,8 +172,8 @@ namespace srrg2_core {
         const PointType pp =
           tp.template transform<0, transform_class, ProjectionType>(projection_matrix);
 
-        // ds drop negative coordinates on the spot (before rounding to pixel coordinates)
-        // ds as the current rounding mode passes points with negative coordinates (-0.5f -> 0)
+        // drop negative coordinates on the spot (before rounding to pixel coordinates)
+        // as the current rounding mode passes points with negative coordinates (-0.5f -> 0)
         if (pp.template value<0>()(0) < 0.0f) {
           continue;
         }
@@ -187,7 +187,7 @@ namespace srrg2_core {
           continue;
         }
 
-        // ds compute image coordinates at pixel precision
+        // compute image coordinates at pixel precision
         int r = 0, c = 0;
         c = int(pp.template value<0>()(0) + 0.5f);
         if (GeometryDim >= 3) {
@@ -258,8 +258,8 @@ namespace srrg2_core {
         projected_point.template transformInPlace<0, transform_class, ProjectionType>(
           projection_matrix);
 
-        // ds drop negative coordinates on the spot (before rounding to pixel coordinates)
-        // ds as the current rounding mode passes points with negative coordinates (-0.5f -> 0)
+        // drop negative coordinates on the spot (before rounding to pixel coordinates)
+        // as the current rounding mode passes points with negative coordinates (-0.5f -> 0)
         if (projected_point.template value<0>()(0) < 0.0f) {
           continue;
         }
@@ -273,7 +273,7 @@ namespace srrg2_core {
           continue;
         }
 
-        // ds compute image coordinates at pixel precision
+        // compute image coordinates at pixel precision
         int r = 0, c = 0;
         c = int(projected_point.template value<0>()(0) + 0.5f);
         if (GeometryDim >= 3) {
@@ -302,7 +302,7 @@ namespace srrg2_core {
                    std::vector<int>& indices_in_world_) {
       PROFILE_TIME("PointProjector::compute");
 
-      // ds prepare output buffers
+      // prepare output buffers
       points_in_camera_.clear();
       points_in_camera_.reserve(points_in_world_.size());
       points_in_image_.clear();
@@ -310,7 +310,7 @@ namespace srrg2_core {
       indices_in_world_.clear();
       indices_in_world_.reserve(points_in_world_.size());
 
-      // ds cache and adjust camera matrix and entries (virtual dispatch)
+      // cache and adjust camera matrix and entries (virtual dispatch)
       ProjectionType projection_matrix;
       projection_matrix.setIdentity();
       adjustProjectionMatrix(projection_matrix);
@@ -319,37 +319,37 @@ namespace srrg2_core {
       const float& minimum_depth_meters(this->param_range_min.value());
       const float& maximum_depth_meters(this->param_range_max.value());
 
-      // ds process all points
+      // process all points
       for (size_t i = 0; i < points_in_world_.size(); ++i) {
         const PointType& point_in_world(points_in_world_[i]);
         if (point_in_world.status != Valid) {
           continue;
         }
 
-        // ds obtain a deep copy of the source point which we will transform accordingly
-        // ds all fields are copied
+        // obtain a deep copy of the source point which we will transform accordingly
+        // all fields are copied
         PointType point_in_camera(point_in_world);
 
-        // ds we transform the point in place
+        // we transform the point in place
         point_in_camera.template transformInPlace<TRANSFORM_CLASS::Isometry, IsometryType>(
           this->_world_in_camera);
 
-        // ds drop points with invalid depth
+        // drop points with invalid depth
         const float depth_meters = point_in_camera.template value<0>()(GeometryDim - 1);
         if (depth_meters < minimum_depth_meters || depth_meters > maximum_depth_meters) {
           continue;
         }
 
-        // ds obtain a deep copy of the source point which we will transform accordingly
-        // ds all fields are copied
+        // obtain a deep copy of the source point which we will transform accordingly
+        // all fields are copied
         PointType point_in_image(point_in_camera);
 
-        // ds we project the coordinates field only in place (field 0 by definition)
+        // we project the coordinates field only in place (field 0 by definition)
         point_in_image.template transformInPlace<0, transform_class, ProjectionType>(
           projection_matrix);
         assert(point_in_image.template value<0>()(GeometryDim - 1) == depth_meters);
 
-        // ds drop points with negative image coordinates
+        // drop points with negative image coordinates
         assert(GeometryDim >= 2);
         const float& image_coordinate_horizontal = point_in_image.template value<0>()(0);
         const float& image_coordinate_vertical   = point_in_image.template value<0>()(1);
@@ -357,7 +357,7 @@ namespace srrg2_core {
           continue;
         }
 
-        // ds if projection is within canvas, we keep it
+        // if projection is within canvas, we keep it
         if (image_coordinate_horizontal < image_cols && image_coordinate_vertical < image_rows) {
           points_in_image_.emplace_back(point_in_image);
           points_in_camera_.emplace_back(point_in_camera);

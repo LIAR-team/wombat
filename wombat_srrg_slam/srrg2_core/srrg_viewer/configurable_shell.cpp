@@ -1367,7 +1367,7 @@ namespace srrg2_core {
     if (!viewer_core || canvases.empty())
       return;
 
-    // ia busy waiting that viewer is online
+    // busy waiting that viewer is online
     while (!viewer_core->isRunning()) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

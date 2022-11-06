@@ -28,7 +28,7 @@ namespace srrg2_core {
                               const std::string& target_,
                               const double& time_seconds_) const {
     transform_.setIdentity();
-    // ds check if the platform is set up
+    // check if the platform is set up
     if (!_is_set_up) {
       std::cerr << YELLOW << std::endl;
       std::cerr << "Platform::getTransform|WARNING platform is not set up yet\n";
@@ -38,11 +38,11 @@ namespace srrg2_core {
       return false;
     }
 
-    // ia cleaning the identifier from strange tokens (/ and \)
+    // cleaning the identifier from strange tokens (/ and \)
     const std::string target_identifier          = removeStringTokens(target_);
     StringLinkMap::const_iterator target_link_it = _identifier_to_link_map.find(target_identifier);
 
-    // ds check if the target link is not available in the model
+    // check if the target link is not available in the model
     if (target_link_it == _identifier_to_link_map.end()) {
       std::cerr << FG_YELLOW("Platform::getTransform|WARNING could not find target ")
                 << FG_BLUE(target_identifier) << std::endl;
@@ -50,7 +50,7 @@ namespace srrg2_core {
     }
 
     Link* target_link = target_link_it->second;
-    // ds compute transform bottom up
+    // compute transform bottom up
     bool result = _getTransformInRoot(transform_, target_link, time_seconds_);
     if (!result) {
       _printInterpolationStatus(
@@ -65,7 +65,7 @@ namespace srrg2_core {
                               const std::string& reference_,
                               const double& time_seconds_) const {
     transform_.setIdentity();
-    // ds check if the platform is set up
+    // check if the platform is set up
     if (!_is_set_up) {
       std::cerr << YELLOW << std::endl;
       std::cerr << "Platform::getTransform|WARNING platform is not set up\n";
@@ -75,13 +75,13 @@ namespace srrg2_core {
       return false;
     }
 
-    // ia cleaning the identifier from strange tokens (/ and \)
+    // cleaning the identifier from strange tokens (/ and \)
     const std::string target_identifier          = removeStringTokens(target_);
     const std::string reference_identifier       = removeStringTokens(reference_);
     StringLinkMap::const_iterator target_link_it = _identifier_to_link_map.find(target_identifier);
     StringLinkMap::const_iterator reference_link_it =
       _identifier_to_link_map.find(reference_identifier);
-    // ds check if the target links are not available in the model
+    // check if the target links are not available in the model
     if (target_link_it == _identifier_to_link_map.end() ||
         reference_link_it == _identifier_to_link_map.end()) {
       std::cerr << "target   : " << target_identifier << std::endl;
@@ -91,7 +91,7 @@ namespace srrg2_core {
       return false;
     }
 
-    // ds compute both transforms bottom up (TODO precompute paths in setup?)
+    // compute both transforms bottom up (TODO precompute paths in setup?)
     Link* target_link = target_link_it->second;
     Link* reference_link = reference_link_it->second;
 
@@ -163,7 +163,7 @@ namespace srrg2_core {
       return false;
     }
 
-    // ia try to get a transform event vector
+    // try to get a transform event vector
     PropertyTransformEventVector* transform_event_vector =
       message_->property<PropertyTransformEventVector>("events");
     if (!transform_event_vector) {
@@ -175,12 +175,12 @@ namespace srrg2_core {
       addEvent(transform_event);
     }
 
-    // ds success if still here
+    // success if still here
     return true;
   }
 
   bool Platform::addEvent(BaseEventPtr link_event_) {
-    // ds filter invalid events which we cannot associate with a link
+    // filter invalid events which we cannot associate with a link
     if (link_event_->identifier().empty()) {
       std::cerr << FG_YELLOW("Platform::addEvent|WARNING: received disconnected "
                              "BaseEvent (identfier not set)")
@@ -188,10 +188,10 @@ namespace srrg2_core {
       return false;
     }
 
-    // ds check if corresponding link is available
+    // check if corresponding link is available
     StringLinkMap::iterator element = _identifier_to_link_map.find(link_event_->identifier());
     Link* link                      = 0;
-    // ds if not available
+    // if not available
     TransformEventPtr tf_event = std::dynamic_pointer_cast<TransformEvent>(link_event_);
 
     if (element == _identifier_to_link_map.end()) {
@@ -199,10 +199,10 @@ namespace srrg2_core {
                             << FG_YELLOW("WARNING: link not present: '" << link_event_->identifier()
                                                                         << "'\n");
 
-      // ds check if we have a transform event - ONLY FOR THESE WE CAN ADD
+      // check if we have a transform event - ONLY FOR THESE WE CAN ADD
       // BASE LINKS
       if (tf_event) {
-        // ds setup a new tf link
+        // setup a new tf link
         link =
           new Link(link_event_->identifier(), tf_event->transform(), tf_event->identifierParent());
         DEBUG_VAR(platform_debug) << "Platform::addEvent|" << GREEN << "adding new Link: '"
@@ -210,11 +210,11 @@ namespace srrg2_core {
                               << tf_event->identifierParent() << "'" << RESET << std::endl;
         addLink(link);
       } else {
-        // ds nothing we can do
+        // nothing we can do
         return false;
       }
     } else {
-      // ds retrieve targeted link
+      // retrieve targeted link
       link = element->second;
       DEBUG_VAR(platform_debug) << "Platform::addEvent|"
                             << FG_BLUE("WARNING: link present: '"
@@ -238,7 +238,7 @@ namespace srrg2_core {
         }
       }
     }
-    // ds add event (will fail and have no effect if wrong dynamic event type)
+    // add event (will fail and have no effect if wrong dynamic event type)
     /* std::cerr << "Platform::addEvent|link " << link->identifier() << " num
      * events = " << link->numberOfEvents() << std::endl; */
     return link->addEvent(tf_event);
@@ -250,15 +250,15 @@ namespace srrg2_core {
       return false;
     }
 
-    // ds attempt insertion and check for already present identfier
+    // attempt insertion and check for already present identfier
     if (!_identifier_to_link_map.insert(std::make_pair(link_->identifier(), link_)).second) {
-      // ds ignore request (TODO: critical or not?)
+      // ignore request (TODO: critical or not?)
       DEBUG_VAR(platform_debug) << FG_YELLOW("Platform::addLink|WARNING: Link: '" << link_->_identifier
                                                                               << "' already exists")
                             << std::endl;
       return false;
     } else {
-      // ds update the structure
+      // update the structure
       return setup();
     }
   }
@@ -268,13 +268,13 @@ namespace srrg2_core {
       return false;
     }
 
-    // ds check if empty (trivial case)
+    // check if empty (trivial case)
     if (!_identifier_to_link_map.size()) {
       std::cerr << FG_RED("Platform::isWellFormed|empty kinematic model") << std::endl;
       return true;
     }
 
-    // ds check if we have loose children (TODO critical?)
+    // check if we have loose children (TODO critical?)
     if (_number_of_correctly_connected_joints != _identifier_to_link_map.size()) {
       std::cerr << FG_RED("Platform::isWellFormed|WARNING: invalid Links: "
                           << _identifier_to_link_map.size() - _number_of_correctly_connected_joints)
@@ -296,7 +296,7 @@ namespace srrg2_core {
       ostream_ << "empty model" << std::endl;
     }
 
-    // ds construct output string based on level in the tree - by scanning all
+    // construct output string based on level in the tree - by scanning all
     // joints
     std::map<int32_t, LinkVector> joints_per_level;
     std::vector<int32_t> levels;
@@ -318,10 +318,10 @@ namespace srrg2_core {
       return ostream_;
     }
 
-    // ds sort levels
+    // sort levels
     std::sort(levels.begin(), levels.end());
 
-    // ds print each level
+    // print each level
     ostream_ << "-----------------------" << std::endl;
     for (const int32_t& level : levels) {
       ostream_ << "level: " << level << " ";
@@ -370,16 +370,16 @@ namespace srrg2_core {
     DEBUG_VAR(platform_debug) << "Platform::setup|setting root" << std::endl;
     _setRoot();
 
-    // ds check if it didn't WORK!!!!!
+    // check if it didn't WORK!!!!!
     if (!_root) {
       std::cerr << FG_RED("Platform::setup|ERROR: failed to set root") << std::endl;
       return false;
     }
-    // ds adjust joint levels of all joints connected to the root
+    // adjust joint levels of all joints connected to the root
     _root->_level                         = 0;
     _number_of_correctly_connected_joints = _updateChildLevel(_root);
 
-    // ds check if we have loose children (TODO critical?)
+    // check if we have loose children (TODO critical?)
     if (_number_of_correctly_connected_joints != _identifier_to_link_map.size()) {
       DEBUG_VAR(platform_debug) << "Platform::setup|WARNING: invalid Links: "
                             << _identifier_to_link_map.size() -
@@ -388,7 +388,7 @@ namespace srrg2_core {
     }
     DEBUG_VAR(platform_debug) << "8=========D" << this << "C==========8" << std::endl;
 
-    // ds fine
+    // fine
     _is_set_up = true;
     return true;
   }
@@ -427,12 +427,12 @@ namespace srrg2_core {
     for (auto pair : _identifier_to_link_map) {
       root_candidate = pair.second;
 
-      // ds traverse backwards towards the root
+      // traverse backwards towards the root
       while (root_candidate->parent()) {
         root_candidate = root_candidate->parent();
       }
 
-      // ds check for conflicting root candidates
+      // check for conflicting root candidates
       if (root_candidate && _root && _root != root_candidate) {
         DEBUG_VAR(platform_debug) << "Platform::_setRoot|WARNING: multiple roots: "
                               << _root->identifier() << " " << root_candidate->identifier()
@@ -447,21 +447,21 @@ namespace srrg2_core {
     for (auto pair : _identifier_to_link_map) {
       Link* child_link = pair.second;
 
-      // ds if the link is not connected to a parent, no hierarchy to update
+      // if the link is not connected to a parent, no hierarchy to update
       if (child_link->_identifier_parent.empty()) {
         continue;
       }
 
-      // ds check if parent is available AND (!!!!!!!) not set already
+      // check if parent is available AND (!!!!!!!) not set already
       /* std::cerr << "processing " << pair.first << std::endl; */
       /* std::cerr << "parent should be" << child_link->_identifier_parent <<
        * std::endl; */
       StringLinkMap::iterator parent_it =
         _identifier_to_link_map.find(child_link->_identifier_parent);
       Link* parent = 0;
-      // ds if parent was not found
+      // if parent was not found
       if (parent_it == _identifier_to_link_map.end()) {
-        // ds allocate a default link (TODO discuss)
+        // allocate a default link (TODO discuss)
         parent = new Link(child_link->_identifier_parent);
         DEBUG_VAR(platform_debug) << "Platform::_updateHierarchy|WARNING: creating empty Link: '"
                               << parent->identifier() << "' as potential root candidate"
@@ -471,9 +471,9 @@ namespace srrg2_core {
         parent = parent_it->second;
       }
 
-      // ds if the child is not yet connected
+      // if the child is not yet connected
       if (!child_link->_parent) {
-        // ds set parent for this child
+        // set parent for this child
         child_link->setParent(parent);
         parent->addChild(child_link);
       }

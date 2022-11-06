@@ -8,7 +8,7 @@
 
 #include "wombat_srrg/srrg_geometry/geometry_defs.h"
 
-// ds helper macros aimed to extend gtest macros
+// helper macros aimed to extend gtest macros
 #define ASSERT_IN_RANGE(VALUE, MIN, MAX) \
   ASSERT_GE(VALUE, MIN);                 \
   ASSERT_LE(VALUE, MAX)
@@ -65,8 +65,8 @@ namespace srrg2_test {
 
   //! parse current user folder from CLI parameters
   static void parseUserFolderUNIX(const std::string& filepath_) {
-    // ds determine local srrg test data path
-    // ds TODO remove this mother of all evil
+    // determine local srrg test data path
+    // TODO remove this mother of all evil
     const size_t index_file_root_slash = filepath_.find_first_of("/");
     if (index_file_root_slash == std::string::npos) {
       std::cerr << "parseUserFolder|ERROR: unable to infer file root (/) from CLI" << std::endl;
@@ -88,10 +88,10 @@ namespace srrg2_test {
       return;
     }
 
-    // ds assemble user folder (might be invalid at this point)
+    // assemble user folder (might be invalid at this point)
     filepath_user_folder = filepath_.substr(0, index_home_folder_slash);
 
-    // ds check if we are in the root folder (CI case) if home is not present
+    // check if we are in the root folder (CI case) if home is not present
     if (filepath_user_folder.find("home") == std::string::npos) {
       std::cerr << "parseUserFolder|WARNING: home folder not found - assuming root" << std::endl;
       filepath_user_folder = filepath_.substr(0, index_root_folder_slash);
@@ -99,7 +99,7 @@ namespace srrg2_test {
     filepath_folder_srrg  = filepath_user_folder + "/source/srrg/";
     filepath_folder_srrg2 = filepath_user_folder + "/source/srrg2/";
 
-    // ds check if the derived folders do not exist
+    // check if the derived folders do not exist
     if (opendir(filepath_folder_srrg.c_str()) == nullptr) {
       std::cerr << "parseUserFolder|WARNING: srrg folder not existing: '" + filepath_folder_srrg +
                      "'"
@@ -113,7 +113,7 @@ namespace srrg2_test {
       return;
     }
 
-    // ds fine if still here
+    // fine if still here
     std::cerr << "parseUserFolderUNIX|using folder SRRG: '" << filepath_folder_srrg << "'"
               << std::endl;
     std::cerr << "parseUserFolderUNIX|using folder SRRG2: '" << filepath_folder_srrg2 << "'"
@@ -135,7 +135,7 @@ namespace srrg2_test {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     RandomNumberGeneratorBase() {
-      // ds constant seed for reproducible tests
+      // constant seed for reproducible tests
       _random_device = std::mt19937(0);
     }
     virtual ~RandomNumberGeneratorBase() {
@@ -144,7 +144,7 @@ namespace srrg2_test {
                                       const RealType_& standard_deviation_) = 0;
 
   protected:
-    // ds random number generation
+    // random number generation
     std::mt19937 _random_device;
   };
 
@@ -153,7 +153,7 @@ namespace srrg2_test {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     RandomNumberGeneratorUniform() {
-      // ds constant seed for reproducible tests
+      // constant seed for reproducible tests
       srand(0);
     }
     virtual ~RandomNumberGeneratorUniform() {

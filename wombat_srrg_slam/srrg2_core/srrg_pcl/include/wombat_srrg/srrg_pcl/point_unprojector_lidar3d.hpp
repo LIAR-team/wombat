@@ -13,7 +13,7 @@ namespace srrg2_core {
     DestMatrixType& dest,
     const SrcChannelType& src,
     const SrcChannelsRestType&... rest) {
-    // ia if something has been changed then fuckin reinitialize everything
+    // if something has been changed then fuckin reinitialize everything
     if (_initialization_required) {
 #ifndef NDEBUG
       std::cerr << "PointUnprojectorLidar3D_::compute|reinitializing lookup projection\n";
@@ -26,7 +26,7 @@ namespace srrg2_core {
 
     dest.resize(src.rows(), src.cols());
 
-    // ia caching things
+    // caching things
     const size_t& lidar_projector_rows = this->_lidar.verticalResolution();
     const size_t& lidar_projector_cols = this->_image_width;
 
@@ -46,7 +46,7 @@ namespace srrg2_core {
         }
 
         dest_pt.status = srrg2_core::Valid;
-        // bdc actual unprojection w/ spherical lookup tables
+        // actual unprojection w/ spherical lookup tables
         const size_t idx          = r * this->_image_width + c;
         dest_pt.coordinates().x() = src_pt * this->_xUnitSphere[idx];
         dest_pt.coordinates().y() = src_pt * this->_yUnitSphere[idx];
@@ -73,7 +73,7 @@ namespace srrg2_core {
     OutputIteratorType dest,
     const SrcChannelType& src,
     const SrcChannelsRestType&... rest) {
-    // ia if something has been changed then fuckin reinitialize everything
+    // if something has been changed then fuckin reinitialize everything
     if (_initialization_required) {
 #ifndef NDEBUG
       std::cerr << "PointUnprojectorLidar3D_::compute|reinitializing lookup projection\n";
@@ -115,7 +115,7 @@ namespace srrg2_core {
   size_t PointUnprojectorLidar3D_<lidar3d_type_, DestPointCloudType_>::compute(
     const PointCloudType_& points_image_coordinates_depth_,
     PointCloudType_& points_in_camera_frame_) {
-    // ia if something has been changed then fuckin reinitialize everything
+    // if something has been changed then fuckin reinitialize everything
     if (_initialization_required) {
 #ifndef NDEBUG
       std::cerr << "PointUnprojectorLidar3D_::compute|reinitializing lookup projection\n";

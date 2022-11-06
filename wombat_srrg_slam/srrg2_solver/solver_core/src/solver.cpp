@@ -46,17 +46,17 @@ namespace srrg2_solver {
     factory->addAllocator<1, 2>();
     factory->addAllocator<1, 3>();
     factory->addAllocator<1, 6>();
-    // ia allocator for the matchable Jj
+    // allocator for the matchable Jj
     factory->addAllocator<5, 5>();
     factory->addAllocator<7, 5>();
     factory->addAllocator<5, 7>();
     factory->addAllocator<5, 1>();
     factory->addAllocator<1, 5>();
-    // ia allocator for the matchable Ji
+    // allocator for the matchable Ji
     factory->addAllocator<5, 6>();
     factory->addAllocator<6, 5>();
 
-    // ia allocator for the chordal
+    // allocator for the chordal
     factory->addAllocator<12, 12>();
     factory->addAllocator<12, 1>();
     factory->addAllocator<1, 12>();
@@ -359,13 +359,13 @@ namespace srrg2_solver {
     SparseBlockMatrix x(_H.blockRowDims(), _H.blockColDims());
     covariance_matricies_.clear();
     covariance_matricies_.reserve(variables_.size());
-    // tg compute blocks to be inverted based on the variables hessian indices
+    // compute blocks to be inverted based on the variables hessian indices
     std::vector<IntPair> block_structure;
     block_structure.reserve(variables_.size());
     for (const VariablePair& vp : variables_) {
       block_structure.emplace_back(vp.first->_hessian_index, vp.second->_hessian_index);
     }
-    // tg sort blocks
+    // sort blocks
     std::sort(block_structure.begin(),
               block_structure.end(),
               [](const IntPair& a, const IntPair& b) -> bool {
@@ -449,9 +449,9 @@ namespace srrg2_solver {
     istat.dim_variables             = _active_variables_dim;
     istat.constraint_violation_norm = 0;
     istat.num_constraints           = 0;
-    // tg I have to do this to get the proper index in the vector of factors stats
+    // I have to do this to get the proper index in the vector of factors stats
     size_t current_level = this->currentLevel();
-    // tg get proper initial index in factors stats
+    // get proper initial index in factors stats
     int factor_idx                                 = 0;
     istat.level                                    = current_level;
     std::vector<FactorBase*>& active_factors_level = _active_factors[current_level];
@@ -488,8 +488,8 @@ namespace srrg2_solver {
             istat.dim_factors += factor->measurementDim();
             break;
           case FactorStats::Status::Suppressed:
-            // ds: fallthrough to return false intended?
-            // gg: this happens when a point is outside the camera, or in general
+            //: fallthrough to return false intended?
+            //: this happens when a point is outside the camera, or in general
             //     when the error function fails
             istat.num_suppressed++;
             break;
@@ -514,9 +514,9 @@ namespace srrg2_solver {
 
     istat.reset();
     istat.iteration = _current_iteration;
-    // tg I have to do this to get the proper index in the vector of factors stats
+    // I have to do this to get the proper index in the vector of factors stats
     size_t current_level = this->currentLevel();
-    // tg get proper initial index in factors stats
+    // get proper initial index in factors stats
     int factor_idx                                 = 0;
     istat.level                                    = current_level;
     std::vector<FactorBase*>& active_factors_level = _active_factors[current_level];
@@ -783,15 +783,15 @@ namespace srrg2_solver {
       _level_changed = true;
       callActions(LevelStart);
       for (int level_iteration = 0; level_iteration < max_level_iterations; ++level_iteration) {
-        // ia perform all the pre-iteration actions
+        // perform all the pre-iteration actions
         callActions(IterationStart);
-        // ia do the trick
+        // do the trick
         const bool solution_ok = param_algorithm->oneRound();
         callActions(IterationEnd);
 
         ++_current_iteration;
 
-        // ia check if algorithm failed
+        // check if algorithm failed
         if (!solution_ok) {
           if (param_verbose.value())
             cerr << "Solver::compute|solver fail" << endl;
@@ -801,7 +801,7 @@ namespace srrg2_solver {
           return;
         }
 
-        // ia check if we have to stop
+        // check if we have to stop
         if (tc && tc->hasToStop()) {
           callActions(LevelEnd);
           callActions(ComputeEnd);

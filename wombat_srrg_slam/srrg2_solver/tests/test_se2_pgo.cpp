@@ -22,10 +22,10 @@ const float sensing_radius = 2.5f;
 
 using Isometry2fVector = std::vector<Isometry2f, Eigen::aligned_allocator<Isometry2f>>;
 
-// ia creates a perfect trajectory without noise
+// creates a perfect trajectory without noise
 void createGTTrajectory(const size_t& n_poses_, Isometry2fVector& gt_trajectory_);
 
-// ia creates a factor graph from the trajectory, including also lc
+// creates a factor graph from the trajectory, including also lc
 template <typename FactorType_, typename VariableType_>
 void createFactorGraph(const Isometry2fVector& gt_trajectory_,
                        const FactorGraphPtr& graph_,

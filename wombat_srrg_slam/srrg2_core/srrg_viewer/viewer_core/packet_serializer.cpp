@@ -18,13 +18,13 @@ namespace srrg2_core {
     if (packet_.type == PACKET_TYPE_INVALID)
       throw std::runtime_error("[PacketSerializer] invalid packet type");
 
-    // ia we put first the packet type
+    // we put first the packet type
     _buffer->data = putInBuffer(_buffer->data, packet_.type);
 
-    // ia finally the payload
+    // finally the payload
     _buffer->data = packet_.serialize(_buffer->data);
 
-    // ia increment the packet counter
+    // increment the packet counter
     ++_buffer->num_packets;
   }
 

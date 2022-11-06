@@ -31,7 +31,7 @@ const char* banner[] = {"This program converts AIS formatted CLF files to SRRG f
 int main(int argc_, char** argv_) {
   messages_registerTypes();
 
-  // ds set up CLI parameters
+  // set up CLI parameters
   // clang-format off
   ParseCommandLine command_line_parser(argv_, banner);
   ArgumentString argument_input_file (
@@ -54,28 +54,28 @@ int main(int argc_, char** argv_) {
     return 0;
   }
 
-  // ds configure serializer
+  // configure serializer
   Serializer serializer;
   serializer.setFilePath(argument_output_file.value());
 
-  // ds open file
+  // open file
   std::ifstream input_file(argument_input_file.value());
   if (!input_file.good() || !input_file.is_open()) {
     std::cerr << "ERROR: unable to open input file" << std::endl;
   }
 
-  // ds parse file line by line
+  // parse file line by line
   std::string line_buffer;
   size_t number_of_converted_laser_messages    = 0;
   size_t number_of_converted_odometry_messages = 0;
   while (std::getline(input_file, line_buffer)) {
-    // ds check if prefix matches the laser topic
+    // check if prefix matches the laser topic
     if (line_buffer.find(argument_laser_topic.value()) == 0) {
       // clang-format off
-      // ds format: num_readings [range_readings] x y theta odom_x odom_y odom_theta ipc_timestamp ipc_hostname logger_timestamp
+      // format: num_readings [range_readings] x y theta odom_x odom_y odom_theta ipc_timestamp ipc_hostname logger_timestamp
       // clang-format on
 
-      // ds stream tokens - first we have to extract the number of readings
+      // stream tokens - first we have to extract the number of readings
       std::istringstream line_buffer_stream(line_buffer);
       std::string topic_name;
       size_t num_readings;
@@ -91,7 +91,7 @@ int main(int argc_, char** argv_) {
       line_buffer_stream >> x >> y >> theta >> odom_x >> odom_y >> odom_theta >>
         ipc_timestamp;
 
-      // ds assemble a laser message TODO fetch laser calibration
+      // assemble a laser message TODO fetch laser calibration
       LaserMessage message("/" + topic_name,
                            "base_link",
                            number_of_converted_laser_messages,
@@ -104,25 +104,25 @@ int main(int argc_, char** argv_) {
       message.range_min.setValue(0 /*killian*/);
       message.ranges.setValue(range_readings);
 
-      // ds write messge
+      // write messge
       serializer.writeObject(message);
       ++number_of_converted_laser_messages;
       std::cerr << "L";
     }
 
-    // ds otherwise check if it matches the odom topic
+    // otherwise check if it matches the odom topic
     else if (line_buffer.find(argument_odometry_topic.value()) == 0) {
       // clang-format off
-      // ds format: ODOM x y theta tv rv accel ipc_timestamp ipc_hostname logger_timestamp
+      // format: ODOM x y theta tv rv accel ipc_timestamp ipc_hostname logger_timestamp
       // clang-format on
 
-      // ds stream tokens
+      // stream tokens
       std::string topic_name;
       double x, y, theta, tv, rv, accel, ipc_timestamp;
       std::istringstream(line_buffer) >> topic_name >> x >> y >> theta >> tv >>
         rv >> accel >> ipc_timestamp;
 
-      // ds assemble an odometry message
+      // assemble an odometry message
       OdometryMessage message("/" + topic_name,
                               "odom",
                               number_of_converted_odometry_messages,
@@ -136,7 +136,7 @@ int main(int argc_, char** argv_) {
       pose.translation().y() = y;
       pose.rotate(AngleAxisf(theta, Vector3f::UnitZ()));
 
-      // ds write messge
+      // write messge
       serializer.writeObject(message);
       ++number_of_converted_odometry_messages;
       std::cerr << "O";

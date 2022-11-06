@@ -26,9 +26,9 @@ namespace srrg2_core {
 
     using VectorType         = Vector3_<Scalar>;
     using MatrixType         = Matrix3_<Scalar>;
-    static constexpr int Dim = VectorType::RowsAtCompileTime + // ia origin
-                               MatrixType::RowsAtCompileTime + // ia direction
-                               1;                              // ia type
+    static constexpr int Dim = VectorType::RowsAtCompileTime + // origin
+                               MatrixType::RowsAtCompileTime + // direction
+                               1;                              // type
     using FullVectorType = Vector_<Scalar, Dim>;
 
     VisualMatchable_() : MatchableType(), DescriptorOwnerType() {

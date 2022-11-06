@@ -124,8 +124,8 @@ namespace srrg2_core {
       FieldTraits::polar2euclidean(dest.template value<i>(), src.template value<i>());
     }
 
-    // ds copies all overlapping fields from src to dest
-    // ds will not compile if dest has not a subset/conflics with src's fields
+    // copies all overlapping fields from src to dest
+    // will not compile if dest has not a subset/conflics with src's fields
     template <typename PointTypeSource_>
     inline static void copyFields(PointType_& dest, const PointTypeSource_& src) {
       PointOps_<PointType_, i - 1>::copyFields(dest, src);
@@ -225,9 +225,9 @@ namespace srrg2_core {
       dest.status       = FieldTraits::normalize(dest.template value<0>());
     }
 
-    // ds recursion termination specialization
-    // ds copies all overlapping fields from src to dest
-    // ds will not compile if dest has not a subset/conflics with src's fields
+    // recursion termination specialization
+    // copies all overlapping fields from src to dest
+    // will not compile if dest has not a subset/conflics with src's fields
     template <typename PointTypeSource_>
     inline static void copyFields(PointType_& dest, const PointTypeSource_& src) {
       dest.template field<0>() = src.template field<0>();

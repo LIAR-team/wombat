@@ -42,7 +42,7 @@ void producer(BufferManager* buffer_manager, BufferSinkShared* sink, PacketSeria
     //ia tell the serializer where it has to put the next packets
     serializer->setBuffer(buffer_send);
 
-    // ia create some packets
+    // create some packets
     PacketPayloadPoints p_packet_0(POINTS_BULK_SIZE, points);
 //    PacketPayloadPoints* p_packet_1(POINTS_BULK_SIZE, points, normals);
     PacketPayloadLines ln_packet_0(POINTS_BULK_SIZE, points);
@@ -158,7 +158,7 @@ int main (int argc, char** argv) {
 
   signal(SIGINT, sigIntHandler);
 
-  // ia popolate things
+  // popolate things
   Vector3f* points = new Vector3f[POINTS_BULK_SIZE];
   Vector3f* normals = new Vector3f[POINTS_BULK_SIZE];
   for (size_t i = 0; i < POINTS_BULK_SIZE; ++i) {

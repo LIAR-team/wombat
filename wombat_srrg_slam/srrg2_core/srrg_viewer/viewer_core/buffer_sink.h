@@ -3,7 +3,7 @@
 
 #pragma once
 #include <atomic>
-// ia properties stuff
+// properties stuff
 #include "wombat_srrg/srrg_config/property_configurable.h"
 #include "buffer_memory.h"
 

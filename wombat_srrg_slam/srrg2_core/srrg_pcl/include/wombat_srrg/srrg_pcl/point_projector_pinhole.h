@@ -36,8 +36,8 @@ namespace srrg2_core {
     }
 
     void initCameraMatrix() override {
-      // ds do not overwrite a valid camera matrix with the identity
-      // ds TODO infer proper camera matrix from (some?) configuration
+      // do not overwrite a valid camera matrix with the identity
+      // TODO infer proper camera matrix from (some?) configuration
       //      this->_camera_matrix.setIdentity();
     }
 

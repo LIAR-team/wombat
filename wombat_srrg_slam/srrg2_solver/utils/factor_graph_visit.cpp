@@ -76,7 +76,7 @@ namespace srrg2_solver {
         //std::cerr << "\tf: " << f << std::endl;
         if (!e.factor) {
           e.factor = f;
-          assert(v == f->variable(e.var_pos) && "bookkeping error 1"); // ia dunno if it's this
+          assert(v == f->variable(e.var_pos) && "bookkeping error 1"); // dunno if it's this
         }
 
         // scan all variables

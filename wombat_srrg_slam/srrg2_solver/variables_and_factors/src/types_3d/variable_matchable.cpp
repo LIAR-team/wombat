@@ -20,7 +20,7 @@ namespace srrg2_solver {
     _estimate.origin().noalias() += pert_.head(3);
     _estimate.rotation().noalias() = _estimate.rotation() * dR;
 
-    // ia enforcing orthonormality
+    // enforcing orthonormality
     const Matrix3f R_backup = _estimate.rotation();
     Matrix3f E              = R_backup.transpose() * R_backup;
     E.diagonal().array() -= 1;
@@ -32,20 +32,20 @@ namespace srrg2_solver {
   void VariableMatchable::serialize(ObjectData& odata, IdContext& context)
   {
     Identifiable::serialize(odata, context);
-    // ia first easy things
+    // first easy things
     odata.setInt("graph_id", this->graphId());
     odata.setInt("status", this->status());
 
-    // ia type
+    // type
     odata.setInt("type", _estimate.type());
 
-    // ia array data to serialize origin
+    // array data to serialize origin
     ArrayData* origin_data = new ArrayData;
     for (uint8_t k = 0; k < _estimate.origin().rows(); ++k) {
       origin_data->add(_estimate.origin()[k]);
     }
 
-    // ia array data to serialize rotation matrix
+    // array data to serialize rotation matrix
     ArrayData* rotation_data = new ArrayData;
     for (uint8_t r = 0; r < _estimate.rotation().rows(); ++r) {
       for (uint8_t c = 0; c < _estimate.rotation().cols(); ++c) {
@@ -53,7 +53,7 @@ namespace srrg2_solver {
       }
     }
 
-    // ia add fields
+    // add fields
     odata.setField("origin", origin_data);
     odata.setField("rotation", rotation_data);
   }
@@ -63,7 +63,7 @@ namespace srrg2_solver {
   {
     Identifiable::deserialize(odata, context);
 
-    // ia first easy thing
+    // first easy thing
     this->setGraphId(odata.getInt("graph_id"));
 
     VariableBase::Status st;
@@ -83,7 +83,7 @@ namespace srrg2_solver {
     }
     setStatus(st);
 
-    // ia now meat - read the object type
+    // now meat - read the object type
     MatchableBase::Type m_type = (MatchableBase::Type)(odata.getInt("type"));
     if (m_type > MatchableBase::Type::Surfel) {
       throw std::runtime_error("VariableMatchable::deserialize|invalid matchable type [" +
@@ -91,13 +91,13 @@ namespace srrg2_solver {
     }
     _estimate.setType(m_type);
 
-    // ia now meat - read the object origin
+    // now meat - read the object origin
     ArrayData* origin_data = dynamic_cast<ArrayData*>(odata.getField("origin"));
     for (uint8_t k = 0; k < _estimate.origin().rows(); ++k) {
       _estimate.origin()[k] = (*origin_data)[k].getFloat();
     }
 
-    // ia now meat - read the object rotation
+    // now meat - read the object rotation
     ArrayData* rotation_data = dynamic_cast<ArrayData*>(odata.getField("rotation"));
     uint8_t i                = 0;
     for (uint8_t r = 0; r < _estimate.rotation().rows(); ++r) {

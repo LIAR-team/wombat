@@ -15,10 +15,10 @@ namespace srrg2_core {
       throw std::runtime_error("no source set");
     }
 
-    // ds if both are zero this subsampler will drop all messages (unwanted I guess)
+    // if both are zero this subsampler will drop all messages (unwanted I guess)
     assert(param_rotation_min.value() > 0 || param_translation_min.value() > 0);
 
-    // ds check if we can subsample
+    // check if we can subsample
     OdometryMessagePtr odom_msg = nullptr;
     while (_cum_rotation < param_rotation_min.value() &&
            _cum_translation < param_translation_min.value()) {

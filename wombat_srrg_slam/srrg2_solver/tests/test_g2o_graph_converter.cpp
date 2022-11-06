@@ -25,12 +25,12 @@ int main(int argc_, char** argv_) {
 TEST_F(G2OConverterSuite, ConvertBOSStoG2O) {
   G2OConverter converter;
 
-  // ds populate a small graph and save it to disk
+  // populate a small graph and save it to disk
   FactorGraph graph;
   populateGraph(graph);
   graph.write("test_graph.boss");
 
-  // ds run conversion from disk
+  // run conversion from disk
   converter.loadGraph("test_graph.boss");
   converter.writeGraph("test_graph.g2o");
 }
@@ -38,12 +38,12 @@ TEST_F(G2OConverterSuite, ConvertBOSStoG2O) {
 TEST_F(G2OConverterSuite, ConvertG2OtoBOSS) {
   G2OConverter generator;
 
-  // ds populate a small graph and save it to disk
+  // populate a small graph and save it to disk
   FactorGraph graph;
   populateGraph(graph);
   graph.write("test_graph.boss");
 
-  // ds run conversion from disk
+  // run conversion from disk
   generator.loadGraph("test_graph.boss");
   generator.writeGraph("test_graph.g2o");
 
@@ -61,18 +61,18 @@ void G2OConverterSuite::TearDown() {
 }
 
 void G2OConverterSuite::populateGraph(FactorGraph& graph_) {
-  // ds add first pose (fixed)
+  // add first pose (fixed)
   VariableBasePtr variable_0 = getPoseVariable();
   variable_0->setGraphId(0);
   variable_0->setStatus(VariableBase::Status::Fixed);
   graph_.addVariable(VariableBasePtr(variable_0));
 
-  // ds add second pose
+  // add second pose
   VariableBasePtr variable_1 = getPoseVariable();
   variable_1->setGraphId(1);
   graph_.addVariable(VariableBasePtr(variable_1));
 
-  // ds add measurement between first and second pose
+  // add measurement between first and second pose
   FactorBasePtr factor = getPoseFactor();
   if (factor) {
     factor->setVariableId(0, variable_0->graphId());
@@ -80,7 +80,7 @@ void G2OConverterSuite::populateGraph(FactorGraph& graph_) {
     graph_.addFactor(factor);
   }
 }
-// tg TODO make the converter AD free
+// TODO make the converter AD free
 VariableBasePtr G2OConverterSuite::getPoseVariable() {
   VariableBasePtr variable             = nullptr;
   VariableSE3EulerLeft* variable_typed = new VariableSE3EulerLeft();

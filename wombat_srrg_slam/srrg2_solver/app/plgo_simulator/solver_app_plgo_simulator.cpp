@@ -52,7 +52,7 @@ static const char* banner[] = {
 };
 
 
-// ia THE PROGRAM
+// THE PROGRAM
 int main(int argc, char** argv) {
   initGraphGenerators();
   BOSS_REGISTER_CLASS(SimRecord);

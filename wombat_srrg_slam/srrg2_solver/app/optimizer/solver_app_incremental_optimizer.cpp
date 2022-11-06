@@ -14,7 +14,7 @@ static const char* banner[] = {
 };
 
 
-// ia THE PROGRAM
+// THE PROGRAM
 int main(int argc, char** argv) {
   exe_name=argv[0];
   ParseCommandLine cmd_line(argv, banner);

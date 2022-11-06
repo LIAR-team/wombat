@@ -73,7 +73,7 @@ namespace srrg2_core {
       return *this;
     }
 
-    // ia set every field to zero
+    // set every field to zero
     inline ThisType& setZero() {
       PointOps_<ThisType, BaseType::NumFields - 1>::setZero(*this);
       return *this;
@@ -244,8 +244,8 @@ namespace srrg2_core {
       return os;
     }
 
-    // ds copies all overlapping fields from src to dest
-    // ds will not compile if dest has not a subset/conflics with src's fields
+    // copies all overlapping fields from src to dest
+    // will not compile if dest has not a subset/conflics with src's fields
     template <typename PointTypeSource_>
     inline void copyFields(const PointTypeSource_& src) {
       PointOps_<ThisType, BaseType::NumFields - 1>::template copyFields<PointTypeSource_>(*this,

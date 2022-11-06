@@ -77,7 +77,7 @@ void initializeRectification(const Matrix3f& camera_calibration_matrix_left_,
 int main(int argc_, char** argv_) {
   messages_registerTypes();
 
-  // ds set up CLI parameters
+  // set up CLI parameters
   // clang-format off
   ParseCommandLine command_line_parser(argv_, banner);
   ArgumentString argument_folder_camera_left(
@@ -118,7 +118,7 @@ int main(int argc_, char** argv_) {
     return 0;
   }
 
-  // ds buffer ground truth data
+  // buffer ground truth data
   StdVectorEigenIsometry3f imu_poses_in_world;
   std::vector<double> timestamps_seconds_gt;
   loadGroundTruthPosesAndStamps(
@@ -127,17 +127,17 @@ int main(int argc_, char** argv_) {
     throw std::runtime_error("ERROR: no ground truth poses loaded");
   }
 
-  // ds configure serializer for parallel in and out streaming
+  // configure serializer for parallel in and out streaming
   Serializer serializer;
   serializer.setFilePath(argument_output_file.value());
 
-  // ds read depth and RGB images and timestamps
+  // read depth and RGB images and timestamps
   std::vector<std::string> image_file_paths_camera_left;
   std::vector<double> timestamps_camera_left;
   std::vector<std::string> image_file_paths_camera_right;
   std::vector<double> timestamps_camera_right;
 
-  // ds parse image information
+  // parse image information
   loadImageInformation(
     argument_folder_camera_left.value(), image_file_paths_camera_left, timestamps_camera_left);
   if (timestamps_camera_left.empty()) {
@@ -149,7 +149,7 @@ int main(int argc_, char** argv_) {
     throw std::runtime_error("ERROR: no right camera image information retrieved");
   }
 
-  // ds load camera calibration data from files
+  // load camera calibration data from files
   Matrix3f camera_calibration_matrix_left(Matrix3f::Zero());
   Vector5d distortion_coefficients_left(Vector5d::Zero());
   Isometry3f imu_from_camera_left(Isometry3f::Identity());
@@ -168,11 +168,11 @@ int main(int argc_, char** argv_) {
   std::cerr << "camera LEFT w.r.t. RIGHT: " << std::endl;
   std::cerr << camera_left_to_right.matrix() << std::endl;
 
-  // ds common parameters for all sequences TODO verify
+  // common parameters for all sequences TODO verify
   const std::string distortion_model_name = "radial-tangential";
   const cv::Size opencv_image_size(752, 480);
 
-  // ds check if rectification is desired
+  // check if rectification is desired
   cv::Mat undistort_rectify_maps_left[2];
   cv::Mat undistort_rectify_maps_right[2];
   Matrix3f camera_calibration_matrix_rectified(Matrix3f::Zero());
@@ -194,7 +194,7 @@ int main(int argc_, char** argv_) {
   std::cerr << "camera RIGHT in LEFT: " << std::endl;
   std::cerr << camera_left_to_right.matrix() << std::endl;
 
-  // ds load IMU information
+  // load IMU information
   std::vector<double> timestamps_imu;
   StdVectorEigenVector3d angular_velocities;
   StdVectorEigenVector3d linear_accelerations;
@@ -217,11 +217,11 @@ int main(int argc_, char** argv_) {
                        imu_in_base_link);
   }
 
-  // ds stop before starting to allow for a quick configuration inspection
+  // stop before starting to allow for a quick configuration inspection
   //  std::cerr << "press [ENTER] to start conversion" << std::endl;
   //  getchar();
 
-  // ds playback configuration UAGHS
+  // playback configuration UAGHS
   constexpr double timestamp_tolerance_seconds = 0.01;
   double timestamp_oldest                      = 0;
   size_t index_gt                              = 0;
@@ -229,7 +229,7 @@ int main(int argc_, char** argv_) {
   size_t index_camera_right                    = 0;
   size_t index_imu                             = 0;
 
-  // ds determine initial, smallest timestamp
+  // determine initial, smallest timestamp
   timestamp_oldest = timestamps_seconds_gt[0];
   if (timestamp_oldest > timestamps_camera_left[0]) {
     timestamp_oldest = timestamps_camera_left[0];
@@ -258,16 +258,16 @@ int main(int argc_, char** argv_) {
   std::cerr << "T";
   serializer.writeObject(*tf_static_message);
 
-  // ds playback all buffers
+  // playback all buffers
   while (index_gt < timestamps_seconds_gt.size() ||
          index_camera_left < timestamps_camera_left.size() ||
          index_camera_right < timestamps_camera_right.size() || index_imu < timestamps_imu.size()) {
-    // ds if we still have ground truth information available
+    // if we still have ground truth information available
     if (index_gt < timestamps_seconds_gt.size()) {
       const double& timestamp_candidate = timestamps_seconds_gt[index_gt];
-      // ds if the timestamp is close enough to the currently smallest timestamp
+      // if the timestamp is close enough to the currently smallest timestamp
       if (std::fabs(timestamp_candidate - timestamp_oldest) < timestamp_tolerance_seconds) {
-        // ds write message
+        // write message
         OdometryMessagePtr gt_imu_in_world(
           new OdometryMessage("/ground_truth", "/base_link", index_gt, timestamp_candidate));
         gt_imu_in_world->pose.setValue(imu_poses_in_world[index_gt]);
@@ -277,10 +277,10 @@ int main(int argc_, char** argv_) {
       }
     }
 
-    // ds if we have left image data available
+    // if we have left image data available
     if (index_camera_left < timestamps_camera_left.size()) {
       const double& timestamp_candidate = timestamps_camera_left[index_camera_left];
-      // ds if the timestamp is close enough to the currently smallest timestamp
+      // if the timestamp is close enough to the currently smallest timestamp
       if (std::fabs(timestamp_candidate - timestamp_oldest) < timestamp_tolerance_seconds) {
         serializeCameraImageAndInfo(serializer,
                                     index_camera_left,
@@ -296,10 +296,10 @@ int main(int argc_, char** argv_) {
       }
     }
 
-    // ds if we have right image data available
+    // if we have right image data available
     if (index_camera_right < timestamps_camera_right.size()) {
       const double& timestamp_candidate = timestamps_camera_right[index_camera_right];
-      // ds if the timestamp is close enough to the currently smallest timestamp
+      // if the timestamp is close enough to the currently smallest timestamp
       if (std::fabs(timestamp_candidate - timestamp_oldest) < timestamp_tolerance_seconds) {
         serializeCameraImageAndInfo(serializer,
                                     index_camera_right,
@@ -315,10 +315,10 @@ int main(int argc_, char** argv_) {
       }
     }
 
-    // ds if we have IMU data available
+    // if we have IMU data available
     if (index_imu < timestamps_imu.size()) {
       const double& timestamp_candidate = timestamps_imu[index_imu];
-      // ds if the timestamp is close enough to the currently smallest timestamp
+      // if the timestamp is close enough to the currently smallest timestamp
       if (std::fabs(timestamp_candidate - timestamp_oldest) < timestamp_tolerance_seconds) {
         IMUMessagePtr message(new IMUMessage("/imu", "/imu", index_imu, timestamp_candidate));
         message->angular_velocity.setValue(angular_velocities[index_imu].cast<float>());
@@ -338,29 +338,29 @@ int main(int argc_, char** argv_) {
       }
     }
 
-    // ds update timestamp in a cascade - lowest wins
+    // update timestamp in a cascade - lowest wins
     bool timestamp_updated = false;
     if (index_gt < timestamps_seconds_gt.size()) {
-      // ds always move timestamp
+      // always move timestamp
       timestamp_oldest  = timestamps_seconds_gt[index_gt];
       timestamp_updated = true;
     }
     if (index_camera_left < timestamps_camera_left.size()) {
-      // ds move timestamp further back if possible
+      // move timestamp further back if possible
       if (timestamp_oldest > timestamps_camera_left[index_camera_left] || !timestamp_updated) {
         timestamp_oldest  = timestamps_camera_left[index_camera_left];
         timestamp_updated = true;
       }
     }
     if (index_camera_right < timestamps_camera_right.size()) {
-      // ds move timestamp further back if possible
+      // move timestamp further back if possible
       if (timestamp_oldest > timestamps_camera_right[index_camera_right] || !timestamp_updated) {
         timestamp_oldest  = timestamps_camera_right[index_camera_right];
         timestamp_updated = true;
       }
     }
     if (index_imu < timestamps_imu.size()) {
-      // ds move timestamp further back if possible
+      // move timestamp further back if possible
       if (timestamp_oldest > timestamps_imu[index_imu] || !timestamp_updated) {
         timestamp_oldest  = timestamps_imu[index_imu];
         timestamp_updated = true;
@@ -387,19 +387,19 @@ void loadGroundTruthPosesAndStamps(const std::string& ground_truth_file_,
     throw std::runtime_error("ERROR: unable to open ground truth file");
   }
 
-  // ds skip the first line (EuRoC format header information)
+  // skip the first line (EuRoC format header information)
   std::cerr << "loadGroundTruthPosesAndStamps|<header>" << std::endl;
   std::string buffer;
   std::getline(ground_truth_stream, buffer);
   std::cerr << buffer << std::endl;
   std::cerr << "loadGroundTruthPosesAndStamps|</header>" << std::endl;
 
-  // ds parse string into tokens split by custom delimiter comma UAGH
+  // parse string into tokens split by custom delimiter comma UAGH
   while (std::getline(ground_truth_stream, buffer)) {
     std::replace(buffer.begin(), buffer.end(), ',', ' ');
     std::stringstream stream(buffer);
 
-    // ds ground truth values
+    // ground truth values
     double timestamp_nanoseconds, p_RS_R_x, p_RS_R_y, p_RS_R_z, q_RS_w, q_RS_x, q_RS_y, q_RS_z,
       v_RS_R_x, v_RS_R_y, v_RS_R_z, b_w_RS_S_x, b_w_RS_S_y, b_w_RS_S_z, b_a_RS_S_x, b_a_RS_S_y,
       b_a_RS_S_z;
@@ -448,19 +448,19 @@ void loadIMUInformation(const std::string& folder_imu_data_,
     throw std::runtime_error("ERROR: unable to open IMU data file: '" + file_path_imu_data + "'");
   }
 
-  // ds skip the first line (EuRoC format header information)
+  // skip the first line (EuRoC format header information)
   std::cerr << "loadIMUInformation|<header>" << std::endl;
   std::string buffer;
   std::getline(stream_imu_data, buffer);
   std::cerr << buffer << std::endl;
   std::cerr << "loadIMUInformation|</header>" << std::endl;
 
-  // ds parse string into tokens split by custom delimiter comma UAGH
+  // parse string into tokens split by custom delimiter comma UAGH
   while (std::getline(stream_imu_data, buffer)) {
     std::replace(buffer.begin(), buffer.end(), ',', ' ');
     std::stringstream stream(buffer);
 
-    // ds ground truth values
+    // ground truth values
     double timestamp_nanoseconds, w_RS_S_x, w_RS_S_y, w_RS_S_z, a_RS_S_x, a_RS_S_y, a_RS_S_z;
     while (stream >> timestamp_nanoseconds >> w_RS_S_x >> w_RS_S_y >> w_RS_S_z >> a_RS_S_x >>
            a_RS_S_y >> a_RS_S_z) {
@@ -477,7 +477,7 @@ void loadIMUInformation(const std::string& folder_imu_data_,
   std::cerr << "loadIMUInformation|loaded IMU data entries: " << timestamps_seconds_.size()
             << " from file '" << file_path_imu_data << "'" << std::endl;
 
-  // ds load IMU parameters
+  // load IMU parameters
   const std::string file_path_imu_parameters(folder_imu_data_ + "/sensor.yaml");
   std::ifstream stream_imu_parameters(file_path_imu_parameters);
   if (!stream_imu_parameters.good() || !stream_imu_parameters.is_open()) {
@@ -485,12 +485,12 @@ void loadIMUInformation(const std::string& folder_imu_data_,
                              file_path_imu_parameters + "'");
   }
 
-  // ds evil parsing - skip lines until we hit the transform 'data' line
+  // evil parsing - skip lines until we hit the transform 'data' line
   for (size_t i = 0; i < 8; ++i) {
     std::getline(stream_imu_parameters, buffer);
   }
 
-  // ds parse transform by tokens
+  // parse transform by tokens
   for (size_t r = 0; r < 4; ++r) {
     for (size_t c = 0; c < 4; ++c) {
       char delimiter = ',';
@@ -528,19 +528,19 @@ void loadImageInformation(const std::string& folder_image_names_,
   image_filenames_.clear();
   timestamps_seconds_.clear();
 
-  // ds skip the first 3 lines (TUM format header information)
+  // skip the first 3 lines (TUM format header information)
   std::cerr << "loadImageInformation|<header>" << std::endl;
   std::string buffer;
   std::getline(stream_image_names, buffer);
   std::cerr << buffer << std::endl;
   std::cerr << "loadImageInformation|</header>" << std::endl;
 
-  // ds parse string into tokens split by custom delimiter comma UAGH
+  // parse string into tokens split by custom delimiter comma UAGH
   while (std::getline(stream_image_names, buffer)) {
     std::replace(buffer.begin(), buffer.end(), ',', ' ');
     std::stringstream stream(buffer);
 
-    // ds parse image information by tokens
+    // parse image information by tokens
     double timestamp_nanoseconds;
     std::string image_file_name;
     while (stream >> timestamp_nanoseconds >> image_file_name) {
@@ -565,13 +565,13 @@ void loadCameraCalibration(const std::string& file_path_camera_calibration_,
                              file_path_camera_calibration_);
   }
 
-  // ds evil parsing - skip lines until we hit the transform 'data' line
+  // evil parsing - skip lines until we hit the transform 'data' line
   std::string buffer;
   for (size_t i = 0; i < 8; ++i) {
     std::getline(stream, buffer);
   }
 
-  // ds parse transform by tokens
+  // parse transform by tokens
   for (size_t r = 0; r < 4; ++r) {
     for (size_t c = 0; c < 4; ++c) {
       char delimiter = ',';
@@ -587,12 +587,12 @@ void loadCameraCalibration(const std::string& file_path_camera_calibration_,
     }
   }
 
-  // ds skip more lines to get to intrinsics and distortion coefficients
+  // skip more lines to get to intrinsics and distortion coefficients
   for (size_t i = 0; i < 6; ++i) {
     std::getline(stream, buffer);
   }
 
-  // ds parse camera focal length and principal point by tokens (fu, fv, cu, cv)
+  // parse camera focal length and principal point by tokens (fu, fv, cu, cv)
   double camera_intrinsic_parameters[4];
   for (size_t i = 0; i < 4; ++i) {
     char delimiter = ',';
@@ -611,10 +611,10 @@ void loadCameraCalibration(const std::string& file_path_camera_calibration_,
   camera_calibration_matrix_left_(1, 1) = camera_intrinsic_parameters[1];
   camera_calibration_matrix_left_(1, 2) = camera_intrinsic_parameters[3];
 
-  // ds skip distortion model
+  // skip distortion model
   std::getline(stream, buffer);
 
-  // ds parse distortion coefficients (in order)
+  // parse distortion coefficients (in order)
   for (size_t i = 0; i < 4; ++i) {
     char delimiter = ',';
     if (i == 3) {
@@ -647,14 +647,14 @@ void serializeCameraImageAndInfo(Serializer& serializer_,
                                  const bool& enable_rectification_,
                                  const cv::Mat* undistort_rectify_maps_,
                                  const Matrix3f& camera_matrix_rectified_) {
-  // ds create image message
+  // create image message
   ImageMessagePtr image_message(
     new ImageMessage("/" + label_ + "/image_raw", "/" + label_, index_, timestamp_));
 
-  // ds load RGB image from disk and convert
+  // load RGB image from disk and convert
   cv::Mat image_opencv = cv::imread(file_path_image_, CV_LOAD_IMAGE_GRAYSCALE);
 
-  // ds rectify image
+  // rectify image
   if (enable_rectification_) {
     cv::remap(image_opencv,
               image_opencv,
@@ -669,14 +669,14 @@ void serializeCameraImageAndInfo(Serializer& serializer_,
       std::to_string(image_opencv.cols));
   }
 
-  // ds map to srrg
+  // map to srrg
   ImageUInt8* base_image(new ImageUInt8());
   base_image->fromCv(image_opencv);
   image_message->setImage(base_image);
   image_message->image_cols.setValue(image_opencv.cols);
   image_message->image_rows.setValue(image_opencv.rows);
 
-  // ds create camera info message
+  // create camera info message
   CameraInfoMessagePtr camera_info_message(
     new CameraInfoMessage(image_message->topic.value() + "/info",
                           image_message->frame_id.value(),
@@ -694,7 +694,7 @@ void serializeCameraImageAndInfo(Serializer& serializer_,
   camera_info_message->cols.setValue(image_opencv.cols);
   camera_info_message->rows.setValue(image_opencv.rows);
 
-  // ds write messages related to this image
+  // write messages related to this image
   serializer_.writeObject(*camera_info_message);
   serializer_.writeObject(*image_message);
   if (label_ == "camera_left") {
@@ -705,7 +705,7 @@ void serializeCameraImageAndInfo(Serializer& serializer_,
     throw std::runtime_error("serializeCameraImageAndInfo|ERROR: unknown camera label");
   }
 
-  // ds display converted images
+  // display converted images
   cv::imshow("processed image: " + label_, image_opencv);
   cv::waitKey(1);
   ++index_;
@@ -720,7 +720,7 @@ void initializeRectification(const Matrix3f& camera_calibration_matrix_left_,
                              cv::Mat* undistort_rectify_maps_right_,
                              Matrix3f& camera_calibration_matrix_rectified_,
                              Isometry3f& camera_left_to_right_) {
-  // ds rectification
+  // rectification
   cv::Mat opencv_camera_calibration_matrix_left(cv::Mat::eye(3, 3, CV_64F));
   cv::Mat opencv_camera_calibration_matrix_right(cv::Mat::eye(3, 3, CV_64F));
   cv::Mat opencv_distortion_coefficients_left(cv::Mat::zeros(4, 1, CV_64F));
@@ -733,7 +733,7 @@ void initializeRectification(const Matrix3f& camera_calibration_matrix_left_,
   cv::Mat opencv_translation_camera_left_to_right(3, 1, CV_64F, cv::Scalar(0));
   cv::Mat opencv_depth_mapping(4, 4, CV_64F, cv::Scalar(0));
 
-  // ds buffer matrices to opencv
+  // buffer matrices to opencv
   for (size_t r = 0; r < 3; ++r) {
     for (size_t c = 0; c < 3; ++c) {
       opencv_camera_calibration_matrix_left.at<double>(r, c) =
@@ -749,7 +749,7 @@ void initializeRectification(const Matrix3f& camera_calibration_matrix_left_,
     opencv_distortion_coefficients_right.at<double>(i) = distortion_coefficients_right_(i);
   }
 
-  // ds compute rectification parameters
+  // compute rectification parameters
   cv::stereoRectify(opencv_camera_calibration_matrix_left,
                     opencv_distortion_coefficients_left,
                     opencv_camera_calibration_matrix_right,
@@ -765,13 +765,13 @@ void initializeRectification(const Matrix3f& camera_calibration_matrix_left_,
                     CV_CALIB_ZERO_DISPARITY,
                     0);
 
-  // ds check if failed
+  // check if failed
   if (cv::norm(opencv_projection_matrix_left) == 0 ||
       cv::norm(opencv_projection_matrix_right) == 0) {
     throw std::runtime_error("ERROR: rectification parameter retrieval failed");
   }
 
-  // ds compute undistorted and rectified mappings
+  // compute undistorted and rectified mappings
   cv::initUndistortRectifyMap(opencv_camera_calibration_matrix_left,
                               opencv_distortion_coefficients_left,
                               opencv_rectification_matrix_left,
@@ -789,7 +789,7 @@ void initializeRectification(const Matrix3f& camera_calibration_matrix_left_,
                               undistort_rectify_maps_right_[0],
                               undistort_rectify_maps_right_[1]);
 
-  // ds check if rectification failed
+  // check if rectification failed
   if (cv::norm(undistort_rectify_maps_left_[0]) == 0 ||
       cv::norm(undistort_rectify_maps_left_[1]) == 0) {
     throw std::runtime_error("ERROR: unable to undistort and rectify camera left");
@@ -804,29 +804,29 @@ void initializeRectification(const Matrix3f& camera_calibration_matrix_left_,
   std::cerr << "initializeRectification|RIGHT projection matrix: " << std::endl;
   std::cerr << opencv_projection_matrix_right << std::endl;
 
-  // ds get right projection matrix to eigen space
+  // get right projection matrix to eigen space
   Matrix3_4f projection_matrix_right_eigen(Matrix3_4f::Zero());
   for (uint32_t row = 0; row < 3; ++row) {
     for (uint32_t col = 0; col < 4; ++col) {
-      // ds for camera calibration parameters
+      // for camera calibration parameters
       if (col < 3) {
-        // ds consistency check
+        // consistency check
         if (std::fabs(opencv_projection_matrix_left.at<double>(row, col) -
                       opencv_projection_matrix_right.at<double>(row, col)) > 1e-5) {
           throw std::runtime_error(
             "initializeRectification|ERROR: inconsistent projection matrices");
         }
-        // ds pick calibration parameters
+        // pick calibration parameters
         camera_calibration_matrix_rectified_(row, col) =
           opencv_projection_matrix_right.at<double>(row, col);
       }
 
-      // ds convert whole projection matrix
+      // convert whole projection matrix
       projection_matrix_right_eigen(row, col) = opencv_projection_matrix_right.at<double>(row, col);
     }
   }
 
-  // ds compute offset for right camera in order to reconstruct projection matrix form txt_io
+  // compute offset for right camera in order to reconstruct projection matrix form txt_io
   // message
   const Vector3f offset(camera_calibration_matrix_rectified_.fullPivLu().solve(
     projection_matrix_right_eigen.block<3, 1>(0, 3)));

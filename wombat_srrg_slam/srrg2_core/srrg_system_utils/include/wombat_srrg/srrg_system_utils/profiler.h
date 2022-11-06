@@ -10,7 +10,7 @@
 
 #include "wombat_srrg/srrg_system_utils/system_utils.h"
 
-// ds functionality can be disabled at compile-time - default is active
+// functionality can be disabled at compile-time - default is active
 #ifdef SRRG_DISABLE_PROFILING
 #define PROFILE_TIME(NAME)
 #else
@@ -31,13 +31,13 @@ namespace srrg2_core {
   //! EXAMPLE: test_profiler.cpp
   class Profiler {
   public:
-    // ds print functionality can be toggled with this static global bool (ahem)
+    // print functionality can be toggled with this static global bool (ahem)
     static bool enable_logging;
     Profiler() {
     }
     ~Profiler();
 
-    // ds RAII time measuring function, starts at construction, stops at destruction (scope)
+    // RAII time measuring function, starts at construction, stops at destruction (scope)
     struct Timer {
       Timer() = delete;
       Timer(Profiler* handle_, const std::string& name_);

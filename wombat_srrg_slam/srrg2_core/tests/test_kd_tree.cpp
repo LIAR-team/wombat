@@ -14,7 +14,7 @@ int main(int argc_, char** argv_) {
 TEST(KDTree, NearestNeighborPerfect) {
   constexpr size_t number_of_points = 1000;
 
-  // ds generate scenario
+  // generate scenario
   KDTree_<float, 3>::VectorTDVector points_database;
   KDTree_<float, 3>::VectorTDVector points_query;
   points_database.reserve(number_of_points);
@@ -25,10 +25,10 @@ TEST(KDTree, NearestNeighborPerfect) {
     points_query.emplace_back(point);
   }
 
-  // ds organize database points in a tree
+  // organize database points in a tree
   const KDTree_<float, 3> database(points_database, 1.0f, 10);
 
-  // ds for each query we should retrieve the exact, best database entry
+  // for each query we should retrieve the exact, best database entry
   for (size_t i = 0; i < number_of_points; ++i) {
     Vector3f neighbor    = Vector3f::Zero();
     int index_neighbor   = 0;
@@ -44,7 +44,7 @@ TEST(KDTree, NearestNeighborPerfect) {
 TEST(KDTree, NearestNeighborsPerfect) {
   constexpr size_t number_of_points = 1000;
 
-  // ds generate scenario
+  // generate scenario
   KDTree_<float, 3>::VectorTDVector points_database;
   KDTree_<float, 3>::VectorTDVector points_query;
   points_database.reserve(number_of_points);
@@ -55,10 +55,10 @@ TEST(KDTree, NearestNeighborsPerfect) {
     points_query.emplace_back(point);
   }
 
-  // ds organize database points in a tree
+  // organize database points in a tree
   const KDTree_<float, 3> database(points_database, 1.0f, 10);
 
-  // ds for each query we should retrieve the exact, best database entry
+  // for each query we should retrieve the exact, best database entry
   for (size_t i = 0; i < number_of_points; ++i) {
     const Vector3f point_query = points_query[i];
     KDTree_<float, 3>::VectorTDVector neighbors;
@@ -66,19 +66,19 @@ TEST(KDTree, NearestNeighborsPerfect) {
     database.findNeighbors(neighbors, indices_neighbors, point_query, 1.0f, KDTreeSearchType::Complete);
     ASSERT_FALSE(neighbors.empty());
 
-    // ds neighbor with the smallest distance must have the same index
+    // neighbor with the smallest distance must have the same index
     size_t index_best   = 0;
     float distance_best = std::numeric_limits<float>::max();
     for (size_t j = 0; j < neighbors.size(); ++j) {
       const Vector3f& neighbor = neighbors[j];
 
-      // ds verify database integrity
+      // verify database integrity
       const int index_neighbor = indices_neighbors[j];
       ASSERT_EQ(neighbor.x(), points_database[index_neighbor].x());
       ASSERT_EQ(neighbor.y(), points_database[index_neighbor].y());
       ASSERT_EQ(neighbor.z(), points_database[index_neighbor].z());
 
-      // ds check if better
+      // check if better
       const float distance = (neighbor - point_query).norm();
       if (distance < distance_best) {
         index_best    = j;
@@ -86,7 +86,7 @@ TEST(KDTree, NearestNeighborsPerfect) {
       }
     }
 
-    // ds perfect match must've been found
+    // perfect match must've been found
     ASSERT_EQ(distance_best, 0.0f);
     ASSERT_EQ(static_cast<size_t>(indices_neighbors[index_best]), i);
   }
@@ -95,7 +95,7 @@ TEST(KDTree, NearestNeighborsPerfect) {
 TEST(KDTree, MaximumLeafRange) {
   constexpr size_t number_of_points = 1000;
 
-  // ds generate scenario
+  // generate scenario
   KDTree_<float, 3>::VectorTDVector points;
   points.reserve(number_of_points);
   for (size_t i = 0; i < number_of_points; ++i) {
@@ -106,12 +106,12 @@ TEST(KDTree, MaximumLeafRange) {
     }
   }
 
-  // ds organize database points in a tree - range too high for split
+  // organize database points in a tree - range too high for split
   const KDTree_<float, 3> database_flat(points, 1.0f, 10);
   ASSERT_EQ(database_flat.numNodes(), size_t(1) /*no splitting happening*/);
   ASSERT_EQ(database_flat.numPoints(), number_of_points);
 
-  // ds organize database points in a tree - range sufficient for split
+  // organize database points in a tree - range sufficient for split
   const KDTree_<float, 3> database_deep(points, 0.1f, 10);
   ASSERT_EQ(database_deep.numNodes(), size_t(3) /* root node + 2 leafs*/);
   ASSERT_EQ(database_deep.numPoints(), number_of_points);
@@ -120,24 +120,24 @@ TEST(KDTree, MaximumLeafRange) {
 TEST(KDTree, MinimumNumberOfLeafPoints) {
   constexpr size_t number_of_points = 1000;
 
-  // ds generate scenario
+  // generate scenario
   KDTree_<float, 3>::VectorTDVector points;
   points.reserve(number_of_points);
   for (size_t i = 0; i < number_of_points; ++i) {
     points.emplace_back(Vector3f(i, i * 2, i * 3));
   }
 
-  // ds minimum number of points cannot be met
+  // minimum number of points cannot be met
   const KDTree_<float, 3> database_0(points, 0.1f, number_of_points + 1);
   ASSERT_EQ(database_0.numNodes(), size_t(1) /*no splitting happening*/);
   ASSERT_EQ(database_0.numPoints(), number_of_points);
 
-  // ds minimum number of points can be met marginally, significant depth gain
+  // minimum number of points can be met marginally, significant depth gain
   const KDTree_<float, 3> database_1(points, 0.1f, number_of_points / 10);
   ASSERT_GT(database_1.numNodes(), 2 * database_0.numNodes());
   ASSERT_EQ(database_1.numPoints(), number_of_points);
 
-  // ds minimum number of points is always met until the last (maximum depth)
+  // minimum number of points is always met until the last (maximum depth)
   const KDTree_<float, 3> database_2(points, 0.1f, 1);
   ASSERT_EQ(database_2.numNodes(), size_t(2 * number_of_points - 1));
   ASSERT_EQ(database_2.numPoints(), number_of_points);

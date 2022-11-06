@@ -146,7 +146,7 @@ template <typename CellType_,
       return _row_ptrs.at(row)[col];
     }
 
-    // tg determine the index in _data which correspond to [row,col]
+    // determine the index in _data which correspond to [row,col]
     // considering a row major structure
     inline size_t indexAt(const std::size_t& row, const std::size_t& col) const {
       if (col >= _cols) {
@@ -158,7 +158,7 @@ template <typename CellType_,
       return row * _cols + col;
     }
 
-    // tg const and non-const accessor to the underlying vector structure (_data)
+    // const and non-const accessor to the underlying vector structure (_data)
     inline CellType& operator[](const std::size_t& index) {
       if (index >= _data.size()) {
         throw std::out_of_range("[Matrix::[]] index out of range for underlying vector");
@@ -186,7 +186,7 @@ template <typename CellType_,
       }
       return _data[index];
     }
-    // tg const and non-const accessor to matrix cells
+    // const and non-const accessor to matrix cells
     inline CellType& at(const Eigen::Vector2i& pos_) {
       return at(pos_(0), pos_(1));
     }

@@ -14,7 +14,7 @@ namespace srrg2_solver {
     }
     odata.setEigen<MeasurementType_>("measurement", this->_measurement);
 
-    // ia old serialization of eigen data
+    // old serialization of eigen data
     //    ArrayData* mdata = new ArrayData;
     //    for (int r = 0; r < m_rows; ++r) {
     //      for (int c = 0; c < m_cols; ++c) {
@@ -34,7 +34,7 @@ namespace srrg2_solver {
 
     MeasurementType_ meas = odata.getEigen<MeasurementType_>("measurement");
 
-    // ia old serialization of eigen data
+    // old serialization of eigen data
     // ArrayData* mdata = dynamic_cast<ArrayData*>(odata.getField("measurement"));
     // int k            = 0;
     // for (int r = 0; r < m_rows; ++r) {

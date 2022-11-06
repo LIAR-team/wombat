@@ -7,11 +7,11 @@
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
 
-// tg include solver stuff (instances)
+// include solver stuff (instances)
 #include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
-// tg include types stuff (instances)
+// include types stuff (instances)
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
@@ -46,7 +46,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointOffsetErrorFactor) {
   using VariablePoint3Vector = std::vector<PointVariableType*>;
   using FactorVector         = std::vector<FactorType*>;
 
-  // tg containers
+  // containers
   VariableSE3Vector poses;
   poses.reserve(num_poses);
   VariablePoint3Vector landmarks;
@@ -71,7 +71,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointOffsetErrorFactor) {
 
   createGTTrajectory(num_poses, offset, ground_truth_poses, ground_truth_landmarks);
 
-  // tg create an anchor for the graph
+  // create an anchor for the graph
   PoseVariableType* v = new PoseVariableType;
   const Isometry3f& T = ground_truth_poses.front();
   v->setEstimate(T);
@@ -89,7 +89,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointOffsetErrorFactor) {
   ASSERT_EQ(poses.size(), ground_truth_poses.size());
   ASSERT_EQ(poses.size(), num_poses);
 
-  // tg generate random landmarks
+  // generate random landmarks
   PointVariableType* point = nullptr;
   size_t num_landmarks     = ground_truth_landmarks.size();
   for (size_t landmark_idx = 0; landmark_idx < num_landmarks; ++landmark_idx) {
@@ -100,7 +100,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointOffsetErrorFactor) {
     graph->addVariable(VariableBasePtr(point));
   }
 
-  // tg all landmark are visible from every pose
+  // all landmark are visible from every pose
   FactorType* f = nullptr;
   FactorVector factors;
   factors.reserve(num_poses * num_landmarks);
@@ -121,7 +121,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointOffsetErrorFactor) {
     }
   }
 
-  // tg optimize graph
+  // optimize graph
   Solver solver;
   solver.param_max_iterations.pushBack(num_iterations);
   solver.param_termination_criteria.setValue(nullptr);
@@ -132,7 +132,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointOffsetErrorFactor) {
   const float chi_square = stats.back().chi_inliers;
 
   LOG << stats << std::endl;
-  // tg assert chi square is good
+  // assert chi square is good
   ASSERT_LT(chi_square, 1e-6);
 
   poses.clear();
@@ -147,7 +147,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointErrorFactor) {
   using VariablePoint3Vector = std::vector<PointVariableType*>;
   using FactorVector         = std::vector<FactorType*>;
 
-  // tg containers
+  // containers
   VariableSE3Vector poses;
   poses.reserve(num_poses);
   VariablePoint3Vector landmarks;
@@ -172,7 +172,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointErrorFactor) {
 
   createGTTrajectory(num_poses, offset, ground_truth_poses, ground_truth_landmarks);
 
-  // tg create an anchor for the graph
+  // create an anchor for the graph
   PoseVariableType* v = new PoseVariableType;
   const Isometry3f& T = ground_truth_poses.front();
   v->setEstimate(T);
@@ -190,7 +190,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointErrorFactor) {
   ASSERT_EQ(poses.size(), ground_truth_poses.size());
   ASSERT_EQ(poses.size(), num_poses);
 
-  // tg generate random landmarks
+  // generate random landmarks
   PointVariableType* point = nullptr;
   size_t num_landmarks     = ground_truth_landmarks.size();
   for (size_t landmark_idx = 0; landmark_idx < num_landmarks; ++landmark_idx) {
@@ -201,7 +201,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointErrorFactor) {
     graph->addVariable(VariableBasePtr(point));
   }
 
-  // tg all landmark are visible from every pose
+  // all landmark are visible from every pose
   FactorType* f = nullptr;
   FactorVector factors;
   factors.reserve(num_poses * num_landmarks);
@@ -221,7 +221,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointErrorFactor) {
     }
   }
 
-  // tg optimize graph
+  // optimize graph
   Solver solver;
   solver.param_max_iterations.pushBack(num_iterations);
   solver.param_termination_criteria.setValue(nullptr);
@@ -232,7 +232,7 @@ TEST(SYNTHETIC_DATA, SE3PosePointErrorFactor) {
   const float chi_square = stats.back().chi_inliers;
 
   LOG << stats << std::endl;
-  // tg assert chi square is good
+  // assert chi square is good
   ASSERT_LT(chi_square, 1e-6);
 
   poses.clear();

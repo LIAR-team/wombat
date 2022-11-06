@@ -72,17 +72,17 @@ TEST(DUMMY_DATA, SE3Plane2PlaneErrorFactor) {
   graph->addVariable(pose);
   graph->addFactor(factor);
 
-  // ia set initial guess and compute
+  // set initial guess and compute
   solver.setGraph(graph);
   solver.compute();
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T    = pose->estimate();
   const Isometry3f diff_T    = estimated_T * robot_in_world;
   const Vector6f diff_vector = geometry3d::t2v(diff_T);
@@ -155,17 +155,17 @@ TEST(DUMMY_DATA, SE3Plane2PlaneWithSensorErrorFactor) {
 
   graph->addFactor(factor);
 
-  // ia set initial guess and compute
+  // set initial guess and compute
   solver.setGraph(graph);
   solver.compute();
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T    = pose->estimate();
   const Isometry3f diff_T    = estimated_T * robot_in_world;
   const Vector6f diff_vector = geometry3d::t2v(diff_T);

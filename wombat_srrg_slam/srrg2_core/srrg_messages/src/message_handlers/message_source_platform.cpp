@@ -34,7 +34,7 @@ namespace srrg2_core {
     }
 
     BaseSensorMessagePtr msg = param_source->getMessage();
-    // ia source ended
+    // source ended
     if (!msg) {
       std::cerr << "MessageSourcePlatform::getMessage|source ended" << std::endl;
       return nullptr;

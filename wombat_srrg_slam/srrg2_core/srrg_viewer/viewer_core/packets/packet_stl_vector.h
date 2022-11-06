@@ -39,7 +39,7 @@ namespace srrg2_core {
              "[PacketVector_::allocate]|bad allocate");
     }
 
-    // ia default argument for ctor is required for the factory
+    // default argument for ctor is required for the factory
     PacketVector_(const EntryTypeVector* vector_ = nullptr) :
       PacketBase(PacketType_) {
       if (vector_) {
@@ -60,9 +60,9 @@ namespace srrg2_core {
     }
 
     char* serialize(char* buffer) const override {
-      // ia first put the size
+      // first put the size
       buffer = putInBuffer(buffer, num_elements);
-      // ia then put the ciaccia
+      // then put the ciaccia
       std::memcpy((void*) buffer,
                   (const void*) data_vector->data(),
                   num_elements * sizeof(EntryType_));
@@ -72,10 +72,10 @@ namespace srrg2_core {
 
     const char* deserialize(const char* buffer) override {
       clear();
-      // ia first get the number of elements
+      // first get the number of elements
       buffer = getFromBuffer(num_elements, buffer);
 
-      // ia allocate and copy
+      // allocate and copy
       allocate(num_elements);
       std::memcpy((void*) data_vector->data(),
                   (const void*) buffer,

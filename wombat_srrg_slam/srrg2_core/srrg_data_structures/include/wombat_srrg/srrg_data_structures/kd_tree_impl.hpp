@@ -78,7 +78,7 @@ namespace srrg2_core {
     const T maximum_squared_distance=pow(maximum_distance,2);
     switch (_node_type) {
     case KDTreeNodeType::Leaf: {
-      // ds return all points in this leaf that satisfy the distance
+      // return all points in this leaf that satisfy the distance
       assert(_max_index >= _min_index);
       const size_t number_of_points = _max_index - _min_index;
       size_t s=answers.size();

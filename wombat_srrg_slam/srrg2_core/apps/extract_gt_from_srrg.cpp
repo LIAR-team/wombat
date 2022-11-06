@@ -72,7 +72,7 @@ void loadGroundTruthFromBOSS(TimestampIsometry3fMap& conatiner_,
 
   conatiner_.clear();
 
-  // ds read file by tokens
+  // read file by tokens
   double timestamp_seconds = 0;
 
   BaseSensorMessagePtr message = nullptr;

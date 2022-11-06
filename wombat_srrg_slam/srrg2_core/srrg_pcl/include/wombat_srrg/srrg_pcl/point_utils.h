@@ -4,7 +4,7 @@
 #pragma once
 namespace srrg2_core {
 
-  // ia add covariance??
+  // add covariance??
   template <class PointType_>
   struct BaseAggregator_ {
     using Point  = PointType_;

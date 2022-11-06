@@ -13,14 +13,14 @@ namespace srrg2_core {
   }
 
   const ViewerCanvasPtr& ViewerManagerShared::getCanvas(const std::string& context_name_) {
-    // ia see if we already have this shitty context
+    // see if we already have this shitty context
     ViewerContextShared* context        = 0;
     ViewerContextContainer::iterator it = _contexts.find(context_name_);
     if (it != _contexts.end()) {
       std::cerr << "ViewerManagerShared::getCanvas|found a context with name [ "
                 << FG_CYAN(context_name_) << " ]\n";
 
-      // ia check if this context fullfills our requirements
+      // check if this context fullfills our requirements
       if (it->second->status() != ViewerContextBase::ViewerContextStatus::Active)
         throw std::runtime_error("ViewerManagerShared::getCanvas|unexpected context status, exit");
       if (it->second->type() != ViewerContextBase::ViewerContextType::Shared)
@@ -30,13 +30,13 @@ namespace srrg2_core {
       return context->canvas();
     }
 
-    // ia if we do not have this shitty context, we create one
+    // if we do not have this shitty context, we create one
     context = new ViewerContextShared(
       context_name_, this, param_max_num_buffers.value(), param_buffer_size.value());
 
     _contexts.insert(std::make_pair(context_name_, context));
 
-    // ia setup connections required for shared viewer
+    // setup connections required for shared viewer
     context->setup();
 
     std::cerr << "ViewerManagerShared::getCanvas|created a context with name [ "
@@ -46,7 +46,7 @@ namespace srrg2_core {
 
   void ViewerManagerShared::bindViewport(ViewportBase* viewport_,
                                          const std::string& context_name_) {
-    // ia see if we have this shitty context
+    // see if we have this shitty context
     ViewerContextShared* context          = 0;
     ViewerContextContainer::iterator c_it = _contexts.find(context_name_);
     if (c_it == _contexts.end())
@@ -57,13 +57,13 @@ namespace srrg2_core {
 
     context = dynamic_cast<ViewerContextShared*>(c_it->second);
 
-    // ia setup the viewport in shared mode
+    // setup the viewport in shared mode
     viewport_->param_source.setValue(context->source());
 
-    // ia a bit of bookkeeping
+    // a bit of bookkeeping
     context->_viewports.insert(viewport_);
 
-    // ia adjust the status
+    // adjust the status
     std::cerr << "ViewerManagerShared::bindViewport|context [ " << FG_CYAN(context_name_)
               << " ] has been binded to viewport [ " << FG_CYAN(viewport_) << " ]" << std::endl;
     context->_status = ViewerContextShared::ViewerContextStatus::Active;
@@ -96,7 +96,7 @@ namespace srrg2_core {
 
     std::cerr << "\nViewerManagerShared::unbindViewport|viewport unbinded" << std::endl;
     if (!context->_viewports.size()) {
-      // ia release the buffer source
+      // release the buffer source
       BufferSinkSharedPtr sink_ = std::dynamic_pointer_cast<BufferSinkShared>(context->_sink);
       sink_->param_source_ptr.setValue(BufferSourceSharedPtr(0));
       context->_sink->setIsActive(false);

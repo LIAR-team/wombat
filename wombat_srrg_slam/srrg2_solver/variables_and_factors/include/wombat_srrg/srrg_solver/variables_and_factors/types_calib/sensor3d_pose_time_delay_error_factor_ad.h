@@ -34,7 +34,7 @@ namespace srrg2_solver {
       ADErrorVectorType e;
       e.setZero();
 
-      // bdc interpolate using the delay
+      // interpolate using the delay
       // TODO this interpolation is useless since it does not depend on the time delay.
       //      only the sensor measures should be interpolated, since the odometry measures are
       //      supposed to be shared between several sensors. Thus, here relative values can be
@@ -52,9 +52,9 @@ namespace srrg2_solver {
         this->_is_valid = false;
         return e;
       }
-      // bdc compute prediction
+      // compute prediction
       Isometry3adf prediction_ad = extrinsics.inverse() * odom_relative * extrinsics;
-      // bdc compute error
+      // compute error
       e = geometry3d::t2v(sensor_relative.inverse() * prediction_ad);
       return e;
     }
@@ -71,12 +71,12 @@ namespace srrg2_solver {
       TimeIsometryMap::iterator lower, upper;
       interpolated_ad.setIdentity();
 
-      // bdc get lower bound
+      // get lower bound
       lower = data_->lower_bound(time.value);
       if (lower == data_->end() || lower == data_->begin()) {
         return false;
       }
-      // bdc get previous element
+      // get previous element
       lower--;
       upper = data_->upper_bound(time.value);
       if (upper == data_->end() || upper == data_->begin()) {
@@ -86,20 +86,20 @@ namespace srrg2_solver {
       const DualValuef lower_time_ad(lower->first);
       const DualValuef upper_time_ad(upper->first);
 
-      // bdc compute relative interpolation time
+      // compute relative interpolation time
       const DualValuef start_interpolation_time =
         (time - lower_time_ad) / (upper_time_ad - lower_time_ad);
 
-      // bdc interpolate isometries at a certain time
+      // interpolate isometries at a certain time
       Matrix4adf m_start, m_end;
       convertMatrix(m_start, lower->second.matrix());
       convertMatrix(m_end, upper->second.matrix());
-      // bdc linear interpolation of matrices (in chordal fashion)
+      // linear interpolation of matrices (in chordal fashion)
       Matrix4adf interpolated = linearInterpolate(start_interpolation_time, m_start, m_end);
       Isometry3adf interpolated_result(interpolated);
       interpolated_ad = interpolated_result;
 
-      // bdc isometry interpolation using slerp on Quaternion
+      // isometry interpolation using slerp on Quaternion
       //      Isometry3adf m_start_iso(m_start), m_end_iso(m_end);
       //      Isometry3adf m_start_iso(lower->second), m_end_iso(upper->second);
       //      interpolated_ad =  geometry3d::interpolateIsometries(start_interpolation_time,
@@ -138,7 +138,7 @@ namespace srrg2_solver {
       if (!data_)
         throw std::runtime_error("[SE3PoseTimeErrorFunctorAD::interpolateMeasure]: missing data");
 
-      // bdc find starting isometry
+      // find starting isometry
       Isometry3adf start_iso;
       if (!interpolateInData(start_iso, data_, start))
         return false;

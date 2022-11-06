@@ -873,7 +873,7 @@ static int linenoiseEdit(int stdin_fd, int stdout_fd, char *buf, size_t buflen, 
         case CTRL_F:     /* ctrl-f */
             linenoiseEditMoveRight(&l);
             break;
-	case CTRL_J:    // gg ctrl-s passes through
+	case CTRL_J:    // ctrl-s passes through
 	  linenoise_call_ctrl_j_callback=1;
 	  return(int) l.len;
         case CTRL_P:    /* ctrl-p */

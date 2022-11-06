@@ -3,10 +3,10 @@
 #include <srrg_system_utils/parse_command_line.h>
 #include <srrg_system_utils/shell_colors.h>
 
-// ia include solver stuff (instances)
+// include solver stuff (instances)
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
-// ia include types stuff (instances)
+// include types stuff (instances)
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
@@ -16,7 +16,7 @@ const std::string exe_name = "test_se3_motion_based_calib";
 using namespace srrg2_core;
 using namespace srrg2_solver;
 
-// ia global data
+// global data
 const size_t n_meas       = 100;
 const size_t n_iterations = 20;
 
@@ -47,7 +47,7 @@ TEST(DUMMY_DATA, SE3PoseMotionErrorFactorAD) {
   using FactorType      = SE3PoseMotionErrorFactorDataDriven;
   using FactorPtrType   = std::shared_ptr<FactorType>;
   using IsometryVector  = std::vector<Isometry3f, Eigen::aligned_allocator<Isometry3f>>;
-  // ia generate dummy data
+  // generate dummy data
   const Vector6f sensor_in_robot_v     = 10 * Vector6f::Random();
   const Isometry3f sensor_in_robot     = geometry3d::ta2t(sensor_in_robot_v);
   const Isometry3f sensor_in_robot_inv = sensor_in_robot.inverse();
@@ -58,7 +58,7 @@ TEST(DUMMY_DATA, SE3PoseMotionErrorFactorAD) {
   measurements.reserve(n_meas);
   relative_motions.reserve(n_meas);
   correspondences.reserve(n_meas);
-  // bdc generating dataset
+  // generating dataset
   for (size_t m = 0; m < n_meas; ++m) {
     Isometry3f rel_sensor_motion = randomRelativeIso();
     relative_motions.emplace_back(rel_sensor_motion);
@@ -90,19 +90,19 @@ TEST(DUMMY_DATA, SE3PoseMotionErrorFactorAD) {
   const auto& stats      = solver.iterationStats();
   const auto& final_chi2 = stats.back().chi_inliers;
 
-  // ia assert performed iterations are the effectively n_iterations
+  // assert performed iterations are the effectively n_iterations
   ASSERT_EQ(stats.size(), n_iterations);
-  // ia assert chi2 is good
+  // assert chi2 is good
   ASSERT_LT(final_chi2, 1e-6);
-  // ia assert that relative error is good
+  // assert that relative error is good
   const auto& estimated_T = pose->estimate();
   const auto diff_T       = estimated_T.inverse() * sensor_in_robot;
   const auto diff_vector  = geometry3d::t2tnq(diff_T);
-  ASSERT_LT(diff_vector[0], 1e-5); // ia X
-  ASSERT_LT(diff_vector[1], 1e-5); // ia Y
-  ASSERT_LT(diff_vector[2], 1e-5); // ia Z
-  ASSERT_LT(diff_vector[3], 1e-5); // ia qx
-  ASSERT_LT(diff_vector[4], 1e-5); // ia qy
-  ASSERT_LT(diff_vector[5], 1e-5); // ia qz
+  ASSERT_LT(diff_vector[0], 1e-5); // X
+  ASSERT_LT(diff_vector[1], 1e-5); // Y
+  ASSERT_LT(diff_vector[2], 1e-5); // Z
+  ASSERT_LT(diff_vector[3], 1e-5); // qx
+  ASSERT_LT(diff_vector[4], 1e-5); // qy
+  ASSERT_LT(diff_vector[5], 1e-5); // qz
   LOG << stats << std::endl;
 }

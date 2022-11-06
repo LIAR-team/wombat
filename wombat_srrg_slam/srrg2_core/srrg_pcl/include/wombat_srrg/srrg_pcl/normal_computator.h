@@ -36,7 +36,7 @@ namespace srrg2_core {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  }; // ia end class NormalComputorBase
+  }; // end class NormalComputorBase
 
   //! @brief specialization for organized point clouds
   template <typename PointCloudType_, int idx_>
@@ -67,7 +67,7 @@ namespace srrg2_core {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  }; // ia end class NormalComputator2DCrossProduct//! @brief specialization for organized point
+  }; // end class NormalComputator2DCrossProduct//! @brief specialization for organized point
      // clouds
 
   //! @brief specialization for spherical range images
@@ -92,7 +92,7 @@ namespace srrg2_core {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  }; // ia end class NormalComputator2DCrossProduct
+  }; // end class NormalComputator2DCrossProduct
 
   //! @brief specialization for organized point clouds
   template <typename PointCloudType_, int idx_>
