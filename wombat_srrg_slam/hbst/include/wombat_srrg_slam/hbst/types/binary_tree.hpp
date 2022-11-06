@@ -1,4 +1,5 @@
 #pragma once
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -7,7 +8,7 @@
 #include <set>
 #include <unordered_map>
 
-#include "binary_node.hpp"
+#include "wombat_srrg_slam/hbst/types/binary_node.hpp"
 
 // ds helper macro for controlled reading and writing operations
 #define GUARDED_IO(FILE, IO_OPERATION, VARIABLE, SIZE, ERROR_MESSAGE) \

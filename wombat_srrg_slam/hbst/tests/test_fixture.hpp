@@ -1,7 +1,9 @@
+#pragma once
+
 #include <gtest/gtest.h>
 #include <random>
 
-#include "wombat_srrg/srrg_hbst/types/binary_tree.hpp"
+#include "wombat_srrg_slam/hbst/types/binary_tree.hpp"
 
 typedef srrg_hbst::BinaryTree256<size_t> Tree;
 

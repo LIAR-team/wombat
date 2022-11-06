@@ -1,8 +1,9 @@
 #pragma once
+
 #include <cmath>
 #include <random>
 
-#include "binary_match.hpp"
+#include "wombat_srrg_slam/hbst/types/binary_match.hpp"
 
 namespace srrg_hbst {
 
@@ -10,7 +11,8 @@ namespace srrg_hbst {
   enum SplittingStrategy { DoNothing, SplitEven, SplitUneven, SplitRandomUniform };
 
   template <typename BinaryMatchableType_, typename real_type_ = double>
-  class BinaryNode {
+  class BinaryNode
+  {
     // ds readability
     using Node = BinaryNode<BinaryMatchableType_, real_type_>;
 
@@ -24,39 +26,43 @@ namespace srrg_hbst {
     using Match           = BinaryMatch<Matchable, real_type>;
 
     //! @brief header for de/serialization TODO fuse with attributes
-    struct Header {
-      Header(const uint64_t& depth_) : depth(depth_) {
-      }
-      Header() : Header(0) {
-      }
-      uint64_t depth;
-      uint64_t number_of_matchables_uncompressed = 0;
-      uint64_t number_of_matchables_compressed   = 0;
+    struct Header
+    {
+      Header(const uint64_t & depth_)
+      : depth(depth_)
+      {}
+
+      Header() = default;
+
+      uint64_t depth {0};
+      uint64_t number_of_matchables_uncompressed {0};
+      uint64_t number_of_matchables_compressed {0};
     };
 
-    // ds ctor/dtor
   public:
     // ds access only through this constructor: no mask provided
-    BinaryNode(const MatchableVector& matchables_,
-               const SplittingStrategy& train_mode_ = SplittingStrategy::SplitEven) :
-      Node(nullptr, 0, matchables_, Descriptor().set(), train_mode_) {
-    }
+    BinaryNode(
+      const MatchableVector& matchables_,
+      const SplittingStrategy& train_mode_ = SplittingStrategy::SplitEven)
+    : Node(nullptr, 0, matchables_, Descriptor().set(), train_mode_)
+    {}
 
     // ds access only through this constructor: mask provided
-    BinaryNode(const MatchableVector& matchables_,
-               Descriptor bit_mask_,
-               const SplittingStrategy& train_mode_ = SplittingStrategy::SplitEven) :
-      Node(nullptr, 0, matchables_, bit_mask_, train_mode_) {
-    }
+    BinaryNode(
+      const MatchableVector& matchables_,
+      Descriptor bit_mask_,
+      const SplittingStrategy& train_mode_ = SplittingStrategy::SplitEven)
+    : Node(nullptr, 0, matchables_, bit_mask_, train_mode_)
+    {}
 
     // ds the default constructor is triggered by subclasses - the responsibility of attribute
     // initialization is left to the subclass ds this is required, since we do not want to trigger
     // the automatic leaf spawning of the baseclass in a subclass
-    BinaryNode() {
-    }
+    BinaryNode() = default;
 
     // ds destructor: recursive destruction of child nodes (risky but readable)
-    virtual ~BinaryNode() {
+    virtual ~BinaryNode()
+    {
       delete left;
       delete right;
     }
@@ -64,7 +70,8 @@ namespace srrg_hbst {
     // ds access
   public:
     // ds create leafs (external use intented)
-    virtual bool spawnLeafs(const SplittingStrategy& train_mode_) {
+    virtual bool spawnLeafs(const SplittingStrategy& train_mode_)
+    {
       assert(!has_leafs);
       _header.number_of_matchables_compressed = matchables.size();
 
@@ -162,55 +169,55 @@ namespace srrg_hbst {
           }
           break;
         }
-        default: { throw std::runtime_error("invalid leaf spawning mode"); }
+        default : { throw std::runtime_error("invalid leaf spawning mode"); }
       }
 
-      // ds if best was found and the partitioning is sufficient (0 to 0.5) - we can spawn leaves
-      if (index_split_bit != -1 && partitioning < maximum_partitioning) {
-        // ds get a mask copy
-        Descriptor bit_mask_previous(bit_mask);
-
-        // ds update mask for leafs
-        bit_mask_previous[index_split_bit] = 0;
-
-        // ds first we have to split the descriptors by the found index - preallocate vectors since
-        // we know how many ones we have
-        MatchableVector matchables_ones(number_of_on_bits_total);
-        MatchableVector matchables_zeros(matchables.size() - number_of_on_bits_total);
-
-        // ds loop over all descriptors and assigning them to the new vectors based on bit status
-        uint64_t index_ones  = 0;
-        uint64_t index_zeros = 0;
-        for (Matchable* matchable : matchables) {
-          if (matchable->descriptor[index_split_bit]) {
-            matchables_ones[index_ones] = matchable;
-            ++index_ones;
-          } else {
-            matchables_zeros[index_zeros] = matchable;
-            ++index_zeros;
-          }
-        }
-        assert(matchables_ones.size() == index_ones);
-        assert(matchables_zeros.size() == index_zeros);
-
-        // ds this leaf becomes a regular node and hence does not carry matchables
-        has_leafs = true;
-        matchables.clear();
-        _header.number_of_matchables_compressed = 0;
-
-        // ds if there are elements for leaves
-        assert(0 < matchables_ones.size());
-        right = new Node(this, _header.depth + 1, matchables_ones, bit_mask_previous, train_mode_);
-
-        assert(0 < matchables_zeros.size());
-        left = new Node(this, _header.depth + 1, matchables_zeros, bit_mask_previous, train_mode_);
-
-        // ds success
-        return true;
-      } else {
+      if (index_split_bit == -1 || partitioning >= maximum_partitioning) {
         // ds failed to spawn leaf - terminate recursion
         return false;
       }
+      // ds if best was found and the partitioning is sufficient (0 to 0.5) - we can spawn leaves
+
+      // ds get a mask copy
+      Descriptor bit_mask_previous(bit_mask);
+
+      // ds update mask for leafs
+      bit_mask_previous[index_split_bit] = 0;
+
+      // ds first we have to split the descriptors by the found index - preallocate vectors since
+      // we know how many ones we have
+      MatchableVector matchables_ones(number_of_on_bits_total);
+      MatchableVector matchables_zeros(matchables.size() - number_of_on_bits_total);
+
+      // ds loop over all descriptors and assigning them to the new vectors based on bit status
+      uint64_t index_ones  = 0;
+      uint64_t index_zeros = 0;
+      for (Matchable* matchable : matchables) {
+        if (matchable->descriptor[index_split_bit]) {
+          matchables_ones[index_ones] = matchable;
+          ++index_ones;
+        } else {
+          matchables_zeros[index_zeros] = matchable;
+          ++index_zeros;
+        }
+      }
+      assert(matchables_ones.size() == index_ones);
+      assert(matchables_zeros.size() == index_zeros);
+
+      // ds this leaf becomes a regular node and hence does not carry matchables
+      has_leafs = true;
+      matchables.clear();
+      _header.number_of_matchables_compressed = 0;
+
+      // ds if there are elements for leaves
+      assert(0 < matchables_ones.size());
+      right = new Node(this, _header.depth + 1, matchables_ones, bit_mask_previous, train_mode_);
+
+      assert(0 < matchables_zeros.size());
+      left = new Node(this, _header.depth + 1, matchables_zeros, bit_mask_previous, train_mode_);
+
+      // ds success
+      return true;
     }
 
     // ds getters
@@ -234,15 +241,17 @@ namespace srrg_hbst {
     // ds inner constructors (used for recursive tree building)
   protected:
     // ds only internally called: default for single matchables
-    BinaryNode(Node* parent_,
-               const uint64_t& depth_,
-               const MatchableVector& matchables_,
-               Descriptor bit_mask_,
-               const SplittingStrategy& train_mode_) :
-      parent(parent_),
+    BinaryNode(
+      Node* parent_,
+      const uint64_t& depth_,
+      const MatchableVector& matchables_,
+      Descriptor bit_mask_,
+      const SplittingStrategy& train_mode_)
+    : parent(parent_),
       _header(depth_),
       matchables(matchables_),
-      bit_mask(bit_mask_) {
+      bit_mask(bit_mask_)
+    {
 #ifdef SRRG_MERGE_DESCRIPTORS
       // ds recompute current number of contained merged matchables TODO make this less horribly
       // wasteful
@@ -258,9 +267,11 @@ namespace srrg_hbst {
 
     // ds helpers
   protected:
-    const real_type _getSetBitFraction(const uint32_t& index_split_bit_,
-                                       const MatchableVector& matchables_,
-                                       uint64_t& number_of_set_bits_total_) const {
+    const real_type _getSetBitFraction(
+      const uint32_t & index_split_bit_,
+      const MatchableVector & matchables_,
+      uint64_t& number_of_set_bits_total_) const
+    {
       assert(0 < matchables_.size());
       assert(0 < _header.number_of_matchables_uncompressed);
       assert(matchables_.size() <= _header.number_of_matchables_uncompressed);
@@ -291,8 +302,7 @@ namespace srrg_hbst {
       assert(number_of_set_bits <= _header.number_of_matchables_uncompressed);
 
       // ds return ratio
-      return (static_cast<real_type>(number_of_set_bits) /
-              _header.number_of_matchables_uncompressed);
+      return static_cast<real_type>(number_of_set_bits) / _header.number_of_matchables_uncompressed;
     }
 
     // ds public fields

@@ -1,5 +1,5 @@
 add_library(srrg_hbst INTERFACE)
-add_library(wombat_srrg::srrg_hbst ALIAS srrg_hbst)
+add_library(wombat_srrg_slam::hbst ALIAS srrg_hbst)
 
 target_include_directories(
   srrg_hbst
@@ -30,9 +30,9 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
 
   ament_add_gtest(test_search tests/test_search.cpp)
-  target_link_libraries(test_search wombat_srrg::srrg_hbst)
+  target_link_libraries(test_search wombat_srrg_slam::hbst)
   ament_add_gtest(test_streaming tests/test_streaming.cpp)
-  target_link_libraries(test_streaming wombat_srrg::srrg_hbst)
+  target_link_libraries(test_streaming wombat_srrg_slam::hbst)
 
   # target_compile_definitions(test_streaming_merging PRIVATE SRRG_MERGE_DESCRIPTORS)
 endif()
