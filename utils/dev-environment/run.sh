@@ -52,8 +52,8 @@ DOCKER_WOMBAT_DIR=${DOCKER_HOME}/wombat
 # Persistent bash history file
 BASH_HISTORY_FILE=${THIS_DIR}/.bash_history
 DOCKER_BASH_HISTORY_FILE=${DOCKER_HOME}/.bash_history
-if [ ! -f ${BASH_HISTORY_FILE_PATH} ]; then
-  touch ${BASH_HISTORY_FILE_PATH}
+if [ ! -f ${BASH_HISTORY_FILE} ]; then
+  touch ${BASH_HISTORY_FILE}
 fi
 BASH_HISTORY_ARGS="--volume=${BASH_HISTORY_FILE}:${DOCKER_BASH_HISTORY_FILE}:rw"
 
