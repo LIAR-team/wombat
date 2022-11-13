@@ -8,6 +8,13 @@ target_link_libraries(
   wombat_srrg::srrg2_solver::core
 )
 
+ament_add_gtest(test_se2_icp test_se2_icp.cpp)
+target_link_libraries(
+  test_se2_icp
+  wombat_srrg::srrg2_solver::types_2d
+  wombat_srrg::srrg2_solver::core
+)
+
 
 return()
 

@@ -6,36 +6,39 @@
 #include "wombat_srrg/srrg_solver/solver_core/error_factor_impl.hpp"
 #include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
 
-namespace srrg2_solver {
-  using namespace srrg2_core;
+namespace srrg2_solver
+{
 
-  void SE2Point2PointErrorFactor::errorAndJacobian(bool error_only) {
-    const EstimateType& X_ = this->_variables.template at<0>()->estimate();
-    const Matrix2f& R     = X_.linear();
-    _e                    = X_ * (*moving) - (*fixed);
-    if (error_only) {
-      return;
-    }
-    _J.block<2, 2>(0, 0) = R;
-    _J.block<2, 1>(0, 2) = -R * geometry2d::skew(*moving);
+using namespace srrg2_core;
+
+void SE2Point2PointErrorFactor::errorAndJacobian(bool error_only)
+{
+  const EstimateType& X_ = this->_variables.template at<0>()->estimate();
+  const Matrix2f& R     = X_.linear();
+  _e                    = X_ * (*moving) - (*fixed);
+  if (error_only) {
+    return;
   }
+  _J.block<2, 2>(0, 0) = R;
+  _J.block<2, 1>(0, 2) = -R * geometry2d::skew(*moving);
+}
 
-  INSTANTIATE(SE2Point2PointErrorFactor)
-  INSTANTIATE(SE2Point2PointErrorFactorCorrespondenceDriven)
+INSTANTIATE(SE2Point2PointErrorFactor)
+INSTANTIATE(SE2Point2PointErrorFactorCorrespondenceDriven)
 
-  void SE2Point2PointWithSensorErrorFactor::errorAndJacobian(bool error_only)
-  {
-    const EstimateType& X_ = _robot_in_sensor * this->_variables.template at<0>()->estimate();
-    const Matrix2f& R     = X_.linear();
-    _e                    = X_ * (*moving) - (*fixed);
-    if (error_only) {
-      return;
-    }
-    _J.block<2, 2>(0, 0) = R;
-    _J.block<2, 1>(0, 2) = -R * geometry2d::skew(*moving);
+void SE2Point2PointWithSensorErrorFactor::errorAndJacobian(bool error_only)
+{
+  const EstimateType& X_ = _robot_in_sensor * this->_variables.template at<0>()->estimate();
+  const Matrix2f& R     = X_.linear();
+  _e                    = X_ * (*moving) - (*fixed);
+  if (error_only) {
+    return;
   }
+  _J.block<2, 2>(0, 0) = R;
+  _J.block<2, 1>(0, 2) = -R * geometry2d::skew(*moving);
+}
 
-  INSTANTIATE(SE2Point2PointWithSensorErrorFactor)
-  INSTANTIATE(SE2Point2PointWithSensorErrorFactorCorrespondenceDriven)
+INSTANTIATE(SE2Point2PointWithSensorErrorFactor)
+INSTANTIATE(SE2Point2PointWithSensorErrorFactorCorrespondenceDriven)
 
 } // namespace srrg2_solver

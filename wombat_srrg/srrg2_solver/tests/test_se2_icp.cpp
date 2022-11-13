@@ -18,12 +18,14 @@ using namespace srrg2_solver;
 const size_t n_meas       = 1000;
 const size_t n_iterations = 10;
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 
-TEST(DUMMY_DATA, SE2Point2PointErrorFactor) {
+TEST(DUMMY_DATA, SE2Point2PointErrorFactor)
+{
   using VariableType     = VariableSE2Right;
   using VariablePtrType  = std::shared_ptr<VariableType>;
   using FactorType       = SE2Point2PointErrorFactorCorrespondenceDriven;
@@ -97,7 +99,8 @@ TEST(DUMMY_DATA, SE2Point2PointErrorFactor) {
   ASSERT_LT(diff_vector.z(), 1e-5);
 }
 
-TEST(DUMMY_DATA, SE2Point2PointWithSensorErrorFactor) {
+TEST(DUMMY_DATA, SE2Point2PointWithSensorErrorFactor)
+{
   using VariableType         = VariableSE2Right;
   using VariablePtrType      = std::shared_ptr<VariableType>;
   using FactorType           = SE2Point2PointWithSensorErrorFactorCorrespondenceDriven;
