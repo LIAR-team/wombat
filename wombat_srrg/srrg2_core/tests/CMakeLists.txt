@@ -26,7 +26,7 @@ target_link_libraries(
 ament_add_gtest(test_geometry test_geometry.cpp)
 target_link_libraries(
   test_geometry
-    wombat_srrg::srrg2_core::srrg_geometry
+    wombat_srrg::srrg2_core::geometry
     wombat_srrg::srrg2_core::srrg_test
 )
 
@@ -34,7 +34,7 @@ ament_add_gtest(test_kd_tree test_kd_tree.cpp)
 target_link_libraries(
   test_kd_tree
     wombat_srrg::srrg2_core::data_structures
-    wombat_srrg::srrg2_core::srrg_geometry
+    wombat_srrg::srrg2_core::geometry
     wombat_srrg::srrg2_core::srrg_test
 )
 

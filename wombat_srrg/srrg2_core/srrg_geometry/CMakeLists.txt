@@ -1,5 +1,5 @@
 add_library(srrg_geometry SHARED)
-add_library(wombat_srrg::srrg2_core::srrg_geometry ALIAS srrg_geometry)
+add_library(wombat_srrg::srrg2_core::geometry ALIAS srrg_geometry)
 
 target_sources(
   srrg_geometry

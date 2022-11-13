@@ -105,7 +105,7 @@ target_sources(
 target_link_libraries(
   srrg_messages
   PUBLIC
-    wombat_srrg::srrg2_core::srrg_boss
+    wombat_srrg::srrg2_core::boss
     wombat_srrg::srrg2_core::srrg_messages::handlers
     wombat_srrg::srrg2_core::srrg_messages::messages
 )

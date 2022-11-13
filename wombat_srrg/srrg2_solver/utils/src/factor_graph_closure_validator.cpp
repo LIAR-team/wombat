@@ -1,10 +1,10 @@
-#include "factor_graph_closure_validator.h"
-#include "srrg_solver/variables_and_factors/types_2d/variable_se2.h"
-#include "srrg_solver/variables_and_factors/types_3d/variable_se3.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_closure_validator.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/variable_se2.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_se3.h"
 #include <fstream>
 
-#include "srrg_solver/variables_and_factors/types_2d/se2_pose_pose_geodesic_error_factor.h"
-#include "srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_pose_pose_geodesic_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h"
 
 std::ofstream null_stream = std::ofstream("/dev/null");
 // std::ostream& console_stream(std::cerr);

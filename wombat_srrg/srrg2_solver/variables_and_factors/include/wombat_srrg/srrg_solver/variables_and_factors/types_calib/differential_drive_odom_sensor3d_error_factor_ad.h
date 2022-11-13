@@ -1,6 +1,6 @@
 #pragma once
 #include "differential_drive_odom_predictor_ad.h"
-#include "srrg_geometry/geometry3d.h"
+#include "wombat_srrg/srrg_geometry/geometry3d.h"
 #include "wombat_srrg/srrg_solver/solver_core/ad_error_factor.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/variable_se2_ad.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_point3_ad.h"

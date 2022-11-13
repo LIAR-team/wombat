@@ -1,7 +1,7 @@
-#include "factor_graph_initializer.h"
-#include "srrg_solver/variables_and_factors/types_2d/all_types.h"
-#include "srrg_solver/variables_and_factors/types_3d/all_types.h"
-#include "srrg_solver/variables_and_factors/types_projective/all_types.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_initializer.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/all_types.h"
 #include <Eigen/Eigenvalues>
 
 namespace srrg2_solver {

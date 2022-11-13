@@ -1,4 +1,4 @@
-#include "factor_graph_visit_cost.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_visit_cost.h"
 
 namespace srrg2_solver {
   using namespace srrg2_core;

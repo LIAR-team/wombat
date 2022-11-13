@@ -21,7 +21,7 @@ target_include_directories(
 target_link_libraries(
   srrg_path_matrix
   PUBLIC
-    wombat_srrg::srrg2_core::srrg_geometry
+    wombat_srrg::srrg2_core::geometry
     wombat_srrg::srrg2_core::srrg_image
     wombat_srrg::srrg2_core::property
     wombat_srrg::srrg2_core::pcl

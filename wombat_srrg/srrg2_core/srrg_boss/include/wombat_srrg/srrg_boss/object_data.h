@@ -3,17 +3,21 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-#include <map>
 #include <limits>
+#include <map>
+#include <string>
 #include <stdexcept>
-#include "wombat_srrg/srrg_boss/id_placeholder.h"
+#include <vector>
+
 #include <Eigen/Core>
 
-namespace srrg2_core {
+#include "wombat_srrg/srrg_boss/id_placeholder.h"
 
-enum ValueType {
+namespace srrg2_core
+{
+
+enum ValueType
+{
   BOOL, NUMBER, STRING, ARRAY, OBJECT, POINTER, POINTER_REF
 };
 
@@ -22,7 +26,8 @@ class ObjectData;
 class PointerReference;
   class IDContext;
   
-class ValueData {
+class ValueData
+{
   friend class ObjectData;
 public:
   virtual int getInt();
@@ -39,22 +44,28 @@ public:
 
   virtual ValueType type()=0;
   const std::string& typeName();
-  operator bool() {
+  operator bool()
+  {
     return getBool();
   }
-  operator int() {
+  operator int()
+  {
     return getInt();
   }
-  operator uint64_t() {
+  operator uint64_t()
+  {
     return getUnsignedInt();
   }
-  operator double() {
+  operator double()
+  {
     return getDouble();
   }
-  operator float() {
+  operator float()
+  {
     return getFloat();
   }
-  operator const std::string&() {
+  operator const std::string&()
+  {
     return getString();
   }
 
@@ -66,7 +77,8 @@ public:
 };
 
 
-class BoolData: public ValueData {
+class BoolData: public ValueData
+{
 public:
   BoolData(bool value): _value(value) {};
   virtual bool getBool();
@@ -77,7 +89,8 @@ protected:
   bool _value;
 };
 
-class NumberData: public ValueData {
+class NumberData: public ValueData
+{
 public:
   NumberData(double value=0.0, int precision=std::numeric_limits<double>::max_digits10):
     _value(value),
@@ -106,7 +119,8 @@ protected:
   int _precision;
 };
 
-class StringData: public ValueData {
+class StringData: public ValueData
+{
 public:
   StringData(const std::string& value): _value(value) {}
   virtual const std::string& getString();
@@ -116,7 +130,8 @@ protected:
   std::string _value;
 };
 
-class ArrayData: public ValueData {
+class ArrayData: public ValueData
+{
 public:
   virtual ValueType type();
   virtual ArrayData& getArray();
@@ -142,19 +157,28 @@ public:
   void setPointer(size_t idx, Identifiable* ptr);
 
   //minimal vector interface (read only)
-  std::vector<ValueData*>::const_iterator begin() {
+  std::vector<ValueData*>::const_iterator begin()
+  {
     return _value.begin();
   }
-  std::vector<ValueData*>::const_iterator end() {
+
+  std::vector<ValueData*>::const_iterator end()
+  {
     return _value.end();
   }
-  size_t capacity() {
+
+  size_t capacity()
+  {
     return _value.capacity();
   }
-  void reserve(size_t n) {
+
+  void reserve(size_t n)
+  {
     _value.reserve(n);
   }
-  ValueData& operator[](size_t n) {
+
+  ValueData& operator[](size_t n)
+  {
     return *_value.at(n);
   }
 
@@ -166,7 +190,8 @@ public:
 #pragma GCC diagnostic pop
   }
 
-  void push_back(ValueData* value) {
+  void push_back(ValueData* value)
+  {
     _value.push_back(value);
   }
 
@@ -174,7 +199,8 @@ protected:
   std::vector<ValueData*> _value;
 };
 
-class ObjectData: public ValueData {
+class ObjectData: public ValueData
+{
 public:
   virtual ValueType type();
   virtual ObjectData& getObject();
@@ -190,63 +216,82 @@ public:
   void setPointer(const std::string&name, Identifiable* ptr, const char* description_=0);
   void setPointer(const std::string&name, std::shared_ptr<Identifiable> ptr, const char* description_=0) { setPointer(name, ptr.get(), description_);}
   
-  int getInt(const std::string& name) {
+  int getInt(const std::string& name)
+  {
     return getField(name)->getInt();
   }
   
-  uint64_t getUnsignedInt(const std::string& name) {
+  uint64_t getUnsignedInt(const std::string& name)
+  {
     return getField(name)->getUnsignedInt();
   }
 
-  double getDouble(const std::string& name) {
+  double getDouble(const std::string& name)
+  {
     return getField(name)->getDouble();
   }
   
-  float getFloat(const std::string& name) {
+  float getFloat(const std::string& name)
+  {
     return getField(name)->getFloat();
   }
   
-  const std::string& getString(const std::string& name) {
+  const std::string& getString(const std::string& name)
+  {
     return getField(name)->getString();
   }
   
-  bool getBool(const std::string& name) {
+  bool getBool(const std::string& name)
+  {
     return getField(name)->getBool();
   }
   
-  const std::vector<std::string>& fields() {
+  const std::vector<std::string>& fields()
+  {
     return _fields;
   }
 
-  PointerReference& getReference(const std::string&name) {
+  PointerReference& getReference(const std::string&name)
+  {
     return getField(name)->getReference();
   }
 
-  Identifiable* getPointer(const std::string&name) {
+  Identifiable* getPointer(const std::string&name)
+  {
     return getField(name)->getPointer();
   }
   
   ValueData* getField(const std::string& name);
 
   template <typename EigenType_>
-  EigenType_ getEigen(const std::string& name) {
+  EigenType_ getEigen(const std::string& name)
+  {
     EigenType_ eigen_object;
-    ValueData* v=getField(name);
-    int rows=eigen_object.matrix().rows();
-    int cols=eigen_object.matrix().cols();
+    ValueData* v = getField(name);
+    if (!v) {
+      assert("Alberto: Potential null pointer dereference" && 0);
+      return eigen_object;
+    }
+    int rows = eigen_object.matrix().rows();
+    int cols = eigen_object.matrix().cols();
     ArrayData* adata;
-    if  (eigen_object.matrix().SizeAtCompileTime==Eigen::Dynamic){
-        ObjectData* o=dynamic_cast<ObjectData*>(v);
-        rows=o->getInt("rows");
-        cols=o->getInt("cols");
-        eigen_object.matrix().resize(rows,cols);
-        v=o->getField("values");
-        adata=dynamic_cast<ArrayData*>(v);
-      } else {
-      adata=dynamic_cast<ArrayData*>(v);
-      int k=0;
-      for (int r=0; r<rows; ++r)
-        for (int c=0; c<cols; ++c, ++k) {
+    if (eigen_object.matrix().SizeAtCompileTime==Eigen::Dynamic)
+    {
+      ObjectData* o = dynamic_cast<ObjectData*>(v);
+      rows = o->getInt("rows");
+      cols = o->getInt("cols");
+      eigen_object.matrix().resize(rows,cols);
+      ValueData* v_2 = o->getField("values");
+      if (!v_2) {
+        assert("Alberto: Potential null pointer dereference" && 0);
+        return eigen_object;
+      }
+      adata = dynamic_cast<ArrayData*>(v_2);
+    } else {
+      adata = dynamic_cast<ArrayData*>(v);
+      int k = 0;
+      for (int r = 0; r<rows; ++r)
+        for (int c = 0; c<cols; ++c, ++k) {
           eigen_object.matrix()(r,c) = (*adata)[k].getFloat();
         }
     }
@@ -254,7 +299,8 @@ public:
   }
   
   template <typename EigenType_>
-  void setEigen(const std::string& name, const EigenType_& eigen_object) {
+  void setEigen(const std::string& name, const EigenType_& eigen_object)
+  {
     ArrayData* adata=new ArrayData;
     int rows=eigen_object.matrix().rows();
     int cols=eigen_object.matrix().cols();
@@ -281,7 +327,8 @@ protected:
   std::vector<std::string> _fields;
 };
 
-class PointerData: public ValueData {
+class PointerData: public ValueData
+{
 public:
   PointerData(Identifiable* pointer): _pointer(pointer) {}
   virtual Identifiable* getPointer();
@@ -291,18 +338,21 @@ protected:
   Identifiable* _pointer;
 };
 
-class PointerReference: public ValueData {
+class PointerReference: public ValueData
+{
 public:
   PointerReference(Identifiable* ref): _ref(ref) {}
 
-  PointerReference& getReference() {
+  PointerReference& getReference()
+  {
     return *this;
   }
 
   virtual Identifiable* getPointer();
 
   template<typename T>
-  void bind(T*& pvar) {
+  void bind(T*& pvar)
+  {
     if (!_ref) {
       pvar=0;
       return;
@@ -320,7 +370,8 @@ public:
   }
 
   template<typename T>
-  void bind(std::shared_ptr<T>& pvar) {
+  void bind(std::shared_ptr<T>& pvar)
+  {
     if (!_ref) {
       pvar=0;
       return;
@@ -339,7 +390,8 @@ public:
   }
 
   template<typename T>
-  void bind(std::weak_ptr<T>& pvar) {
+  void bind(std::weak_ptr<T>& pvar)
+  {
     if (!_ref) {
       pvar.reset();
       return;

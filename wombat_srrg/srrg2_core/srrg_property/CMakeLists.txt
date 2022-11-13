@@ -20,7 +20,7 @@ target_include_directories(
 target_link_libraries(
   srrg_property
   PUBLIC
-    wombat_srrg::srrg2_core::srrg_boss
+    wombat_srrg::srrg2_core::boss
     wombat_srrg::srrg2_core::system_utils
     Eigen3::Eigen
 )

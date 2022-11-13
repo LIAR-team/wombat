@@ -3,8 +3,8 @@
 
 add_subdirectory(solver_core)
 add_subdirectory(variables_and_factors)
-#add_subdirectory(utils)
-#add_subdirectory(solver_incremental)
+add_subdirectory(utils)
+add_subdirectory(solver_incremental)
 
 return()
 

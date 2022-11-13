@@ -1,5 +1,5 @@
 add_library(srrg_boss SHARED)
-add_library(wombat_srrg::srrg2_core::srrg_boss ALIAS srrg_boss)
+add_library(wombat_srrg::srrg2_core::boss ALIAS srrg_boss)
 
 target_sources(
   srrg_boss

@@ -17,7 +17,7 @@ endif()
 
 #add_library(srrg2_core SHARED)
 #add_library(wombat_srrg::srrg2_core ALIAS srrg2_core)
-#target_link_libraries(srrg2_core PUBLIC wombat_srrg::srrg2_core::srrg_boss)
+#target_link_libraries(srrg2_core PUBLIC wombat_srrg::srrg2_core::boss)
 
 
 ## Missing to build 

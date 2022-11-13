@@ -17,7 +17,7 @@ target_include_directories(
 target_link_libraries(
   srrg_config
   PUBLIC
-    wombat_srrg::srrg2_core::srrg_boss
+    wombat_srrg::srrg2_core::boss
     wombat_srrg::srrg2_core::data_structures
     wombat_srrg::srrg2_core::property
     wombat_srrg::srrg2_core::system_utils

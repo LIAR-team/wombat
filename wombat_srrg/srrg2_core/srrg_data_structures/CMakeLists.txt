@@ -19,7 +19,7 @@ target_include_directories(
 target_link_libraries(
   srrg_data_structures
   PUBLIC
-    wombat_srrg::srrg2_core::srrg_geometry
+    wombat_srrg::srrg2_core::geometry
     wombat_srrg::srrg2_core::property
     wombat_srrg::srrg2_core::system_utils
     Eigen3::Eigen

@@ -1,4 +1,4 @@
-#include "factor_graph_visit.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_visit.h"
 #include <algorithm>
 
 using namespace std;

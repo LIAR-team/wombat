@@ -1,27 +1,40 @@
-add_library(srrg2_solver_factor_graph_utils_library SHARED
-  #visit
-  factor_graph_visit_entry.cpp factor_graph_visit_entry.h
-  factor_graph_visit_cost.cpp factor_graph_visit_cost.h
-  factor_graph_visit_policy.cpp factor_graph_visit_policy.h
-  factor_graph_visit.cpp factor_graph_visit.h
+###########
+## utils library
+############
+add_library(srrg2_solver_utils SHARED)
+add_library(wombat_srrg::srrg2_solver::utils ALIAS srrg2_solver_utils)
+target_sources(
+  srrg2_solver_utils
+  PRIVATE
+    src/instances.cpp
 
-  # initializer
-  factor_graph_initializer_rule.cpp factor_graph_initializer_rule.h
-  factor_graph_initializer.cpp factor_graph_initializer.h
+    #visit
+    src/factor_graph_visit_entry.cpp
+    src/factor_graph_visit_cost.cpp
+    src/factor_graph_visit_policy.cpp
+    src/factor_graph_visit.cpp
 
-  # closure validator
-  factor_graph_closure_validator.cpp factor_graph_closure_validator.h
+    # initializer
+    src/factor_graph_initializer_rule.cpp
+    src/factor_graph_initializer.cpp
 
-  solver_evaluator.cpp
-  solver_evaluator.h
-  # instances
-  instances.cpp instances.h
-  )
+    # closure validator
+    src/factor_graph_closure_validator.cpp
 
-target_link_libraries(srrg2_solver_factor_graph_utils_library
-  srrg2_solver_types2d_library
-  srrg2_solver_types3d_library
-  srrg2_solver_projective_library
-  srrg2_solver_calib_library
-  srrg2_solver_core_library
-  )
+    src/solver_evaluator.cpp
+)
+target_include_directories(
+  srrg2_solver_utils
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+target_link_libraries(
+  srrg2_solver_utils
+  PUBLIC
+    wombat_srrg::srrg2_core::config
+    wombat_srrg::srrg2_solver::core
+    wombat_srrg::srrg2_solver::types_2d
+    wombat_srrg::srrg2_solver::types_3d
+    wombat_srrg::srrg2_solver::types_projective
+    wombat_srrg::srrg2_solver::types_calib
+)

@@ -1,8 +1,3 @@
-#add_subdirectory(types_3d)
-#add_subdirectory(types_projective)
-#add_subdirectory(types_calib)
-
-
 ###########
 ## types_common library
 ############
@@ -100,4 +95,76 @@ target_link_libraries(
     wombat_srrg::srrg2_core::matchable
     wombat_srrg::srrg2_solver::core
     wombat_srrg::srrg2_solver::types_common
+)
+
+###########
+## types_projective library
+############
+add_library(srrg2_solver_types_projective SHARED)
+add_library(wombat_srrg::srrg2_solver::types_projective ALIAS srrg2_solver_types_projective)
+target_sources(
+  srrg2_solver_types_projective
+  PRIVATE
+    src/types_projective/instances.cpp
+
+    # camera based factors
+    src/types_projective/se3_projective_error_factor.cpp
+    src/types_projective/se3_rectified_stereo_projective_error_factor.cpp
+    src/types_projective/se3_projective_depth_error_factor.cpp
+
+      # similiarity factors
+    src/types_projective/variable_sim3.cpp
+    src/types_projective/variable_sim3_ad.cpp
+    src/types_projective/sim3_point2point_error_factor.cpp 
+    src/types_projective/sim3_pose_pose_error_factor_ad.cpp
+    src/types_projective/se3_pose_point_omni_ba_error_factor.cpp
+    src/types_projective/se3_pose_point_pinhole_ba_error_factor.cpp
+    src/types_projective/se3_pose_point_rectified_stereo_error_factor.cpp
+)
+target_include_directories(
+  srrg2_solver_types_projective
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+target_link_libraries(
+  srrg2_solver_types_projective
+  PUBLIC
+    wombat_srrg::srrg2_solver::core
+    wombat_srrg::srrg2_solver::types_3d
+)
+
+###########
+## types_calib library
+############
+add_library(srrg2_solver_types_calib SHARED)
+add_library(wombat_srrg::srrg2_solver::types_calib ALIAS srrg2_solver_types_calib)
+target_sources(
+  srrg2_solver_types_calib
+  PRIVATE
+    src/types_calib/instances.cpp
+
+    src/types_calib/variable_time.cpp
+    src/types_calib/variable_time_ad.cpp
+    src/types_calib/differential_drive_odom_predictor_ad.cpp
+    src/types_calib/differential_drive_odom_time_delay_sensor2d_error_factor_ad.cpp
+    src/types_calib/differential_drive_odom_error_factor_ad.cpp
+    src/types_calib/differential_drive_odom_sensor2d_error_factor_ad.cpp
+    src/types_calib/differential_drive_odom_sensor3d_error_factor_ad.cpp
+    src/types_calib/sensor3d_pose_time_delay_error_factor_ad.cpp
+    src/types_calib/sensor2d_extrinsic_pose_motion_calib_ad.cpp
+    src/types_calib/sensor3d_extrinsic_pose_motion_calib_ad.cpp
+)
+target_include_directories(
+  srrg2_solver_types_calib
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+target_link_libraries(
+  srrg2_solver_types_calib
+  PUBLIC
+    wombat_srrg::srrg2_core::geometry
+    wombat_srrg::srrg2_core::pcl
+    wombat_srrg::srrg2_solver::core
+    wombat_srrg::srrg2_solver::types_2d
+    wombat_srrg::srrg2_solver::types_3d
 )

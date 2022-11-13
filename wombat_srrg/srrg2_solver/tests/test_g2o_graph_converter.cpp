@@ -1,4 +1,4 @@
-#include "srrg_geometry/geometry_defs.h"
+#include "wombat_srrg/srrg_geometry/geometry_defs.h"
 #include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 #include "srrg_test/test_helper.hpp"
 #include "app/converter/g2o_converter.h"

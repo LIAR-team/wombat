@@ -1,7 +1,7 @@
 #include "instances.h"
-#include "factor_graph_closure_validator.h"
-#include "factor_graph_initializer.h"
-#include "factor_graph_visit.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_closure_validator.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_initializer.h"
+#include "wombat_srrg/srrg_solver/utils/factor_graph_visit.h"
 
 namespace srrg2_solver {
   void solver_utils_registerTypes() {

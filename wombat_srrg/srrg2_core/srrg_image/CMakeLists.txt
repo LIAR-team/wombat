@@ -18,7 +18,7 @@ target_link_libraries(
   srrg_image
   PUBLIC
     wombat_srrg::srrg2_core::data_structures
-    wombat_srrg::srrg2_core::srrg_boss
+    wombat_srrg::srrg2_core::boss
     ${OpenCV_LIBS}
 )
 

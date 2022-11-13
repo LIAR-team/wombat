@@ -16,10 +16,10 @@ target_include_directories(
 target_link_libraries(
   srrg_matchable
   PUBLIC
-    wombat_srrg::srrg2_core::srrg_geometry
+    wombat_srrg::srrg2_core::geometry
     wombat_srrg::srrg2_core::pcl
   PRIVATE
-    wombat_srrg::srrg2_core::srrg_boss
+    wombat_srrg::srrg2_core::boss
 )
 
 wombat_install_target(srrg_matchable)
