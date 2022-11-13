@@ -13,7 +13,7 @@
 #)
 
 
-#ia normals
+# normals
 add_executable(app_test_normal_computation test_normal_computation.cpp)
 target_link_libraries(app_test_normal_computation
   srrg2_property_library
@@ -23,7 +23,7 @@ target_link_libraries(app_test_normal_computation
   srrg2_image_library
 )
 
-# #ia giorgio point test
+# # giorgio point test
 add_executable(app_test_point_ops test_point_ops.cpp)
 target_link_libraries(app_test_point_ops
   srrg2_property_library
@@ -49,7 +49,7 @@ target_link_libraries(app_test_point_cloud_polar
 )
   
   
-#ia point processor - aka integral image
+# point processor - aka integral image
 add_executable(app_test_point_matrix_processor test_point_matrix_processor.cpp)
 target_link_libraries(app_test_point_matrix_processor
   srrg2_property_library

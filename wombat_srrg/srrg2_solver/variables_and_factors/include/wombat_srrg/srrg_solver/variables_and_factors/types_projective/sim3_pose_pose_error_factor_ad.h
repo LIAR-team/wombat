@@ -36,7 +36,7 @@ namespace srrg2_solver {
       convertMatrix(_inverse_measurement, inv_meas);
     }
     
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
 
   protected:
     //! @brief measurement

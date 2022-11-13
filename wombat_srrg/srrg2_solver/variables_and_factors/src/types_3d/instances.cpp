@@ -1,6 +1,6 @@
 //! include all the types you declared here
 #include "instances.h"
-#include "all_types.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
 //! we try to instantiate all solvers
 namespace srrg2_solver {

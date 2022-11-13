@@ -2,7 +2,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/error_factor.h"
 #include "wombat_srrg/srrg_solver/solver_core/factor_correspondence_driven_dynamic.h"
 #include "variable_se3.h"
-#include <srrg_matchable/matchable.h>
+#include <wombat_srrg/srrg_matchable/matchable.h>
 
 namespace srrg2_solver {
 

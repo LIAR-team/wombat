@@ -1,5 +1,5 @@
 #include "sim3_point2point_error_factor.h"
-#include "wombat_srrg/srrg_solver/solver_core/error_factor_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/error_factor_impl.hpp"
 #include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
 
 namespace srrg2_solver {

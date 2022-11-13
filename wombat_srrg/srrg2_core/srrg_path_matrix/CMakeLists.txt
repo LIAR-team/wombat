@@ -24,7 +24,7 @@ target_link_libraries(
     wombat_srrg::srrg2_core::srrg_geometry
     wombat_srrg::srrg2_core::srrg_image
     wombat_srrg::srrg2_core::property
-    wombat_srrg::srrg2_core::srrg_pcl
+    wombat_srrg::srrg2_core::pcl
     wombat_srrg::srrg2_core::system_utils
 )
 

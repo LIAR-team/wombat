@@ -14,7 +14,7 @@ namespace srrg2_solver {
    */
   class FactorDrawable :public FactorBase, public DrawableBase
   {
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
   };
 
 } // namespace srrg2_solver

@@ -3,7 +3,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/factor_correspondence_driven_dynamic.h"
 #include "variable_se2_ad.h"
 #include <wombat_srrg/srrg_geometry/geometry2d.h>
-#include <srrg_pcl/point_types.h>
+#include <wombat_srrg/srrg_pcl/point_types.h>
 
 namespace srrg2_solver {
   /** @brief ICP factor in 2D exploiting normals. This is a single point factor.

@@ -1,5 +1,5 @@
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
-//#include "wombat_srrg/srrg_solver/solver_core/constraint_factor_impl.cpp"
+//#include "wombat_srrg/srrg_solver/solver_core/constraint_factor_impl.hpp"
 #include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 #include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_ddl.h"
 #include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_dl.h"

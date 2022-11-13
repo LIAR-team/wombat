@@ -3,7 +3,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/factor_correspondence_driven.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_se3.h"
 #include <wombat_srrg/srrg_geometry/geometry3d.h>
-#include <srrg_pcl/point_types.h>
+#include <wombat_srrg/srrg_pcl/point_types.h>
 
 namespace srrg2_solver {
   using namespace srrg2_core;

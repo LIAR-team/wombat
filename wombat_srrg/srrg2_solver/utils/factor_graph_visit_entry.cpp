@@ -1,5 +1,5 @@
 #include "factor_graph_visit_entry.h"
-#include "srrg_solver/solver_core/factor_base.h"
+#include "wombat_srrg/srrg_solver/solver_core/factor_base.h"
 
 namespace srrg2_solver {
 

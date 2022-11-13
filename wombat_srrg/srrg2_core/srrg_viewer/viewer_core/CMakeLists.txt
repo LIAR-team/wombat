@@ -1,4 +1,4 @@
-#ia base protocol 
+# base protocol 
 #add_subdirectory(packets)
 add_library(srrg2_viewer_core_library SHARED
   packets.h

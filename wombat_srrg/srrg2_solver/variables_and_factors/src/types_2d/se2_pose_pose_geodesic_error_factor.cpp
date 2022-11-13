@@ -1,9 +1,9 @@
-#include "se2_pose_pose_geodesic_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_pose_pose_geodesic_error_factor.h"
 
 
 //! include this: this contains all the implementations of the factors
 //! that are hidden to the modules that do not need them to avoid excessive compilation times (EVIL)
-#include "wombat_srrg/srrg_solver/solver_core/error_factor_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/error_factor_impl.hpp"
 #include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
 
 namespace srrg2_solver {

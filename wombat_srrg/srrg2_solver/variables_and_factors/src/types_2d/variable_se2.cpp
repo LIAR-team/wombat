@@ -1,28 +1,32 @@
-#include "variable_se2.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/variable_se2.h"
 
 //! include this: this contains all the implementations of the factors
 //! that are hidden to the modules that do not need them to avoid excessive compilation times (EVIL)
 #include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
-#include "wombat_srrg/srrg_solver/solver_core/variable_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/variable.h"
 
-namespace srrg2_solver {
-  using namespace srrg2_core;
+namespace srrg2_solver
+{
 
-  void VariableSE2Base::_drawImpl(ViewerCanvasPtr canvas_) const {
-    if (!canvas_) {
-      throw std::runtime_error("VariableSE2_::draw|invalid canvas");
-    }
-    canvas_->pushColor();
-    canvas_->setColor(srrg2_core::ColorPalette::color3fBlue());
-    canvas_->pushMatrix();
-    canvas_->multMatrix(geometry3d::get3dFrom2dPose(_estimate).matrix());
-    //      canvas_->putSphere(0.1);
-    canvas_->putReferenceSystem(0.1);
-    canvas_->popMatrix();
-    canvas_->popAttribute();
+using namespace srrg2_core;
+
+/*
+void VariableSE2Base::_drawImpl(ViewerCanvasPtr canvas_) const {
+  if (!canvas_) {
+    throw std::runtime_error("VariableSE2_::draw|invalid canvas");
   }
+  canvas_->pushColor();
+  canvas_->setColor(srrg2_core::ColorPalette::color3fBlue());
+  canvas_->pushMatrix();
+  canvas_->multMatrix(geometry3d::get3dFrom2dPose(_estimate).matrix());
+  //      canvas_->putSphere(0.1);
+  canvas_->putReferenceSystem(0.1);
+  canvas_->popMatrix();
+  canvas_->popAttribute();
+}
+*/
 
-  INSTANTIATE(VariableSE2Right)
-  INSTANTIATE(VariableSE2Left)
+INSTANTIATE(VariableSE2Right)
+INSTANTIATE(VariableSE2Left)
 
 } // namespace srrg2_solver

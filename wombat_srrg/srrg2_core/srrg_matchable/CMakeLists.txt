@@ -1,5 +1,5 @@
 add_library(srrg_matchable SHARED)
-add_library(wombat_srrg::srrg2_core::srrg_matchable ALIAS srrg_matchable)
+add_library(wombat_srrg::srrg2_core::matchable ALIAS srrg_matchable)
 
 target_sources(
   srrg_matchable
@@ -17,7 +17,7 @@ target_link_libraries(
   srrg_matchable
   PUBLIC
     wombat_srrg::srrg2_core::srrg_geometry
-    wombat_srrg::srrg2_core::srrg_pcl
+    wombat_srrg::srrg2_core::pcl
   PRIVATE
     wombat_srrg::srrg2_core::srrg_boss
 )

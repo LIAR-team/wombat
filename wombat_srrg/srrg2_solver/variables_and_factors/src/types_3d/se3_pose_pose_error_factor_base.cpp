@@ -1,4 +1,4 @@
-#include "se3_pose_pose_error_factor_base.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_pose_error_factor_base.h"
 #include "variable_se3.h"
 
 namespace srrg2_solver {

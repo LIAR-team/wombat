@@ -1,8 +1,10 @@
-#include "variable_matchable.h"
-#include "srrg_solver/solver_core/instance_macros.h"
-#include "srrg_solver/solver_core/variable_impl.cpp"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/variable_matchable.h"
+#include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
+#include "wombat_srrg/srrg_solver/solver_core/variable.h"
 
-namespace srrg2_solver {
+namespace srrg2_solver
+{
+
   VariableMatchable::~VariableMatchable()
   {}
 
@@ -107,6 +109,7 @@ namespace srrg2_solver {
     }
   }
 
+  /*
   void VariableMatchable::_drawImpl(ViewerCanvasPtr canvas_) const
   {
     if (!canvas_) {
@@ -117,6 +120,6 @@ namespace srrg2_solver {
     canvas_->putPoints(1, &_estimate.origin());
     canvas_->popAttribute();
   }
-
+  */
   INSTANTIATE(VariableMatchable)
 } // namespace srrg2_solver

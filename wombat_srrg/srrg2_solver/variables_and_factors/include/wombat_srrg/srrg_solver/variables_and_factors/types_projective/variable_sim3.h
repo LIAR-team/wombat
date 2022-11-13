@@ -14,7 +14,7 @@ namespace srrg2_solver {
     using EstimateType = VariableGeneric_<7, Similiarity3_>::EstimateType;
 
     void setZero() override;
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
     void serialize(ObjectData& odata, IdContext& context) override;
     void deserialize(ObjectData& odata, IdContext& context) override;
     void normalize() override;

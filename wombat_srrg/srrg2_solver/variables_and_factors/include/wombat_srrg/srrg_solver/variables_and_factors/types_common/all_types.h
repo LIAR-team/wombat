@@ -12,7 +12,7 @@ namespace srrg2_solver {
   class VariableVector3: public VariableVector_<3> {
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
   };
   */
   using VariableVector3 = VariableVector_<3>;

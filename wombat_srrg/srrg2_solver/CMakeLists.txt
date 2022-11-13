@@ -12,7 +12,7 @@ return()
 #find_package(OpenCV REQUIRED)
 #message("${PROJECT_NAME}|OpenCV version ${OpenCV_VERSION} found in (${OpenCV_DIR})")
 
-#ia create a package
+# create a package
 catkin_package(
   INCLUDE_DIRS
     src
@@ -30,7 +30,7 @@ catkin_package(
     srrg_cmake_modules
 )
 
-#ia include directories
+# include directories
 include_directories(
   ${PROJECT_SOURCE_DIR}/src
   ${CHOLMOD_INCLUDE_DIR}

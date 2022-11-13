@@ -14,7 +14,7 @@ target_link_libraries(test_linear_solver_block_inverse
     ${catkin_LIBRARIES}
 )
   
-#ia 2D icp test
+# 2D icp test
 catkin_add_gtest(test_se2_icp test_se2_icp.cpp)
 target_link_libraries(test_se2_icp
   srrg2_solver_core_library
@@ -75,7 +75,7 @@ target_link_libraries(test_se3_nicp
   ${catkin_LIBRARIES}
 )
 
-# #ia 3D icp test
+# # 3D icp test
 catkin_add_gtest(test_se3_icp test_se3_icp.cpp)
 target_link_libraries(test_se3_icp
   srrg2_solver_core_library
@@ -129,7 +129,7 @@ target_link_libraries(test_se2_multi_point_registration
    srrg2_solver_types2d_library
    ${catkin_LIBRARIES})
    
-# #ia 3D pgo test
+# # 3D pgo test
 catkin_add_gtest(test_se3_matchables test_se3_matchables.cpp)
 target_link_libraries(test_se3_matchables
   srrg2_solver_core_library
@@ -147,7 +147,7 @@ target_link_libraries(test_g2o_graph_converter
   ${catkin_LIBRARIES}
 )
 
-#ia moved here
+# moved here
 add_executable(factor_graph_loop_validator_test
   factor_graph_loop_validator_test.cpp)
 target_link_libraries(factor_graph_loop_validator_test

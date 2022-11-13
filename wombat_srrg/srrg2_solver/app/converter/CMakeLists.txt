@@ -1,4 +1,4 @@
-#ia converter app. given a g2o file it becames a boss graph and viceversa
+# converter app. given a g2o file it becames a boss graph and viceversa
 add_library (srrg2_g2o_converter_library
   g2o_converter_action_base.h
   g2o_converter_action_se2.h

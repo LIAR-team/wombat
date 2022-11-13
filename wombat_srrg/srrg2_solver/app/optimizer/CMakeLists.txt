@@ -1,4 +1,4 @@
-# #ia multisolver app, you give a graph, it optimizes it
+# # multisolver app, you give a graph, it optimizes it
 add_executable(solver_app_graph_optimizer solver_app_graph_optimizer.cpp)
 target_link_libraries(solver_app_graph_optimizer
   srrg2_solver_types2d_library
@@ -12,7 +12,7 @@ target_link_libraries(solver_app_graph_optimizer
   ${catkin_LIBRARIES}
 )
 
-# #ia multisolver app, you give a graph, it optimizes it
+# # multisolver app, you give a graph, it optimizes it
 add_executable(solver_app_incremental_optimizer solver_app_incremental_optimizer.cpp)
 target_link_libraries(solver_app_incremental_optimizer
   srrg2_solver_types2d_library

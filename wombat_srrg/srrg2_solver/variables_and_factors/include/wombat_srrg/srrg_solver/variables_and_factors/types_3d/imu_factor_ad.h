@@ -92,7 +92,7 @@ namespace srrg2_solver {
       this->setInformationMatrix(meas_.informationMatrix());
     }
 
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
 
   protected:
     //! @brief measurement

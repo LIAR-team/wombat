@@ -1,5 +1,5 @@
 #include "wombat_srrg/srrg_solver/solver_core/constraint_factor.h"
-#include "wombat_srrg/srrg_solver/solver_core/factor_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/factor_impl.hpp"
 #include "wombat_srrg/srrg_solver/solver_core/factor_updaters.h"
 #include <Eigen/Dense>
 namespace srrg2_solver {

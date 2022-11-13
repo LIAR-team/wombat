@@ -1,5 +1,5 @@
 #pragma once
-#include <srrg_matchable/matchable.h>
+#include <wombat_srrg/srrg_matchable/matchable.h>
 
 #include "wombat_srrg/srrg_solver/solver_core/variable.h"
 
@@ -21,6 +21,6 @@ namespace srrg2_solver {
     //! @brief deserialization of the variable through BOSS.
     void deserialize(ObjectData& odata, IdContext& context) override;
     
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
   };
 } // namespace srrg2_solver

@@ -11,7 +11,7 @@ ament_add_gtest(test_cloud_intensity test_cloud_intensity.cpp)
 target_link_libraries(
   test_cloud_intensity
     wombat_srrg::srrg2_core::srrg_image
-    wombat_srrg::srrg2_core::srrg_pcl
+    wombat_srrg::srrg2_core::pcl
 )
 
 ament_add_gtest(test_distance_map test_distance_map.cpp)
@@ -19,7 +19,7 @@ target_link_libraries(
   test_distance_map
     wombat_srrg::srrg2_core::srrg_image
     wombat_srrg::srrg2_core::srrg_path_matrix
-    wombat_srrg::srrg2_core::srrg_pcl
+    wombat_srrg::srrg2_core::pcl
     wombat_srrg::srrg2_core::system_utils
 )
 
@@ -50,7 +50,7 @@ ament_add_gtest(test_matrix_bilinear_interpolation test_matrix_bilinear_interpol
 target_link_libraries(
   test_matrix_bilinear_interpolation
     wombat_srrg::srrg2_core::data_structures
-    wombat_srrg::srrg2_core::srrg_pcl
+    wombat_srrg::srrg2_core::pcl
     wombat_srrg::srrg2_core::srrg_test
 )
 
@@ -113,7 +113,7 @@ target_link_libraries(test_profiler
   srrg2_system_utils_library
 )
 
-#ia GTEST: matchable basics
+# GTEST: matchable basics
 catkin_add_gtest(test_matchables test_matchables.cpp)
 target_link_libraries(test_matchables
   srrg2_system_utils_library

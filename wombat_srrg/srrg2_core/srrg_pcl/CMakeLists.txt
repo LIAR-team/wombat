@@ -1,5 +1,5 @@
 add_library(srrg_pcl SHARED)
-add_library(wombat_srrg::srrg2_core::srrg_pcl ALIAS srrg_pcl)
+add_library(wombat_srrg::srrg2_core::pcl ALIAS srrg_pcl)
 
 target_sources(
   srrg_pcl

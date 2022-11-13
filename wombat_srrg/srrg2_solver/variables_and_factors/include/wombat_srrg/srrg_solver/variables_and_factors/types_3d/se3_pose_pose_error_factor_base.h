@@ -23,7 +23,7 @@ namespace srrg2_solver {
       _inverse_measurement = _measurement.inverse();
     }
 
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
 
   protected:
     MeasurementType _inverse_measurement = MeasurementType::Identity();

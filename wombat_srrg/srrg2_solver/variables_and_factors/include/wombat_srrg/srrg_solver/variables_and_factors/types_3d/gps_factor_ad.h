@@ -24,7 +24,7 @@ namespace srrg2_solver {
       convertMatrix(_pose_measurement, gps_measurement_);
     }
 
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
 
   protected:
     //! @brief measurement

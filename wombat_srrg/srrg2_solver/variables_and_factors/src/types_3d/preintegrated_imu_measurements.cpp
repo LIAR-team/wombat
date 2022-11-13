@@ -1,4 +1,4 @@
-#include "preintegrated_imu_measurements.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/preintegrated_imu_measurements.h"
 namespace srrg2_solver {
   using namespace srrg2_core;
 

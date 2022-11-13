@@ -53,7 +53,7 @@ target_link_libraries(solver_app_graph_sorter
   ${catkin_LIBRARIES}
 )
 
-#ia multisolver app, you give a graph, it optimizes it
+# multisolver app, you give a graph, it optimizes it
 add_executable(solver_app_graph_incremental_reader
   solver_app_graph_incremental_reader.cpp)
 
@@ -70,7 +70,7 @@ target_link_libraries(solver_app_graph_incremental_reader
   ${catkin_LIBRARIES}
 )
 
-#ia multisolver app, you give a graph, it optimizes it
+# multisolver app, you give a graph, it optimizes it
 add_executable(solver_app_graph_evaluator
   solver_app_graph_evaluator.cpp)
 
@@ -86,7 +86,7 @@ target_link_libraries(solver_app_graph_evaluator
   ${catkin_LIBRARIES}
 )
 
-#ia multisolver app, you give a graph, it optimizes it
+# multisolver app, you give a graph, it optimizes it
 add_executable(solver_app_graph_gt_generator
   solver_app_graph_gt_generator.cpp)
 

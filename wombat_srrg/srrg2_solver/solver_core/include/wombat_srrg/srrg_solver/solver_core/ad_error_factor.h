@@ -41,3 +41,5 @@ namespace srrg2_solver {
     inline void _updateJacobianAD();
   };
 } // namespace srrg2_solver
+
+#include "ad_error_factor_impl.hpp"

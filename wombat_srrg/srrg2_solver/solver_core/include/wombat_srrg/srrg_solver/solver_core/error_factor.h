@@ -93,7 +93,8 @@ namespace srrg2_solver {
 
     /*! @return The i-th jacobian (read only) */
     template <int i>
-    inline const JacobianMatrixType<i> jacobian() const {
+    inline const JacobianMatrixType<i> jacobian() const
+    {
       return JacobianMatrixType<i>(_J.data() +
                                    ThisType::template perturbationOffset<i>() * ErrorDim);
     }
@@ -174,3 +175,5 @@ namespace srrg2_solver {
   };
 
 } // namespace srrg2_solver
+
+#include "error_factor_impl.hpp"

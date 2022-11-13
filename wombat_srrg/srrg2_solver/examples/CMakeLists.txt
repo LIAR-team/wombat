@@ -41,7 +41,7 @@ target_link_libraries(example_se2_icp
 )
 
 
-#ia example PGO 3D
+# example PGO 3D
 add_executable(example_se3_pgo example_se3_pgo.cpp)
 target_link_libraries(example_se3_pgo
   srrg2_solver_core_library

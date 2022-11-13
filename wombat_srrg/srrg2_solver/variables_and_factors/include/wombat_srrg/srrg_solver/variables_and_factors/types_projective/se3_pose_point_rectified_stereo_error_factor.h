@@ -33,6 +33,6 @@ namespace srrg2_solver {
                      const VariablePoint3& sizes_and_baseline);
     
     void errorAndJacobian(bool error_only_ = false) final;
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
   };
 } // namespace srrg2_solver

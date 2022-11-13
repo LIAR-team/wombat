@@ -2,7 +2,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/ad_error_factor.h"
 #include "wombat_srrg/srrg_solver/solver_core/factor_correspondence_driven_dynamic.h"
 #include "variable_se3_ad.h"
-#include <srrg_pcl/point_types.h>
+#include <wombat_srrg/srrg_pcl/point_types.h>
 
 namespace srrg2_solver {
   using namespace srrg2_core;

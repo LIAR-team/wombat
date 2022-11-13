@@ -21,7 +21,7 @@ namespace srrg2_solver {
 
     virtual void setZero() override;
 
-    void _drawImpl(ViewerCanvasPtr canvas_) const override;
+    //void _drawImpl(ViewerCanvasPtr canvas_) const override;
 
     void normalize() override;
 };

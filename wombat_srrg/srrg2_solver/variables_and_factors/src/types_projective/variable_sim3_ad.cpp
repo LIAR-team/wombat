@@ -1,6 +1,6 @@
 #include "variable_sim3_ad.h"
 #include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
-#include "wombat_srrg/srrg_solver/solver_core/variable_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/variable.h"
 
 namespace srrg2_solver {
   INSTANTIATE(VariableSim3EulerRightAD)

@@ -2,17 +2,17 @@
 
 //! include this: this contains all the implementations of the factors
 //! that are hidden to the modules that do not need them to avoid excessive compilation times (EVIL)
-#include "wombat_srrg/srrg_solver/solver_core/ad_error_factor_impl.cpp"
-#include "wombat_srrg/srrg_solver/solver_core/error_factor_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/ad_error_factor_impl.hpp"
+#include "wombat_srrg/srrg_solver/solver_core/error_factor_impl.hpp"
 #include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
 
 namespace srrg2_solver {
   using namespace srrg2_core;
 
   void SE2Point2PointErrorFactor::errorAndJacobian(bool error_only) {
-    const EstimateType& X = this->_variables.template at<0>()->estimate();
-    const Matrix2f& R     = X.linear();
-    _e                    = X * (*moving) - (*fixed);
+    const EstimateType& X_ = this->_variables.template at<0>()->estimate();
+    const Matrix2f& R     = X_.linear();
+    _e                    = X_ * (*moving) - (*fixed);
     if (error_only) {
       return;
     }
@@ -23,10 +23,11 @@ namespace srrg2_solver {
   INSTANTIATE(SE2Point2PointErrorFactor)
   INSTANTIATE(SE2Point2PointErrorFactorCorrespondenceDriven)
 
-  void SE2Point2PointWithSensorErrorFactor::errorAndJacobian(bool error_only) {
-    const EstimateType& X = _robot_in_sensor * this->_variables.template at<0>()->estimate();
-    const Matrix2f& R     = X.linear();
-    _e                    = X * (*moving) - (*fixed);
+  void SE2Point2PointWithSensorErrorFactor::errorAndJacobian(bool error_only)
+  {
+    const EstimateType& X_ = _robot_in_sensor * this->_variables.template at<0>()->estimate();
+    const Matrix2f& R     = X_.linear();
+    _e                    = X_ * (*moving) - (*fixed);
     if (error_only) {
       return;
     }

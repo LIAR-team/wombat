@@ -1,4 +1,4 @@
-#include "wombat_srrg/srrg_solver/solver_core/constraint_factor_impl.cpp"
+#include "wombat_srrg/srrg_solver/solver_core/constraint_factor_impl.hpp"
 #include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
 #include <wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_pose_point_range_constraint_factor.h>
 

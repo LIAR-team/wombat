@@ -51,3 +51,5 @@ namespace srrg2_solver {
   };
 
 } // namespace srrg2_solver
+
+#include "measurement_owner_impl.hpp"
