@@ -28,8 +28,16 @@ target_sources(
   srrg2_solver_types_2d
   PRIVATE
     src/types_2d/instances.cpp
+    src/types_2d/se2_plane2plane_error_factor.cpp
+    src/types_2d/se2_point2point_error_factor.cpp
+    src/types_2d/se2_pose_point_bearing_error_factor.cpp
+    src/types_2d/se2_pose_point_error_factor.cpp
+    src/types_2d/se2_pose_point_range_constraint_factor.cpp
+    src/types_2d/se2_pose_pose_chordal_error_factor.cpp
+    src/types_2d/se2_pose_pose_geodesic_error_factor.cpp
+    src/types_2d/se2_prior_error_factor.cpp
     src/types_2d/variable_se2.cpp
-    src/types_2d/variable_se2_ad.cpp  
+    src/types_2d/variable_se2_ad.cpp
 )
 target_include_directories(
   srrg2_solver_types_2d

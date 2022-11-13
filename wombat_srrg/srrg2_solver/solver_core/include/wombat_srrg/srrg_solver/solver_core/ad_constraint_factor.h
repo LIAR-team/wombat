@@ -41,4 +41,7 @@ namespace srrg2_solver {
     template <int idx>
     inline void _updateJacobianAD();
   };
+
 } // namespace srrg2_solver
+
+#include "ad_constraint_factor_impl.hpp"

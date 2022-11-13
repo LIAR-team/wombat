@@ -3,7 +3,7 @@
 #include <wombat_srrg/srrg_system_utils/parse_command_line.h>
 #include <wombat_srrg/srrg_system_utils/shell_colors.h>
 
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
+//#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 #include "wombat_srrg/srrg_solver/solver_core/linear_solvers/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"

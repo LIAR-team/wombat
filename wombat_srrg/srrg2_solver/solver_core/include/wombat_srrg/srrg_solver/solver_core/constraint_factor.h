@@ -156,3 +156,5 @@ namespace srrg2_solver {
   };
 
 } // namespace srrg2_solver
+
+#include "constraint_factor_impl.hpp"

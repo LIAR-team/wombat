@@ -1,4 +1,4 @@
-#include "se2_point2point_error_factor.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_point2point_error_factor.h"
 
 //! include this: this contains all the implementations of the factors
 //! that are hidden to the modules that do not need them to avoid excessive compilation times (EVIL)

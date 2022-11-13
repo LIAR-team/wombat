@@ -3,24 +3,28 @@
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 
 //! we try to instantiate all solvers
-namespace srrg2_solver {
-  using namespace srrg2_core;
+namespace srrg2_solver
+{
 
-  // this is the function you have to call to initialize
-  // the serialization subsystem
-  void variables_and_factors_2d_registerTypes() {
-    BOSS_REGISTER_CLASS(VariableSE2Right);
-    BOSS_REGISTER_CLASS(VariableSE2RightAD);
-    BOSS_REGISTER_CLASS(SE2PosePoseGeodesicErrorFactor);
-    BOSS_REGISTER_CLASS(SE2PosePoseChordalErrorFactor);
-    BOSS_REGISTER_CLASS(SE2PosePointErrorFactor);
+using namespace srrg2_core;
 
-    BOSS_REGISTER_CLASS(SE2PosePointBearingErrorFactor);
-    BOSS_REGISTER_CLASS(SE2PriorErrorFactor);
-    BOSS_REGISTER_CLASS(SE2Point2PointErrorFactorCorrespondenceDriven);
-    BOSS_REGISTER_CLASS(SE2Plane2PlaneErrorFactorCorrespondenceDriven);
-    BOSS_REGISTER_CLASS(SE2Point2PointWithSensorErrorFactorCorrespondenceDriven);
-    BOSS_REGISTER_CLASS(SE2Plane2PlaneWithSensorErrorFactorCorrespondenceDriven);
-    BOSS_REGISTER_CLASS(SE2PosePointRangeConstraintFactor);
-  }
+// this is the function you have to call to initialize
+// the serialization subsystem
+void variables_and_factors_2d_registerTypes()
+{
+  BOSS_REGISTER_CLASS(VariableSE2Right);
+  BOSS_REGISTER_CLASS(VariableSE2RightAD);
+  BOSS_REGISTER_CLASS(SE2PosePoseGeodesicErrorFactor);
+  BOSS_REGISTER_CLASS(SE2PosePoseChordalErrorFactor);
+  BOSS_REGISTER_CLASS(SE2PosePointErrorFactor);
+
+  BOSS_REGISTER_CLASS(SE2PosePointBearingErrorFactor);
+  BOSS_REGISTER_CLASS(SE2PriorErrorFactor);
+  BOSS_REGISTER_CLASS(SE2Point2PointErrorFactorCorrespondenceDriven);
+  BOSS_REGISTER_CLASS(SE2Plane2PlaneErrorFactorCorrespondenceDriven);
+  BOSS_REGISTER_CLASS(SE2Point2PointWithSensorErrorFactorCorrespondenceDriven);
+  BOSS_REGISTER_CLASS(SE2Plane2PlaneWithSensorErrorFactorCorrespondenceDriven);
+  BOSS_REGISTER_CLASS(SE2PosePointRangeConstraintFactor);
+}
+
 } // namespace srrg2_solver

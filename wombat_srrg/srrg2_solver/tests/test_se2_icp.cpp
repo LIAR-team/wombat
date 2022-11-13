@@ -6,7 +6,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/linear_solvers/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
+//#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 
 const std::string exe_name = "test_se2_icp";

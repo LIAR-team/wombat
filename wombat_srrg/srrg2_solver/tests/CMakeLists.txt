@@ -8,11 +8,38 @@ target_link_libraries(
   wombat_srrg::srrg2_solver::core
 )
 
+# 2D icp test
 ament_add_gtest(test_se2_icp test_se2_icp.cpp)
 target_link_libraries(
   test_se2_icp
   wombat_srrg::srrg2_solver::types_2d
   wombat_srrg::srrg2_solver::core
+)
+
+# 2D n(ormal)-icp test
+ament_add_gtest(test_se2_nicp test_se2_nicp.cpp)
+target_link_libraries(
+  test_se2_nicp
+  wombat_srrg::srrg2_solver::types_2d
+  wombat_srrg::srrg2_solver::core
+)
+
+# prior factors SE2
+ament_add_gtest(test_se2_prior_factor test_se2_prior_factor.cpp)
+target_link_libraries(
+  test_se2_prior_factor
+  wombat_srrg::srrg2_solver::types_2d
+  wombat_srrg::srrg2_solver::core
+)
+
+# pose pose offset with se2 variable
+ament_add_gtest(test_se2_extrinsic_motion_calib test_se2_extrinsic_motion_calib.cpp)
+target_link_libraries(
+  test_se2_extrinsic_motion_calib
+  wombat_srrg::srrg2_solver::core
+  wombat_srrg::srrg2_solver::types_calib
+  wombat_srrg::srrg2_solver::types_2d
+  wombat_srrg::srrg2_solver::types_3d
 )
 
 
@@ -21,31 +48,7 @@ return()
 ####################
 
 
-
-# 2D icp test
-catkin_add_gtest(test_se2_icp test_se2_icp.cpp)
-target_link_libraries(test_se2_icp
-  srrg2_solver_core_library
-  srrg2_solver_types2d_library
-  ${catkin_LIBRARIES}
-)
-
-# #bdc 2D n(ormal)-icp test
-catkin_add_gtest(test_se2_nicp test_se2_nicp.cpp)
-target_link_libraries(test_se2_nicp
-  srrg2_solver_core_library
-  srrg2_solver_types2d_library
-  ${catkin_LIBRARIES}
-)
-# tg prior factors SE2
-catkin_add_gtest(test_se2_prior_factor test_se2_prior_factor.cpp)
-target_link_libraries(test_se2_prior_factor
-  srrg2_solver_core_library
-  srrg2_solver_types2d_library
-  ${catkin_LIBRARIES}
-)
-
-# # ldg test pose pose offset with se2 variable
+# test pose pose offset with se2 variable
 catkin_add_gtest(test_se2_extrinsic_motion_calib test_se2_extrinsic_motion_calib.cpp)
 target_link_libraries(test_se2_extrinsic_motion_calib
   srrg2_solver_core_library
@@ -56,7 +59,7 @@ target_link_libraries(test_se2_extrinsic_motion_calib
 )
 
 
-# ldg test pose pose offset with se3 variable
+# test pose pose offset with se3 variable
 catkin_add_gtest(test_se3_extrinsic_motion_calib test_se3_extrinsic_motion_calib.cpp)
 target_link_libraries(test_se3_extrinsic_motion_calib
 srrg2_solver_core_library
@@ -67,7 +70,7 @@ ${catkin_LIBRARIES}
 )
 
 
-#tg prior factors SE3
+# prior factors SE3
 catkin_add_gtest(test_se3_prior_factor test_se3_prior_factor.cpp)
 target_link_libraries(test_se3_prior_factor
   srrg2_solver_core_library
@@ -91,7 +94,7 @@ target_link_libraries(test_se3_icp
   ${catkin_LIBRARIES}
 )
 
-#bdc 3D motion-based-calibration test
+# 3D motion-based-calibration test
 catkin_add_gtest(test_se3_motion_based_calib test_se3_motion_based_calib.cpp)
 target_link_libraries(test_se3_motion_based_calib
   srrg2_solver_core_library
@@ -99,7 +102,7 @@ target_link_libraries(test_se3_motion_based_calib
   ${catkin_LIBRARIES}
 )
 
-# #tg pose point offset test
+# pose point offset test
 catkin_add_gtest(test_se3_multi_point_registration test_se3_multi_point_registration.cpp)
 target_link_libraries(test_se3_multi_point_registration
   srrg2_solver_core_library
@@ -107,7 +110,7 @@ target_link_libraries(test_se3_multi_point_registration
   ${catkin_LIBRARIES}
 )
 
-# tg 3D pgo test
+# 3D pgo test
 catkin_add_gtest(test_se3_pgo test_se3_pgo.cpp)
 target_link_libraries(test_se3_pgo
   srrg2_solver_core_library
@@ -115,7 +118,7 @@ target_link_libraries(test_se3_pgo
   ${catkin_LIBRARIES}
 )
 
-# #tg test cholmod linear solver on se3 pgo problems
+# test cholmod linear solver on se3 pgo problems
 catkin_add_gtest(test_sparse_block_linear_solver_cholmod_full test_sparse_block_linear_solver_cholmod_full.cpp)
 target_link_libraries(test_sparse_block_linear_solver_cholmod_full
   srrg2_solver_core_library
@@ -123,21 +126,21 @@ target_link_libraries(test_sparse_block_linear_solver_cholmod_full
   ${catkin_LIBRARIES}
 )
 
-# #tg se2 pgo test using pose pose chordal error factor (no AD)
+# se2 pgo test using pose pose chordal error factor (no AD)
 catkin_add_gtest(test_se2_pgo test_se2_pgo.cpp)
 target_link_libraries(test_se2_pgo
    srrg2_solver_core_library
    srrg2_solver_types2d_library
    ${catkin_LIBRARIES})
 
-# #tg se2 pose point factor test 
+# se2 pose point factor test 
 catkin_add_gtest(test_se2_multi_point_registration test_se2_multi_point_registration.cpp)
 target_link_libraries(test_se2_multi_point_registration
    srrg2_solver_core_library
    srrg2_solver_types2d_library
    ${catkin_LIBRARIES})
    
-# # 3D pgo test
+# 3D pgo test
 catkin_add_gtest(test_se3_matchables test_se3_matchables.cpp)
 target_link_libraries(test_se3_matchables
   srrg2_solver_core_library
@@ -145,7 +148,7 @@ target_link_libraries(test_se3_matchables
   ${catkin_LIBRARIES}
 )
 
-#ds g2o converter test
+# g2o converter test
 catkin_add_gtest(test_g2o_graph_converter test_g2o_graph_converter.cpp)
 target_link_libraries(test_g2o_graph_converter
   srrg2_solver_core_library
@@ -155,7 +158,6 @@ target_link_libraries(test_g2o_graph_converter
   ${catkin_LIBRARIES}
 )
 
-# moved here
 add_executable(factor_graph_loop_validator_test
   factor_graph_loop_validator_test.cpp)
 target_link_libraries(factor_graph_loop_validator_test
@@ -170,7 +172,7 @@ target_link_libraries(factor_graph_loop_validator_test
   ${catkin_LIBRARIES}
 )
 
-# tg dominik factors in new format
+# factors in new format
 catkin_add_gtest(test_se3_posit test_se3_posit.cpp)
 target_link_libraries(test_se3_posit
   srrg2_solver_projective_library
@@ -178,7 +180,7 @@ target_link_libraries(test_se3_posit
 )
 
 
-# ldg test similiarity variable
+# test similiarity variable
 catkin_add_gtest(test_sim3 test_sim3.cpp)
 target_link_libraries(test_sim3
   srrg2_solver_core_library
@@ -186,7 +188,7 @@ target_link_libraries(test_sim3
   ${catkin_LIBRARIES}
 )
 
-# ldg test pgo with sim3 variable
+# test pgo with sim3 variable
 catkin_add_gtest(test_sim3_pgo test_sim3_pgo.cpp)
  target_link_libraries(test_sim3_pgo
    srrg2_solver_core_library
@@ -194,7 +196,7 @@ catkin_add_gtest(test_sim3_pgo test_sim3_pgo.cpp)
    ${catkin_LIBRARIES}
 )
 
-# add imu test
+# imu test
 #catkin_add_gtest(test_imu test_imu.cpp)
 #target_link_libraries(test_imu
 #   srrg2_solver_core_library
@@ -202,7 +204,7 @@ catkin_add_gtest(test_sim3_pgo test_sim3_pgo.cpp)
 #   ${catkin_LIBRARIES}
 #)
 
-# ldg test icp with sim3 variable
+# test icp with sim3 variable
 # catkin_add_gtest(test_sim3_icp test_sim3_icp.cpp)
 # target_link_libraries(test_sim3_icp
 #   srrg2_solver_core_library

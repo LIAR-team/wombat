@@ -7,7 +7,6 @@
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
 // include types stuff (instances)
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 
 const std::string exe_name = "test_se2_nicp";
@@ -19,12 +18,14 @@ using namespace srrg2_solver;
 const size_t n_meas       = 1000;
 const size_t n_iterations = 20;
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 
-TEST(DUMMY_DATA, SE2Plane2PlaneErrorFactor) {
+TEST(DUMMY_DATA, SE2Plane2PlaneErrorFactor)
+{
   using VariableType    = VariableSE2Right;
   using VariablePtrType = std::shared_ptr<VariableType>;
   using FactorType      = SE2Plane2PlaneErrorFactorCorrespondenceDriven;
@@ -90,7 +91,8 @@ TEST(DUMMY_DATA, SE2Plane2PlaneErrorFactor) {
   LOG << stats << std::endl;
 }
 
-TEST(DUMMY_DATA, SE2Plane2PlaneWithSensorErrorFactor) {
+TEST(DUMMY_DATA, SE2Plane2PlaneWithSensorErrorFactor)
+{
   using VariableType    = VariableSE2Right;
   using VariablePtrType = std::shared_ptr<VariableType>;
   using FactorType      = SE2Plane2PlaneWithSensorErrorFactorCorrespondenceDriven;

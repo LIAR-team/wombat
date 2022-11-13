@@ -2,30 +2,33 @@
 #include "wombat_srrg/srrg_solver/solver_core/instance_macros.h"
 #include "wombat_srrg/srrg_solver/solver_core/variable.h"
 
-namespace srrg2_solver {
-  using namespace srrg2_core;
+namespace srrg2_solver
+{
 
-  template <typename VariableSE2_>
-  VariableSE2AD_<VariableSE2_>::~VariableSE2AD_(){}
+using namespace srrg2_core;
 
-  template <typename VariableSE2_>
-  void VariableSE2AD_<VariableSE2_>::applyPerturbationAD(const ADPerturbationVectorType& pert) {
-    ADEstimateType pert_m;
-    pert_m = geometry2d::v2t(pert);
+template <typename VariableSE2_>
+VariableSE2AD_<VariableSE2_>::~VariableSE2AD_(){}
 
-    switch (VariableType::PerturbationSide) {
-    case VariableSE2Base::Left:
-      ADVariableType::_ad_estimate = pert_m * ADVariableType::_ad_estimate;
-      break;
-    case VariableSE2Base::Right:
-      ADVariableType::_ad_estimate = ADVariableType::_ad_estimate * pert_m;
-      break;
-    default:
-      assert(0);
-    }
+template <typename VariableSE2_>
+void VariableSE2AD_<VariableSE2_>::applyPerturbationAD(const ADPerturbationVectorType& pert)
+{
+  ADEstimateType pert_m;
+  pert_m = geometry2d::v2t(pert);
+
+  switch (VariableType::PerturbationSide) {
+  case VariableSE2Base::Left:
+    ADVariableType::_ad_estimate = pert_m * ADVariableType::_ad_estimate;
+    break;
+  case VariableSE2Base::Right:
+    ADVariableType::_ad_estimate = ADVariableType::_ad_estimate * pert_m;
+    break;
+  default:
+    assert(0);
   }
+}
 
-  INSTANTIATE(VariableSE2RightAD)
-  INSTANTIATE(VariableSE2LeftAD)
+INSTANTIATE(VariableSE2RightAD)
+INSTANTIATE(VariableSE2LeftAD)
   
 } // namespace srrg2_solver
