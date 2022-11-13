@@ -23,7 +23,7 @@
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/se3_pose_point_omni_ba_error_factor.h"
 
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/instances.h"
 #include "wombat_srrg/srrg_solver/utils/instances.h"

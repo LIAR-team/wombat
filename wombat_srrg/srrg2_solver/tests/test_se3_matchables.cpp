@@ -12,12 +12,12 @@
 #include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_lm.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
 // include types stuff (instances)
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
 const std::string exe_name = "test_se3_matchables";
 #define LOG std::cerr << exe_name + "|"
-const std::string data_folder(SRRG2_SOLVER_DATA_FOLDER);
+const std::string data_folder("/tmp");
 
 using namespace srrg2_core;
 using namespace srrg2_solver;

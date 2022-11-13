@@ -7,7 +7,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
 // include types stuff (instances)
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
 const std::string exe_name = "test_se3_motion_based_calib";
@@ -21,7 +21,8 @@ const size_t n_meas       = 100;
 const size_t n_iterations = 20;
 
 /* This function generates a fake relative 3d isometry */
-Isometry3f randomRelativeIso() {
+static Isometry3f randomRelativeIso()
+{
   const float tmax = 0.1;
   float x          = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / tmax));
   float y          = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / tmax));
@@ -36,12 +37,14 @@ Isometry3f randomRelativeIso() {
   return rand_iso;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 
-TEST(DUMMY_DATA, SE3PoseMotionErrorFactorAD) {
+TEST(DUMMY_DATA, SE3PoseMotionErrorFactorAD)
+{
   using VariableType    = VariableSE3QuaternionRightAD;
   using VariablePtrType = std::shared_ptr<VariableType>;
   using FactorType      = SE3PoseMotionErrorFactorDataDriven;

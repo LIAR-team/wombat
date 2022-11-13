@@ -12,7 +12,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
 // include types stuff (instances)
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 
 
@@ -33,12 +33,14 @@ void createGTTrajectory(const size_t& n_poses_,
                         const Isometry3f& offset_,
                         Isometry3fVector& gt_trajectory_,
                         Vector3fVector& landmarks);
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 
-TEST(SYNTHETIC_DATA, SE3PosePointOffsetErrorFactor) {
+TEST(SYNTHETIC_DATA, SE3PosePointOffsetErrorFactor)
+{
   using PoseVariableType     = VariableSE3QuaternionRight;
   using PointVariableType    = VariablePoint3;
   using FactorType           = SE3PosePointOffsetErrorFactor;
@@ -107,14 +109,14 @@ TEST(SYNTHETIC_DATA, SE3PosePointOffsetErrorFactor) {
   for (size_t p = 0; p < num_poses; ++p) {
     const Isometry3f& pose = ground_truth_poses.at(p);
     for (size_t l = 0; l < num_landmarks; ++l) {
-      const Vector3f& point = ground_truth_landmarks.at(l);
-      if ((point - pose.translation()).norm() < perception_range) {
+      const Vector3f& point_it = ground_truth_landmarks.at(l);
+      if ((point_it - pose.translation()).norm() < perception_range) {
         f = new FactorType;
         f->setVariableId(0, poses[p]->graphId());
         f->setVariableId(1, landmarks[l]->graphId());
         f->setVariableId(2, v_offset->graphId());
         const Isometry3f total_transform = pose * offset;
-        f->setMeasurement(total_transform.inverse() * point);
+        f->setMeasurement(total_transform.inverse() * point_it);
         graph->addFactor(FactorBasePtr(f));
         factors.emplace_back(f);
       }
@@ -208,13 +210,13 @@ TEST(SYNTHETIC_DATA, SE3PosePointErrorFactor) {
   for (size_t p = 0; p < num_poses; ++p) {
     const Isometry3f& pose = ground_truth_poses.at(p);
     for (size_t l = 0; l < num_landmarks; ++l) {
-      const Vector3f& point = ground_truth_landmarks.at(l);
-      if ((point - pose.translation()).norm() < perception_range) {
+      const Vector3f& point_it = ground_truth_landmarks.at(l);
+      if ((point_it - pose.translation()).norm() < perception_range) {
         f = new FactorType;
         f->setVariableId(0, poses[p]->graphId());
         f->setVariableId(1, landmarks[l]->graphId());
         const Isometry3f total_transform = pose * offset;
-        f->setMeasurement(total_transform.inverse() * point);
+        f->setMeasurement(total_transform.inverse() * point_it);
         graph->addFactor(FactorBasePtr(f));
         factors.emplace_back(f);
       }

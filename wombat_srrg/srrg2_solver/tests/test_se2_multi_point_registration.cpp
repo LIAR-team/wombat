@@ -5,7 +5,6 @@
 #include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_lm.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
 
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 
 using namespace srrg2_core;
@@ -18,12 +17,14 @@ size_t num_landmarks  = 100;
 size_t num_poses      = 100;
 size_t num_iterations = 20;
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 
-TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
+TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor)
+{
   using FactorType           = SE2PosePointErrorFactor;
   using VariablePoseType     = VariableSE2Right;
   using VariablePointType    = VariablePoint2;
@@ -98,9 +99,9 @@ TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
       f = new FactorType();
       f->setVariableId(0, poses[p]->graphId());
       f->setVariableId(1, landmarks[l]->graphId());
-      const Isometry2f& T   = ground_truth_poses[p];
-      const Vector2f& point = ground_truth_landmarks[l];
-      f->setMeasurement(T.inverse() * point);
+      const Isometry2f& T_   = ground_truth_poses[p];
+      const Vector2f& point_ = ground_truth_landmarks[l];
+      f->setMeasurement(T_.inverse() * point_);
       graph->addFactor(FactorBasePtr(f));
       factors.emplace_back(f);
     }
@@ -123,7 +124,8 @@ TEST(SYNTHETIC_DATA, SE2PosePointErrorFactor) {
   ASSERT_LT(chi_square, 1e-6);
 }
 
-TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor) {
+TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor)
+{
   using FactorType           = SE2PosePointBearingErrorFactor;
   using VariablePoseType     = VariableSE2Right;
   using VariablePointType    = VariablePoint2;
@@ -200,9 +202,9 @@ TEST(SYNTHETIC_DATA, SE2PosePointBearingErrorFactor) {
       f = new FactorType;
       f->setVariableId(0, poses[p]->graphId());
       f->setVariableId(1, landmarks[l]->graphId());
-      const Isometry2f& T            = ground_truth_poses[p];
-      const Vector2f& point          = ground_truth_landmarks[l];
-      const Vector2f predicted_point = T.inverse() * point;
+      const Isometry2f& T_            = ground_truth_poses[p];
+      const Vector2f& point_          = ground_truth_landmarks[l];
+      const Vector2f predicted_point = T_.inverse() * point_;
       float angle                    = std::atan2(predicted_point(1), predicted_point(0));
       f->setMeasurement(Vector1f(angle));
       graph->addFactor(FactorBasePtr(f));

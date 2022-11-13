@@ -17,7 +17,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
 #include "wombat_srrg/srrg_solver/solver_core/termination_criteria.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/instances.h"
 #include "wombat_srrg/srrg_solver/utils/instances.h"
 

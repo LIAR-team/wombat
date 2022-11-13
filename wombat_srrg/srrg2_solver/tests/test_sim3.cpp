@@ -5,7 +5,6 @@
 #include <wombat_srrg/srrg_system_utils/shell_colors.h>
 
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/all_types.h"
 
 const std::string exe_name = "test_sim3";
@@ -14,12 +13,14 @@ const std::string exe_name = "test_sim3";
 using namespace srrg2_core;
 using namespace srrg2_solver;
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 
-TEST(Sim3Variable, Sim3SolverVariable) {
+TEST(Sim3Variable, Sim3SolverVariable)
+{
   // testing variable sim3 and pertubation
   Vector7f pert;
   pert << 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.f;
@@ -85,7 +86,8 @@ TEST(Sim3Variable, Sim3SolverVariable) {
   ASSERT_LT(diff_ql(6), 1e-5);
 }
 
-TEST(Sim3VariableAD, Sim3SolverVariable) {
+TEST(Sim3VariableAD, Sim3SolverVariable)
+{
   // testing variable sim3 autodiff and pertubation quaternion right only
   VariableSim3QuaternionRightAD var;
   Vector7_<DualValuef> pert;

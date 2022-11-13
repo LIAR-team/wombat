@@ -3,7 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 #include "wombat_srrg/srrg_solver/solver_core/factor_graph.h"
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"

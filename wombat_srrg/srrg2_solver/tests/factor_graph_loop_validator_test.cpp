@@ -1,3 +1,6 @@
+#include <gtest/gtest.h>
+
+
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 //#include "wombat_srrg/srrg_solver/solver_core/linear_solvers/instances.h"
 // #include "wombat_srrg/srrg_solver/solver_core/linear_solvers/sparse_block_linear_solver_cholesky_csparse.h"
@@ -9,19 +12,23 @@ using namespace srrg2_core;
 using FactorSE2= SE2PosePoseGeodesicErrorFactor;
 
 
-void printClosures(const FactorGraphClosureValidator::ClosureStatsMap& closures) {
+static void printClosures(
+  const FactorGraphClosureValidator::ClosureStatsMap& closures)
+{
   for (auto c_it = closures.begin(); c_it != closures.end(); ++c_it) {
     auto& stats = c_it->second;
     std::cerr << "f: " << c_it->first << " n_checks: " << stats.num_times_checked
-              << " n_ok: " << stats.num_times_good << std::endl;
+    << " n_ok: " << stats.num_times_good << std::endl;
   }
 }
 
-void addCircle(FactorGraphPtr graph,
-               float radius,
-               int segments,
-               int start_id             = 0,
-               const Isometry2f& origin = Isometry2f::Identity()) {
+static void addCircle(
+  FactorGraphPtr graph,
+  float radius,
+  int segments,
+  int start_id             = 0,
+  const Isometry2f& origin = Isometry2f::Identity())
+{
   std::vector<std::shared_ptr<VariableSE2RightAD>> variables(segments);
   float alpha    = 0;
   float d_alpha  = 2 * M_PI / segments;
@@ -55,7 +62,14 @@ void addCircle(FactorGraphPtr graph,
   }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+
+TEST(loop_validator, test_executable)
+{
   std::vector<std::shared_ptr<FactorBase>> closures;
   FactorGraphPtr graph(new FactorGraph);
   addCircle(graph, 5, 10);

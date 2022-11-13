@@ -1,11 +1,10 @@
 #include <random>
 #include <wombat_srrg/srrg_data_structures/correspondence.h>
-#include <srrg_test/synthetic_world.hpp>
+#include <wombat_srrg/srrg_test/synthetic_world.hpp>
 
 #include "wombat_srrg/srrg_solver/solver_core/instances.h"
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/instances.h"
+
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/all_types.h"
 

@@ -5,7 +5,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/linear_solvers/instances.h"
 
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+
 
 #include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_gn.h"
 #include "wombat_srrg/srrg_solver/solver_core/iteration_algorithm_lm.h"

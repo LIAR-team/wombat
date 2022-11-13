@@ -13,7 +13,7 @@
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
 // include types stuff (instances)
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/all_types.h"
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
+
 
 const std::string exe_name = "test_se3_pgo";
 #define LOG std::cerr << exe_name + "|"

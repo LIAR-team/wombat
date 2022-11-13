@@ -2,8 +2,8 @@
 
 #include "g2o_converter.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h"
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_calib/instances.h"
+
+
 
 
 namespace srrg2_solver {

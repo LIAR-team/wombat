@@ -12,7 +12,6 @@
 #include "wombat_srrg/srrg_solver/solver_core/solver.h"
 
 // ldg include variable stuff
-#include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/sim3_pose_pose_error_factor_ad.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_projective/variable_sim3.h"
 

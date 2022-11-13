@@ -3,7 +3,6 @@
 
 #pragma once
 #include "wombat_srrg/srrg_data_structures/correspondence.h"
-#include "wombat_srrg/srrg_messages/instances.h"
 #include "wombat_srrg/srrg_pcl/instances.h"
 #include "test_helper.hpp"
 
