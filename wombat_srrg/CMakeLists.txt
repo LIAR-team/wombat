@@ -25,7 +25,7 @@ message(WARNING "CXSparse LIB ${CXSPARSE_LIBRARIES}")
 message(WARNING "CXSparse INC ${CXSPARSE_INCLUDE_DIRS}")
 
 
-wombat_package()
+wombat_package(NO_WOMBAT_LINTERS)
 
 add_subdirectory(hbst)
 add_subdirectory(srrg2_core)

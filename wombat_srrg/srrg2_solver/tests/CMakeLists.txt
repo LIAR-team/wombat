@@ -1,19 +1,20 @@
-#gg: peculiar libraries moved to the app they belong
-#    the tests are for sanity
-#gg: I moved some peculiar library together with the only app that uses it
-include_directories(
-  ${PROJECT_SOURCE_DIR}
-  )
+find_package(ament_cmake_gtest REQUIRED)
 
-#tg block inversion
-catkin_add_gtest(test_linear_solver_block_inverse test_linear_solver_block_inverse.cpp)
-target_link_libraries(test_linear_solver_block_inverse
-    srrg2_solver_core_library
-    srrg2_boss_library
-    srrg2_property_library
-    ${catkin_LIBRARIES}
+ament_add_gtest(test_linear_solver_block_inverse test_linear_solver_block_inverse.cpp)
+target_link_libraries(
+  test_linear_solver_block_inverse
+  wombat_srrg::srrg2_core::boss
+  wombat_srrg::srrg2_core::property
+  wombat_srrg::srrg2_solver::core
 )
-  
+
+
+return()
+
+####################
+
+
+
 # 2D icp test
 catkin_add_gtest(test_se2_icp test_se2_icp.cpp)
 target_link_libraries(test_se2_icp

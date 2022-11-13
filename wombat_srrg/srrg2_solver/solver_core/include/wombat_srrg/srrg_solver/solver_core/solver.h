@@ -29,7 +29,8 @@ public:
 
   /*! Solver status, used to understand whether the optimization was successful or not*/
   enum SolverStatus : int { Error = -1, Ready = 0, Processing = 1, Success = 2 };
-  enum SolverEvent : int {
+  enum SolverEvent : int
+  {
     ComputeStart   = 0,
     ComputeEnd     = 1,
     IterationStart = 2,
@@ -95,8 +96,9 @@ public:
   /*! @return The factor graph interface shared pointer */
   FactorGraphInterface& graph()
   {
-    if (!_graph)
+    if (!_graph) {
       throw std::runtime_error("graph is not set, cannot dereference it");
+    }
     return *_graph;
   }
 
@@ -187,30 +189,35 @@ public:
   {
     return _iteration_stats;
   }
+
   /*! Clear stats */
   inline void clearIterationStats()
   {
     _current_iteration = 0;
     _iteration_stats.clear();
   }
+
   /*! @return Statistics of the measurements */
   inline const FactorStatsVector& measurementStats(const int& level_ = 0) const
   {
     auto it = _factor_stats.find(level_);
     return it->second;
   }
+
   /*! @return Statistics of the last iteration in the optimization */
   inline const IterationStats& lastIterationStats() const
   {
     return *_iteration_stats.rbegin();
   }
+
   /*! @return current iteration */
   inline const int& currentIteration() const
   {
     return _current_iteration;
   }
 
-  inline int status() const {
+  inline int status() const
+  {
     return _status;
   }
 
@@ -225,11 +232,13 @@ public:
   bool cmdStats(std::string& response);
 
   /*! Current level of the optimization, used when the problem is hierarchical */
-  inline int currentLevel() const {
+  inline int currentLevel() const
+  {
     return _current_level;
   }
 
-  bool levelChanged() const {
+  bool levelChanged() const
+  {
     return _level_changed;
   }
 
@@ -237,9 +246,10 @@ protected:
   /*! Extract a single diagonal block of a variable.
     Returns null of the variable is not defined, it is fixed
   */
-  const MatrixBlockBase* _extractFisherInformationBlock(bool& transposed,
-                                                        const VariableBase& variable1_,
-                                                        const VariableBase& variable2_) const;
+  const MatrixBlockBase* _extractFisherInformationBlock(
+    bool& transposed,
+    const VariableBase& variable1_,
+    const VariableBase& variable2_) const;
 
   /*! Assign to each factor type the corresponding robustifier, following the robustifier_policy
     */

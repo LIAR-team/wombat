@@ -6,6 +6,10 @@ add_subdirectory(variables_and_factors)
 add_subdirectory(utils)
 add_subdirectory(solver_incremental)
 
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
+
 return()
 
 

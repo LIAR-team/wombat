@@ -11,23 +11,27 @@
 
 #include <wombat_srrg/srrg_system_utils/parse_command_line.h>
 #include <wombat_srrg/srrg_system_utils/shell_colors.h>
+
 using namespace srrg2_core;
 using namespace srrg2_solver;
 using namespace Eigen;
 using namespace std;
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 
-TEST(MARGINAL_COVARIANCE, SparseBlockLinearSolverCholmodFull) {
+TEST(MARGINAL_COVARIANCE, SparseBlockLinearSolverCholmodFull)
+{
   // Define block sizes
   int block_size[] = {3, 3, 6};
   // Value on the diagonal
   float diag_value = 10;
   // Number of blocks
   int n = sizeof(block_size) / sizeof(int);
+
   // Required to register block allocation
   Solver slv;
   // Define dimensions and num elements on the diagonal
@@ -68,13 +72,13 @@ TEST(MARGINAL_COVARIANCE, SparseBlockLinearSolverCholmodFull) {
   double time = sc.toc();
   std::cerr << FG_YELLOW(" Time : ") << time << std::endl;
   MatrixBlockBase* block = x.blockAt(1, 1);
-  Matrix3f A11           = block->eigenType<Matrix3f>();
+  Matrix3f A11 = block->eigenType<Matrix3f>();
 
   ASSERT_FLOAT_EQ(A11(0, 0), 0.10059022);
   ASSERT_FLOAT_EQ(A11(1, 1), 0.10266787);
   ASSERT_FLOAT_EQ(A11(2, 2), 0.10006254);
 
-  block                   = x.blockAt(1, 2);
+  block = x.blockAt(1, 2);
   Matrix<float, 3, 6> A12 = block->eigenType<Matrix<float, 3, 6>>();
 
   ASSERT_FLOAT_EQ(A12(0, 3), -0.0077052107);
@@ -82,7 +86,8 @@ TEST(MARGINAL_COVARIANCE, SparseBlockLinearSolverCholmodFull) {
   ASSERT_FLOAT_EQ(A12(2, 5), 0.0025015634);
 }
 
-TEST(MARGINAL_COVARIANCE, SparseBlockLinearSolverCholesky) {
+TEST(MARGINAL_COVARIANCE, SparseBlockLinearSolverCholesky)
+{
   std::cerr << FG_RED("NEED GIORGIO HELP TO FIX VECTORIZE, THIS TEST GIVES SEGFAULT ON CI FOR "
                       "UBUNTU 20.04 Release")
             << std::endl;

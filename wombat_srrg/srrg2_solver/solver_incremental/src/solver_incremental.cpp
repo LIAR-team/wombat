@@ -58,7 +58,7 @@ void SolverIncremental::setGraph(FactorGraphPtr graph_)
 }
 
 // call once, passing the factor pool that is new since the last epoch
-VariableBase::Id SolverIncremental::compute(const IdSet& factor_ids, bool force)
+VariableBase::Id SolverIncremental::compute(const IdSet & factor_ids, bool force)
 {
   (void)force;
 
@@ -123,8 +123,7 @@ VariableBase::Id SolverIncremental::compute(const IdSet& factor_ids, bool force)
         fixed_variables.insert(v_id);
       }
     }
-    
-    
+
     _local_gauge->setStatus(VariableBase::Fixed);
     for (auto v_id: fixed_variables) {
       VariableBase* v=_graph->variable(v_id);
