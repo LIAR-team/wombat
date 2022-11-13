@@ -24,7 +24,9 @@ namespace srrg2_core {
       _value = value_;
     }
 
+#pragma GCC diagnostic ignored "-Wnull-dereference"
     PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
     void copyTo(PropertyBase& other_) override {
       ThisType& other = dynamic_cast<ThisType&>(other_);

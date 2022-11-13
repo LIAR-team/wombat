@@ -45,7 +45,9 @@ namespace srrg2_core {
       _value(value_) {
     }
 
+#pragma GCC diagnostic ignored "-Wnull-dereference"
     PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
     int rows() const override {
       return _value.rows();

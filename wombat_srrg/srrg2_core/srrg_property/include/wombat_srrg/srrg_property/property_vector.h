@@ -45,7 +45,10 @@ namespace srrg2_core {
     inline void pushBack(const T& v) {
       this->_value.push_back(v);
     }
+
+#pragma GCC diagnostic ignored "-Wnull-dereference"
     PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
     inline const typename ValueType::value_type& value(int idx) const {
       return this->_value[idx];

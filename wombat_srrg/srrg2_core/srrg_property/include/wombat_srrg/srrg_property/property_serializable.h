@@ -27,7 +27,9 @@ namespace srrg2_core {
       (void)flag;
     }
 
+#pragma GCC diagnostic ignored "-Wnull-dereference"
     PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
     void serialize(ObjectData& odata, IdContext& context) override {
       ObjectData* inner_data = new ObjectData;

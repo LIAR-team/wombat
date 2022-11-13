@@ -40,9 +40,11 @@ public:
 
   inline void touch()
   {
+#pragma GCC diagnostic ignored "-Wnull-dereference"
     if (_changed_flag) {
       *_changed_flag = true;
     }
+#pragma GCC diagnostic pop
   }
 
   virtual void serialize(ObjectData& odata, IdContext& id_context);
@@ -79,7 +81,7 @@ public:
 protected:
   std::string _name;
   std::string _description;
-  bool* _changed_flag = 0; // set this on construction. If set this will
+  bool* _changed_flag {nullptr}; // set this on construction. If set this will
                             // toggle the flag when the variable is changed
 };
 
@@ -110,7 +112,9 @@ public:
   : PropertyBase(name_, description_, config_, flag)
   {}
 
-  PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic ignored "-Wnull-dereference"
+    PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
   PropertyBase* clone() override
   {
@@ -175,7 +179,9 @@ public:
     int value_,
     bool* flag = 0);
 
-  PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic ignored "-Wnull-dereference"
+    PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
   PropertyBase* clone() override;
   void copyTo(PropertyBase& other) override;
@@ -203,7 +209,9 @@ public:
     uint8_t value_,
     bool* flag = 0);
 
-  PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic ignored "-Wnull-dereference"
+    PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
   PropertyBase* clone() override;
   void copyTo(PropertyBase& other) override;
@@ -231,7 +239,9 @@ public:
     uint64_t value_,
     bool* flag = 0);
 
-  PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic ignored "-Wnull-dereference"
+    PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
   PropertyBase* clone() override;
   void copyTo(PropertyBase& other) override;
@@ -259,7 +269,9 @@ public:
     bool value_,
     bool* flag = 0);
 
-  PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic ignored "-Wnull-dereference"
+    PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
   PropertyBase* clone() override;
   void copyTo(PropertyBase& other) override;
@@ -285,7 +297,9 @@ public:
     float value_,
     bool* flag = 0);
 
-  PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic ignored "-Wnull-dereference"
+    PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
   PropertyBase* clone() override;
   void copyTo(PropertyBase& other) override;
@@ -311,7 +325,9 @@ public:
     double value_,
     bool* flag = 0);
 
-  PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic ignored "-Wnull-dereference"
+    PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
   PropertyBase* clone() override;
   void copyTo(PropertyBase& other) override;
@@ -338,7 +354,9 @@ public:
     const std::string& value_,
     bool* flag = 0);
 
-  PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic ignored "-Wnull-dereference"
+    PROPERTY_ADD_SET_GET;
+#pragma GCC diagnostic pop
 
   PropertyBase* clone() override;
   void copyTo(PropertyBase& other) override;
