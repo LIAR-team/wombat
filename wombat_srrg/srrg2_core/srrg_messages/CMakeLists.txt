@@ -94,7 +94,7 @@ target_link_libraries(
 wombat_install_target(srrg_messages_handlers)
 
 add_library(srrg_messages SHARED)
-add_library(wombat_srrg::srrg2_core::srrg_messages ALIAS srrg_messages)
+add_library(wombat_srrg::srrg2_core::messages ALIAS srrg_messages)
 
 target_sources(
   srrg_messages

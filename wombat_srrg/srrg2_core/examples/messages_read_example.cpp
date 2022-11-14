@@ -5,8 +5,8 @@
 #include <wombat_srrg/srrg_boss/id_context.h>
 #include <wombat_srrg/srrg_boss/serializer.h>
 #include <wombat_srrg/srrg_boss/deserializer.h>
-#include <srrg_messages/instances.h>
-#include <srrg_messages/message_handlers/message_file_source.h>
+#include <wombat_srrg/srrg_messages/instances.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_file_source.h>
 
 #define EXAMPLE_LOG std::cerr << "srrg2_core::examples::message_read_example| "
 

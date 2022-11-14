@@ -7,25 +7,25 @@
 #include <iterator>
 
 #include <wombat_srrg/srrg_boss/serializer.h>
-#include <srrg_messages/instances.h>
+#include <wombat_srrg/srrg_messages/instances.h>
 #include "wombat_srrg/srrg_system_utils/parse_command_line.h>
 #include "wombat_srrg/srrg_system_utils/system_utils.h>
 #include "wombat_srrg/srrg_system_utils/shell_colors.h>
 #include <wombat_srrg/srrg_geometry/geometry3d.h>
-#include <srrg_messages/messages/imu_message.h>
-#include <srrg_messages/messages/joints_message.h>
-#include <srrg_messages/messages/image_message.h>
-#include <srrg_messages/messages/laser_message.h>
-#include <srrg_messages/messages/range_message.h>
-#include <srrg_messages/messages/camera_info_message.h>
-#include <srrg_messages/messages/transform_events_message.h>
-#include <srrg_messages/messages/odometry_message.h>
-#include <srrg_messages/message_handlers/message_file_source.h>
-#include <srrg_messages/message_handlers/message_file_sink.h>
-#include <srrg_messages/message_handlers/message_sorted_source.h>
-#include <srrg_messages/message_handlers/message_synchronized_source.h>
-#include <srrg_messages/message_handlers/message_pack.h>
-#include <srrg_messages/instances.h>
+#include <wombat_srrg/srrg_messages/messages/imu_message.h>
+#include <wombat_srrg/srrg_messages/messages/joints_message.h>
+#include <wombat_srrg/srrg_messages/messages/image_message.h>
+#include <wombat_srrg/srrg_messages/messages/laser_message.h>
+#include <wombat_srrg/srrg_messages/messages/range_message.h>
+#include <wombat_srrg/srrg_messages/messages/camera_info_message.h>
+#include <wombat_srrg/srrg_messages/messages/transform_events_message.h>
+#include <wombat_srrg/srrg_messages/messages/odometry_message.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_file_source.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_file_sink.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_sorted_source.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_synchronized_source.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_pack.h>
+#include <wombat_srrg/srrg_messages/instances.h>
 
 using namespace srrg2_core;
 namespace fs = std::experimental::filesystem;

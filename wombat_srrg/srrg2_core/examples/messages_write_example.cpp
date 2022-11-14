@@ -6,15 +6,15 @@
 #include <wombat_srrg/srrg_boss/id_context.h>
 #include <wombat_srrg/srrg_boss/serializer.h>
 #include <wombat_srrg/srrg_boss/deserializer.h>
-#include <srrg_messages/messages/imu_message.h>
-#include <srrg_messages/messages/joints_message.h>
-#include <srrg_messages/messages/image_message.h>
-#include <srrg_messages/messages/laser_message.h>
-#include <srrg_messages/messages/range_message.h>
-#include <srrg_messages/messages/camera_info_message.h>
-#include <srrg_messages/message_handlers/message_file_source.h>
-#include <srrg_messages/message_handlers/message_sorted_source.h>
-#include <srrg_messages/instances.h>
+#include <wombat_srrg/srrg_messages/messages/imu_message.h>
+#include <wombat_srrg/srrg_messages/messages/joints_message.h>
+#include <wombat_srrg/srrg_messages/messages/image_message.h>
+#include <wombat_srrg/srrg_messages/messages/laser_message.h>
+#include <wombat_srrg/srrg_messages/messages/range_message.h>
+#include <wombat_srrg/srrg_messages/messages/camera_info_message.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_file_source.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_sorted_source.h>
+#include <wombat_srrg/srrg_messages/instances.h>
 
 #define EXAMPLE_LOG std::cerr << "srrg2_core::examples::message_write_example| "
 

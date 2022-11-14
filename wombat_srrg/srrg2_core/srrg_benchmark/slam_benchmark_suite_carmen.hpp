@@ -4,13 +4,13 @@
 #pragma once
 #include "slam_benchmark_suite.hpp"
 #include "wombat_srrg/srrg_config/configurable_manager.h"
-#include <srrg_messages/message_handlers/message_file_source.h>
-#include <srrg_messages/message_handlers/message_odom_subsampler_source.h>
-#include <srrg_messages/message_handlers/message_sorted_source.h>
-#include <srrg_messages/message_handlers/message_synchronized_source.h>
-#include <srrg_messages/message_handlers/message_pack.h>
-#include <srrg_messages/messages/point_cloud2_message.h>
-#include <srrg_messages/messages/laser_message.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_file_source.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_odom_subsampler_source.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_sorted_source.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_synchronized_source.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_pack.h>
+#include <wombat_srrg/srrg_messages/messages/point_cloud2_message.h>
+#include <wombat_srrg/srrg_messages/messages/laser_message.h>
 
 namespace srrg2_core {
 

@@ -4,11 +4,11 @@
 #pragma once
 #include "wombat_srrg/srrg_messages/instances.h"
 #include <wombat_srrg/srrg_geometry/geometry3d.h>
-#include <srrg_messages/instances.h>
-#include <srrg_messages/messages/image_message.h>
-#include <srrg_messages/messages/camera_info_message.h>
-#include <srrg_messages/messages/transform_events_message.h>
-#include <srrg_messages/message_handlers/message_source_platform.h>
+#include <wombat_srrg/srrg_messages/instances.h>
+#include <wombat_srrg/srrg_messages/messages/image_message.h>
+#include <wombat_srrg/srrg_messages/messages/camera_info_message.h>
+#include <wombat_srrg/srrg_messages/messages/transform_events_message.h>
+#include <wombat_srrg/srrg_messages/message_handlers/message_source_platform.h>
 #include <numeric>
 namespace srrg2_core {
 

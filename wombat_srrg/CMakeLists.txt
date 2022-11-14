@@ -30,6 +30,7 @@ wombat_package(NO_WOMBAT_LINTERS)
 add_subdirectory(hbst)
 add_subdirectory(srrg2_core)
 add_subdirectory(srrg2_solver)
+add_subdirectory(srrg2_slam_interfaces)
 
 wombat_package_install(
   EXPORT_DEPS
