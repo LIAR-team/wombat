@@ -1,3 +1,4 @@
+add_subdirectory(srrg_benchmark)
 add_subdirectory(srrg_boss)
 add_subdirectory(srrg_config)
 add_subdirectory(srrg_data_structures)
@@ -9,9 +10,9 @@ add_subdirectory(srrg_path_matrix)
 add_subdirectory(srrg_pcl)
 add_subdirectory(srrg_property)
 add_subdirectory(srrg_system_utils)
-add_subdirectory(srrg_test)
 
 if(BUILD_TESTING)
+  add_subdirectory(srrg_test)
   add_subdirectory(tests)
 endif()
 
@@ -25,7 +26,6 @@ endif()
 # add_subdirectory(apps)
 # add_subdirectory(examples)
 # add_subdirectory(misc_tests)
-# add_subdirectory(srrg_benchmark)
 # add_subdirectory(srrg_messages_viewers)
 # add_subdirectory(srrg_viewer)
 

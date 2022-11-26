@@ -146,7 +146,7 @@ bool MapListener::handleLocalMapMessage3D(srrg2_core::BaseSensorMessagePtr msg_)
       new PropertyTrajectory3D("trajectory", "", &lmap->dynamic_properties, Trajectory3D(), 0);
     _graph->addVariable(LocalMap3DPtr(lmap));
   } else {
-    LocalMap3D* lmap = dynamic_cast<LocalMap3D*>(v);
+    lmap = dynamic_cast<LocalMap3D*>(v);
     if (!lmap) {
       throw std::runtime_error("wrong local map type already in graph");
     }

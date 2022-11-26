@@ -1,19 +1,17 @@
 #include "instances.h"
-#include "mapping/merger_correspondence_homo_impl.cpp"
-#include "registration/aligners/aligner_slice_processor_impl.cpp"
-#include "registration/aligners/aligner_termination_criteria_impl.cpp"
-#include "registration/aligners/multi_aligner_impl.cpp"
-#include "registration/local_map_selectors/local_map_selector_breadth_first_impl.cpp"
-#include "registration/local_map_selectors/local_map_selector_user_defined_impl.cpp"
-#include "registration/loop_detector/multi_loop_detector_brute_force_impl.cpp"
-#include "registration/loop_detector/multi_loop_detector_hbst_impl.cpp"
-#include "registration/relocalization/multi_relocalizer_impl.cpp"
-#include "system/multi_graph_slam_impl.cpp"
-#include "trackers/multi_tracker_impl.cpp"
-#include "trackers/tracker_slice_processor_impl.cpp"
-#include <wombat_srrg/srrg_solver/solver_core/instances.h>
-#include <wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h>
-#include <wombat_srrg/srrg_solver/variables_and_factors/types_3d/instances.h>
+#include "wombat_srrg/srrg2_slam_interfaces/mapping/merger_correspondence_homo.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/aligners/aligner_slice_processor.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/aligners/aligner_termination_criteria.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/aligners/multi_aligner.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/local_map_selectors/local_map_selector_breadth_first.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/local_map_selectors/local_map_selector_user_defined.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/loop_detector/multi_loop_detector_brute_force.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/loop_detector/multi_loop_detector_hbst.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/relocalization/multi_relocalizer.h"
+#include "wombat_srrg/srrg2_slam_interfaces/system/multi_graph_slam.h"
+#include "wombat_srrg/srrg2_slam_interfaces/trackers/multi_tracker.h"
+#include "wombat_srrg/srrg2_slam_interfaces/trackers/tracker_slice_processor.h"
+
 
 // ds reduce digital footprint and enforce linker sanity
 /*

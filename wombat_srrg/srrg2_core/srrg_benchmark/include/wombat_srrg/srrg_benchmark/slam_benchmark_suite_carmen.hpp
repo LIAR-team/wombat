@@ -28,7 +28,7 @@ namespace srrg2_core {
     virtual ~SLAMBenchmarkSuiteCARMEN() {
     }
 
-    void loadDataset(const std::string& filepath_,
+    void loadDataset(const std::string & filepath,
                      const size_t& number_of_message_packs_to_read_ = -1,
                      const size_t& number_of_message_pack_to_start_ = 0) override {
       _dataset_path = filepath_;
@@ -85,8 +85,8 @@ namespace srrg2_core {
       _current_message = _messages.begin();
     }
 
-    void loadGroundTruth(const std::string& filepath_,
-                         const std::string& filepath_additional_ = std::string()) override {
+    void loadGroundTruth(const std::string & filepath,
+                         const std::string & filepath_additional = "") override {
       _ground_truth_path = filepath_;
 
       // open ground truth file in AIS format: # timestamp1 timestamp2 x y z roll pitch yaw

@@ -1,9 +1,9 @@
-#include "srrg2_slam_interfaces/instances.h"
+#include "wombat_srrg/srrg2_slam_interfaces/instances.h"
 #include <srrg_benchmark/trajectory_writers.h>
 #include <wombat_srrg/srrg_config/configurable_manager.h>
 #include <wombat_srrg/srrg_messages/instances.h>
-#include <srrg_system_utils/parse_command_line.h>
-#include <srrg_system_utils/shell_colors.h>
+#include <wombat_srrg/srrg_system_utils/parse_command_line.h>
+#include <wombat_srrg/srrg_system_utils/shell_colors.h>
 
 using namespace srrg2_core;
 using namespace srrg2_slam_interfaces;

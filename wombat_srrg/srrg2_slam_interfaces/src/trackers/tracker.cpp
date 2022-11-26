@@ -4,6 +4,8 @@
 #include <wombat_srrg/srrg_messages/messages/image_message.h>        //ds visualization only
 #include <wombat_srrg/srrg_messages/messages/odometry_message.h>     //ds visualization only
 
+// TODO @asoragna srrg_viewer
+
 namespace srrg2_slam_interfaces
 {
 
@@ -15,15 +17,17 @@ void TrackerBase::compute()
   preprocessRawData();
   align();
   merge();
-  this->_need_redraw=true;
+  //this->_need_redraw=true;
 }
 
 bool TrackerBase::putMessage(BaseSensorMessagePtr msg_)
 {
   setRawData(msg_);
   compute();
-  this->_need_redraw=true;
-  ActiveDrawable::draw();
+  
+  //this->_need_redraw=true;
+  //ActiveDrawable::draw();
+  
   Eigen::Isometry3f pose_in_local_map = liftEstimate();
   if (status() == Tracking && param_push_sinks.size()) {
     OdometryMessagePtr odom(new OdometryMessage);

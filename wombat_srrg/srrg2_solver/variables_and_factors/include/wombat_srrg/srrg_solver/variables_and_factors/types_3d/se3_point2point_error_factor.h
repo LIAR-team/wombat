@@ -6,6 +6,7 @@
 
 namespace srrg2_solver
 {
+
 using namespace srrg2_core;
 
 /** @brief ICP factor in 3D. This is a single point factor.
@@ -24,18 +25,19 @@ public:
 
   /**
     * @brief Provide a point form the fixed cloud to the optimization process
-    * @param[in] Point3f from fixed cloud
+    * @param[in] fixed Point3f from fixed cloud
     */
-  inline void setFixed(const Point3f& fixed_)
+  inline void setFixed(const Point3f & fixed_)
   {
     fixed = &fixed_.coordinates();
   }
+
   /**
     * @brief Provide a point form the moving cloud to the optimization process
     * Used to compute the transformation that will bring the moving cloud on the fixed
-    * @param[in] Point3f from moving cloud
+    * @param[in] moving Point3f from moving cloud
     */
-  inline void setMoving(const Point3f& moving_)
+  inline void setMoving(const Point3f & moving_)
   {
     moving = &moving_.coordinates();
   }
@@ -64,9 +66,9 @@ public:
     * @brief Set the sensor pose wrt the robot base
     * @param[in] Isometry3f sensor pose in robot frame
     */
-  inline void setSensorInRobot(const EstimateType& sensor_in_robot_)
+  inline void setSensorInRobot(const EstimateType & sensor_in_robot)
   {
-    _robot_in_sensor = sensor_in_robot_.inverse();
+    _robot_in_sensor = sensor_in_robot.inverse();
   }
 
 protected:

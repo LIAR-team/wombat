@@ -49,159 +49,178 @@
 #define ASSERT_LT_ABS(VALUE, VALUE_REFERENCE) ASSERT_LT(std::fabs(VALUE), VALUE_REFERENCE)
 
 //! unittest namespace, not to be used in any other context!
-namespace srrg2_test {
+namespace srrg2_test
+{
 
-  //! current user folder used for test execution
-  static std::string filepath_user_folder = "";
+//! current user folder used for test execution
+static std::string filepath_user_folder = "";
 
-  //! current srrg source folder used for test execution
-  static std::string filepath_folder_srrg = "";
+//! current srrg source folder used for test execution
+static std::string filepath_folder_srrg = "";
 
-  //! current srrg2 source folder used for test execution
-  static std::string filepath_folder_srrg2 = "";
+//! current srrg2 source folder used for test execution
+static std::string filepath_folder_srrg2 = "";
 
-  //! flag that is set to true if test data path is set correctly
-  static bool is_test_data_available = false;
+//! flag that is set to true if test data path is set correctly
+static bool is_test_data_available = false;
 
-  //! parse current user folder from CLI parameters
-  static void parseUserFolderUNIX(const std::string& filepath_) {
-    // determine local srrg test data path
-    // TODO remove this mother of all evil
-    const size_t index_file_root_slash = filepath_.find_first_of("/");
-    if (index_file_root_slash == std::string::npos) {
-      std::cerr << "parseUserFolder|ERROR: unable to infer file root (/) from CLI" << std::endl;
-      return;
-    }
-    const size_t index_root_folder_slash = filepath_.find_first_of("/", index_file_root_slash + 1);
-    if (index_root_folder_slash == std::string::npos) {
-      std::cerr << "parseUserFolder|WARNING: unable to infer home "
-                   "folder (/root, /home) from CLI"
-                << std::endl;
-      return;
-    }
-    const size_t index_home_folder_slash =
-      filepath_.find_first_of("/", index_root_folder_slash + 1);
-    if (index_home_folder_slash == std::string::npos) {
-      std::cerr << "parseUserFolder|WARNING: unable to infer user folder(/ "
-                   "home / user) from CLI "
-                << std::endl;
-      return;
-    }
-
-    // assemble user folder (might be invalid at this point)
-    filepath_user_folder = filepath_.substr(0, index_home_folder_slash);
-
-    // check if we are in the root folder (CI case) if home is not present
-    if (filepath_user_folder.find("home") == std::string::npos) {
-      std::cerr << "parseUserFolder|WARNING: home folder not found - assuming root" << std::endl;
-      filepath_user_folder = filepath_.substr(0, index_root_folder_slash);
-    }
-    filepath_folder_srrg  = filepath_user_folder + "/source/srrg/";
-    filepath_folder_srrg2 = filepath_user_folder + "/source/srrg2/";
-
-    // check if the derived folders do not exist
-    if (opendir(filepath_folder_srrg.c_str()) == nullptr) {
-      std::cerr << "parseUserFolder|WARNING: srrg folder not existing: '" + filepath_folder_srrg +
-                     "'"
-                << std::endl;
-      return;
-    }
-    if (opendir(filepath_folder_srrg2.c_str()) == nullptr) {
-      std::cerr << "parseUserFolder|WARNING: srrg2 folder not existing: '" + filepath_folder_srrg2 +
-                     "'"
-                << std::endl;
-      return;
-    }
-
-    // fine if still here
-    std::cerr << "parseUserFolderUNIX|using folder SRRG: '" << filepath_folder_srrg << "'"
+//! parse current user folder from CLI parameters
+static void parseUserFolderUNIX(const std::string & filepath)
+{
+  // determine local srrg test data path
+  // TODO remove this mother of all evil
+  const size_t index_file_root_slash = filepath.find_first_of("/");
+  if (index_file_root_slash == std::string::npos) {
+    std::cerr << "parseUserFolder|ERROR: unable to infer file root (/) from CLI" << std::endl;
+    return;
+  }
+  const size_t index_root_folder_slash = filepath.find_first_of("/", index_file_root_slash + 1);
+  if (index_root_folder_slash == std::string::npos) {
+    std::cerr << "parseUserFolder|WARNING: unable to infer home "
+                  "folder (/root, /home) from CLI"
               << std::endl;
-    std::cerr << "parseUserFolderUNIX|using folder SRRG2: '" << filepath_folder_srrg2 << "'"
+    return;
+  }
+  const size_t index_home_folder_slash =
+    filepath.find_first_of("/", index_root_folder_slash + 1);
+  if (index_home_folder_slash == std::string::npos) {
+    std::cerr << "parseUserFolder|WARNING: unable to infer user folder(/ "
+                  "home / user) from CLI "
               << std::endl;
-    is_test_data_available = true;
+    return;
   }
 
-  //! test entry points
-  static int runTests(int argc_, char** argv_, const bool& use_test_folder_ = false) {
-    if (use_test_folder_) {
-      parseUserFolderUNIX(argv_[0]);
-    }
-    testing::InitGoogleTest(&argc_, argv_);
-    return RUN_ALL_TESTS();
+  // assemble user folder (might be invalid at this point)
+  filepath_user_folder = filepath.substr(0, index_home_folder_slash);
+
+  // check if we are in the root folder (CI case) if home is not present
+  if (filepath_user_folder.find("home") == std::string::npos) {
+    std::cerr << "parseUserFolder|WARNING: home folder not found - assuming root" << std::endl;
+    filepath_user_folder = filepath.substr(0, index_root_folder_slash);
+  }
+  filepath_folder_srrg  = filepath_user_folder + "/source/srrg/";
+  filepath_folder_srrg2 = filepath_user_folder + "/source/srrg2/";
+
+  // check if the derived folders do not exist
+  if (opendir(filepath_folder_srrg.c_str()) == nullptr) {
+    std::cerr << "parseUserFolder|WARNING: srrg folder not existing: '" + filepath_folder_srrg +
+                    "'"
+              << std::endl;
+    return;
+  }
+  if (opendir(filepath_folder_srrg2.c_str()) == nullptr) {
+    std::cerr << "parseUserFolder|WARNING: srrg2 folder not existing: '" + filepath_folder_srrg2 +
+                    "'"
+              << std::endl;
+    return;
   }
 
-  template <typename RealType_ = float>
-  class RandomNumberGeneratorBase {
-  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    RandomNumberGeneratorBase() {
-      // constant seed for reproducible tests
-      _random_device = std::mt19937(0);
-    }
-    virtual ~RandomNumberGeneratorBase() {
-    }
-    virtual RealType_ getRandomScalar(const RealType_& mean_,
-                                      const RealType_& standard_deviation_) = 0;
+  // fine if still here
+  std::cerr << "parseUserFolderUNIX|using folder SRRG: '" << filepath_folder_srrg << "'"
+            << std::endl;
+  std::cerr << "parseUserFolderUNIX|using folder SRRG2: '" << filepath_folder_srrg2 << "'"
+            << std::endl;
+  is_test_data_available = true;
+}
 
-  protected:
-    // random number generation
-    std::mt19937 _random_device;
-  };
+//! test entry points
+static int runTests(int argc_, char** argv_, const bool& use_test_folder_ = false)
+{
+  if (use_test_folder_) {
+    parseUserFolderUNIX(argv_[0]);
+  }
+  testing::InitGoogleTest(&argc_, argv_);
+  return RUN_ALL_TESTS();
+}
 
-  template <typename RealType_ = float>
-  class RandomNumberGeneratorUniform : public RandomNumberGeneratorBase<RealType_> {
-  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    RandomNumberGeneratorUniform() {
-      // constant seed for reproducible tests
-      srand(0);
-    }
-    virtual ~RandomNumberGeneratorUniform() {
-    }
-    virtual RealType_ getRandomScalar(const RealType_& mean_,
-                                      const RealType_& standard_deviation_) override {
-      const RealType_ minimum(mean_ - standard_deviation_);
-      const RealType_ maximum(mean_ + standard_deviation_);
-      std::uniform_real_distribution<RealType_> distribution(minimum, maximum);
-      return distribution(this->_random_device);
-    }
-    template <int Dimension_>
-    srrg2_core::Vector_<RealType_, Dimension_>
-    getRandomVector(const srrg2_core::Vector_<RealType_, Dimension_>& mean_,
-                    const srrg2_core::Vector_<RealType_, Dimension_>& standard_deviation_) {
-      const srrg2_core::Vector_<RealType_, Dimension_> minimum(mean_ - standard_deviation_);
-      const srrg2_core::Vector_<RealType_, Dimension_> maximum(mean_ + standard_deviation_);
-      srrg2_core::Vector_<RealType_, Dimension_> random_vector;
-      for (int i = 0; i < Dimension_; ++i) {
-        std::uniform_real_distribution<RealType_> distribution(minimum(i), maximum(i));
-        random_vector(i) = distribution(this->_random_device);
-      }
-      return random_vector;
-    }
-  };
+template <typename RealType_ = float>
+class RandomNumberGeneratorBase
+{
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  RandomNumberGeneratorBase() {
+    // constant seed for reproducible tests
+    _random_device = std::mt19937(0);
+  }
+  virtual ~RandomNumberGeneratorBase() {
+  }
+  virtual RealType_ getRandomScalar(const RealType_& mean,
+                                    const RealType_& standard_deviation) = 0;
 
-  template <typename RealType_ = float>
-  class RandomNumberGeneratorGaussian : public RandomNumberGeneratorBase<RealType_> {
-  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    virtual ~RandomNumberGeneratorGaussian() {
+protected:
+  // random number generation
+  std::mt19937 _random_device;
+};
+
+template <typename RealType_ = float>
+class RandomNumberGeneratorUniform : public RandomNumberGeneratorBase<RealType_>
+{
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  RandomNumberGeneratorUniform()
+  {
+    // constant seed for reproducible tests
+    srand(0);
+  }
+
+  virtual ~RandomNumberGeneratorUniform() = default;
+
+  virtual RealType_ getRandomScalar(
+    const RealType_& mean,
+    const RealType_& standard_deviation) override
+  {
+    const RealType_ minimum(mean - standard_deviation);
+    const RealType_ maximum(mean + standard_deviation);
+    std::uniform_real_distribution<RealType_> distribution(minimum, maximum);
+    return distribution(this->_random_device);
+  }
+
+  template <int Dimension_>
+  srrg2_core::Vector_<RealType_, Dimension_>
+  getRandomVector(
+    const srrg2_core::Vector_<RealType_, Dimension_>& mean,
+    const srrg2_core::Vector_<RealType_, Dimension_>& standard_deviation)
+  {
+    const srrg2_core::Vector_<RealType_, Dimension_> minimum(mean - standard_deviation);
+    const srrg2_core::Vector_<RealType_, Dimension_> maximum(mean + standard_deviation);
+    srrg2_core::Vector_<RealType_, Dimension_> random_vector;
+    for (int i = 0; i < Dimension_; ++i) {
+      std::uniform_real_distribution<RealType_> distribution(minimum(i), maximum(i));
+      random_vector(i) = distribution(this->_random_device);
     }
-    virtual RealType_ getRandomScalar(const RealType_& mean_,
-                                      const RealType_& standard_deviation_) override {
-      std::normal_distribution<RealType_> distribution(mean_, standard_deviation_);
-      return distribution(this->_random_device);
+    return random_vector;
+  }
+};
+
+template <typename RealType_ = float>
+class RandomNumberGeneratorGaussian : public RandomNumberGeneratorBase<RealType_>
+{
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  virtual ~RandomNumberGeneratorGaussian() = default;
+
+  virtual RealType_ getRandomScalar(
+    const RealType_ & mean,
+    const RealType_ & standard_deviation) override
+  {
+    std::normal_distribution<RealType_> distribution(mean, standard_deviation);
+    return distribution(this->_random_device);
+  }
+
+  template <int Dimension_>
+  srrg2_core::Vector_<RealType_, Dimension_>
+  getRandomVector(
+    const srrg2_core::Vector_<RealType_, Dimension_> & mean,
+    const srrg2_core::Vector_<RealType_, Dimension_> & standard_deviation)
+  {
+    srrg2_core::Vector_<RealType_, Dimension_> random_vector;
+    for (int i = 0; i < Dimension_; ++i) {
+      std::normal_distribution<RealType_> distribution(mean(i), standard_deviation(i));
+      random_vector(i) = distribution(this->_random_device);
     }
-    template <int Dimension_>
-    srrg2_core::Vector_<RealType_, Dimension_>
-    getRandomVector(const srrg2_core::Vector_<RealType_, Dimension_>& mean_,
-                    const srrg2_core::Vector_<RealType_, Dimension_>& standard_deviation_) {
-      srrg2_core::Vector_<RealType_, Dimension_> random_vector;
-      for (int i = 0; i < Dimension_; ++i) {
-        std::normal_distribution<RealType_> distribution(mean_(i), standard_deviation_(i));
-        random_vector(i) = distribution(this->_random_device);
-      }
-      return random_vector;
-    }
-  };
+    return random_vector;
+  }
+};
 
 } // namespace srrg2_test

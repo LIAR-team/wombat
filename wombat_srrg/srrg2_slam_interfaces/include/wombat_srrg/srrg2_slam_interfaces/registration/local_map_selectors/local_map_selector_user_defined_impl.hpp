@@ -1,8 +1,10 @@
-#include "local_map_selector_user_defined.h"
+#pragma once
 
-namespace srrg2_slam_interfaces {
+namespace srrg2_slam_interfaces
+{
   template <typename SLAMAlgorithmType_>
-  void LocalMapSelectorUserDefined_<SLAMAlgorithmType_>::compute() {
+  void LocalMapSelectorUserDefined_<SLAMAlgorithmType_>::compute()
+  {
     if (!ThisType::_slam) {
       throw std::runtime_error("LocalMapSelectorBreadthFirst_::compute| no slam selected");
     }

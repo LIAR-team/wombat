@@ -8,7 +8,7 @@
 
 using TimestampVector = std::vector<double>;
 
-TimestampVector loadTextFile(const std::string& filepath_);
+TimestampVector loadTextFile(const std::string & filepath);
 
 int main(int argc, char **argv) {
 
@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 }
 
 
-TimestampVector loadTextFile(const std::string& filepath_)  {
+TimestampVector loadTextFile(const std::string & filepath)  {
   // ldg open file in following format # timestamp tx ty tz qx qy qz qw
   std::ifstream text_file(filepath_, std::ios::in);
   if (!text_file.good() || !text_file.is_open()) {

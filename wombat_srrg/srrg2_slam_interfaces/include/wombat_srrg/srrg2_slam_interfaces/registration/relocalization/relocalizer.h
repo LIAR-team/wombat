@@ -1,5 +1,5 @@
 #pragma once
-#include "srrg2_slam_interfaces/registration/loop_detector/loop_detector.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/loop_detector/loop_detector.h"
 
 namespace srrg2_slam_interfaces {
   /**

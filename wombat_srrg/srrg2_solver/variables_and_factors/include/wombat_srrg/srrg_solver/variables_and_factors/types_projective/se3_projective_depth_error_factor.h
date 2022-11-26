@@ -6,70 +6,79 @@
 #include <wombat_srrg/srrg_geometry/geometry3d.h>
 #include <wombat_srrg/srrg_pcl/point_types.h>
 
-namespace srrg2_solver {
-  using namespace srrg2_core;
+namespace srrg2_solver
+{
 
-  /***** point to point *****/
+using namespace srrg2_core;
 
-  class SE3ProjectiveDepthErrorFactor : public ErrorFactor_<3, VariableSE3QuaternionRight> {
-  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using BaseType   = ErrorFactor_<3, VariableSE3QuaternionRight>;
-    using FixedType  = Point3f;
-    using MovingType = Point3f;
+/***** point to point *****/
 
-    inline void setFixed(const Point3f& fixed_) {
-      _fixed_point = &fixed_.coordinates();
-    }
-    inline void setMoving(const Point3f& moving_) {
-      _moving_point = &moving_.coordinates();
-    }
+class SE3ProjectiveDepthErrorFactor : public ErrorFactor_<3, VariableSE3QuaternionRight>
+{
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  using BaseType   = ErrorFactor_<3, VariableSE3QuaternionRight>;
+  using FixedType  = Point3f;
+  using MovingType = Point3f;
 
-    void errorAndJacobian(bool error_only = false) override;
+  inline void setFixed(const Point3f & fixed)
+  {
+    _fixed_point = &fixed.coordinates();
+  }
+  inline void setMoving(const Point3f & moving)
+  {
+    _moving_point = &moving.coordinates();
+  }
 
-    inline void setCameraMatrix(const srrg2_core::Matrix3f& camera_matrix_) {
-      _camera_matrix = camera_matrix_;
-    }
+  void errorAndJacobian(bool error_only = false) override;
 
-    inline void setImageDim(const srrg2_core::Vector2f& image_dim_) {
-      _image_dim = image_dim_;
-    }
+  inline void setCameraMatrix(const srrg2_core::Matrix3f & camera_matrix)
+  {
+    _camera_matrix = camera_matrix;
+  }
 
-  protected:
-    const Vector3f* _moving_point       = nullptr;
-    const Vector3f* _fixed_point        = nullptr;
-    srrg2_core::Matrix3f _camera_matrix = srrg2_core::Matrix3f::Identity();
-    srrg2_core::Vector2f _image_dim     = srrg2_core::Vector2f::Zero();
-  };
+  inline void setImageDim(const srrg2_core::Vector2f & image_dim)
+  {
+    _image_dim = image_dim;
+  }
 
-  // correspondence factor
-  using SE3ProjectiveDepthErrorFactorCorrespondenceDriven =
-    FactorCorrespondenceDriven_<SE3ProjectiveDepthErrorFactor,
-                                Point3fVectorCloud,
-                                Point3fVectorCloud>;
+protected:
+  const Vector3f* _moving_point       = nullptr;
+  const Vector3f* _fixed_point        = nullptr;
+  srrg2_core::Matrix3f _camera_matrix = srrg2_core::Matrix3f::Identity();
+  srrg2_core::Vector2f _image_dim     = srrg2_core::Vector2f::Zero();
+};
 
-  class SE3ProjectiveDepthWithSensorErrorFactor : public SE3ProjectiveDepthErrorFactor {
-  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    using BaseType     = SE3ProjectiveDepthErrorFactor;
-    using FixedType    = Point3f;
-    using MovingType   = Point3f;
-    using EstimateType = Isometry3f;
+// correspondence factor
+using SE3ProjectiveDepthErrorFactorCorrespondenceDriven =
+  FactorCorrespondenceDriven_<SE3ProjectiveDepthErrorFactor,
+                              Point3fVectorCloud,
+                              Point3fVectorCloud>;
 
-    void errorAndJacobian(bool error_only = false) final;
+class SE3ProjectiveDepthWithSensorErrorFactor : public SE3ProjectiveDepthErrorFactor
+{
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  using BaseType     = SE3ProjectiveDepthErrorFactor;
+  using FixedType    = Point3f;
+  using MovingType   = Point3f;
+  using EstimateType = Isometry3f;
 
-    inline void setSensorInRobot(const EstimateType& sensor_in_robot_) {
-      _robot_in_sensor = sensor_in_robot_.inverse();
-    }
+  void errorAndJacobian(bool error_only = false) final;
 
-  protected:
-    EstimateType _robot_in_sensor = Isometry3f::Identity();
-  };
+  inline void setSensorInRobot(const EstimateType & sensor_in_robot)
+  {
+    _robot_in_sensor = sensor_in_robot.inverse();
+  }
 
-  // correspondence factor
-  using SE3ProjectiveDepthWithSensorErrorFactorCorrespondenceDriven =
-    FactorCorrespondenceDriven_<SE3ProjectiveDepthWithSensorErrorFactor,
-                                Point3fVectorCloud,
-                                Point3fVectorCloud>;
+protected:
+  EstimateType _robot_in_sensor = Isometry3f::Identity();
+};
+
+// correspondence factor
+using SE3ProjectiveDepthWithSensorErrorFactorCorrespondenceDriven =
+  FactorCorrespondenceDriven_<SE3ProjectiveDepthWithSensorErrorFactor,
+                              Point3fVectorCloud,
+                              Point3fVectorCloud>;
 
 } // namespace srrg2_solver

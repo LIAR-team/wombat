@@ -29,8 +29,9 @@ target_link_libraries(
   srrg2_slam_interfaces
   PUBLIC
     wombat_srrg::hbst
+    wombat_srrg::srrg2_core::benchmark
     #wombat_srrg::srrg2_core::srrg_messages::handlers
-    #wombat_srrg::srrg2_core::srrg_messages::messages
+    wombat_srrg::srrg2_core::srrg_messages::messages
     wombat_srrg::srrg2_core::system_utils
     wombat_srrg::srrg2_solver::core
     wombat_srrg::srrg2_solver::utils

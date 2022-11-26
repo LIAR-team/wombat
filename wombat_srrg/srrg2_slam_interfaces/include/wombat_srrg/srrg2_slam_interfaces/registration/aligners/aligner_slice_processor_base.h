@@ -1,242 +1,260 @@
 #pragma once
 #include "aligner.h"
-#include <srrg_data_structures/iterator_interface.h>
+#include <wombat_srrg/srrg_data_structures/iterator_interface.h>
 #include <wombat_srrg/srrg_property/property_container.h>
 #include <wombat_srrg/srrg_solver/solver_core/factor_correspondence_driven.h>
 #include <wombat_srrg/srrg_solver/solver_core/solver.h>
 
-namespace srrg2_slam_interfaces {
-  using namespace srrg2_core;
-  using namespace srrg2_solver;
+// TODO @asoragna srrg_viewer
 
-  template <typename VariableType_>
-  class MultiAlignerBase_;
+namespace srrg2_slam_interfaces
+{
+
+using namespace srrg2_core;
+using namespace srrg2_solver;
+
+template <typename VariableType_>
+class MultiAlignerBase_;
+
+/**
+  * @brief base class for aligner slice processor
+  * provides the interfaces for a slice-wise registration
+  */
+template <typename VariableType_>
+class AlignerSliceProcessorBase_
+: public Configurable,
+  public srrg2_core::PlatformUser
+  //public srrg2_core::DrawableBase
+{
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  using ThisType     = AlignerSliceProcessorBase_<VariableType_>;
+  using VariableType = VariableType_;
+  using EstimateType = typename VariableType::EstimateType;
+
+  template <typename T>
+  friend class MultiAlignerBase_;
+
+  using AlignerType = Aligner_<EstimateType, PropertyContainerBase, PropertyContainerBase>;
+  PARAM(PropertyConfigurable_<RobustifierBase>,
+        robustifier,
+        "robustifier used on this slice",
+        0,
+        0);
+
+  PARAM(PropertyString,
+        fixed_slice_name,
+        "name of the slice in the fixed scene",
+        "",
+        &_fixed_slice_changed_flag);
+
+  PARAM(PropertyString,
+        moving_slice_name,
+        "name of the slice in the moving scene",
+        "",
+        &_moving_slice_changed_flag);
+
+  PARAM(PropertyString, frame_id, "name of the sensor's frame in the tf tree", "", nullptr);
+  PARAM(PropertyString, base_frame_id, "name of the base frame in the tf tree", "", nullptr);
+
+  //! @brief default ctor
+  AlignerSliceProcessorBase_() = default;
+
+  //! @brief virtual dtor
+  virtual ~AlignerSliceProcessorBase_() = default;
 
   /**
-   * @brief base class for aligner slice processor
-   * provides the interfaces for a slice-wise registration
-   */
-  template <typename VariableType_>
-  class AlignerSliceProcessorBase_ : public Configurable,
-                                     public srrg2_core::PlatformUser,
-                                     public srrg2_core::DrawableBase {
-  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    * @brief const correspondence vector getter
+    * The correspondences are computed by the correspondence finder
+    * The correspondence finder is not mandatory, thus this function could be useless in some cases
+    * @return the const computed correspondence vector
+    */
+  virtual const CorrespondenceVector& correspondences() const
+  {
+    throw std::runtime_error(
+      "AlignerSliceBase_::correspondence()|can't use the base class function");
+    return _dummy_corr;
+  }
 
-    using ThisType     = AlignerSliceProcessorBase_<VariableType_>;
-    using VariableType = VariableType_;
-    using EstimateType = typename VariableType::EstimateType;
+  /**
+    * @brief correspondence vector getter
+    * The correspondences are computed by the correspondence finder
+    * The correspondence finder is not mandatory, thus this function could be useless in some cases
+    * @return the computed correspondence vector
+    */
+  virtual CorrespondenceVector& correspondences()
+  {
+    throw std::runtime_error(
+      "AlignerSliceBase_::correspondence()|can't use the base class function");
+    return _dummy_corr;
+  }
 
-    template <typename T>
-    friend class MultiAlignerBase_;
+protected:
+  /**
+    * @brief initialize the slice with the related aligner
+    * @param[in] aligner: the base aligner that uses this slice
+    */
+  virtual inline void init(AlignerType * aligner)
+  {
+    _aligner = aligner;
+  }
 
-    using AlignerType = Aligner_<EstimateType, PropertyContainerBase, PropertyContainerBase>;
-    PARAM(PropertyConfigurable_<RobustifierBase>,
-          robustifier,
-          "robustifier used on this slice",
-          0,
-          0);
+  /**
+    * @brief demux the scene to gather the correct fixed slice
+    * @param[in] fixed_scene: the whole fixed scene (in tracking case use the measurement scene)
+    */
+  virtual void setFixed(PropertyContainerBase * fixed_scene)
+  {
+    _fixed_scene = fixed_scene;
+    bindFixed();
+  }
 
-    PARAM(PropertyString,
-          fixed_slice_name,
-          "name of the slice in the fixed scene",
-          "",
-          &_fixed_slice_changed_flag);
+  /**
+    * @brief demux the scene to gather the correct moving slice
+    * @param[in] moving_scene: the whole fixed scene (in tracking case use the local map scene)
+    */
+  virtual void setMoving(PropertyContainerBase * moving_scene)
+  {
+    _moving_scene = moving_scene;
+    bindMoving();
+  }
 
-    PARAM(PropertyString,
-          moving_slice_name,
-          "name of the slice in the moving scene",
-          "",
-          &_moving_slice_changed_flag);
+  /**
+    * @brief propagates the transform to the inner modules
+    * @param[in] moving_scene: the whole fixed scene (in tracking case use the local map scene)
+    */
+  virtual void setMovingInFixed(const EstimateType & moving_in_fixed_) = 0;
 
-    PARAM(PropertyString, frame_id, "name of the sensor's frame in the tf tree", "", nullptr);
-    PARAM(PropertyString, base_frame_id, "name of the base frame in the tf tree", "", nullptr);
+  /**
+    * @brief instanciate the factor, the moving and fixed scenes are propagated to the new
+    * factor, if present
+    */
+  virtual void initializeFactor() = 0;
 
-    //! @brief default ctor
-    AlignerSliceProcessorBase_() = default;
-    //! @brief virtual dtor
-    virtual ~AlignerSliceProcessorBase_() = default;
+  /**
+    * @brief generate a factor out of correspondences
+    * @return the generated factor smart ptr
+    */
+  virtual FactorBasePtr factor() = 0;
 
-    /**
-     * @brief const correspondence vector getter
-     * The correspondences are computed by the correspondence finder
-     * The correspondence finder is not mandatory, thus this function could be useless in some cases
-     * @return the const computed correspondence vector
-     */
-    virtual const CorrespondenceVector& correspondences() const {
-      throw std::runtime_error(
-        "AlignerSliceBase_::correspondence()|can't use the base class function");
-      return _dummy_corr;
-    }
+  /**
+    * @brief binds the robustifier if any
+    */
+  virtual void bindRobustifier() = 0;
 
-    /**
-     * @brief correspondence vector getter
-     * The correspondences are computed by the correspondence finder
-     * The correspondence finder is not mandatory, thus this function could be useless in some cases
-     * @return the computed correspondence vector
-     */
-    virtual CorrespondenceVector& correspondences() {
-      throw std::runtime_error(
-        "AlignerSliceBase_::correspondence()|can't use the base class function");
-      return _dummy_corr;
-    }
+  /**
+    * @brief computes associations for current moving scene and fixed measurements
+    * @return reference to computed associations for external use (e.g. pruning)
+    */
+  virtual CorrespondenceVector* computeCorrespondences() = 0;
 
-  protected:
-    /**
-     * @brief initialize the slice with the related aligner
-     * @param[in] aligner_: the base aligner that uses this slice
-     */
-    virtual inline void init(AlignerType* aligner_) {
-      _aligner = aligner_;
-    }
+  /**
+    * @brief stores associations in an auxiliary data buffer that can be re-used during merge
+    */
+  virtual void storeCorrespondences() = 0;
 
-    /**
-     * @brief demux the scene to gather the correct fixed slice
-     * @param[in] fixed_scene_: the whole fixed scene (in tracking case use the measurement scene)
-     */
-    virtual void setFixed(PropertyContainerBase* fixed_scene_) {
-      _fixed_scene = fixed_scene_;
-      bindFixed();
-    }
+  /**
+    * @brief checks if correspondences are good enough
+    * @return true if correspondences are good
+    */
+  virtual bool correspondencesGood() const = 0;
 
-    /**
-     * @brief demux the scene to gather the correct moving slice
-     * @param[in] moving_scene_: the whole fixed scene (in tracking case use the local map scene)
-     */
-    virtual void setMoving(PropertyContainerBase* moving_scene_) {
-      _moving_scene = moving_scene_;
-      bindMoving();
-    }
+  /**
+    * @brief binds the slice of the fixed scene to the fixed slice pointer in class
+    */
+  virtual void bindFixed() = 0;
+  /**
+    * @brief binds the slice of the moving scene to the moving slice pointer in class
+    */
+  virtual void bindMoving() = 0;
 
-    /**
-     * @brief propagates the transform to the inner modules
-     * @param[in] moving_scene_: the whole fixed scene (in tracking case use the local map scene)
-     */
-    virtual void setMovingInFixed(const EstimateType& moving_in_fixed_) = 0;
+  /**
+    * @brief auxiliary function for slice binding
+    * @param[out] slice_: slice to be bound
+    * @param[in] scene_: scene where to look for the slice
+    * @param[in] slice_name_: name of the slice
+    */
+  template <typename SliceType_>
+  void
+  bindSlice(SliceType_* slice_, PropertyContainerBase* scene_, const std::string& slice_name_);
 
-    /**
-     * @brief instanciate the factor, the moving and fixed scenes are propagated to the new
-     * factor, if present
-     */
-    virtual void initializeFactor() = 0;
+  /**
+    * @brief number of correspondences computed getter
+    * @return size of the correspondence vector
+    */
+  virtual int numCorrespondences() const
+  {
+    return 0;
+  }
 
-    /**
-     * @brief generate a factor out of correspondences
-     * @return the generated factor smart ptr
-     */
-    virtual FactorBasePtr factor() = 0;
+  /**
+    * @brief initializes the factor based on inherent values of the slice (e.g. camera matrix,
+    * prior)
+    * This method is called for all factors for each iteration
+    */
+  virtual void setupFactor() = 0;
 
-    /**
-     * @brief binds the robustifier if any
-     */
-    virtual void bindRobustifier() = 0;
+  /**
+    * @brief check if this aligner uses a prior factor
+    * @return true if has prior factor
+    */
+  virtual bool isPrior() = 0;
 
-    /**
-     * @brief computes associations for current moving scene and fixed measurements
-     * @return reference to computed associations for external use (e.g. pruning)
-     */
-    virtual CorrespondenceVector* computeCorrespondences() = 0;
+  /**
+    * @brief resets the state of the Aligner slice to brand new aligner
+    */
+  void reset() override;
 
-    /**
-     * @brief stores associations in an auxiliary data buffer that can be re-used during merge
-     */
-    virtual void storeCorrespondences() = 0;
+  /**
+    *  @brief expose dynamic container properties
+    *  @return all the properties in a map <string,PropertyPtr>
+    */
+  inline const srrg2_core::StringPropertyPtrMap & dyncamicProperties() const
+  {
+    return _dynamic_properties.properties();
+  }
 
-    /**
-     * @brief checks if correspondences are good enough
-     * @return true if correspondences are good
-     */
-    virtual bool correspondencesGood() const = 0;
+  /**
+    * @brief retrieve a single property by name
+    * @return the selected property
+    */
+  inline srrg2_core::PropertyBase * dynamicProperty(const std::string & name)
+  {
+    return _dynamic_properties.property(name);
+  }
 
-    /**
-     * @brief binds the slice of the fixed scene to the fixed slice pointer in class
-     */
-    virtual void bindFixed() = 0;
-    /**
-     * @brief binds the slice of the moving scene to the moving slice pointer in class
-     */
-    virtual void bindMoving() = 0;
+  /**
+    * @brief retrieve a typed single property by name
+    * @return the selected property
+    */
+  template <typename TargetType_>
+  inline TargetType_ * dynamicProperty(const std::string & name)
+  {
+    return _dynamic_properties.property<TargetType_>(name);
+  }
 
-    /**
-     * @brief auxiliary function for slice binding
-     * @param[out] slice_: slice to be bound
-     * @param[in] scene_: scene where to look for the slice
-     * @param[in] slice_name_: name of the slice
-     */
-    template <typename SliceType_>
-    void
-    bindSlice(SliceType_*& slice_, PropertyContainerBase* scene_, const std::string& slice_name_);
+  PropertyContainerBase* _fixed_scene =
+    nullptr; /**< whole fixed scene (e.g. measurements for tracker)  */
+  PropertyContainerBase* _moving_scene =
+    nullptr; /**< whole moving scene (e.g. local map for tracker)  */
 
-    /**
-     * @brief number of correspondences computed getter
-     * @return size of the correspondence vector
-     */
-    virtual int numCorrespondences() const {
-      return 0;
-    }
+  bool _robustifier_changed_flag  = true; /**< change control flag for robustifiers */
+  bool _fixed_slice_changed_flag  = true; /**< change control flag for fixed data slice */
+  bool _moving_slice_changed_flag = true; /**< change control flag for moving data slice */
 
-    /**
-     * @brief initializes the factor based on inherent values of the slice (e.g. camera matrix,
-     * prior)
-     * This method is called for all factors for each iteration
-     */
-    virtual void setupFactor() = 0;
+  AlignerType* _aligner = nullptr; /**< pointer to the aligner*/
 
-    /**
-     * @brief check if this aligner uses a prior factor
-     * @return true if has prior factor
-     */
-    virtual bool isPrior() = 0;
+  srrg2_core::PropertyContainerDynamic
+    _dynamic_properties; /**< optional auxiliary properties that can be handled by the aligner */
 
-    /**
-     * @brief resets the state of the Aligner slice to brand new aligner
-     */
-    void reset() override;
+private:
+  CorrespondenceVector _dummy_corr; /**< useless coords, to be purged */
+};
 
-    /**
-     *  @brief expose dynamic container properties
-     *  @return all the properties in a map <string,PropertyPtr>
-     */
-    inline const srrg2_core::StringPropertyPtrMap& dyncamicProperties() const {
-      return _dynamic_properties.properties();
-    }
-
-    /**
-     * @brief retrieve a single property by name
-     * @return the selected property
-     */
-    inline srrg2_core::PropertyBase* dynamicProperty(const std::string& name_) {
-      return _dynamic_properties.property(name_);
-    }
-
-    /**
-     * @brief retrieve a typed single property by name
-     * @return the selected property
-     */
-    template <typename TargetType_>
-    inline TargetType_* dynamicProperty(const std::string& name_) {
-      return _dynamic_properties.property<TargetType_>(name_);
-    }
-
-    PropertyContainerBase* _fixed_scene =
-      nullptr; /**< whole fixed scene (e.g. measurements for tracker)  */
-    PropertyContainerBase* _moving_scene =
-      nullptr; /**< whole moving scene (e.g. local map for tracker)  */
-
-    bool _robustifier_changed_flag  = true; /**< change control flag for robustifiers */
-    bool _fixed_slice_changed_flag  = true; /**< change control flag for fixed data slice */
-    bool _moving_slice_changed_flag = true; /**< change control flag for moving data slice */
-
-    AlignerType* _aligner = nullptr; /**< pointer to the aligner*/
-
-    srrg2_core::PropertyContainerDynamic
-      _dynamic_properties; /**< optional auxiliary properties that can be handled by the aligner */
-
-  private:
-    CorrespondenceVector _dummy_corr; /**< useless coords, to be purged */
-  };
-
-  template <typename VariableType_>
-  using AlignerSliceProcessorBasePtr_ = std::shared_ptr<AlignerSliceProcessorBase_<VariableType_>>;
+template <typename VariableType_>
+using AlignerSliceProcessorBasePtr_ = std::shared_ptr<AlignerSliceProcessorBase_<VariableType_>>;
 
 } // namespace srrg2_slam_interfaces
+
+#include "aligner_slice_processor_base_impl.hpp"

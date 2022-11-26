@@ -2,15 +2,16 @@
 // Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
 
 #pragma once
-#include "wombat_srrg/srrg_messages/instances.h"
+
 #include <wombat_srrg/srrg_geometry/geometry3d.h>
-#include <wombat_srrg/srrg_messages/instances.h>
 #include <wombat_srrg/srrg_messages/messages/image_message.h>
 #include <wombat_srrg/srrg_messages/messages/camera_info_message.h>
 #include <wombat_srrg/srrg_messages/messages/transform_events_message.h>
 #include <wombat_srrg/srrg_messages/message_handlers/message_source_platform.h>
 #include <numeric>
-namespace srrg2_core {
+
+namespace srrg2_core
+{
 
   // SLAM benchmark facility TODO move me?
   template <typename EstimateType_>
@@ -56,20 +57,20 @@ namespace srrg2_core {
     }
 
     //! loads messages from a dataset file
-    virtual void loadDataset(const std::string& filepath_,
+    virtual void loadDataset(const std::string & filepath,
                              const size_t& number_of_message_packs_to_read_ = -1,
                              const size_t& number_of_message_pack_to_start_ = 0) = 0;
 
-    virtual void loadDatasetWithTF(const std::string& filepath_,
+    virtual void loadDatasetWithTF(const std::string & filepath,
                                    MessageSourcePlatformPtr platform_source_,
                                    const size_t& number_of_message_packs_to_read_ = -1,
                                    const size_t& number_of_message_pack_to_start_ = 0) {
     }
     //! loads ground truth poses from file (s)
-    virtual void loadGroundTruth(const std::string& filepath_,
-                                 const std::string& filepath_additional_ = std::string()) = 0;
+    virtual void loadGroundTruth(const std::string & filepath,
+                                 const std::string & filepath_additional = "") = 0;
 
-    virtual void loadGroundTruthFromBOSS(const std::string& filepath_, const std::string& topic_) {
+    virtual void loadGroundTruthFromBOSS(const std::string & filepath, const std::string& topic_) {
     }
 
     //! fetch the next message from memory (buffered with loadDataset)

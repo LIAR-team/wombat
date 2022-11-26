@@ -22,19 +22,19 @@ namespace srrg2_core {
     virtual ~SLAMBenchmarkSuiteKITTI() {
     }
 
-    virtual void loadGroundTruth(const std::string& filepath_,
-                                 const std::string& filepath_additional_ = std::string()) override {
+    virtual void loadGroundTruth(const std::string & filepath,
+                                 const std::string & filepath_additional = "") override {
       throw std::runtime_error(
         "SLAMBenchmarkSuiteEuRoC::loadGroundTruth|don't call my name, Alejandro");
     }
 
-    virtual void loadDataset(const std::string& filepath_,
+    virtual void loadDataset(const std::string & filepath,
                              const size_t& number_of_message_packs_to_read_ = -1,
                              const size_t& number_of_message_pack_to_start_ = 0) override {
       throw std::runtime_error("SLAMBenchmarkSuiteEuRoC::loadDataset|don't call my name, Roberto");
     }
 
-    virtual void loadDatasetWithTF(const std::string& filepath_,
+    virtual void loadDatasetWithTF(const std::string & filepath,
                                    MessageSourcePlatformPtr platform_source_,
                                    const size_t& number_of_message_packs_to_read_ = -1,
                                    const size_t& number_of_message_pack_to_start_ = 0) {
@@ -77,7 +77,7 @@ namespace srrg2_core {
       }
     }
 
-    void loadGroundTruthFromBOSS(const std::string& filepath_,
+    void loadGroundTruthFromBOSS(const std::string & filepath,
                                  const std::string& topic_ = "/ground_truth") override {
       _ground_truth_path = filepath_;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "initializer.h"
-#include <srrg_data_structures/platform.h>
+#include <wombat_srrg/srrg_data_structures/platform.h>
 #include <wombat_srrg/srrg_messages/message_handlers/message_pack.h>
 #include <wombat_srrg/srrg_messages/messages/camera_info_message.h>
 #include <wombat_srrg/srrg_messages/messages/image_message.h>

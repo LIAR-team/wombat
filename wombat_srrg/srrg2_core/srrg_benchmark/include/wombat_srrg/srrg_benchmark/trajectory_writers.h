@@ -1,7 +1,6 @@
 // Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
 // Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
 
-#include "wombat_srrg/srrg_messages/instances.h"
 #include "wombat_srrg/srrg_system_utils/parse_command_line.h"
 #include "wombat_srrg/srrg_system_utils/system_utils.h"
 #include <wombat_srrg/srrg_messages/messages/imu_message.h>
@@ -25,18 +24,20 @@ using TimestampIsometry3fMap =
            std::less<double>,
            Eigen::aligned_allocator<std::pair<double, srrg2_core::Isometry3f>>>;
 
-void writeTrajectoryToFileTUM(const TimestampIsometry3fMap& conatiner_,
-                              const std::string& filename_) {
-  std::cerr << "writeTrajectoryToFileTUM|output file [" << FG_YELLOW(filename_) << "]" << std::endl;
-  std::ofstream outfile(filename_, std::ofstream::out);
+void writeTrajectoryToFileTUM(
+  const TimestampIsometry3fMap & conatiner,
+  const std::string & filename)
+{
+  std::cerr << "writeTrajectoryToFileTUM|output file [" << FG_YELLOW(filename) << "]" << std::endl;
+  std::ofstream outfile(filename, std::ofstream::out);
   if (!outfile.good() || !outfile.is_open()) {
     throw std::runtime_error("SLAMBenchmarkSuiteICL::writeTrajectoryToFile|unable to open file: " +
-                             filename_);
+                             filename);
   }
   outfile << std::fixed;
   outfile << std::setprecision(9);
   outfile << "# timestamp tx ty tz qx qy qz qw \n";
-  for (const auto& entry : conatiner_) {
+  for (const auto& entry : conatiner) {
     const double& timestamp_seconds = entry.first;
     outfile << timestamp_seconds << " ";
     const srrg2_core::Isometry3f& pose_estimate(entry.second);
@@ -53,18 +54,20 @@ void writeTrajectoryToFileTUM(const TimestampIsometry3fMap& conatiner_,
   outfile.close();
 }
 
-void writeTrajectoryToFileKITTI(const TimestampIsometry3fMap& conatiner_,
-                                const std::string& filename_) {
-  std::cerr << "writeTrajectoryToFileKITTI|output file [" << FG_YELLOW(filename_) << "]"
+void writeTrajectoryToFileKITTI(
+  const TimestampIsometry3fMap & conatiner,
+  const std::string & filename)
+{
+  std::cerr << "writeTrajectoryToFileKITTI|output file [" << FG_YELLOW(filename) << "]"
             << std::endl;
-  std::ofstream outfile(filename_, std::ofstream::out);
+  std::ofstream outfile(filename, std::ofstream::out);
   if (!outfile.good() || !outfile.is_open()) {
     throw std::runtime_error(
-      "SLAMBenchmarkSuiteKITTI::writeTrajectoryToFile|unable to open file: " + filename_);
+      "SLAMBenchmarkSuiteKITTI::writeTrajectoryToFile|unable to open file: " + filename);
   }
   outfile << std::scientific;
   outfile << std::setprecision(9);
-  for (const auto& entry : conatiner_) {
+  for (const auto& entry : conatiner) {
     const srrg2_core::Isometry3f& pose_estimate(entry.second);
     for (size_t r = 0; r < 3; ++r) {
       for (size_t c = 0; c < 4; ++c) {

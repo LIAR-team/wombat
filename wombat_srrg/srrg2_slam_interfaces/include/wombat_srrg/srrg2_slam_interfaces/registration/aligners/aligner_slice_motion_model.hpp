@@ -1,6 +1,6 @@
 #pragma once
 #include "aligner_slice_processor_prior.h"
-#include "srrg2_slam_interfaces/motion_models/motion_model_base.hpp"
+#include "wombat_srrg/srrg2_slam_interfaces/motion_models/motion_model_base.hpp"
 #include <wombat_srrg/srrg_config/property_configurable.h>
 #include <wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_prior_error_factor.h>
 #include <wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_prior_error_factor_ad.h>

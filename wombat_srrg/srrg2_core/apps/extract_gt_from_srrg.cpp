@@ -12,7 +12,7 @@ const std::string exec_name = "extract_gt_from_srrg|";
 #define LOG std::cerr << exec_name
 
 void loadGroundTruthFromBOSS(TimestampIsometry3fMap& conatiner_,
-                             const std::string& filepath_,
+                             const std::string & filepath,
                              const std::string& topic_);
 
 int main(int argc, char** argv) {
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 }
 
 void loadGroundTruthFromBOSS(TimestampIsometry3fMap& conatiner_,
-                             const std::string& filepath_,
+                             const std::string & filepath,
                              const std::string& topic_) {
   LOG << "opening file [" << FG_YELLOW(filepath_) << "] looking for topic [" << FG_BLUE(topic_)
       << "]" << std::endl;

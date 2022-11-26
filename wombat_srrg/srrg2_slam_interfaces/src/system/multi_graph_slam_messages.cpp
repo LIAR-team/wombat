@@ -23,8 +23,8 @@ void LocalMapMessageBase::serialize(ObjectData& odata, IdContext& context)
 void LocalMapMessageBase::deserialize(ObjectData& odata, IdContext& context)
 {
   BaseSensorMessage::deserialize(odata, context);
-  srrg2_core::ValueData * vdata_ptr=odata.getField("history");
-  srrg2_core::ArrayData* adata_ptr=dynamic_cast<srrg2_core::ArrayData*>(vdata_ptr);
+  srrg2_core::ValueData * vdata_ptr = odata.getField("history");
+  srrg2_core::ArrayData* adata_ptr = dynamic_cast<srrg2_core::ArrayData*>(vdata_ptr);
   if (! adata_ptr) {
     return;
   }
@@ -33,9 +33,9 @@ void LocalMapMessageBase::deserialize(ObjectData& odata, IdContext& context)
   history.clear();
   for (size_t i = 0; i < adata.size(); ++i) {
     srrg2_core::ValueData& vdata  = adata[i];
-    srrg2_core::ObjectData& odata = dynamic_cast<srrg2_core::ObjectData&>(vdata);
+    srrg2_core::ObjectData& odata_ = dynamic_cast<srrg2_core::ObjectData&>(vdata);
     TrackerReportRecordPtr report(new TrackerReportRecord);
-    report->deserialize(odata, context);
+    report->deserialize(odata_, context);
     history.push_back(report);
   }
 }

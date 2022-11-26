@@ -15,18 +15,22 @@ TrackerInputHandle::TrackerInputHandle(
 {}
 
 void TrackerInputHandle::serialize(
-  srrg2_core::ObjectData& odata,
-  srrg2_core::IdContext& context)
+  srrg2_core::ObjectData & odata,
+  srrg2_core::IdContext & context)
 {
+  (void)context;
+
   odata.setString("topic", topic);
   odata.setInt("seq", seq);
   odata.setDouble("timestamp", timestamp);
 }
 
 void TrackerInputHandle::deserialize(
-  srrg2_core::ObjectData& odata,
-  srrg2_core::IdContext& context)
+  srrg2_core::ObjectData & odata,
+  srrg2_core::IdContext & context)
 {
+  (void)context;
+
   topic     = odata.getString("topic");
   seq       = odata.getInt("seq");
   timestamp = odata.getDouble("timestamp");
@@ -40,8 +44,8 @@ TrackerReportRecord::TrackerReportRecord(
 {}
 
 void TrackerReportRecord::serialize(
-  srrg2_core::ObjectData& odata,
-  srrg2_core::IdContext& context)
+  srrg2_core::ObjectData & odata,
+  srrg2_core::IdContext & context)
 {
   BaseType::serialize(odata, context);
   srrg2_core::ArrayData* adata = new srrg2_core::ArrayData;
@@ -57,8 +61,8 @@ void TrackerReportRecord::serialize(
 }
 
 void TrackerReportRecord::deserialize(
-  srrg2_core::ObjectData& odata,
-  srrg2_core::IdContext& context)
+  srrg2_core::ObjectData & odata,
+  srrg2_core::IdContext & context)
 {
   BaseType::deserialize(odata, context);
   measurements.clear();
@@ -68,7 +72,7 @@ void TrackerReportRecord::deserialize(
     return;
   }
   for (size_t i = 0; i < adata->size(); ++i) {
-    srrg2_core::ValueData& xdata  = (*adata)[i];
+    srrg2_core::ValueData& xdata = (*adata)[i];
     srrg2_core::ObjectData& mdata = dynamic_cast<srrg2_core::ObjectData&>(xdata);
     TrackerInputHandlePtr handle(new TrackerInputHandle);
     handle->deserialize(mdata, context);

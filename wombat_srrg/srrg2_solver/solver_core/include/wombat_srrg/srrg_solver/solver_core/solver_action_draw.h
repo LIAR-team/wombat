@@ -1,6 +1,6 @@
 #pragma once
 #include "solver_action_base.h"
-#include <srrg_viewer/active_drawable.h>
+#include <wombat_srrg/srrg_viewer/active_drawable.h>
 
 namespace srrg2_solver {
 

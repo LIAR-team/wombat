@@ -1,5 +1,5 @@
 #pragma once
-#include "srrg2_slam_interfaces/registration/local_map_selectors/local_map_selector.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/local_map_selectors/local_map_selector.h"
 #include <wombat_srrg/srrg_solver/solver_core/solver.h>
 #include <wombat_srrg/srrg_solver/utils/factor_graph_visit.h>
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "srrg2_slam_interfaces/mapping/local_map.h"
-#include <srrg_data_structures/correspondence.h>
+#include "wombat_srrg/srrg2_slam_interfaces/mapping/local_map.h"
+#include <wombat_srrg/srrg_data_structures/correspondence.h>
 #include <wombat_srrg/srrg_solver/solver_core/factor_base.h>
 #include <wombat_srrg/srrg_solver/variables_and_factors/types_2d/se2_pose_pose_geodesic_error_factor.h>
 #include <wombat_srrg/srrg_solver/variables_and_factors/types_3d/se3_pose_pose_geodesic_error_factor.h>

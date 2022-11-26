@@ -1,7 +1,7 @@
 #pragma once
 #include "loop_detector.h"
-#include "srrg2_slam_interfaces/mapping/local_map.h"
-#include "srrg2_slam_interfaces/registration/local_map_selectors/local_map_selector_breadth_first.h"
+#include "wombat_srrg/srrg2_slam_interfaces/mapping/local_map.h"
+#include "wombat_srrg/srrg2_slam_interfaces/registration/local_map_selectors/local_map_selector_breadth_first.h"
 
 namespace srrg2_slam_interfaces {
 
@@ -49,3 +49,5 @@ namespace srrg2_slam_interfaces {
   };
 
 } // namespace srrg2_slam_interfaces
+
+#include "multi_loop_detector_brute_force_impl.hpp"

@@ -1,6 +1,6 @@
 #include <srrg_test/test_helper.hpp>
 
-#include "srrg2_slam_interfaces/motion_models/motion_model_constant_velocity.hpp"
+#include "wombat_srrg/srrg2_slam_interfaces/motion_models/motion_model_constant_velocity.hpp"
 #include "srrg_geometry/geometry2d.h"
 #include "srrg_geometry/geometry3d.h"
 

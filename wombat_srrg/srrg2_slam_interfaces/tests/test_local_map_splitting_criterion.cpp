@@ -1,6 +1,6 @@
 #include <srrg_test/test_helper.hpp>
 
-#include "srrg2_slam_interfaces/instances.h"
+#include "wombat_srrg/srrg2_slam_interfaces/instances.h"
 
 using namespace srrg2_slam_interfaces;
 using namespace srrg2_core;
