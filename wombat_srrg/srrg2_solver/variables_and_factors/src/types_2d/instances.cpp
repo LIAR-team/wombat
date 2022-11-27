@@ -1,5 +1,5 @@
 //! include all the types you declared here
-#include "instances.h"
+#include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/instances.h"
 #include "wombat_srrg/srrg_solver/variables_and_factors/types_2d/all_types.h"
 
 //! we try to instantiate all solvers

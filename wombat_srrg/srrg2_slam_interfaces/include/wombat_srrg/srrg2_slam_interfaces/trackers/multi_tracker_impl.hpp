@@ -215,7 +215,7 @@ void MultiTrackerBase_<EstimateType_>::_drawImpl(srrg2_core::ViewerCanvasPtr can
   assert(param_aligner.value());
   param_aligner->draw(canvas_);
 
-  // ia recursively call all the tr-slice draw
+  // recursively call all the tr-slice draw
   for (size_t sit = 0; sit < param_slice_processors.size(); ++sit) {
     const SliceProcessorTypePtr& proc = param_slice_processors.value(sit);
     proc->draw(canvas_);

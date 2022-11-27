@@ -128,7 +128,7 @@ std::shared_ptr<DestMessageType_> extractMessage(
   srrg2_core::MessagePackPtr message_pack =
     std::dynamic_pointer_cast<srrg2_core::MessagePack>(measurement);
 
-  // ia if it's not a pack, try to process a single laser message
+  // if it's not a pack, try to process a single laser message
   if (!message_pack) {
     if (measurement->topic.value() == topic_) {
       return std::dynamic_pointer_cast<DestMessageType_>(measurement);

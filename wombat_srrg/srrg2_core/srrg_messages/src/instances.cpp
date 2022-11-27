@@ -1,7 +1,7 @@
 // Copyright 2018-2022, Giorgio Grisetti, Mirco Colosi, Dominik Schlegel,
 // Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
 
-#include "instances.h"
+#include "wombat_srrg/srrg_messages/instances.h"
 #include "wombat_srrg/srrg_messages/messages/camera_info_message.h"
 #include "wombat_srrg/srrg_messages/messages/cmd_vel_message.h"
 #include "wombat_srrg/srrg_messages/messages/grid_map_message.h"

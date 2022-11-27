@@ -31,6 +31,7 @@ add_subdirectory(hbst)
 add_subdirectory(srrg2_core)
 add_subdirectory(srrg2_solver)
 add_subdirectory(srrg2_slam_interfaces)
+add_subdirectory(srrg2_laser_slam_2d)
 
 wombat_package_install(
   EXPORT_DEPS

@@ -135,7 +135,7 @@ protected:
   {
     bool association_good = false;
 
-    // ia do the dance for each slice
+    // do the dance for each slice
     const size_t number_of_slices = param_slice_processors.size();
     for (size_t index_slice = 0; index_slice < number_of_slices; ++index_slice) {
       AlignerSliceProcessorTypePtr slice = param_slice_processors.value(index_slice);

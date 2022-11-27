@@ -1,5 +1,5 @@
 add_library(srrg_path_matrix SHARED)
-add_library(wombat_srrg::srrg2_core::srrg_path_matrix ALIAS srrg_path_matrix)
+add_library(wombat_srrg::srrg2_core::path_matrix ALIAS srrg_path_matrix)
 
 target_sources(
   srrg_path_matrix

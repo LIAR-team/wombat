@@ -12,7 +12,7 @@ using namespace srrg2_core;
 
 template <typename EstimateType_, typename FixedMeasurementType_, typename MovingSceneType_>
 void TrackerSliceProcessor_<EstimateType_, FixedMeasurementType_, MovingSceneType_>::sanityCheck(
-  const std::string& message) const
+  const std::string & message) const
 {
   BaseType::sanityCheck(message);
   std::string msg = message;
@@ -72,10 +72,12 @@ inline void TrackerSliceProcessor_<EstimateType_, FixedMeasurementType_, MovingS
 
 template <typename EstimateType_, typename FixedMeasurementType_, typename MovingSceneType_>
 void TrackerSliceProcessor_<EstimateType_, FixedMeasurementType_, MovingSceneType_>::setClosure(
-  const CorrespondenceVector& correspondences_,
-  const EstimateType& reference_in_query_,
-  const EstimateType& robot_in_moving_local_map_)
+  const CorrespondenceVector & correspondences_,
+  const EstimateType & reference_in_query_,
+  const EstimateType & robot_in_moving_local_map_)
 {
+  (void)robot_in_moving_local_map_;
+
   _correspondences.clear();
   if (!param_closure_merger.value()) {
     return;

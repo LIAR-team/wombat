@@ -102,7 +102,7 @@ void MultiAlignerBase_<VariableType_>::compute()
   // tg force the solver to recompute structure
   param_solver->setGraph(_graph);
 
-  // ia precompute: in this case just bind robustifiers in each aligner-slice
+  // precompute: in this case just bind robustifiers in each aligner-slice
   _preCompute();
 
   // run solver on current problem
@@ -121,7 +121,7 @@ void MultiAlignerBase_<VariableType_>::compute()
     return;
   }
 
-  // ia post compute: in this case run inliers only and eventually purge correspondences
+  // post compute: in this case run inliers only and eventually purge correspondences
   _postCompute();
 
   // make sure the solver's final isometry estimate is healthy and propagate it to the slices

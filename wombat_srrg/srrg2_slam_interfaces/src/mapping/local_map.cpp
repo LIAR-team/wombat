@@ -18,7 +18,7 @@ void DynamicPropertyContainerOwner::_drawImpl(ViewerCanvasPtr canvas_) const
 
   // TODO re-think this logic to support generic point clouds with less code UAGH
   for (auto it : dynamic_properties.properties()) {
-    // ia TODO laser slam case :)
+    // TODO laser slam case :)
     Property_<PointNormal2fVectorCloud*>* points_2d =
       dynamic_cast<Property_<PointNormal2fVectorCloud*>*>(it.second);
     if (points_2d && points_2d->value()) {
@@ -26,7 +26,7 @@ void DynamicPropertyContainerOwner::_drawImpl(ViewerCanvasPtr canvas_) const
       continue; // this property has been handled
     }
 
-    // ia TODO proslam case :)
+    // TODO proslam case :)
     Property_<PointIntensityDescriptor3fVectorCloud*>* points_3d =
       dynamic_cast<Property_<PointIntensityDescriptor3fVectorCloud*>*>(it.second);
     if (points_3d && points_3d->value()) {
@@ -34,15 +34,15 @@ void DynamicPropertyContainerOwner::_drawImpl(ViewerCanvasPtr canvas_) const
       continue; // this property has been handled
     }
 
-    // ia TODO shaslam case :)
+    // TODO shaslam case :)
     Property_<VisualMatchablefVector*>* matchables =
       dynamic_cast<Property_<VisualMatchablefVector*>*>(it.second);
     if (matchables && matchables->value()) {
       canvas_->putVisualMatchables(*matchables->value());
-      continue; // ia this property has been handled
+      continue; // this property has been handled
     }
 
-    // ia TODO nicp case :)
+    // TODO nicp case :)
     Property_<PointNormalCurvature3fVectorCloud*>* points_nicp =
       dynamic_cast<Property_<PointNormalCurvature3fVectorCloud*>*>(it.second);
     if (points_nicp && points_nicp->value()) {

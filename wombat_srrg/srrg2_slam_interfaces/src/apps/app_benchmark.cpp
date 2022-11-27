@@ -84,7 +84,7 @@ int main(int argc, char** argv)
   }
 
   ConfigurableManager::initFactory(arg_dl_stub_file.value());
-  // ia load config and get objects
+  // load config and get objects
   LOG << "reading configuration [ " << arg_config_name.value() << " ]\n";
   ConfigurableManager manager;
   manager.read(arg_config_name.value());
@@ -106,7 +106,7 @@ int main(int argc, char** argv)
 
   slammer_ptr->param_push_sinks.pushBack(benchamin_ptr);
 
-  // ia start processing the thing
+  // start processing the thing
   LOG << "start processing\n";
   BaseSensorMessagePtr msg = nullptr;
 

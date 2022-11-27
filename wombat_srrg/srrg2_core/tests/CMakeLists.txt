@@ -18,7 +18,7 @@ ament_add_gtest(test_distance_map test_distance_map.cpp)
 target_link_libraries(
   test_distance_map
     wombat_srrg::srrg2_core::srrg_image
-    wombat_srrg::srrg2_core::srrg_path_matrix
+    wombat_srrg::srrg2_core::path_matrix
     wombat_srrg::srrg2_core::pcl
     wombat_srrg::srrg2_core::system_utils
 )

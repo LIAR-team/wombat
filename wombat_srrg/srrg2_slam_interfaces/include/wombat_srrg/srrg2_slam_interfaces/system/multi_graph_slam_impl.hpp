@@ -179,7 +179,7 @@ void MultiGraphSLAM_<LoopClosureType_>::compute()
   // global pose
   tracker->setRawData(_message);
   tracker->preprocessRawData();
-  tracker->align(); // ia I really do not like this name
+  tracker->align(); // I really do not like this name
   _robot_in_local_map = tracker->robotInLocalMap();
   switch (tracker->status()) {
     case TrackerBase::Initializing:

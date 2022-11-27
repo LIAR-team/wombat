@@ -2,7 +2,6 @@
 #ds enable HBST code for descriptor merging and opencv support TODO move to cmake_modules?
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSRRG_MERGE_DESCRIPTORS -DSRRG_HBST_HAS_OPENCV")
 
-
 add_library(srrg2_slam_interfaces SHARED)
 add_library(wombat_srrg::srrg2_slam_interfaces ALIAS srrg2_slam_interfaces)
 
