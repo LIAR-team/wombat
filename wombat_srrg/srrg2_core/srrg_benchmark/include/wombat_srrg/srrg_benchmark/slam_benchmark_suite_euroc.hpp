@@ -2,7 +2,7 @@
 // Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
 
 #pragma once
-#include "slam_benchmark_suite_kitti.hpp" //ds we can inherit most methods
+#include "slam_benchmark_suite_kitti.hpp" // we can inherit most methods
 
 namespace srrg2_core {
 

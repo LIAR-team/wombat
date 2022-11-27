@@ -231,7 +231,7 @@ namespace srrg2_slam_interfaces {
           auto cmowner = camera_owners_[i];
           cmowner->setCameraMatrix(camera_info_msg->camera_matrix.value());
 
-          // ds overwrite image dimensions TODO purge completely from configuration
+          // overwrite image dimensions TODO purge completely from configuration
           cmowner->setCanvasRows(camera_info_msg->rows.value());
           cmowner->setCanvasCols(camera_info_msg->cols.value());
 

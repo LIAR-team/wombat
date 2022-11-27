@@ -40,7 +40,7 @@ namespace srrg2_slam_interfaces {
         throw std::runtime_error("LocalMapSplittingCriterionVisbility|SLAM tracker not set");
       }
 
-      // ds cache local map and check if not available
+      // cache local map and check if not available
       const LocalMapType* local_map = ThisType::_slam->currentLocalMap();
       if (!local_map || local_map->properties().empty()) {
         std::cerr << "LocalMapSplittingCriterionVisbility|WARNING: no local map available, no "
@@ -51,13 +51,13 @@ namespace srrg2_slam_interfaces {
       }
       const size_t current_number_of_points = local_map->numberOfPoints();
 
-      // ds if the previous number of points was not reset (not in a new local map)
+      // if the previous number of points was not reset (not in a new local map)
       if (_previous_number_of_points != 0) {
         assert(current_number_of_points >= _previous_number_of_points);
         const size_t delta = current_number_of_points - _previous_number_of_points;
 
-        // ds if the current number of points is above the limit
-        // ds the delta is 0 for pure relocalization and hence will not trigger this condition
+        // if the current number of points is above the limit
+        // the delta is 0 for pure relocalization and hence will not trigger this condition
         if (delta != 0 && current_number_of_points > param_maximum_number_of_points.value()) {
           ThisType::_has_to_split    = true;
           _previous_number_of_points = 0;
@@ -66,19 +66,19 @@ namespace srrg2_slam_interfaces {
       }
       _previous_number_of_points = current_number_of_points;
 
-      // ds evaluate iteration statistics to determine inlier tracks for a split decision
+      // evaluate iteration statistics to determine inlier tracks for a split decision
       srrg2_solver::IterationStatsVector iteration_statistics(0);
 
-      // ds if the system just relocalized
+      // if the system just relocalized
       if (ThisType::_slam->relocalized()) {
         RelocalizerTypePtr relocalizer = ThisType::_slam->param_relocalizer.value();
         if (relocalizer && relocalizer->param_aligner.value()) {
-          // ds compute inlier ratio from relocalizer's aligner iteration statistics
-          // ds the statistics are identical to the tracker one's in case they share the aligner
+          // compute inlier ratio from relocalizer's aligner iteration statistics
+          // the statistics are identical to the tracker one's in case they share the aligner
           iteration_statistics = relocalizer->param_aligner->iterationStats();
         }
       } else {
-        // ds compute inlier ratio from tracker's aligner iteration statistics
+        // compute inlier ratio from tracker's aligner iteration statistics
         iteration_statistics = tracker->iterationStats();
       }
       if (iteration_statistics.empty()) {
@@ -90,7 +90,7 @@ namespace srrg2_slam_interfaces {
       const float inlier_tracking_ratio =
         static_cast<float>(iteration_statistics.back().num_inliers) / current_number_of_points;
 
-      // ds if the tracking ratio is too low we have to generate a new local map
+      // if the tracking ratio is too low we have to generate a new local map
       if (inlier_tracking_ratio < param_minimum_tracked_point_ratio.value()) {
         ThisType::_has_to_split    = true;
         _previous_number_of_points = 0;

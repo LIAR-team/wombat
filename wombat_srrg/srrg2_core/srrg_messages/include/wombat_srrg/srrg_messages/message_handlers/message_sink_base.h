@@ -2,49 +2,57 @@
 // Bartolomeo Della Corte, Irvin Aloise, Federico Nardi, Tiziano Guadagnino
 
 #pragma once
+
 #include "wombat_srrg/srrg_boss/serializer.h"
 #include "wombat_srrg/srrg_config/property_configurable_vector.h"
 #include "wombat_srrg/srrg_data_structures/platform.h"
 #include "wombat_srrg/srrg_messages/messages/base_sensor_message.h"
 
-namespace srrg2_core {
+// TODO @asoragna srrg_viewer
 
-  class ViewerCanvas;
+namespace srrg2_core
+{
 
-  class MessageSinkBase : public Configurable, public PlatformUser {
-  public:
-    PARAM(PropertyString, tf_topic, "name of the transform tree to subscribe to", "", nullptr);
-    PARAM_VECTOR(PropertyConfigurableVector_<MessageSinkBase>,
-                 push_sinks,
-                 "sinks to which the output of this message will be pushed with propagateMessage",
-                 nullptr);
-    MessageSinkBase()          = default;
-    virtual ~MessageSinkBase() = default;
+//class ViewerCanvas;
 
-    // default implementation just propagates the message
-    virtual bool putMessage(BaseSensorMessagePtr msg_);
+class MessageSinkBase : public Configurable, public PlatformUser
+{
+public:
+  PARAM(PropertyString, tf_topic, "name of the transform tree to subscribe to", "", nullptr);
+  PARAM_VECTOR(PropertyConfigurableVector_<MessageSinkBase>,
+                push_sinks,
+                "sinks to which the output of this message will be pushed with propagateMessage",
+                nullptr);
 
-    // explicit method to propagate the message to the connected sinks
-    virtual bool propagateMessage(BaseSensorMessagePtr msg_);
+  MessageSinkBase()          = default;
+  virtual ~MessageSinkBase() = default;
 
-    // default implementation propagates the reset to all connected sinks
-    void reset() override;
+  // default implementation just propagates the message
+  virtual bool putMessage(BaseSensorMessagePtr msg_);
 
-    void setPlatform(PlatformPtr) override;
+  // explicit method to propagate the message to the connected sinks
+  virtual bool propagateMessage(BaseSensorMessagePtr msg_);
 
-    inline bool isOpen() {
-      return _is_open;
-    }
+  // default implementation propagates the reset to all connected sinks
+  void reset() override;
 
-    //! @brief flushes internal buffer (if any)
-    virtual bool flush();
+  void setPlatform(PlatformPtr) override;
 
-    //! @brief checks if any internal buffer is unflushed
-    virtual bool isFlushed();
+  inline bool isOpen()
+  {
+    return _is_open;
+  }
 
-  protected:
-    bool _is_open = false;
-  };
+  //! @brief flushes internal buffer (if any)
+  virtual bool flush();
 
-  using MessageSinkBasePtr = std::shared_ptr<MessageSinkBase>;
+  //! @brief checks if any internal buffer is unflushed
+  virtual bool isFlushed();
+
+protected:
+  bool _is_open = false;
+};
+
+using MessageSinkBasePtr = std::shared_ptr<MessageSinkBase>;
+
 } // namespace srrg2_core

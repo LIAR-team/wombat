@@ -56,7 +56,7 @@ AlignerSliceProcessor_<FactorType_, FixedType_, MovingType_>::computeCorresponde
 template <typename FactorType_, typename FixedType_, typename MovingType_>
 void AlignerSliceProcessor_<FactorType_, FixedType_, MovingType_>::storeCorrespondences()
 {
-  // ds check for the possibility of adding auxiliary data to the scene
+  // check for the possibility of adding auxiliary data to the scene
   PropertyContainerDynamic* auxiliary_data =
     dynamic_cast<PropertyContainerDynamic*>(ThisType::_moving_scene);
   if (auxiliary_data) {
@@ -67,13 +67,13 @@ void AlignerSliceProcessor_<FactorType_, FixedType_, MovingType_>::storeCorrespo
     PropertyCorrespondenceVector* property =
       auxiliary_data->property<PropertyCorrespondenceVector>(property_name);
 
-    // ds if the property is already set
+    // if the property is already set
     if (property) {
-      // ds update the entry - copying the correspondences (expensive but manipulation safe)
+      // update the entry - copying the correspondences (expensive but manipulation safe)
       property->setValue(_correspondences);
     } else {
-      // ds store the correspondences in a container for this slice
-      // ds the correspondences can be later picked up by the tracker for use in a tracker slice
+      // store the correspondences in a container for this slice
+      // the correspondences can be later picked up by the tracker for use in a tracker slice
       auxiliary_data->addProperty(
         new PropertyCorrespondenceVector(property_name,
                                           "aligner correspondences",

@@ -1,25 +1,27 @@
-#include <srrg_test/test_helper.hpp>
+#include "wombat_srrg/srrg_test/test_helper.hpp"
 
 #include "wombat_srrg/srrg2_slam_interfaces/instances.h"
 
 using namespace srrg2_slam_interfaces;
 using namespace srrg2_core;
 
-int main(int argc_, char** argv_) {
+int main(int argc_, char** argv_)
+{
   return srrg2_test::runTests(argc_, argv_);
 }
 
-TEST(LocalMapSplittingCriterionDistance2D, Translation1D) {
+TEST(LocalMapSplittingCriterionDistance2D, Translation1D)
+{
   LocalMapSplittingCriterionDistance2D criterion;
   criterion.param_local_map_distance.setValue(5.0f /*meters*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM2D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry2f robot_pose(Isometry2f::Identity());
   for (size_t i = 0; i < 10; ++i) {
     slam_system.setRobotInLocalMap(robot_pose);
@@ -30,22 +32,23 @@ TEST(LocalMapSplittingCriterionDistance2D, Translation1D) {
       ASSERT_TRUE(criterion.hasToSplit());
     }
 
-    // ds advance robot
+    // advance robot
     robot_pose.translation() += Vector2f(1, 0);
   }
 }
 
-TEST(LocalMapSplittingCriterionDistance3D, Translation1D) {
+TEST(LocalMapSplittingCriterionDistance3D, Translation1D)
+{
   LocalMapSplittingCriterionDistance3D criterion;
   criterion.param_local_map_distance.setValue(5.0f /*meters*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   for (size_t i = 0; i < 10; ++i) {
     slam_system.setRobotInLocalMap(robot_pose);
@@ -56,22 +59,23 @@ TEST(LocalMapSplittingCriterionDistance3D, Translation1D) {
       ASSERT_TRUE(criterion.hasToSplit());
     }
 
-    // ds advance robot
+    // advance robot
     robot_pose.translation() += Vector3f(1, 0, 0);
   }
 }
 
-TEST(LocalMapSplittingCriterionRotation2D, RotationNegative) {
+TEST(LocalMapSplittingCriterionRotation2D, RotationNegative)
+{
   LocalMapSplittingCriterionRotation2D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM2D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry2f robot_pose(Isometry2f::Identity());
   const float angle_step_size = criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 10; ++i) {
@@ -86,17 +90,18 @@ TEST(LocalMapSplittingCriterionRotation2D, RotationNegative) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionRotation2D, RotationPositive) {
+TEST(LocalMapSplittingCriterionRotation2D, RotationPositive)
+{
   LocalMapSplittingCriterionRotation2D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM2D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry2f robot_pose(Isometry2f::Identity());
   const float angle_step_size = criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 10; ++i) {
@@ -111,17 +116,18 @@ TEST(LocalMapSplittingCriterionRotation2D, RotationPositive) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveX) {
+TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveX)
+{
   LocalMapSplittingCriterionRotation3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float angle_step_size = criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 10; ++i) {
@@ -136,17 +142,18 @@ TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveX) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveY) {
+TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveY)
+{
   LocalMapSplittingCriterionRotation3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float angle_step_size = criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 10; ++i) {
@@ -161,17 +168,18 @@ TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveY) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveZ) {
+TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveZ)
+{
   LocalMapSplittingCriterionRotation3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float angle_step_size = criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 10; ++i) {
@@ -186,17 +194,18 @@ TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveZ) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveXYNegativeZ) {
+TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveXYNegativeZ)
+{
   LocalMapSplittingCriterionRotation3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float angle_step_size = criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 6; ++i) {
@@ -215,17 +224,18 @@ TEST(LocalMapSplittingCriterionRotation3D, RotationPositiveXYNegativeZ) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeX) {
+TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeX)
+{
   LocalMapSplittingCriterionRotation3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float angle_step_size = -criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 10; ++i) {
@@ -240,17 +250,18 @@ TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeX) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeY) {
+TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeY)
+{
   LocalMapSplittingCriterionRotation3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float angle_step_size = -criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 10; ++i) {
@@ -265,17 +276,18 @@ TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeY) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeZ) {
+TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeZ)
+{
   LocalMapSplittingCriterionRotation3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float angle_step_size = -criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 10; ++i) {
@@ -290,17 +302,18 @@ TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeZ) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeXYPositiveZ) {
+TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeXYPositiveZ)
+{
   LocalMapSplittingCriterionRotation3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float angle_step_size = criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 6; ++i) {
@@ -319,18 +332,19 @@ TEST(LocalMapSplittingCriterionRotation3D, RotationNegativeXYPositiveZ) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionViewpoint3D, RotationNegativeXYPositiveZ) {
+TEST(LocalMapSplittingCriterionViewpoint3D, RotationNegativeXYPositiveZ)
+{
   LocalMapSplittingCriterionViewpoint3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
   criterion.param_local_map_distance.setValue(1 /*1 meter*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float step_size = criterion.param_local_map_angle_distance_radians.value() / 10;
   for (size_t i = 0; i < 6; ++i) {
@@ -349,18 +363,19 @@ TEST(LocalMapSplittingCriterionViewpoint3D, RotationNegativeXYPositiveZ) {
   ASSERT_TRUE(criterion.hasToSplit());
 }
 
-TEST(LocalMapSplittingCriterionViewpoint3D, TranslationPositiveX) {
+TEST(LocalMapSplittingCriterionViewpoint3D, TranslationPositiveX)
+{
   LocalMapSplittingCriterionViewpoint3D criterion;
   criterion.param_local_map_angle_distance_radians.setValue(M_PI / 6 /*30 degrees*/);
   criterion.param_local_map_distance.setValue(1 /*1 meter*/);
 
-  // ds populate a slam system
+  // populate a slam system
   MultiGraphSLAM3D slam_system;
 
-  // ds hook it up to the criterion
+  // hook it up to the criterion
   criterion.setSLAMAlgorithm(&slam_system);
 
-  // ds check criterion continuously for a (simulated) moving robot
+  // check criterion continuously for a (simulated) moving robot
   Isometry3f robot_pose(Isometry3f::Identity());
   const float step_size = criterion.param_local_map_distance.value() / 10;
   for (size_t i = 0; i < 10; ++i) {

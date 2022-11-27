@@ -40,8 +40,8 @@ namespace srrg2_slam_interfaces {
     }
 
   protected:
-    // ds ugly ugly ugly local helper functions to have a human-understandable parameter
-    // ds instead of sweet quaternions
+    // ugly ugly ugly local helper functions to have a human-understandable parameter
+    // instead of sweet quaternions
     inline float _rotation2EulerDeltaChecked(const srrg2_core::Matrix2f& rotation_) const {
       return std::fabs(atan2(rotation_(1, 0), rotation_(0, 0)));
     }
@@ -50,7 +50,7 @@ namespace srrg2_slam_interfaces {
       for (size_t i = 0; i < 3; ++i) {
         const double absolute_angle = std::fabs(delta[i]);
         assert(absolute_angle <= M_PI + 1e-5 /*hi float*/);
-        // ds FIXME this is only valid for small angular changes
+        // FIXME this is only valid for small angular changes
         delta[i] = std::min(absolute_angle, M_PI + 1e-5 /*hi float*/ - absolute_angle);
       }
       return delta.norm();

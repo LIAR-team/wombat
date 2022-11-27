@@ -1,8 +1,8 @@
 #include "wombat_srrg/srrg2_slam_interfaces/trackers/tracker.h"
 
-#include <wombat_srrg/srrg_messages/message_handlers/message_pack.h> //ds visualization only
-#include <wombat_srrg/srrg_messages/messages/image_message.h>        //ds visualization only
-#include <wombat_srrg/srrg_messages/messages/odometry_message.h>     //ds visualization only
+#include <wombat_srrg/srrg_messages/message_handlers/message_pack.h> // visualization only
+#include <wombat_srrg/srrg_messages/messages/image_message.h>        // visualization only
+#include <wombat_srrg/srrg_messages/messages/odometry_message.h>     // visualization only
 
 // TODO @asoragna srrg_viewer
 

@@ -105,16 +105,16 @@ void MultiAlignerBase_<VariableType_>::compute()
   // ia precompute: in this case just bind robustifiers in each aligner-slice
   _preCompute();
 
-  // ds run solver on current problem
+  // run solver on current problem
   _runSolver(BaseType::param_max_iterations.value(), term_crit);
 
-  // ds if no iteration was performed
+  // if no iteration was performed
   if (BaseType::_iteration_stats.empty()) {
     BaseType::_status = AlignerBase::Fail;
     return;
   }
 
-  // ds if we have insufficient inliers -> return altered status
+  // if we have insufficient inliers -> return altered status
   const IterationStats& stats = BaseType::_iteration_stats.back();
   if (stats.num_inliers < param_min_num_inliers.value()) {
     BaseType::_status = AlignerBase::NotEnoughInliers;
@@ -124,7 +124,7 @@ void MultiAlignerBase_<VariableType_>::compute()
   // ia post compute: in this case run inliers only and eventually purge correspondences
   _postCompute();
 
-  // ds make sure the solver's final isometry estimate is healthy and propagate it to the slices
+  // make sure the solver's final isometry estimate is healthy and propagate it to the slices
   EstimateType moving_in_fixed_estimate = movingInFixed();
   fixTransform(moving_in_fixed_estimate);
   setMovingInFixed(moving_in_fixed_estimate);
@@ -136,11 +136,11 @@ void MultiAlignerBase_<VariableType_>::_runSolver(
   const size_t & number_of_iterations_,
   const std::shared_ptr<AlignerTerminationCriteriaBase> termination_criterion_)
 {
-  // ds backup in case of failure
+  // backup in case of failure
   EstimateType moving_in_fixed = movingInFixed();
-  // ds run iterations
+  // run iterations
   for (size_t i = 0; i < number_of_iterations_; ++i) {
-    // ds correspondence buffer for factor statistics based pruning (e.g. keep inliers only)
+    // correspondence buffer for factor statistics based pruning (e.g. keep inliers only)
     bool association_good = _computeCorrespondencesPerSlices(moving_in_fixed);
     if (!association_good) {
       BaseType::_status = AlignerBase::NotEnoughCorrespondences;
@@ -158,7 +158,7 @@ void MultiAlignerBase_<VariableType_>::_runSolver(
       setMovingInFixed(moving_in_fixed);
     }
 
-    // ds check for early termination
+    // check for early termination
     if (termination_criterion_ && termination_criterion_->hasToStop()) {
       break;
     }
@@ -169,9 +169,9 @@ template <typename VariableType_>
 void MultiAlignerBase_<VariableType_>::_preCompute()
 {
   const size_t& number_of_slices = param_slice_processors.size();
-  // ds bind robustifiers to each slice and perform slicewise aligner initializations
-  // ds odometry priors (e.g. motion model) are only effective as last slice(s)
-  // ds TODO add a proper policy for this
+  // bind robustifiers to each slice and perform slicewise aligner initializations
+  // odometry priors (e.g. motion model) are only effective as last slice(s)
+  // TODO add a proper policy for this
   for (size_t sit = 0; sit < number_of_slices; ++sit) {
     AlignerSliceProcessorTypePtr s = param_slice_processors.value(sit);
     s->bindRobustifier();
@@ -202,20 +202,20 @@ void MultiAlignerBase_<VariableType_>::_setupAligner()
 template <typename VariableType_>
 void MultiAlignerBase_<VariableType_>::_postCompute()
 {
-  // ds if inlier only runs are enabled (at this point we should have enough inliers)
+  // if inlier only runs are enabled (at this point we should have enough inliers)
   if (param_enable_inlier_only_runs.value()) {
-    // ds swap out and bind inlier-only robustifiers to each slice TODO refactor this
+    // swap out and bind inlier-only robustifiers to each slice TODO refactor this
     _setClampRobustifiers();
 
-    // ds run inlier only iterations
+    // run inlier only iterations
     _runSolver(BaseType::param_max_iterations.value(),
                 BaseType::param_termination_criteria.value());
 
-    // ds swap back the original robustifiers
+    // swap back the original robustifiers
     _restoreRobustifiers();
   }
 
-  // ds purge correspondences if desired (based on last iteration)
+  // purge correspondences if desired (based on last iteration)
   if (param_keep_only_inlier_correspondences.value()) {
     _pruneCorrespondences();
   }
@@ -224,14 +224,14 @@ void MultiAlignerBase_<VariableType_>::_postCompute()
 template <typename VariableType_>
 void MultiAlignerBase_<VariableType_>::_setClampRobustifiers()
 {
-  // ds swap out and bind inlier-only robustifiers to each slice TODO refactor this
+  // swap out and bind inlier-only robustifiers to each slice TODO refactor this
   _robustifiers_original_per_slice.reserve(param_slice_processors.size());
   for (size_t sit = 0; sit < param_slice_processors.size(); ++sit) {
     AlignerSliceProcessorTypePtr slice = param_slice_processors.value(sit);
     RobustifierBasePtr robustifier_current(slice->param_robustifier.value());
     _robustifiers_original_per_slice.emplace_back(robustifier_current);
 
-    // ds only replace valid robustifiers
+    // only replace valid robustifiers
     if (robustifier_current) {
       RobustifierBasePtr robustifier_clamp(RobustifierBasePtr(new RobustifierClamp()));
       robustifier_clamp->param_chi_threshold.setValue(
@@ -245,7 +245,7 @@ void MultiAlignerBase_<VariableType_>::_setClampRobustifiers()
 template <typename VariableType_>
 void MultiAlignerBase_<VariableType_>::_restoreRobustifiers()
 {
-  // ds swap back the original robustifiers
+  // swap back the original robustifiers
   for (size_t sit = 0; sit < param_slice_processors.size(); ++sit) {
     AlignerSliceProcessorTypePtr slice = param_slice_processors.value(sit);
     slice->param_robustifier.setValue(_robustifiers_original_per_slice[sit]);
@@ -258,14 +258,14 @@ void MultiAlignerBase_<VariableType_>::_pruneCorrespondences()
 {
   const FactorStatsVector& factor_stats(param_solver->measurementStats());
 
-  // ds check for inconsistency: correspondences concatenation must have equal length as factors
+  // check for inconsistency: correspondences concatenation must have equal length as factors
   size_t total_number_of_correspondences = 0;
   for (size_t sit = 0; sit < param_slice_processors.size(); ++sit) {
     AlignerSliceProcessorTypePtr s = param_slice_processors.value(sit);
     total_number_of_correspondences += s->numCorrespondences();
   }
   if (factor_stats.size() < total_number_of_correspondences) {
-    // ds unable to prune invalid correspondences
+    // unable to prune invalid correspondences
     std::cerr << "MultiAlignerBase::runSolver|WARNING: size of factor stats = "
               << factor_stats.size()
               << " mismatches total size of correspondences = " << total_number_of_correspondences
@@ -275,8 +275,8 @@ void MultiAlignerBase_<VariableType_>::_pruneCorrespondences()
     return;
   }
 
-  // ds purge correspondences for each slice (in order!)
-  // ds since we have a reference of the correspondences we can directly modify them
+  // purge correspondences for each slice (in order!)
+  // since we have a reference of the correspondences we can directly modify them
   size_t total_number_of_inlier_correspondences = 0;
   size_t index_factor                           = 0;
   for (size_t sit = 0; sit < param_slice_processors.size(); ++sit) {

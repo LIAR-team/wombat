@@ -31,3 +31,5 @@ target_link_libraries(
     wombat_srrg::srrg2_solver::types_calib
     wombat_srrg::srrg2_solver::utils
 )
+
+wombat_install_target(srrg2_solver_solver_incremental)

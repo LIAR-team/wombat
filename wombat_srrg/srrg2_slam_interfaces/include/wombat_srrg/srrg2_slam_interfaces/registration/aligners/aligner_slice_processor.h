@@ -97,7 +97,7 @@ public:
   /*
   void _drawImpl(srrg2_core::ViewerCanvasPtr canvas_) const override
   {
-    // ds do not force subclasses to override (YET)
+    // do not force subclasses to override (YET)
   }
   */
 

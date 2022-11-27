@@ -69,16 +69,16 @@ void MultiGraphSLAM_<LoopClosureType_>::makeNewMap(float info_scale_)
   const EstimateType robot_pose     = robotInWorld();
   const LocalMapType* previous_local_map = _current_local_map;
 
-  // ds create a new, empty local map
+  // create a new, empty local map
   _current_local_map = new LocalMapType();
   _current_local_map->setEstimate(robot_pose);
 
   // tracker populates the map
-  // ds this will also migrate the correspondences from the last aligment to the new map
+  // this will also migrate the correspondences from the last aligment to the new map
   param_tracker->populateScene(_current_local_map->dynamic_properties);
   param_tracker->setCurrentLocalMapId(_current_local_map->graphId());
   
-  /// ds populate pose graph with local map state estimates
+  /// populate pose graph with local map state estimates
   _graph->addVariable(VariableBasePtr(_current_local_map));
   FactorBaseTypePtr factor = nullptr;
   if (previous_local_map) {
@@ -90,7 +90,7 @@ void MultiGraphSLAM_<LoopClosureType_>::makeNewMap(float info_scale_)
     factor->setInformationMatrix(_default_info * info_scale_);
     _graph->addFactor(factor);
 
-    // ds train the previous local map in the detector for place recognition
+    // train the previous local map in the detector for place recognition
     if (param_loop_detector.value()) {
       param_loop_detector->addPreviousQuery();
     }
@@ -124,23 +124,23 @@ void MultiGraphSLAM_<LoopClosureType_>::compute()
 {
   _current_local_map_msg = nullptr;
   PROFILE_TIME("MultiGraphSLAM::compute");
-  // ds set shared platform if needed TODO rework this
+  // set shared platform if needed TODO rework this
   if (!_platform && param_tf_topic.value().length()) {
     std::cerr << className() << "| requires a transform tree but not set, skipping" << std::endl;
     std::cerr << "tf_topic: " << param_tf_topic.value() << " platform: " << _platform << std::endl;
     return;
   }
 
-  // ds optional initialization TODO rework this
+  // optional initialization TODO rework this
   auto initializer = param_initializer.value();
   if (initializer && !initializer->isInitialized()) {
     std::cerr << "MultiGraphSLAM::compute|initializing" << std::endl;
 
-    // ds run initializer
+    // run initializer
     initializer->setRawData(_message);
     initializer->initialize();
     
-    // ds skip processing if insufficient data is available for initialization
+    // skip processing if insufficient data is available for initialization
     if (!initializer->isInitialized()) {
       return;
     }
@@ -199,19 +199,19 @@ void MultiGraphSLAM_<LoopClosureType_>::compute()
       optimize();
       relocalize(relocalize_closures);
       if (!_relocalized_closure) {
-        // ds a new sub-scene (e.g. local map will be populated)
+        // a new sub-scene (e.g. local map will be populated)
         makeNewMap(1);
       } else {
-        // ds we do not have to create a new local scene but instead reload an old one
+        // we do not have to create a new local scene but instead reload an old one
         std::cerr << FG_GREEN("MultiGraphSLAM::compute|reloading old local map (graph ID: ")
                   << _current_local_map->graphId() << FG_GREEN(")") << std::endl;
-        // ds the correspondences from the closures can be re-used by the tracker for merging
-        // ds it is fine if the correspondences are destroyed by scope after the merge
+        // the correspondences from the closures can be re-used by the tracker for merging
+        // it is fine if the correspondences are destroyed by scope after the merge
         const EstimateType& reference_in_query = _relocalized_closure->measurement();
         tracker->setClosure(
           _relocalized_closure->correspondences, reference_in_query, _robot_in_local_map);
 
-        // ds reset closure buffer for next iteration (potentially without relocalization)
+        // reset closure buffer for next iteration (potentially without relocalization)
         _relocalized_closure = nullptr;
       }
       tracker->setCurrentLocalMapId(_current_local_map->graphId());
@@ -239,8 +239,8 @@ void MultiGraphSLAM_<LoopClosureType_>::compute()
       throw std::runtime_error("MultiGraphSLAM::compute|unknown tracker status");
   }
 
-  // ds set global pose of current tracker scene to the tracker
-  // ds this information will be used for global landmark updates in the merge phase
+  // set global pose of current tracker scene to the tracker
+  // this information will be used for global landmark updates in the merge phase
   tracker->setLocalMapInWorld(_current_local_map->estimate());
   tracker->setRobotInLocalMap(_robot_in_local_map);
   tracker->merge();
@@ -458,21 +458,21 @@ void MultiGraphSLAM_<LoopClosureType_>::_drawImpl(ViewerCanvasPtr canvas) const
     return;
   }
 
-  // ds draw current robot pose (inside local map) in RED TODO move to local maps?
+  // draw current robot pose (inside local map) in RED TODO move to local maps?
   canvas->pushMatrix();
   canvas->pushColor();
   canvas->setColor(srrg2_core::ColorPalette::color3fRed());
 
-  // ds draw robot pose
+  // draw robot pose
   _current_local_map->setDrawingReferenceFrame(canvas, robotInWorld());
   canvas->putSphere(_current_local_map->size_local_map_sphere);
 
-  // ds draw current correspondences at robot pose
+  // draw current correspondences at robot pose
   param_tracker->_drawImpl(canvas);
   canvas->popAttribute();
   canvas->popMatrix();
 
-  // ds draw pose graph
+  // draw pose graph
   adjustDrawingAttributes();
   for (const auto& it : _graph->variables()) {
     it.second->_drawImpl(canvas);

@@ -1,5 +1,5 @@
-#include "wombat_srrg/srrg2_slam_interfaces/instances.h"
-#include <srrg_benchmark/trajectory_writers.h>
+#include "../instances.h"
+#include <wombat_srrg/srrg_benchmark/trajectory_writers.h>
 #include <wombat_srrg/srrg_config/configurable_manager.h>
 #include <wombat_srrg/srrg_messages/instances.h>
 #include <wombat_srrg/srrg_system_utils/parse_command_line.h>
@@ -15,7 +15,8 @@ bool requires_platform = false;
 bool has_platform      = false;
 using LocalMapType     = MultiGraphSLAM3D::LocalMapType;
 
-struct StampedIsometry3f {
+struct StampedIsometry3f
+{
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   StampedIsometry3f(const double& ts_, const Isometry3f& iso_) {
     timestamp = ts_;
@@ -37,7 +38,8 @@ using TimestampLocalMapUMap = std::unordered_map<double, LocalMapType*>;
 void unrollFullTrajectory(TimestampIsometry3fMap& unrolled_trajectory_,
                           const LocalMapLocalPosesMap& full_trajectory_);
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   srrg2_core::srrgInit(argc, argv, exe_name.c_str());
   srrg2_core::messages_registerTypes();
   srrg2_slam_interfaces::srrg2_slam_interfaces_registerTypes();
@@ -146,8 +148,10 @@ int main(int argc, char** argv) {
   return 0;
 }
 
-void unrollFullTrajectory(TimestampIsometry3fMap& unrolled_trajectory_,
-                          const LocalMapLocalPosesMap& full_trajectory_) {
+void unrollFullTrajectory(
+  TimestampIsometry3fMap& unrolled_trajectory_,
+  const LocalMapLocalPosesMap& full_trajectory_)
+{
   unrolled_trajectory_.clear();
   for (const auto& entry : full_trajectory_) {
     for (const auto& stamped_pose : entry.second) {

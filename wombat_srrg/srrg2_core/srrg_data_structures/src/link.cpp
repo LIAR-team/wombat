@@ -130,10 +130,10 @@ namespace srrg2_core {
   /* template <typename BearingType_, typename PositionType_> */
   /* bool LinkWithJoint_<BearingType_, PositionType_>::addEvent(BaseEventPtr event_) { */
 
-  /*   //ds attempt a downcast */
+  /*   // attempt a downcast */
   /*   JointEventPtr event = std::dynamic_pointer_cast<JointEvent>(event_); */
 
-  /*   //ds if it worked - keep the event - otherwise ignore it */
+  /*   // if it worked - keep the event - otherwise ignore it */
   /*   if (event) { */
   /*     _events.push_back(event_); */
   /*     return true; */
@@ -183,31 +183,31 @@ namespace srrg2_core {
 
   /*   Link::InterpolationStatus LinkWithJointPrismatic::sample(const double& time_seconds_) { */
 
-  /*     //ds search two events for interpolating the specified time */
+  /*     // search two events for interpolating the specified time */
   /*     double time_seconds_bot = 0; */
   /*     double time_seconds_top = 0; */
   /*     BaseEventPtr event_bot; */
   /*     BaseEventPtr event_top; */
 
-  /*     //ds if interpolation is successful */
+  /*     // if interpolation is successful */
   /*     if (_setInterpolationData(time_seconds_, time_seconds_bot, time_seconds_top, event_bot,
    * event_top) == InterpolationStatus::Ok) { */
   /*       if (!event_bot || !event_top) { */
   /*         return InterpolationStatus::NoData; */
   /*       } */
 
-  /*       //ds current positions to interpolate - downcasting */
+  /*       // current positions to interpolate - downcasting */
   /*       const double t_bot = std::dynamic_pointer_cast<JointEvent>(event_bot)->position(); */
   /*       const double t_top = std::dynamic_pointer_cast<JointEvent>(event_top)->position(); */
 
-  /*       //ds interpolate between the two events at the specified time */
+  /*       // interpolate between the two events at the specified time */
   /*       const double normalized_time = (time_seconds_ - time_seconds_bot) / (time_seconds_top -
    * time_seconds_bot); */
 
-  /*       //ds position in specified direction */
+  /*       // position in specified direction */
   /*       _sampled_position = t_top + normalized_time * (t_top - t_bot); */
 
-  /*       //ds update pose in parent - shift in direction */
+  /*       // update pose in parent - shift in direction */
   /*       _pose_in_parent.translation() += _sampled_position * _bearing; */
   /*     } */
   /*     return _sampled_status; */
@@ -215,20 +215,20 @@ namespace srrg2_core {
 
   /*   Link::InterpolationStatus LinkWithJointRotational::sample(const double& time_seconds_) { */
 
-  /*     //ds search two events for interpolating the specified time */
+  /*     // search two events for interpolating the specified time */
   /*     double time_seconds_bot = 0; */
   /*     double time_seconds_top = 0; */
   /*     BaseEventPtr event_bot; */
   /*     BaseEventPtr event_top; */
 
-  /*     //ds if interpolation is successful */
+  /*     // if interpolation is successful */
   /*     if (_setInterpolationData(time_seconds_, time_seconds_bot, time_seconds_top, event_bot,
    * event_top) == InterpolationStatus::Ok) { */
   /*       if (!event_bot || !event_top) { */
   /*         return InterpolationStatus::NoData; */
   /*       } */
 
-  /*       //ds current positions to interpolate - downcasting */
+  /*       // current positions to interpolate - downcasting */
   /*       const Quaternionf q_bot =
    * Quaternionf(Eigen::AngleAxisf(std::dynamic_pointer_cast<JointEvent>(event_bot)->position() *
    * M_PI, _bearing)); */
@@ -236,14 +236,14 @@ namespace srrg2_core {
    * Quaternionf(Eigen::AngleAxisf(std::dynamic_pointer_cast<JointEvent>(event_top)->position() *
    * M_PI, _bearing)); */
 
-  /*       //ds interpolate between the two events at the specified time */
+  /*       // interpolate between the two events at the specified time */
   /*       const double normalized_time = (time_seconds_ - time_seconds_bot) / (time_seconds_top -
    * time_seconds_bot); */
 
-  /*       //ds spherical interpolation between orientations */
+  /*       // spherical interpolation between orientations */
   /*       _sampled_position = q_bot.slerp(normalized_time, q_top); */
 
-  /*       //ds update pose in parent - rotate */
+  /*       // update pose in parent - rotate */
   /*       _pose_in_parent.rotate(_sampled_position); */
   /*     } */
   /*     return _sampled_status; */

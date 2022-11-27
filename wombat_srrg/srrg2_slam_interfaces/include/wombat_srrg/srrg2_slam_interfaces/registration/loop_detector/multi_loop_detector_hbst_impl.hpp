@@ -25,16 +25,16 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::comp
     throw std::runtime_error("MultiLoopDetectorHBST::compute|ERROR: no local map set");
   }
 
-  // ds populate measurement for correspondence computation w.r.t. database TODO uagh
+  // populate measurement for correspondence computation w.r.t. database TODO uagh
   _current_local_map = ThisType::_slam->currentLocalMap();
 
-  // ds compute correspondence vectors to database for current local map
+  // compute correspondence vectors to database for current local map
   computeCorrespondences();
 
-  // ds compute alignment for each correspondence vector
+  // compute alignment for each correspondence vector
   _computeAlignments();
 
-  // ds done
+  // done
   if (!ThisType::_detected_closures.empty()) {
     std::cerr << FG_GREEN("MultiLoopDetectorHBST::compute|detected closures: ")
               << FG_GREEN(ThisType::_detected_closures.size()) << std::endl;
@@ -48,12 +48,12 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::addP
     return;
   }
 
-  // ds skip empty training request
+  // skip empty training request
   if (_query_matchables.empty()) {
     return;
   }
 
-  // ds skip already added local maps (happens when we move from relocalization to mapping)
+  // skip already added local maps (happens when we move from relocalization to mapping)
   const size_t local_map_graph_id = _current_local_map->graphId();
   if (_graph_id_to_database_index.find(local_map_graph_id) != _graph_id_to_database_index.end()) {
     return;
@@ -62,12 +62,12 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::addP
   assert(_query_matchables[0]->objects.size() == 1);
   assert(_query_matchables[0]->objects.begin()->first == index);
 
-  // ds register database index w.r.t the local map in the graph
+  // register database index w.r.t the local map in the graph
   _local_maps_in_database.push_back(_current_local_map);
   _graph_id_to_database_index.insert(std::make_pair(local_map_graph_id, index));
   _current_local_map = nullptr;
 
-  // ds integrate previous query into the database
+  // integrate previous query into the database
   _database.add(_query_matchables, srrg_hbst::SplittingStrategy::SplitEven);
   assert(_database.size() == _local_maps_in_database.size());
   assert(_database.size() == _graph_id_to_database_index.size());
@@ -81,7 +81,7 @@ MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::computeCo
     throw std::runtime_error("MultiLoopDetectorHBST::compute|ERROR: no measurements set");
   }
 
-  // ds retrieve measurements in supported descriptor format from the slice
+  // retrieve measurements in supported descriptor format from the slice
   SliceProcessorTypePtr slice = nullptr;
   _retrieveSliceFromAligner(slice);
   _retrieveDescriptorsFromLocalMap(
@@ -93,8 +93,8 @@ MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::computeCo
     return;
   }
 
-  // ds if we have to update the database configuration
-  // ds this should be done only at startup as it might corrupt the database!
+  // if we have to update the database configuration
+  // this should be done only at startup as it might corrupt the database!
   if (_config_changed) {
 #ifdef SRRG_MERGE_DESCRIPTORS
     DatabaseType::maximum_distance_for_merge = param_maximum_distance_for_merge.value();
@@ -105,32 +105,32 @@ MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::computeCo
     _config_changed                          = false;
   }
 
-  // ds check if we have unadded matchables
+  // check if we have unadded matchables
   if (!_query_matchables.empty()) {
-    // ds we have to free the matchables from the previous call
+    // we have to free the matchables from the previous call
     for (const DatabaseType::Matchable* matchable : _query_matchables) {
       delete matchable;
     }
     _query_matchables.clear();
   }
 
-  // ds cache
+  // cache
   const size_t number_of_query_descriptors = _fixed_current_local_map->size();
   const PointDescriptorVectorType& points_fixed(*_fixed_current_local_map);
   _query_matchables.reserve(number_of_query_descriptors);
   assert(_current_local_map->graphId() >= 0);
 
-  // ds determine query index - for a new local map it corresponds to the database size
+  // determine query index - for a new local map it corresponds to the database size
   uint64_t index_query = _database.size();
 
-  // ds check if we already registered this local map in our database (by graph identifier)
+  // check if we already registered this local map in our database (by graph identifier)
   const auto iterator = _graph_id_to_database_index.find(_current_local_map->graphId());
   if (iterator != _graph_id_to_database_index.end()) {
-    // ds pick original index for matching
+    // pick original index for matching
     index_query = iterator->second;
   }
 
-  // ds convert the descriptors to HBST matchables, linking by increasing point index
+  // convert the descriptors to HBST matchables, linking by increasing point index
   for (uint64_t index_descriptor = 0; index_descriptor < number_of_query_descriptors;
         ++index_descriptor) {
     if (points_fixed[index_descriptor].status == POINT_STATUS::Valid) {
@@ -139,17 +139,17 @@ MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::computeCo
     }
   }
 
-  // ds query the database for matches - match addition has to be triggered externally
+  // query the database for matches - match addition has to be triggered externally
   DatabaseType::MatchVectorMap matches_per_reference;
   _database.match(_query_matchables,
                   matches_per_reference,
                   ThisType::param_maximum_descriptor_distance.value());
 
-  // ds filter match vector according to closure constraints
+  // filter match vector according to closure constraints
   _indices.reserve(matches_per_reference.size());
   _correspondences_per_reference.reserve(matches_per_reference.size());
   for (const auto& entry : matches_per_reference) {
-    // ds check if age difference between the query and reference candidate is sufficiently high
+    // check if age difference between the query and reference candidate is sufficiently high
     if (std::fabs(index_query - entry.first) >
         param_minimum_age_difference_to_candidates.value()) {
       const DatabaseType::MatchVector& matches = entry.second;
@@ -157,7 +157,7 @@ MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::computeCo
       if (number_of_matches > ThisType::param_relocalize_min_inliers.value()) {
         const size_t index_reference = entry.first;
 
-        // ds register filtered candidates for optional external manipulation
+        // register filtered candidates for optional external manipulation
         CorrespondenceVector correspondences;
         _computeCorrespondencesFromMatches(matches, correspondences);
         _correspondences_per_reference.insert(
@@ -176,11 +176,11 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::
 {
   correspondences_.clear();
 
-  // ds convert matches into correspondence candidates by best distance TODO add Lowe check
+  // convert matches into correspondence candidates by best distance TODO add Lowe check
   std::unordered_map<size_t /*reference*/, Correspondence> candidates;
   candidates.reserve(matches_.size());
   for (const DatabaseType::Match& match : matches_) {
-    // ds only pick non-ambiguous matches
+    // only pick non-ambiguous matches
     if (match.object_references.size() == 1) {
       const size_t& index_descriptor_reference = match.object_references[0];
       auto iterator                            = candidates.find(index_descriptor_reference);
@@ -198,7 +198,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::
     }
   }
 
-  // ds register filtered candidates
+  // register filtered candidates
   correspondences_.reserve(matches_.size());
   for (auto& candidate : candidates) {
     correspondences_.emplace_back(std::move(candidate.second));
@@ -209,7 +209,7 @@ template <typename SLAMAlgorithmType_, typename AlignerType_, typename FactorTyp
 void
 MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_retrieveSliceFromAligner(
   SliceProcessorTypePtr& slice_) {
-  // ds retrieve slices to process from aligner unit
+  // retrieve slices to process from aligner unit
   std::shared_ptr<AlignerType> aligner = ThisType::param_relocalize_aligner.value();
   if (!aligner) {
     throw std::runtime_error(
@@ -228,7 +228,7 @@ MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_retrieve
               << std::endl;
   }
 
-  // ds pick the first slice for loop closing TODO alternatives?
+  // pick the first slice for loop closing TODO alternatives?
   slice_ = aligner->param_slice_processors.template getSharedPtr<SliceProcessorType>(0);
   assert(slice_);
 }
@@ -244,7 +244,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::
                               "local map contains no properties");
   }
 
-  // ds parse point cloud property name from properties
+  // parse point cloud property name from properties
   DescriptorPropertyType* property =
     dynamic_cast<DescriptorPropertyType*>(local_map_->property(slice_point_cloud_name_));
   if (!property) {
@@ -265,7 +265,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
       "MultiLoopDetectorHBST::computeAlignments|ERROR: current local map not set");
   }
 
-  // ds retrieve aligner and its solver unit
+  // retrieve aligner and its solver unit
   std::shared_ptr<AlignerType> aligner = ThisType::param_relocalize_aligner.value();
   if (!aligner) {
     throw std::runtime_error(
@@ -280,16 +280,16 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
       "compute spatial relation between query and database)");
   }
 
-  // ds cache graph, must be available
+  // cache graph, must be available
   FactorGraphInterfacePtr graph = ThisType::_slam->graph();
   if (!graph) {
     throw std::runtime_error("MultiLoopDetectorHBST::computeAlignments|ERROR: graph not set");
   }
 
-  // ds cache current pose
+  // cache current pose
   const EstimateType& pose_in_query = ThisType::_slam->robotInLocalMap();
 
-  // ds parse moving slice name - must be the same for all reference local maps
+  // parse moving slice name - must be the same for all reference local maps
   SliceProcessorTypePtr slice = nullptr;
   _retrieveSliceFromAligner(slice);
   const std::string slice_point_cloud_name_moving = slice->param_moving_slice_name.value();
@@ -298,21 +298,21 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
   SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug) << "MultiLoopDetectorHBST::computeAlignments|search: "
                                   << FG_BGREEN(_current_local_map->graphId()) << "  [\n";
 
-  // ds for all query - reference pairs with sufficient correspondences
+  // for all query - reference pairs with sufficient correspondences
   for (const auto& loop_closure_candidate : _correspondences_per_reference) {
     const size_t& index_reference     = loop_closure_candidate.first;
     const CorrespondenceVector& corrs = loop_closure_candidate.second;
 
     AlignerBase::Status aligner_status = AlignerBase::Status::Fail;
 
-    // ds grab reference local map from SLAM system
+    // grab reference local map from SLAM system
     assert(index_reference < _local_maps_in_database.size());
     LocalMapType* reference_local_map = _local_maps_in_database[index_reference];
     assert(reference_local_map);
     assert(_current_local_map != reference_local_map);
     SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug) << "(" << reference_local_map->graphId();
 
-    // ds check if target cannot be satisfied before computing
+    // check if target cannot be satisfied before computing
     if (corrs.size() < ThisType::param_relocalize_min_inliers.value()) {
       aligner_status = AlignerBase::Status::NotEnoughCorrespondences;
       SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug)
@@ -320,7 +320,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
       continue;
     }
 
-    // ds retrieve descriptors from reference local map to compute relative transform
+    // retrieve descriptors from reference local map to compute relative transform
     _retrieveDescriptorsFromLocalMap(
       reference_local_map, slice_point_cloud_name_moving, _moving_past_local_map);
 
@@ -329,8 +329,8 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
     //      std::cerr << FG_MAGENTA("movin size: " << _moving_past_local_map->size()) <<
     //      std::endl;
 
-    // ds compute relative transform between query and reference directly with the solver
-    // ds populate factors with HBST correspondences TODO refactor
+    // compute relative transform between query and reference directly with the solver
+    // populate factors with HBST correspondences TODO refactor
     assert(_fixed_current_local_map);
     assert(_moving_past_local_map);
     std::shared_ptr<FactorCorrespondenceDrivenType> factor(new FactorCorrespondenceDrivenType());
@@ -341,7 +341,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
     factor->setVariableId(0, 0);
     factor->setRobustifier(slice->param_robustifier.template getRawPtr<RobustifierBase>());
 
-    // ds hook up to solver TODO refactor
+    // hook up to solver TODO refactor
     std::shared_ptr<VariableType> variable_reference_in_query(new VariableType());
     variable_reference_in_query->setGraphId(0);
     variable_reference_in_query->setEstimate(EstimateType::Identity());
@@ -349,7 +349,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
     single_pose_graph->addVariable(variable_reference_in_query);
     single_pose_graph->addFactor(factor);
     solver->setGraph(single_pose_graph);
-    // ds we keep the correspondences locked during optimization TODO refactor
+    // we keep the correspondences locked during optimization TODO refactor
     for (size_t i = 0; i < static_cast<size_t>(aligner->param_max_iterations.value()); ++i) {
       solver->compute();
 
@@ -368,7 +368,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
 
     aligner_status = AlignerBase::Status::Success;
 
-    // ds attempt to add loop closure (still has to pass some heuristics)
+    // attempt to add loop closure (still has to pass some heuristics)
     const EstimateType reference_in_query(variable_reference_in_query->estimate());
 
     _addLoopClosure(pose_in_query,
@@ -389,14 +389,14 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_add
   LocalMapType* local_map_query_,
   LocalMapType* local_map_reference_,
   const CorrespondenceVector& correspondences_) {
-  // ds set optimization statistics
+  // set optimization statistics
   const size_t& number_of_inliers = solver_statistics_.num_inliers;
   const size_t number_of_correspondences =
     number_of_inliers + solver_statistics_.num_outliers + solver_statistics_.num_suppressed;
   const float average_chi_per_inlier = solver_statistics_.chi_inliers / number_of_inliers;
   assert(number_of_correspondences == correspondences_.size());
 
-  // ds skip closure if statistics are insufficient
+  // skip closure if statistics are insufficient
   if (number_of_inliers < ThisType::param_relocalize_min_inliers.value()) {
     SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug)
       << ", " << FG_BRED("NUM_INLIERS DROP: ") << number_of_inliers << ")\n";
@@ -431,14 +431,14 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_add
   //    reference_in_query_.inverse().translation().transpose()
   //              << std::endl;
 
-  // ds reduce weight along z (we mainly want to correct on x and y) TODO make selectable
-  // ds this assumes local maps generated for a forward facing camera
+  // reduce weight along z (we mainly want to correct on x and y) TODO make selectable
+  // this assumes local maps generated for a forward facing camera
   LoopInformationMatrixType information_matrix(LoopInformationMatrixType::Identity());
   information_matrix(EstimateType::Dim - 1, EstimateType::Dim - 1) = 1e-3;
 
-  // ds assemble loop closure object
+  // assemble loop closure object
   std::shared_ptr<LoopClosureType> closure(
-    new LoopClosureType(-1, // ds is set later by validator (I guess?),
+    new LoopClosureType(-1, // is set later by validator (I guess?),
                         local_map_query_,
                         local_map_reference_ /*target*/,
                         reference_in_query_,

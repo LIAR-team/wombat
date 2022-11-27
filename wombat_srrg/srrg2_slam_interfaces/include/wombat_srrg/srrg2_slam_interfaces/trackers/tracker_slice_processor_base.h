@@ -219,7 +219,7 @@ public:
   template <typename T>
   friend class MultiTrackerBase_;
 
-  // ds this slice is also (ab)used for pumping in poses for the motion model aligner slice
+  // this slice is also (ab)used for pumping in poses for the motion model aligner slice
   PARAM(srrg2_core::PropertyConfigurable_<RawDataPreprocessorType>,
         adaptor,
         "measurement adaptor used in the slice",

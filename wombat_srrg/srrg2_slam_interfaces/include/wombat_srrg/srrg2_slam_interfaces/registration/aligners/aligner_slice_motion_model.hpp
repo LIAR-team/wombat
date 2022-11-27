@@ -25,7 +25,7 @@ namespace srrg2_slam_interfaces {
     using EstimateType    = typename VariableType::EstimateType;
     using MotionModelType = MotionModelBase_<EstimateType>;
     using AlignerType     = Aligner_<EstimateType, PropertyContainerBase, PropertyContainerBase>;
-    // ds access to protected (?) setters
+    // access to protected (?) setters
     template <typename T>
     friend class MultiAlignerBase_;
 
@@ -51,9 +51,9 @@ namespace srrg2_slam_interfaces {
       assert(aligner_);
       BaseType::init(aligner_);
 
-      // ds propagate motion model for given tracker pose estimate
+      // propagate motion model for given tracker pose estimate
       if (!ThisType::_fixed_slice->empty()) {
-        // ds TODO generify this
+        // TODO generify this
         param_motion_model->setRobotInLocalMap(ThisType::_fixed_slice->back());
         if (ThisType::_fixed_slice->size() > 1) {
           param_motion_model->setRobotInLocalMapPrevious(*(ThisType::_fixed_slice->end() - 2));
@@ -61,7 +61,7 @@ namespace srrg2_slam_interfaces {
         param_motion_model->compute();
       }
 
-      // ds set aligner estimate with motion model guess
+      // set aligner estimate with motion model guess
       // srrg most likely that we must put the inverse
       //      std::cerr << "AlignerSliceMotionModel_::init()|check if we need the inverse or not"
       //                << std::endl;
@@ -81,13 +81,13 @@ namespace srrg2_slam_interfaces {
     EstimateType _motion_inverse = EstimateType::Identity();
   };
 
-  // ds we should be able to pick arbitrary SE(d) factors
-  // ds since ultimately we are only interested in VariableType::EstimateType
+  // we should be able to pick arbitrary SE(d) factors
+  // since ultimately we are only interested in VariableType::EstimateType
   using AlignerSliceMotionModel2D = AlignerSliceMotionModel_<srrg2_solver::SE2PriorErrorFactor,
                                                              srrg2_core::StdDequeEigenIsometry2f,
                                                              srrg2_core::StdDequeEigenIsometry2f>;
   using AlignerSliceMotionModel3D =
-    AlignerSliceMotionModel_<srrg2_solver::SE3PriorErrorFactorAD, // ds quaternions
+    AlignerSliceMotionModel_<srrg2_solver::SE3PriorErrorFactorAD, // quaternions
                              srrg2_core::StdDequeEigenIsometry3f,
                              srrg2_core::StdDequeEigenIsometry3f>;
 

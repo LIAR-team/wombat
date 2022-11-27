@@ -16,7 +16,7 @@ MultiTrackerBase_<EstimateType_>::setRobotInLocalMap(
   PROFILE_TIME("MultiTrackerBase::setRobotInLocalMap");
   _robot_in_local_map = robot_in_local_map;
 
-  // ds update tracker slice estimates as well
+  // update tracker slice estimates as well
   for (size_t index_slice = 0; index_slice < param_slice_processors.size(); ++index_slice) {
     SliceProcessorTypePtr slice = param_slice_processors.value(index_slice);
     slice->setRobotInLocalMap(_robot_in_local_map);
@@ -43,7 +43,7 @@ MultiTrackerBase_<EstimateType_>::setClosure(
 {
   PROFILE_TIME("MultiTrackerBase::setClosure");
 
-  // ds provide slice with current tracker estimate and closure data (correspondences for merging)
+  // provide slice with current tracker estimate and closure data (correspondences for merging)
   for (size_t i = 0; i < param_slice_processors.size(); ++i) {
     SliceProcessorTypePtr slice = param_slice_processors.value(i);
     slice->setClosure(correspondences, reference_in_query, robot_in_moving_local_map);
@@ -125,23 +125,23 @@ void MultiTrackerBase_<EstimateType_>::align()
     proc->clip();
   }
 
-  // ds configure aligner
+  // configure aligner
   AlignerTypePtr aligner = param_aligner.value();
   aligner->setFixed(&_measurement_container);
   aligner->setMoving(&_clipped_scene_container);
 
-  // ds set initial guess (if set externally)
-  // ds this guess can be overwritten by aligner slices in aligner->compute()
+  // set initial guess (if set externally)
+  // this guess can be overwritten by aligner slices in aligner->compute()
   aligner->setMovingInFixed(_moving_in_fixed_guess);
 
-  // ds compute relative transform between all fixed and moving slices
+  // compute relative transform between all fixed and moving slices
   aligner->compute();
 
-  // ds store correspondences for merging
+  // store correspondences for merging
   aligner->storeCorrespondences();
-  // ds evaluate tracker status based on aligner performance
+  // evaluate tracker status based on aligner performance
   if (param_aligner->status() == AlignerBase::Success) {
-    // ds update current tracker and slice pose estimates
+    // update current tracker and slice pose estimates
     // srrg for the tracker the local map is fixed and the robot is moving
     _updateRobotInLocalMap(aligner->movingInFixed());
     this->_status = TrackerBase::Tracking;
@@ -151,7 +151,7 @@ void MultiTrackerBase_<EstimateType_>::align()
               << std::endl;
     this->_status = TrackerBase::Lost;
 
-    // ds tracker estimate is not updated TODO @mc correct?
+    // tracker estimate is not updated TODO @mc correct?
   }
 }
 
@@ -167,7 +167,7 @@ void MultiTrackerBase_<EstimateType_>::merge()
     slice->merge();
   }
 
-  // ds last step in tracking (afaik), count frame as processed
+  // last step in tracking (afaik), count frame as processed
   ++BaseType::_num_frames_processed;
 }
 

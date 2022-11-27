@@ -158,7 +158,7 @@ target_link_libraries(
 ament_add_gtest(test_se3_posit test_se3_posit.cpp)
 target_link_libraries(
   test_se3_posit
-  wombat_srrg::srrg2_core::srrg_test
+  wombat_srrg::srrg2_core::test
   wombat_srrg::srrg2_solver::types_projective
 )
 

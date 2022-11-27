@@ -1,7 +1,7 @@
 #pragma once
 #include <wombat_srrg/srrg_property/property_container.h>
 #include <wombat_srrg/srrg_messages/message_handlers/message_sink_base.h>
-#include <wombat_srrg/srrg_messages/messages/image_message.h> //ds visualization only
+#include <wombat_srrg/srrg_messages/messages/image_message.h> // visualization only
 #include <wombat_srrg/srrg_property/property_container.h>
 //#include <wombat_srrg/srrg_viewer/active_drawable.h>
 #include <wombat_srrg/srrg_solver/solver_core/variable.h>

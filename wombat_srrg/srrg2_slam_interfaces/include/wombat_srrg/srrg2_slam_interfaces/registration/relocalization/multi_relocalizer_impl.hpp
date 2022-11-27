@@ -136,7 +136,7 @@ void MultiRelocalizer_<SlamAlgorithmType_>::compute()
         best_chi_average               = curr_average;
         ThisType::_relocalized_closure = c;
 
-        // ds store associations for merging (can still be overwritten)
+        // store associations for merging (can still be overwritten)
         aligner->storeCorrespondences();
       }
     }

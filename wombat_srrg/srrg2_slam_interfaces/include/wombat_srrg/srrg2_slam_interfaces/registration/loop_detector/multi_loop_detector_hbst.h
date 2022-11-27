@@ -1,6 +1,6 @@
 #pragma once
 
-#include "multi_loop_detector_brute_force.h" //ds reusing parameters
+#include "multi_loop_detector_brute_force.h" // reusing parameters
 #include <wombat_srrg/hbst/types/binary_tree.hpp>
 #include <wombat_srrg/srrg_solver/solver_core/factor.h>
 

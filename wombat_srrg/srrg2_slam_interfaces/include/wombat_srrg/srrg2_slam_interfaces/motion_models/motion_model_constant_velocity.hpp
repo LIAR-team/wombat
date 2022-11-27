@@ -31,15 +31,15 @@ public:
     _robot_in_local_map          = robot_in_local_map;
   }
 
-  // ds TODO depracted now, can be deleted as soon as MM slice is active
+  // TODO depracted now, can be deleted as soon as MM slice is active
   void shiftTrackerEstimate(
     const EstimateType& estimate_,
     const double timestamp_seconds = 0.0) override
   {
     (void)timestamp_seconds;
 
-    // ds the previous will cancel out this tracker estimate in the next computation
-    // ds TODO this is kind of hacky and hence should be purged with a cleaner alternative
+    // the previous will cancel out this tracker estimate in the next computation
+    // TODO this is kind of hacky and hence should be purged with a cleaner alternative
     _robot_in_local_map_previous =
       estimate_ * (_robot_in_local_map_previous.inverse() * _robot_in_local_map);
     _robot_in_local_map = estimate_;

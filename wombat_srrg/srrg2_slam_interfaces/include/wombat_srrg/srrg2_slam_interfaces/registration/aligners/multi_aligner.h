@@ -162,7 +162,7 @@ using MultiAligner3D    = MultiAlignerBase_<VariableSE3EulerRightAD>;
 using MultiAligner2DPtr = std::shared_ptr<MultiAligner2D>;
 using MultiAligner3DPtr = std::shared_ptr<MultiAligner3D>;
 
-// ds TODO converge 3D pipelines to use this aligner type
+// TODO converge 3D pipelines to use this aligner type
 using MultiAligner3DQR    = MultiAlignerBase_<VariableSE3QuaternionRightAD>;
 using MultiAligner3DQRPtr = std::shared_ptr<MultiAligner3DQR>;
 

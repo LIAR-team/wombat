@@ -19,6 +19,8 @@ target_link_libraries(
     wombat_srrg::srrg2_solver::core
 )
 
+wombat_install_target(srrg2_solver_types_common)
+
 ###########
 ## types_2d library
 ############
@@ -51,6 +53,8 @@ target_link_libraries(
     wombat_srrg::srrg2_solver::core
     wombat_srrg::srrg2_solver::types_common
 )
+
+wombat_install_target(srrg2_solver_types_2d)
 
 ###########
 ## types_3d library
@@ -105,6 +109,8 @@ target_link_libraries(
     wombat_srrg::srrg2_solver::types_common
 )
 
+wombat_install_target(srrg2_solver_types_3d)
+
 ###########
 ## types_projective library
 ############
@@ -141,6 +147,8 @@ target_link_libraries(
     wombat_srrg::srrg2_solver::types_3d
 )
 
+wombat_install_target(srrg2_solver_types_projective)
+
 ###########
 ## types_calib library
 ############
@@ -176,3 +184,5 @@ target_link_libraries(
     wombat_srrg::srrg2_solver::types_2d
     wombat_srrg::srrg2_solver::types_3d
 )
+
+wombat_install_target(srrg2_solver_types_calib)

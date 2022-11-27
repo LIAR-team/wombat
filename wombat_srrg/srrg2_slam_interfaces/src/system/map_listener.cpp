@@ -1,6 +1,6 @@
 #include "wombat_srrg/srrg2_slam_interfaces/system/map_listener.h"
 #include "wombat_srrg/srrg2_slam_interfaces/system/multi_graph_slam_messages.h"
-#include "../instances.h"
+#include "wombat_srrg/srrg2_slam_interfaces/instances.h"
 #include "wombat_srrg/srrg2_slam_interfaces/mapping/local_map.h"
 #include <wombat_srrg/srrg_benchmark/trajectory_writers.h>
 #include <wombat_srrg/srrg_geometry/geometry3d.h>
@@ -368,8 +368,8 @@ bool MapListener::cmdSaveTrajectory(
 }
 
 bool MapListener::cmdSaveGraph(
-  std::string& response,
-  const std::string& filename)
+  std::string & response,
+  const std::string & filename)
 {
   response = className()
     + "| saving graph to file ["

@@ -97,7 +97,7 @@ TEST(MessageSynchronizedSource, ValidTopics_NoTimeOffset) {
   // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
-    // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?
+    // ASSERT_TRUE(synchronized_source->isOpen()); // TODO why is this FALSE?
     MessagePackPtr message_pack = std::dynamic_pointer_cast<MessagePack>(message);
     ASSERT_NOTNULL(message_pack);
     ++number_of_processed_message_packs;
@@ -136,7 +136,7 @@ TEST(MessageSynchronizedSource, InvalidTopics_NoTimeOffset) {
   // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
-    // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?
+    // ASSERT_TRUE(synchronized_source->isOpen()); // TODO why is this FALSE?
     MessagePackPtr message_pack = std::dynamic_pointer_cast<MessagePack>(message);
     ASSERT_NOTNULL(message_pack);
     ++number_of_processed_message_packs;
@@ -175,7 +175,7 @@ TEST(MessageSynchronizedSource, ValidTopics_TolerableTimeOffset) {
   // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
-    // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?
+    // ASSERT_TRUE(synchronized_source->isOpen()); // TODO why is this FALSE?
     MessagePackPtr message_pack = std::dynamic_pointer_cast<MessagePack>(message);
     ASSERT_NOTNULL(message_pack);
     ++number_of_processed_message_packs;
@@ -214,7 +214,7 @@ TEST(MessageSynchronizedSource, ValidTopics_IntolerableTimeOffset) {
   // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
-    // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?
+    // ASSERT_TRUE(synchronized_source->isOpen()); // TODO why is this FALSE?
     MessagePackPtr message_pack = std::dynamic_pointer_cast<MessagePack>(message);
     ASSERT_NOTNULL(message_pack);
     ++number_of_processed_message_packs;
@@ -256,7 +256,7 @@ TEST(MessageSynchronizedSource, ValidTopics_ShuffledTimeOffset) {
   // process messages
   size_t number_of_processed_message_packs = 0;
   while (BaseSensorMessagePtr message = synchronized_source->getMessage()) {
-    // ASSERT_TRUE(synchronized_source->isOpen()); //ds TODO why is this FALSE?
+    // ASSERT_TRUE(synchronized_source->isOpen()); // TODO why is this FALSE?
     MessagePackPtr message_pack = std::dynamic_pointer_cast<MessagePack>(message);
     ASSERT_NOTNULL(message_pack);
     ++number_of_processed_message_packs;

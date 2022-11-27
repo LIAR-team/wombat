@@ -3,7 +3,7 @@
 
 namespace srrg2_slam_interfaces {
 
-  // ds some diamond inheritance would've been nice but we keep the mess away from serialization
+  // some diamond inheritance would've been nice but we keep the mess away from serialization
   /**
    * @brief Splitting criterion based on both translation and rotation
    */
@@ -54,7 +54,7 @@ namespace srrg2_slam_interfaces {
     }
 
   protected:
-    // ds aggregation for now (not configurable)
+    // aggregation for now (not configurable)
     TranslationType criterion_translation;
     RotationType criterion_rotation;
   };

@@ -109,7 +109,7 @@ public:
     */
   virtual const std::vector<int> globalIndices() const
   {
-    // ds implementation is not enforced
+    // implementation is not enforced
     return std::vector<int>(0);
   }
 

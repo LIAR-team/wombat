@@ -70,8 +70,8 @@ namespace srrg2_slam_interfaces {
       ThisType::setInformationMatrix(info_);
       ThisType::setEnabled(false);
 
-      // ds set the variables id in the graph
-      // ds at this point the variables are not necessarily already present in the graph
+      // set the variables id in the graph
+      // at this point the variables are not necessarily already present in the graph
       assert(source_);
       ThisType::setVariableId(0, source_->graphId());
       assert(target_);
@@ -83,7 +83,7 @@ namespace srrg2_slam_interfaces {
      * @return the source (moving) local map
      */
     LocalMapType* source() {
-      // ds can be null in case the closure is not instantiated in the graph
+      // can be null in case the closure is not instantiated in the graph
       return dynamic_cast<LocalMapType*>(ThisType::variable(0));
     }
 
@@ -92,7 +92,7 @@ namespace srrg2_slam_interfaces {
      * @return the target (fixed) local map
      */
     LocalMapType* target() {
-      // ds can be null in case the closure is not instantiated in the graph
+      // can be null in case the closure is not instantiated in the graph
       return dynamic_cast<LocalMapType*>(ThisType::variable(1));
     }
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <list>
 #include <wombat_srrg/srrg_geometry/geometry_defs.h>
-#include <wombat_srrg/srrg_messages/messages/base_sensor_message.h> //ds visualization only
+#include <wombat_srrg/srrg_messages/messages/base_sensor_message.h> // visualization only
 #include <wombat_srrg/srrg_property/property_container.h>
 #include <wombat_srrg/srrg_property/property_eigen.h>
 #include <wombat_srrg/srrg_property/property_serializable.h>

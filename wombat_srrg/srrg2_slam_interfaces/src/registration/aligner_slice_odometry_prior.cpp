@@ -12,7 +12,7 @@ void AlignerSliceOdom2DPrior::setupFactor()
   }
   _factor->setMeasurement(delta);
   _factor->setInformationMatrix(
-    param_diagonal_info_matrix.value().asDiagonal()); //< hack //ds TODO explain hack
+    param_diagonal_info_matrix.value().asDiagonal()); //< hack // TODO explain hack
 }
 
 void AlignerSliceOdom2DPrior::init(AlignerType * aligner)

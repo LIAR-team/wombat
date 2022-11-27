@@ -40,8 +40,8 @@ public:
     return dynamic_properties.property(name);
   }
 
-  // ds ugly, expensive way of determining the current number of points in the local map
-  // ds TODO we should be able to make this more efficient through interfaced property addition
+  // ugly, expensive way of determining the current number of points in the local map
+  // TODO we should be able to make this more efficient through interfaced property addition
   size_t numberOfPoints() const;
 };
 
@@ -71,7 +71,7 @@ public:
   //  const EstimateType& pose_) const
   //{};
 
-  // ds visualization properties TODO parametrize visualization?
+  // visualization properties TODO parametrize visualization?
   float size_local_map_sphere = 0.2;
 };
 
@@ -83,7 +83,7 @@ public:
 
   LocalMap2D()
   {
-    size_local_map_sphere = 0.2; // ds default for laser
+    size_local_map_sphere = 0.2; // default for laser
   }
 
   //void setDrawingReferenceFrame(
@@ -99,7 +99,7 @@ public:
 
   LocalMap3D()
   {
-    size_local_map_sphere = 0.05; // ds indoor scenarios TODO meh
+    size_local_map_sphere = 0.05; // indoor scenarios TODO meh
   }
 
   //void setDrawingReferenceFrame(

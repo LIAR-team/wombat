@@ -131,7 +131,7 @@ public:
 
   //! @brief stores associations in an auxiliary data buffer that can be re-used during merge
   virtual void storeCorrespondences() {
-    // ds no effect if not overridden by target aligner TODO enforce implementation?
+    // no effect if not overridden by target aligner TODO enforce implementation?
   }
   /**
     * @brief numbers of correspondences getter

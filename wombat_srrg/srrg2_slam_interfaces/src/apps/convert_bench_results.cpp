@@ -1,4 +1,4 @@
-#include "wombat_srrg/srrg2_slam_interfaces/instances.h"
+#include "../instances.h"
 #include <wombat_srrg/srrg_config/configurable_manager.h>
 #include <wombat_srrg/srrg_messages/instances.h>
 #include <wombat_srrg/srrg_system_utils/parse_command_line.h>

@@ -16,14 +16,14 @@ void DynamicPropertyContainerOwner::_drawImpl(ViewerCanvasPtr canvas_) const
     return;
   }
 
-  // ds TODO re-think this logic to support generic point clouds with less code UAGH
+  // TODO re-think this logic to support generic point clouds with less code UAGH
   for (auto it : dynamic_properties.properties()) {
     // ia TODO laser slam case :)
     Property_<PointNormal2fVectorCloud*>* points_2d =
       dynamic_cast<Property_<PointNormal2fVectorCloud*>*>(it.second);
     if (points_2d && points_2d->value()) {
       canvas_->putPoints(*points_2d->value());
-      continue; // ds this property has been handled
+      continue; // this property has been handled
     }
 
     // ia TODO proslam case :)
@@ -31,7 +31,7 @@ void DynamicPropertyContainerOwner::_drawImpl(ViewerCanvasPtr canvas_) const
       dynamic_cast<Property_<PointIntensityDescriptor3fVectorCloud*>*>(it.second);
     if (points_3d && points_3d->value()) {
       canvas_->putPoints(*points_3d->value());
-      continue; // ds this property has been handled
+      continue; // this property has been handled
     }
 
     // ia TODO shaslam case :)
@@ -47,7 +47,7 @@ void DynamicPropertyContainerOwner::_drawImpl(ViewerCanvasPtr canvas_) const
       dynamic_cast<Property_<PointNormalCurvature3fVectorCloud*>*>(it.second);
     if (points_nicp && points_nicp->value()) {
       canvas_->putPoints(*points_nicp->value());
-      continue; // ds this property has been handled
+      continue; // this property has been handled
     }
   }
 }
@@ -56,19 +56,19 @@ void DynamicPropertyContainerOwner::_drawImpl(ViewerCanvasPtr canvas_) const
 size_t DynamicPropertyContainerOwner::numberOfPoints() const
 {
   size_t number_of_points = 0;
-  // ds TODO re-think this logic to support generic point clouds with less code UAGH
+  // TODO re-think this logic to support generic point clouds with less code UAGH
   for (auto it : dynamic_properties.properties()) {
     Property_<PointNormal2fVectorCloud*>* points_2d =
       dynamic_cast<Property_<PointNormal2fVectorCloud*>*>(it.second);
     if (points_2d && points_2d->value()) {
       number_of_points += points_2d->value()->size();
-      continue; // ds this property has been handled
+      continue; // this property has been handled
     }
     Property_<PointIntensityDescriptor3fVectorCloud*>* points_3d =
       dynamic_cast<Property_<PointIntensityDescriptor3fVectorCloud*>*>(it.second);
     if (points_3d && points_3d->value()) {
       number_of_points += points_3d->value()->size();
-      continue; // ds this property has been handled
+      continue; // this property has been handled
     }
   }
   return number_of_points;
@@ -97,7 +97,7 @@ void LocalMap_<VariableType_>::_drawImpl(srrg2_core::ViewerCanvasPtr canvas) con
 
   setDrawingReferenceFrame(canvas, ThisType::estimate());
   DynamicPropertyContainerOwner::_drawImpl(canvas);
-  Eigen::Matrix4f m; // ds TODO make configurable in visualization parameters
+  Eigen::Matrix4f m; // TODO make configurable in visualization parameters
   m << 0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1;
   //    canvas->multMatrix(m);
   canvas->putSphere(size_local_map_sphere);

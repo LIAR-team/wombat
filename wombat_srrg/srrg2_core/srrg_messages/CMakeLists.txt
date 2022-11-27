@@ -48,8 +48,6 @@ target_link_libraries(
 
 wombat_install_target(srrg_messages_messages)
 
-return()
-
 add_library(srrg_messages_handlers SHARED)
 add_library(wombat_srrg::srrg2_core::srrg_messages::handlers ALIAS srrg_messages_handlers)
 

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "wombat_srrg/srrg2_slam_interfaces/initializers/initializer_camera.h"
 #include "wombat_srrg/srrg2_slam_interfaces/mapping/local_map.h"
 #include "wombat_srrg/srrg2_slam_interfaces/mapping/local_map_splitting_criterions/local_map_splitting_criterion_rotation.hpp"

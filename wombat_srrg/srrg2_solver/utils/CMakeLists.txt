@@ -38,3 +38,5 @@ target_link_libraries(
     wombat_srrg::srrg2_solver::types_projective
     wombat_srrg::srrg2_solver::types_calib
 )
+
+wombat_install_target(srrg2_solver_utils)

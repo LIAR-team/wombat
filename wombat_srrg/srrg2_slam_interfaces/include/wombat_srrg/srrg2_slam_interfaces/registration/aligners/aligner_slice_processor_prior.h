@@ -70,7 +70,7 @@ protected:
 
   virtual void storeCorrespondences() override
   {
-    // ds TODO implement or make THIS derive from the aligner slice instead of the base?
+    // TODO implement or make THIS derive from the aligner slice instead of the base?
   }
 
   virtual bool correspondencesGood() const override

@@ -23,6 +23,8 @@ target_link_libraries(
     Eigen3::Eigen
 )
 
+wombat_install_target(srrg2_solver_sparse_block_matrix)
+
 ###########
 ## linear_solvers library
 ############
@@ -57,6 +59,8 @@ target_link_libraries(
     #${CXSPARSE_LIBRARY}
 )
 ament_target_dependencies(srrg2_solver_linear_solvers PUBLIC CHOLMOD UMFPACK CXSPARSE)
+
+wombat_install_target(srrg2_solver_linear_solvers)
 
 ###########
 ## core library
@@ -102,3 +106,5 @@ target_link_libraries(
   wombat_srrg::srrg2_core::data_structures
   #srrg2_viewer_library
 )
+
+wombat_install_target(srrg2_solver_core)

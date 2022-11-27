@@ -35,12 +35,12 @@ public:
   using ClipperType             = SceneClipper_<EstimateType, MovingSceneType>;
   using ClipperTypePtr          = std::shared_ptr<ClipperType>;
 
-  // ds correspondence based merger (dynamically checked to provide it with correspondences)
+  // correspondence based merger (dynamically checked to provide it with correspondences)
   using MergerCorrespondenceType =
     MergerCorrespondence_<EstimateType, MovingSceneType, FixedMeasurementType>;
   using MergerCorrespondenceTypePtr = std::shared_ptr<MergerCorrespondenceType>;
 
-  // ds loop closure merging types TODO bawh
+  // loop closure merging types TODO bawh
   using MergerClosureType    = MergerCorrespondenceHomo_<EstimateType, MovingSceneType>;
   using MergerClosureTypePtr = std::shared_ptr<MergerClosureType>;
 

@@ -4,7 +4,7 @@ ament_add_gtest(test_abstract_map test_abstract_map.cpp)
 target_link_libraries(
   test_abstract_map
   wombat_srrg::srrg2_core::data_structures
-  wombat_srrg::srrg2_core::srrg_test
+  wombat_srrg::srrg2_core::test
 )
 
 ament_add_gtest(test_cloud_intensity test_cloud_intensity.cpp)
@@ -27,7 +27,7 @@ ament_add_gtest(test_geometry test_geometry.cpp)
 target_link_libraries(
   test_geometry
     wombat_srrg::srrg2_core::geometry
-    wombat_srrg::srrg2_core::srrg_test
+    wombat_srrg::srrg2_core::test
 )
 
 ament_add_gtest(test_kd_tree test_kd_tree.cpp)
@@ -35,7 +35,7 @@ target_link_libraries(
   test_kd_tree
     wombat_srrg::srrg2_core::data_structures
     wombat_srrg::srrg2_core::geometry
-    wombat_srrg::srrg2_core::srrg_test
+    wombat_srrg::srrg2_core::test
 )
 
 ament_add_gtest(test_image_data test_image_data.cpp)
@@ -43,7 +43,7 @@ target_link_libraries(
   test_image_data
     wombat_srrg::srrg2_core::srrg_image
     wombat_srrg::srrg2_core::system_utils
-    wombat_srrg::srrg2_core::srrg_test
+    wombat_srrg::srrg2_core::test
 )
 
 ament_add_gtest(test_matrix_bilinear_interpolation test_matrix_bilinear_interpolation.cpp)
@@ -51,7 +51,7 @@ target_link_libraries(
   test_matrix_bilinear_interpolation
     wombat_srrg::srrg2_core::data_structures
     wombat_srrg::srrg2_core::pcl
-    wombat_srrg::srrg2_core::srrg_test
+    wombat_srrg::srrg2_core::test
 )
 
 #ament_add_gtest(test_streaming_configurable test_streaming_configurable.cpp)
@@ -59,7 +59,7 @@ target_link_libraries(
 #  test_streaming_configurable
 #  wombat_srrg::srrg2_core::config
 #  wombat_srrg::srrg2_core::property
-#  wombat_srrg::srrg2_core::srrg_test
+#  wombat_srrg::srrg2_core::test
 #  dl
 #)
 

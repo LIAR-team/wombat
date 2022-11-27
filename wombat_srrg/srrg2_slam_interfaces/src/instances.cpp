@@ -1,4 +1,4 @@
-#include "instances.h"
+#include "wombat_srrg/srrg2_slam_interfaces/instances.h"
 #include "wombat_srrg/srrg2_slam_interfaces/mapping/merger_correspondence_homo.h"
 #include "wombat_srrg/srrg2_slam_interfaces/registration/aligners/aligner_slice_processor.h"
 #include "wombat_srrg/srrg2_slam_interfaces/registration/aligners/aligner_termination_criteria.h"
@@ -13,7 +13,7 @@
 #include "wombat_srrg/srrg2_slam_interfaces/trackers/tracker_slice_processor.h"
 
 
-// ds reduce digital footprint and enforce linker sanity
+// reduce digital footprint and enforce linker sanity
 /*
 #define BOSS_REGISTER_CLASS(CLASS_)                 \
    CLASS_ dummy_##CLASS_;                            \

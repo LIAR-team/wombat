@@ -30,8 +30,7 @@ target_link_libraries(
   PUBLIC
     wombat_srrg::hbst
     wombat_srrg::srrg2_core::benchmark
-    #wombat_srrg::srrg2_core::srrg_messages::handlers
-    wombat_srrg::srrg2_core::srrg_messages::messages
+    wombat_srrg::srrg2_core::messages
     wombat_srrg::srrg2_core::system_utils
     wombat_srrg::srrg2_solver::core
     wombat_srrg::srrg2_solver::utils
@@ -40,15 +39,17 @@ target_link_libraries(
     ${OpenCV_LIBRARIES}
 )
 
+wombat_install_target(srrg2_slam_interfaces)
+
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
+
 return()
 
-add_executable(app_benchmark app_benchmark.cpp)
+add_executable(app_benchmark src/apps/app_benchmark.cpp)
 target_link_libraries(app_benchmark
-  srrg2_slam_interfaces_library
-  srrg2_config_library
-  srrg2_messages_library
-  ${catkin_LIBRARIES}
+  wombat_srrg::srrg2_slam_interfaces
+  wombat_srrg::srrg2_core::config
+  wombat_srrg::srrg2_core::srrg_messages::messages
 )
-
-
-#wombat_install_target(srrg2_slam_interfaces)

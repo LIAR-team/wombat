@@ -10,7 +10,7 @@ using namespace srrg2_core;
 
 int32_t main() {
 
-  //ds check events
+  // check events
   JointEventPtr event_t0(new JointEvent(0, "j0", 0));
   JointEventPtr event_t1(new JointEvent(1, "j0", 100));
   JointEventPtr event_t2(new JointEvent(2, "j0", 103));

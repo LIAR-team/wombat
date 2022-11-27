@@ -85,7 +85,7 @@ public:
   //! (e.g. no integration would be desirable for relocalization, hence train is not called)
   virtual void addPreviousQuery()
   {
-    // ds default is not required
+    // default is not required
   }
 
   void reset() override

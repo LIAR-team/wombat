@@ -5,8 +5,8 @@
 namespace srrg2_slam_interfaces
 {
 
-// ds buffered (i.e. has short-term memory) tracker estimate adaptor
-// ds the DestContainerType_ must support pop_front and push_back
+// buffered (i.e. has short-term memory) tracker estimate adaptor
+// the DestContainerType_ must support pop_front and push_back
 template <typename DestContainerType_>
 class RawDataPreprocessorTrackerEstimate_ : public RawDataPreprocessor_<DestContainerType_>
 {
@@ -24,7 +24,7 @@ public:
 
   RawDataPreprocessorTrackerEstimate_()
   {
-    // ds ready by construction
+    // ready by construction
     ThisType::_status = ThisType::Ready;
     _robot_in_local_map_estimates.clear();
     //      ThisType::_meas.reset(new ContainerType);
@@ -35,14 +35,14 @@ public:
   {
     assert(ThisType::_meas);
 
-    // ds if the buffer is saturated
+    // if the buffer is saturated
     if (_robot_in_local_map_estimates.size() == param_number_of_poses_to_keep.value()) {
-      // ds roll ahead
+      // roll ahead
       _robot_in_local_map_estimates.pop_front();
       _robot_in_local_map_estimates.push_back(_robot_in_local_map);
       assert(_robot_in_local_map_estimates.size() == param_number_of_poses_to_keep.value());
     } else {
-      // ds grow buffer
+      // grow buffer
       _robot_in_local_map_estimates.push_back(_robot_in_local_map);
     }
     *ThisType::_meas = _robot_in_local_map_estimates;
@@ -55,7 +55,7 @@ public:
   {
     (void)message;
     (void)report;
-    // ds unused
+    // unused
     return true;
   }
 
@@ -72,8 +72,8 @@ public:
   {
     const EstimateType transform_into_new_origin(origin.inverse());
 
-    // ds shift all past estimates behind the current one
-    // ds this preserves buffer consistency between local map changes (new/relocalization)
+    // shift all past estimates behind the current one
+    // this preserves buffer consistency between local map changes (new/relocalization)
     for (EstimateType& tracker_pose_estimate : _robot_in_local_map_estimates) {
       tracker_pose_estimate = transform_into_new_origin * tracker_pose_estimate;
     }
