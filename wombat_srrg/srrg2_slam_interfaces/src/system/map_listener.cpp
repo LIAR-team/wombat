@@ -15,18 +15,19 @@ using namespace srrg2_core;
 
 MapListener::MapListener()
 {
-  addCommand (
+  addCommand(
     new ConfigurableCommand_< MapListener, typeof(&MapListener::cmdSaveGraph), std::string, std::string>
     (this,
       "saveGraph",
       "saves a graph to a json file",
       &MapListener::cmdSaveGraph));
-  addCommand (
+  addCommand(
     new ConfigurableCommand_< MapListener, typeof(&MapListener::cmdSaveTrajectory), std::string, std::string>
     (this,
       "saveTrajectory",
       "saves the trajectory in a plain text file",
       &MapListener::cmdSaveTrajectory));
+
   _graph = FactorGraphPtr(new FactorGraph);
 }
 
@@ -248,12 +249,12 @@ bool MapListener::handleNodeUpdateMessage3D(srrg2_core::BaseSensorMessagePtr msg
   return true;
 }
 
-void MapListener::computeTrajectory(Trajectory2D& trajectory)
+void MapListener::computeTrajectory(Trajectory2D & trajectory)
 {
   using EstimateType = LocalMap2D::EstimateType;
   trajectory.clear();
-  for (auto it = _graph->variables().begin(); it != _graph->variables().end(); ++it) {
-    LocalMap2D* lmap = dynamic_cast<LocalMap2D*>(it.value());
+  for (auto it_vars = _graph->variables().begin(); it_vars != _graph->variables().end(); ++it_vars) {
+    LocalMap2D* lmap = dynamic_cast<LocalMap2D*>(it_vars.value());
     if (!lmap) {
       continue;
     }
@@ -263,21 +264,21 @@ void MapListener::computeTrajectory(Trajectory2D& trajectory)
       continue;
     }
     const LocalMap2D::EstimateType& lmap_pose = lmap->estimate();
-    for (auto it : local_trajectory->value()) {
-      const double& timestamp        = it.first;
-      const EstimateType& local_pose = it.second;
+    for (auto it_traj : local_trajectory->value()) {
+      const double& timestamp        = it_traj.first;
+      const EstimateType& local_pose = it_traj.second;
       TrajectoryItem_<Eigen::Isometry2f> entry(lmap_pose * local_pose, lmap->graphId());
       trajectory[timestamp]          = entry;
     }
   }
 }
 
-void MapListener::computeTrajectory(Trajectory3D& trajectory)
+void MapListener::computeTrajectory(Trajectory3D & trajectory)
 {
   using EstimateType = LocalMap3D::EstimateType;
   trajectory.clear();
-  for (auto it = _graph->variables().begin(); it != _graph->variables().end(); ++it) {
-    LocalMap3D* lmap = dynamic_cast<LocalMap3D*>(it.value());
+  for (auto it_vars = _graph->variables().begin(); it_vars != _graph->variables().end(); ++it_vars) {
+    LocalMap3D* lmap = dynamic_cast<LocalMap3D*>(it_vars.value());
     if (!lmap) {
       continue;
     }
@@ -287,19 +288,18 @@ void MapListener::computeTrajectory(Trajectory3D& trajectory)
       continue;
     }
     const LocalMap3D::EstimateType& lmap_pose = lmap->estimate();
-    for (auto it : local_trajectory->value()) {
-      const double& timestamp        = it.first;
-      const EstimateType& local_pose = it.second;
+    for (auto it_traj : local_trajectory->value()) {
+      const double& timestamp        = it_traj.first;
+      const EstimateType& local_pose = it_traj.second;
       TrajectoryItem_<Eigen::Isometry3f> entry(lmap_pose * local_pose, lmap->graphId());
       trajectory[timestamp]          = entry;
     }
   }
 }
 
-
 bool MapListener::cmdSaveTrajectory(
-  std::string& response,
-  const std::string& filename)
+  std::string & response,
+  const std::string & filename)
 {
   response = className()
     + "| saving trajectory to file ["
@@ -343,19 +343,23 @@ bool MapListener::cmdSaveTrajectory(
           
   switch(trj_type){
   case TwoD:
-    computeTrajectory(trj_2d);
-    outfile << "# timestamp id x y theta\n";
-    for (auto it : trj_2d) {
-      outfile << it.first << " " << it.second.local_map_id << " " << geometry2d::t2v(it.second).transpose() << std::endl;
-    } 
-    break;
-  case ThreeD:
-    computeTrajectory(trj_3d);
-    outfile << "# timestamp id tx ty tz qx qy qz\n";
-    for (auto it : trj_3d) {
-      outfile << it.first << " " << it.second.local_map_id << " " << geometry3d::t2v(it.second).transpose() << std::endl;
+    {
+      computeTrajectory(trj_2d);
+      outfile << "# timestamp id x y theta\n";
+      for (auto it : trj_2d) {
+        outfile << it.first << " " << it.second.local_map_id << " " << geometry2d::t2v(it.second).transpose() << std::endl;
+      } 
+      break;
     }
-    break;
+  case ThreeD:
+    {
+      computeTrajectory(trj_3d);
+      outfile << "# timestamp id tx ty tz qx qy qz\n";
+      for (auto it : trj_3d) {
+        outfile << it.first << " " << it.second.local_map_id << " " << geometry3d::t2v(it.second).transpose() << std::endl;
+      }
+      break;
+    }
   default:
     throw std::runtime_error("the impossible happened");
   }

@@ -10,7 +10,7 @@ namespace srrg2_slam_interfaces
   if (var)         \
   std::cerr
 
-static bool loop_detector_debug = true;
+static constexpr bool s_loop_detector_debug = true;
 
 template <typename SLAMAlgorithmType_, typename AlignerType_>
 void MultiLoopDetectorBruteForce_<SLAMAlgorithmType_, AlignerType_>::compute()
@@ -53,17 +53,17 @@ void MultiLoopDetectorBruteForce_<SLAMAlgorithmType_, AlignerType_>::compute()
   if (!aligner) {
     throw std::runtime_error("MultiLoopDetectorBruteForce_::compute| no aligner");
   }
-  SRRG2_SLAM_DEBUG(loop_detector_debug) << "LoopDetectorBruteForce_::loopDetect|search: "
+  SRRG2_SLAM_DEBUG(s_loop_detector_debug) << "LoopDetectorBruteForce_::loopDetect|search: "
                               << FG_BGREEN(source_local_map->graphId()) << "  [\n";
   const EstimateType& pose_in_current =
     ThisType::_slam->robotInLocalMap(); // pose in the current map
 
-  // SRRG2_SLAM_DEBUG(loop_detector_debug) << "fixed set" << std::endl;
+  // SRRG2_SLAM_DEBUG(s_loop_detector_debug) << "fixed set" << std::endl;
   // for (auto it:_current_local_map->dynamic_properties.properties()){
-  //   SRRG2_SLAM_DEBUG(loop_detector_debug) << "p: " << it.first << std::endl;
+  //   SRRG2_SLAM_DEBUG(s_loop_detector_debug) << "p: " << it.first << std::endl;
   // }
   aligner->setFixed(&source_local_map->dynamic_properties);
-  for (auto& h : hints) {
+  for (auto & h : hints) {
     // srrg this is done in the loop selector
     //      if (h->local_map == source_local_map) {
     //        continue;
@@ -74,13 +74,13 @@ void MultiLoopDetectorBruteForce_<SLAMAlgorithmType_, AlignerType_>::compute()
     }
     ThisType::_attempted_closures.insert(target_local_map);
 
-    SRRG2_SLAM_DEBUG(loop_detector_debug) << "(" << target_local_map->graphId();
+    SRRG2_SLAM_DEBUG(s_loop_detector_debug) << "(" << target_local_map->graphId();
     aligner->setMoving(&target_local_map->dynamic_properties);
     aligner->setMovingInFixed(h->initial_guess);
 
     aligner->compute();
     if (aligner->status() != AlignerBase::Success) {
-      SRRG2_SLAM_DEBUG(loop_detector_debug)
+      SRRG2_SLAM_DEBUG(s_loop_detector_debug)
         << ", " << FG_BRED("ALIGNER DROP [code: " << aligner->status() << "]") << ")\n";
       continue;
     }
@@ -94,54 +94,52 @@ void MultiLoopDetectorBruteForce_<SLAMAlgorithmType_, AlignerType_>::compute()
 
     // srrg this should be done in the slice
     if (num_inliers < param_relocalize_min_inliers.value()) {
-      SRRG2_SLAM_DEBUG(loop_detector_debug) << ", " << FG_BRED("NUM_INLIERS DROP: ") << num_inliers << ")\n";
+      SRRG2_SLAM_DEBUG(s_loop_detector_debug) << ", " << FG_BRED("NUM_INLIERS DROP: ") << num_inliers << ")\n";
       continue;
     }
 
     if (chi_inliers > param_relocalize_max_chi_inliers.value()) {
-      SRRG2_SLAM_DEBUG(loop_detector_debug)
+      SRRG2_SLAM_DEBUG(s_loop_detector_debug)
         << ", " << FG_BRED("MAX_CHI_INLIERS DROP: ") << chi_inliers << ")\n";
       continue;
     }
 
     float inlier_ratio = (float) num_inliers / (float) num_correspondences;
-    SRRG2_SLAM_DEBUG(loop_detector_debug) << ", " << inlier_ratio;
+    SRRG2_SLAM_DEBUG(s_loop_detector_debug) << ", " << inlier_ratio;
     if (inlier_ratio < param_relocalize_min_inliers_ratio.value()) {
-      SRRG2_SLAM_DEBUG(loop_detector_debug)
+      SRRG2_SLAM_DEBUG(s_loop_detector_debug)
         << ", " << FG_BRED("MIN_INLIERS_RATIO DROP") << inlier_ratio << ")\n";
       continue;
-    }
-
-    SRRG2_SLAM_DEBUG(loop_detector_debug) << ", " << FG_BGREEN("ACCEPT") << ")\n";
-    else {
+    } else {
+      SRRG2_SLAM_DEBUG(s_loop_detector_debug) << ", " << FG_BGREEN("ACCEPT") << ")\n";
       std::cerr << FG_BGREEN("ACCEPT") << std::endl;
     }
-    using InformationMatrixType = typename LoopClosureType::InformationMatrixType;
 
     // we add a factor to the map
     EstimateType pose_in_target = aligner->movingInFixed().inverse() * pose_in_current;
 
     std::shared_ptr<LoopClosureType> closure(
-      new LoopClosureType(-1, // ThisType::_slam->generateGraphId(),
-                          source_local_map,
-                          target_local_map,
-                          aligner->movingInFixed(),
-                          InformationMatrixType::Identity(),
-                          pose_in_target,
-                          chi_inliers,
-                          num_inliers,
-                          num_correspondences));
+      new LoopClosureType(
+        -1, // ThisType::_slam->generateGraphId(),
+        source_local_map,
+        target_local_map,
+        aligner->movingInFixed(),
+        LoopDetector_<SLAMAlgorithmType_>::InformationMatrixType::Identity(),
+        pose_in_target,
+        chi_inliers,
+        num_inliers,
+        num_correspondences));
     ThisType::_detected_closures.push_back(closure);
   }
-  SRRG2_SLAM_DEBUG(loop_detector_debug) << "]" << std::endl;
+  SRRG2_SLAM_DEBUG(s_loop_detector_debug) << "]" << std::endl;
 }
-
 
 template <typename SLAMAlgorithmType_, typename AlignerType_>
 void MultiLoopDetectorBruteForce_<SLAMAlgorithmType_, AlignerType_>::reset()
 {
-  if (param_relocalize_aligner.value())
+  if (param_relocalize_aligner.value()) {
     param_relocalize_aligner->reset();
+  }
 }
 
 } // namespace srrg2_slam_interfaces

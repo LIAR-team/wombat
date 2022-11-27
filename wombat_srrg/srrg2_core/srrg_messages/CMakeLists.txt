@@ -17,7 +17,7 @@ target_sources(
     src/messages/odometry_message.cpp
     src/messages/path_message.cpp
     src/messages/planner_status_message.cpp
-    #src/messages/point_cloud2_message.cpp
+    src/messages/point_cloud2_message.cpp
     src/messages/point_field.cpp
     src/messages/point_stamped_message.cpp
     src/messages/pose_array_message.cpp
@@ -40,8 +40,9 @@ target_link_libraries(
   srrg_messages_messages
   PUBLIC
     wombat_srrg::srrg2_core::data_structures
-    wombat_srrg::srrg2_core::srrg_image
+    wombat_srrg::srrg2_core::pcl
     wombat_srrg::srrg2_core::property
+    wombat_srrg::srrg2_core::srrg_image
     wombat_srrg::srrg2_core::system_utils
 )
 

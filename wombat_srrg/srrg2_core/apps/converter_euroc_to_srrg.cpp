@@ -60,7 +60,7 @@ void serializeCameraImageAndInfo(Serializer& serializer_,
                                  const std::string& distortion_model_name_,
                                  const Vector5d& distortion_coefficients_,
                                  const Matrix3f& camera_matrix_,
-                                 const bool& enable_rectification_,
+                                 bool enable_rectification_,
                                  const cv::Mat* undistort_rectify_maps_,
                                  const Matrix3f& camera_matrix_rectified_);
 
@@ -644,7 +644,7 @@ void serializeCameraImageAndInfo(Serializer& serializer_,
                                  const std::string& distortion_model_name_,
                                  const Vector5d& distortion_coefficients_,
                                  const Matrix3f& camera_matrix_,
-                                 const bool& enable_rectification_,
+                                 bool enable_rectification_,
                                  const cv::Mat* undistort_rectify_maps_,
                                  const Matrix3f& camera_matrix_rectified_) {
   // create image message

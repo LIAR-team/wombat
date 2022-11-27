@@ -9,7 +9,7 @@ using namespace srrg2_core;
 using namespace srrg2_solver;
 
 template <typename VariableType_>
-void MultiAlignerBase_<VariableType_>::setFixed(PropertyContainerBase* fixed_scene_)
+void MultiAlignerBase_<VariableType_>::setFixed(PropertyContainerBase * fixed_scene_)
 {
   BaseType::setFixed(fixed_scene_);
   for (size_t sit = 0; sit < param_slice_processors.size(); ++sit) {
@@ -20,7 +20,7 @@ void MultiAlignerBase_<VariableType_>::setFixed(PropertyContainerBase* fixed_sce
 
 // sets the moving scene, isolating the channels
 template <typename VariableType_>
-void MultiAlignerBase_<VariableType_>::setMoving(PropertyContainerBase* moving_scene_)
+void MultiAlignerBase_<VariableType_>::setMoving(PropertyContainerBase * moving_scene_)
 {
   BaseType::setMoving(moving_scene_);
   for (size_t sit = 0; sit < param_slice_processors.size(); ++sit) {
@@ -31,24 +31,32 @@ void MultiAlignerBase_<VariableType_>::setMoving(PropertyContainerBase* moving_s
 
 template <typename VariableType_>
 void MultiAlignerBase_<VariableType_>::setMovingInFixed(
-  const typename MultiAlignerBase_<VariableType_>::EstimateType& moving_in_fixed_)
+  const typename MultiAlignerBase_<VariableType_>::EstimateType & moving_in_fixed_)
 {
   if (!param_solver.value()) {
     throw std::runtime_error("MultiAlignerBase_::setMovingInFixed()| no solver");
   }
   VariableType* variable = dynamic_cast<VariableType*>(_graph->variable(0));
-  variable->setEstimate(moving_in_fixed_);
+  if (variable) {
+    variable->setEstimate(moving_in_fixed_);
+  } else {
+    assert(false);
+  }
 }
 
 template <typename VariableType_>
-const typename MultiAlignerBase_<VariableType_>::EstimateType&
+const typename MultiAlignerBase_<VariableType_>::EstimateType &
 MultiAlignerBase_<VariableType_>::movingInFixed() const
 {
   if (!param_solver.value()) {
     throw std::runtime_error("MultiAlignerBase_::movingInFixed()| no solver");
   }
   const VariableType* variable = dynamic_cast<const VariableType*>(_graph->variable(0));
-  return variable->estimate();
+  if (variable) {
+    return variable->estimate();
+  } else {
+    assert(false);
+  }
 }
 
 template <typename VariableType_>
@@ -65,8 +73,9 @@ void MultiAlignerBase_<VariableType_>::reset()
   _slices_changed_flag = true;
 
   for (size_t i=0; i<param_slice_processors.size(); ++i){
-    if (param_slice_processors.value(i))
+    if (param_slice_processors.value(i)) {
       param_slice_processors.value(i)->reset();
+    }
   }
 }
 

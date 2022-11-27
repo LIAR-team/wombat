@@ -7,13 +7,8 @@
 namespace srrg2_slam_interfaces
 {
 
-void AlignerTerminationCriteriaBase::init(AlignerBase* aligner_)
-{
-  _aligner = aligner_;
-}
-
 template <typename AlignerType_>
-void AlignerTerminationCriteriaStandard_<AlignerType_>::init(AlignerBase* aligner_)
+void AlignerTerminationCriteriaStandard_<AlignerType_>::init(AlignerBase * aligner_)
 {
   AlignerTerminationCriteriaBase::init(aligner_);
   _typed_aligner = dynamic_cast<AlignerType_*>(ThisType::_aligner);
@@ -27,7 +22,8 @@ void AlignerTerminationCriteriaStandard_<AlignerType_>::init(AlignerBase* aligne
 }
 
 template <typename AlignerType_>
-bool AlignerTerminationCriteriaStandard_<AlignerType_>::hasToStop() {
+bool AlignerTerminationCriteriaStandard_<AlignerType_>::hasToStop()
+{
   ++_num_iteration;
   const srrg2_solver::IterationStats& current_stats = _typed_aligner->iterationStats().back();
   const float epsilon                               = param_chi_epsilon.value();

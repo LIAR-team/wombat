@@ -9,7 +9,7 @@ namespace srrg2_slam_interfaces
 if (var)         \
 std::cerr
 
-static bool loop_detector_HBST_debug = true;
+static constexpr bool s_loop_detector_HBST_debug = true;
 
 template <typename SLAMAlgorithmType_, typename AlignerType_, typename FactorType_>
 void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::compute()
@@ -295,7 +295,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
   const std::string slice_point_cloud_name_moving = slice->param_moving_slice_name.value();
   assert(slice->param_robustifier.value());
 
-  SRRG2_SLAM_DEBUG(loop_detector_HBST_debug) << "MultiLoopDetectorHBST::computeAlignments|search: "
+  SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug) << "MultiLoopDetectorHBST::computeAlignments|search: "
                                   << FG_BGREEN(_current_local_map->graphId()) << "  [\n";
 
   // ds for all query - reference pairs with sufficient correspondences
@@ -310,12 +310,12 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
     LocalMapType* reference_local_map = _local_maps_in_database[index_reference];
     assert(reference_local_map);
     assert(_current_local_map != reference_local_map);
-    SRRG2_SLAM_DEBUG(loop_detector_HBST_debug) << "(" << reference_local_map->graphId();
+    SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug) << "(" << reference_local_map->graphId();
 
     // ds check if target cannot be satisfied before computing
     if (corrs.size() < ThisType::param_relocalize_min_inliers.value()) {
       aligner_status = AlignerBase::Status::NotEnoughCorrespondences;
-      SRRG2_SLAM_DEBUG(loop_detector_HBST_debug)
+      SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug)
         << ", " << FG_BRED("ALIGNER DROP [code: " << aligner_status << "]") << ")\n";
       continue;
     }
@@ -361,7 +361,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
     }
 
     if (solver->status() != SolverType::SolverStatus::Success) {
-      SRRG2_SLAM_DEBUG(loop_detector_HBST_debug)
+      SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug)
         << ", " << FG_BRED("ALIGNER DROP [code: " << aligner_status << "]") << ")\n";
       continue;
     }
@@ -378,7 +378,7 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_com
                     reference_local_map,
                     corrs);
   }
-  SRRG2_SLAM_DEBUG(loop_detector_HBST_debug) << "]" << std::endl;
+  SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug) << "]" << std::endl;
 }
 
 template <typename SLAMAlgorithmType_, typename AlignerType_, typename FactorType_>
@@ -398,27 +398,27 @@ void MultiLoopDetectorHBST_<SLAMAlgorithmType_, AlignerType_, FactorType_>::_add
 
   // ds skip closure if statistics are insufficient
   if (number_of_inliers < ThisType::param_relocalize_min_inliers.value()) {
-    SRRG2_SLAM_DEBUG(loop_detector_HBST_debug)
+    SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug)
       << ", " << FG_BRED("NUM_INLIERS DROP: ") << number_of_inliers << ")\n";
     return;
   }
 
   if (average_chi_per_inlier > ThisType::param_relocalize_max_chi_inliers.value()) {
-    SRRG2_SLAM_DEBUG(loop_detector_HBST_debug)
+    SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug)
       << ", " << FG_BRED("MAX_CHI_INLIERS DROP: ") << average_chi_per_inlier << ")\n";
     return;
   }
 
   const float inlier_ratio = static_cast<float>(number_of_inliers) / number_of_correspondences;
 
-  SRRG2_SLAM_DEBUG(loop_detector_HBST_debug) << ", " << inlier_ratio;
+  SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug) << ", " << inlier_ratio;
   if (inlier_ratio < ThisType::param_relocalize_min_inliers_ratio.value()) {
-    SRRG2_SLAM_DEBUG(loop_detector_HBST_debug)
+    SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug)
       << ", " << FG_BRED("MIN_INLIERS_RATIO DROP") << inlier_ratio << ")\n";
     return;
   }
 
-  SRRG2_SLAM_DEBUG(loop_detector_HBST_debug) << ", " << FG_BGREEN("ACCEPT") << ")\n";
+  SRRG2_SLAM_DEBUG(s_loop_detector_HBST_debug) << ", " << FG_BGREEN("ACCEPT") << ")\n";
   else {
     std::cerr << FG_BGREEN("ACCEPT") << std::endl;
   }

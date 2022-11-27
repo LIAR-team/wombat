@@ -18,11 +18,16 @@ class AlignerTerminationCriteriaBase : public srrg2_core::Configurable
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   friend class AlignerBase;
+
   /**
     * @brief initialize the criteria by storing the aligner raw pointer
     * @param[in] aligner_: raw pointer of the aligner
     */
-  virtual void init(AlignerBase* aligner_);
+  virtual void init(AlignerBase * aligner_)
+  {
+    _aligner = aligner_;
+  }
+
   /**
     * @brief Implement the decision function for aligner run termination
     * @return true if the criterion is satisfied
@@ -59,7 +64,7 @@ public:
         0);
   PARAM(srrg2_core::PropertyFloat, chi_epsilon, "chi decay", 0.2, 0);
 
-  void init(AlignerBase* aligner_) override;
+  void init(AlignerBase * aligner_) override;
 
   bool hasToStop() override;
 
@@ -70,8 +75,8 @@ protected:
   srrg2_solver::BehaviorAnalyzer_<int> _num_inliers;  /**< inliers buffer to be analyzed */
   srrg2_solver::BehaviorAnalyzer_<float> _chi_norm;   /**< chi buffer to be analyzed */
 
-  AlignerType* _typed_aligner = nullptr; /**< aligner casted to effective type */
-  int _num_iteration          = 0;       /**< cached number of iterations */
+  AlignerType * _typed_aligner = nullptr; /**< aligner casted to effective type */
+  int _num_iteration = 0;       /**< cached number of iterations */
 };
 
 } // namespace srrg2_slam_interfaces

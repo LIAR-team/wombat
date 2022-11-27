@@ -1,4 +1,5 @@
 #pragma once
+
 #include "aligner_slice_processor_base.h"
 
 namespace srrg2_slam_interfaces

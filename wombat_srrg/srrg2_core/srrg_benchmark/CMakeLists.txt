@@ -1,15 +1,21 @@
-add_library(srrg_benchmark INTERFACE)
+add_library(srrg_benchmark SHARED)
 add_library(wombat_srrg::srrg2_core::benchmark ALIAS srrg_benchmark)
 
 target_include_directories(
   srrg_benchmark
-  INTERFACE
+  PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+)
+
+target_sources(
+  srrg_benchmark
+  PRIVATE
+    src/trajectory_writers.cpp
 )
 
 target_link_libraries(
   srrg_benchmark
-  INTERFACE
+  PUBLIC
     wombat_srrg::srrg2_core::config
     wombat_srrg::srrg2_core::geometry
     wombat_srrg::srrg2_core::srrg_messages::messages
