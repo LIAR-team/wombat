@@ -32,8 +32,13 @@ EXPECTED_VERSION=$(head -n 1 ${EXPECTED_VERSION_FILE})
 THIS_FROM_COMMAND=$(head -n 1 ${DOCKERFILE})
 EXPECTED_FROM_COMMAND="FROM ${EXPECTED_VERSION}"
 if [ "${THIS_FROM_COMMAND}" != "${EXPECTED_FROM_COMMAND}" ]; then
-  echo "### - Warning! Your Dockerfile is not up-to-date. The build may fail."
-  echo "### - Run ${SETUP_SCRIPT} to restore the expected base image."
+  echo "#########################################################################"
+  echo "WARNING! Your Dockerfile is not the expected one for this branch."
+  echo "Your base image is ${THIS_FROM_COMMAND}"
+  echo "The expected base image is ${EXPECTED_VERSION}"
+  echo "Run the setup script to restore the expected base image:"
+  echo "bash ${SETUP_SCRIPT}"
+  echo "#########################################################################"
 fi
 
 # Build the developer's dockerfile
