@@ -22,14 +22,14 @@ jobs:
       DEV_ENV_IMAGE: ${{ steps.set_version.outputs.DEV_ENV_IMAGE }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Read VERSION
         run: |
           VER=$(cat ${{ github.workspace }}/utils/dev-environment/VERSION) \
           && echo "DEV_ENV_IMAGE=$VER" >> $GITHUB_ENV
       - name: Set VERSION
         id: set_version
-        run: echo "::set-output name=DEV_ENV_IMAGE::${{ env.DEV_ENV_IMAGE }}"
+        run: echo "DEV_ENV_IMAGE=${{ env.DEV_ENV_IMAGE }}" >> $GITHUB_OUTPUT
 
   Build-and-Test:
     needs: Setup-Wombat
