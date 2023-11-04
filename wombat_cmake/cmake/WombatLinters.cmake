@@ -40,7 +40,7 @@ function(wombat_linters)
   if(_cpp_files)
     # Clang-tidy
     # C/C++ static analysis for various checks
-    
+
     # TODO: clang-tidy is currently broken. Enable it again
     # when https://github.com/ament/ament_lint/pull/441 is merged and released.
     #find_package(ament_cmake_clang_tidy REQUIRED)
