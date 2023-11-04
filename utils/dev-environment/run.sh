@@ -84,14 +84,22 @@ fi
 # Check if we have display
 DISPLAY_ARGS=""
 if [ ! -z "${DISPLAY}" ]; then
-  # Make sure XAUTH exists
   XSOCK=/tmp/.X11-unix
-  XAUTH=/tmp/.docker.xauth
-  touch ${XAUTH}
-  xauth nlist ${DISPLAY} | sed -e 's/^..../ffff/' | xauth -f ${XAUTH} nmerge -
+  DISPLAY_VOLUMES="--volume=${XSOCK}:${XSOCK}:rw"
+  DISPLAY_ENV=""
+  if [ -n "${IS_UBUNTU_HOST}" ]; then
+    # Make sure XAUTH exists
+    XAUTH=/tmp/.docker.xauth
+    touch ${XAUTH}
+    xauth nlist ${DISPLAY} | sed -e 's/^..../ffff/' | xauth -f ${XAUTH} nmerge -
 
-  DISPLAY_ENV="--env DISPLAY=${DISPLAY} --env XAUTHORITY=${XAUTH}"
-  DISPLAY_VOLUMES="--volume=${XSOCK}:${XSOCK}:rw --volume=${XAUTH}:${XAUTH}:rw"
+    DISPLAY_ENV="--env DISPLAY=${DISPLAY} --env XAUTHORITY=${XAUTH}"
+    DISPLAY_VOLUMES="${DISPLAY_VOLUMES} --volume=${XAUTH}:${XAUTH}:rw"
+  else
+    IP=$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
+    /usr/X11/bin/xhost + ${IP}
+    DISPLAY_ENV="--env DISPLAY=${IP}:0"
+  fi
 
   DISPLAY_ARGS="${DISPLAY_ENV} ${DISPLAY_VOLUMES}"
 fi
@@ -118,6 +126,15 @@ if [ ! -z "${SSH_AUTH_SOCK}" ]; then
   fi
 fi
 
+NETWORK_ARGS=""
+# Linux allows to use --network=host setting
+if [ -n "${IS_UBUNTU_HOST}" ]; then
+  NETWORK_ARGS="--network=host"
+else
+  # 8765 is the port used by the Foxglove bridge
+  NETWORK_ARGS="-p 8765:8765"
+fi
+
 # Run the developer's dockerfile
 docker run -it --rm \
   ${BASH_HISTORY_ARGS} \
@@ -126,7 +143,7 @@ docker run -it --rm \
   ${GITCONFIG_ARGS} \
   ${GPU_ARGS} \
   ${SSH_ARGS} \
-  --network=host \
+  ${NETWORK_ARGS} \
   --privileged \
   --user=${UID}:${UID} \
   --volume=${HOME}:${DOCKER_HOME}/host-home:rw \

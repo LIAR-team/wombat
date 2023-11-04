@@ -40,18 +40,21 @@ function(wombat_linters)
   if(_cpp_files)
     # Clang-tidy
     # C/C++ static analysis for various checks
-    find_package(ament_cmake_clang_tidy REQUIRED)
-    set(_clang_tidy_config ${_wombat_linters_dir}/clang-tidy-checks)
-    # Include only errors from header files located in the project directory
-    set(_clang_tidy_header_filter --header-filter ${PROJECT_SOURCE_DIR}/.*)
-    # Clang-tidy can be very slow
-    set(_clang_tidy_timeout 1000)
-    ament_clang_tidy(
-      ${CMAKE_BINARY_DIR}
-      ${_clang_tidy_header_filter}
-      CONFIG_FILE ${_clang_tidy_config}
-      TIMEOUT ${_clang_tidy_timeout}
-    )
+
+    # TODO: clang-tidy is currently broken. Enable it again
+    # when https://github.com/ament/ament_lint/pull/441 is merged and released.
+    #find_package(ament_cmake_clang_tidy REQUIRED)
+    #set(_clang_tidy_config ${_wombat_linters_dir}/clang-tidy-checks)
+    ## Include only errors from header files located in the project directory
+    #set(_clang_tidy_header_filter --header-filter ${PROJECT_SOURCE_DIR}/.*)
+    ## Clang-tidy can be very slow
+    #set(_clang_tidy_timeout 1000)
+    #ament_clang_tidy(
+    #  ${CMAKE_BINARY_DIR}
+    #  ${_clang_tidy_header_filter}
+    #  CONFIG_FILE ${_clang_tidy_config}
+    #  TIMEOUT ${_clang_tidy_timeout}
+    #)
 
     # CppCheck
     # C/C++ static analysis for undefined behaviors and other bugs

@@ -110,7 +110,7 @@ docker pull ${DEVELOPER_IMAGE}
 # Create user devdocker directory
 DEVDOCKER_DIR_NAME=".devdocker"
 USER_DEVDOCKER=${REPO_DIR}/${DEVDOCKER_DIR_NAME}
-echo "### - Installing developer docker to ${USER_DEVDOCKER}"
+echo "### - Installing developer docker directory to ${USER_DEVDOCKER}"
 if [ -e ${USER_DEVDOCKER} ] && [ ! -d ${USER_DEVDOCKER} ]; then
   rm -rf ${USER_DEVDOCKER}
 fi
