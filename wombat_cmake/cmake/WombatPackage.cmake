@@ -19,7 +19,7 @@ include(CMakeParseArguments)
 macro(wombat_package)
   cmake_parse_arguments(
     ARG # prefix of output variables
-    "NO_WOMBAT_LINTERS" # list of names of the boolean arguments (only defined ones will be true)
+    "AUTO_GENERATED_CODE" # list of names of the boolean arguments (only defined ones will be true)
     "" # list of names of mono-valued arguments
     "" # list of names of multi-valued arguments (output variables are lists)
     ${ARGN} # arguments of the function to parse, here we take the all original ones
@@ -44,7 +44,6 @@ macro(wombat_package)
       -fPIC
       -Wall
       -Wdeprecated
-      -Werror
       -Wextra
       -Wimplicit-fallthrough
       -Wmissing-braces
@@ -54,6 +53,9 @@ macro(wombat_package)
       -Wpointer-arith
       -Wshadow
     )
+    if(NOT ARG_AUTO_GENERATED_CODE)
+      add_compile_options(-Werror)
+    endif()
   endif()
 
   if(WOMBAT_COVERAGE)
@@ -63,7 +65,7 @@ macro(wombat_package)
   endif()
 
   # Automatically run linters
-  if(BUILD_TESTING AND NOT ARG_NO_WOMBAT_LINTERS)
+  if(BUILD_TESTING AND NOT ARG_AUTO_GENERATED_CODE)
     wombat_linters()
   endif()
 

@@ -28,13 +28,15 @@ fi
 
 IS_UBUNTU_HOST=$(is_ubuntu_host)
 
+# Check if the developer dockerfile is using the expected version
+# of the base image. Print a big warning if it is not.
 EXPECTED_VERSION=$(head -n 1 ${EXPECTED_VERSION_FILE})
 THIS_FROM_COMMAND=$(head -n 1 ${DOCKERFILE})
-EXPECTED_FROM_COMMAND="FROM ${EXPECTED_VERSION}"
-if [ "${THIS_FROM_COMMAND}" != "${EXPECTED_FROM_COMMAND}" ]; then
+THIS_VERSION=${THIS_FROM_COMMAND#"FROM "}
+if [ "${THIS_VERSION}" != "${EXPECTED_VERSION}" ]; then
   echo "#########################################################################"
   echo "WARNING! Your Dockerfile is not the expected one for this branch."
-  echo "Your base image is ${THIS_FROM_COMMAND}"
+  echo "Your base image is ${THIS_VERSION}"
   echo "The expected base image is ${EXPECTED_VERSION}"
   echo "Run the setup script to restore the expected base image:"
   echo "bash ${SETUP_SCRIPT}"
@@ -42,8 +44,7 @@ if [ "${THIS_FROM_COMMAND}" != "${EXPECTED_FROM_COMMAND}" ]; then
 fi
 
 # Build the developer's dockerfile
-# NOTE: disable buildkit which requires internet connection for building.
-DOCKER_BUILDKIT=0 docker build \
+DOCKER_CLI_HINTS=false docker build \
   --file ${DOCKERFILE} \
   --network=host \
   --tag wombat-dev \
@@ -53,6 +54,14 @@ DOCKER_BUILDKIT=0 docker build \
 WOMBAT_DIR=$(dirname ${THIS_DIR})
 DOCKER_HOME=/home/docker-dev
 DOCKER_WOMBAT_DIR=${DOCKER_HOME}/wombat
+
+# Make sure that the mounted directory is in the "safe" list of git
+GIT_CONFIG_SAFE_DIRS_KEY="safe.directory"
+GIT_CONFIG_SAFE_DIRS_VALUES=$( git config --global --get "${GIT_CONFIG_SAFE_DIRS_KEY}" || true; )
+if [[ "${GIT_CONFIG_SAFE_DIRS_VALUES}" != *"${DOCKER_WOMBAT_DIR}"* ]]; then
+  echo "The git config '${GIT_CONFIG_SAFE_DIRS_KEY}' does not contain the mounted workspace directory '${DOCKER_WOMBAT_DIR}'. Adding it."
+  git config --global --add ${GIT_CONFIG_SAFE_DIRS_KEY} ${DOCKER_WOMBAT_DIR}
+fi
 
 # Persistent bash history file
 BASH_HISTORY_FILE=${THIS_DIR}/.bash_history
@@ -96,11 +105,16 @@ if [ ! -z "${DISPLAY}" ]; then
     DISPLAY_ENV="--env DISPLAY=${DISPLAY} --env XAUTHORITY=${XAUTH}"
     DISPLAY_VOLUMES="${DISPLAY_VOLUMES} --volume=${XAUTH}:${XAUTH}:rw"
   else
-    IP=$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
-    /usr/X11/bin/xhost + ${IP}
-    DISPLAY_ENV="--env DISPLAY=${IP}:0"
+    # TODO: this may not work on every PC, i.e. the interface may be named differently
+    NETWORK_INTERFACE="en0"
+    IP=$(ifconfig ${NETWORK_INTERFACE} | grep inet | awk '$1=="inet" {print $2}')
+    # If IP is not found, we don't want to run this command.
+    # It would be a safety issue as it would allow any IP to connect.
+    if [[ -n "${IP}" ]]; then
+      /usr/X11/bin/xhost + ${IP}
+      DISPLAY_ENV="--env DISPLAY=${IP}:0"
+    fi
   fi
-
   DISPLAY_ARGS="${DISPLAY_ENV} ${DISPLAY_VOLUMES}"
 fi
 
@@ -135,8 +149,8 @@ else
   NETWORK_ARGS="-p 8765:8765"
 fi
 
-# Run the developer's dockerfile
-docker run -it --rm \
+# Define the full command to start the container
+CMD=(docker run -it --rm \
   ${BASH_HISTORY_ARGS} \
   ${CCACHE_ARGS} \
   ${DISPLAY_ARGS} \
@@ -151,4 +165,11 @@ docker run -it --rm \
   --env COLCON_HOME=${DOCKER_WOMBAT_DIR}/.colcon \
   --workdir ${DOCKER_WOMBAT_DIR} \
   wombat-dev \
-  $@
+  $@)
+
+# Print the command we are about to execute
+echo "####
+${CMD[@]}
+####"
+# Run the command to start a container for the developer's dockerfile
+"${CMD[@]}"
