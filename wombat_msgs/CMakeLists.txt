@@ -8,7 +8,7 @@ find_package(action_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(std_msgs REQUIRED)
 
-wombat_package(NO_WOMBAT_LINTERS)
+wombat_package(AUTO_GENERATED_CODE)
 
 # Generate ROS 2 interfaces and create wombat_msgs library
 rosidl_generate_interfaces(${PROJECT_NAME}
