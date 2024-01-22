@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>kennel</name>
+  <version>0.0.1</version>
+  <description>Kinematics Simulation Environment for Playful Robots</description>
+  <maintainer email="alberto.soragna@gmail.com">Alberto Soragna</maintainer>
+  <license>Proprietary</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>wombat_cmake</buildtool_depend>
+
+  <depend>geometry_msgs</depend>
+  <depend>nav2_map_server</depend>
+  <depend>rclcpp</depend>
+  <depend>tf2</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>wombat_core</depend>
+
+  <test_depend>wombat_cmake</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
