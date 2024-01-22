@@ -41,10 +41,6 @@ target_link_libraries(kennel PRIVATE kennel_lib)
 wombat_install_target(kennel_lib)
 wombat_install_target(kennel)
 
-install(DIRECTORY launch
-  DESTINATION share/${PROJECT_NAME}
-)
-
 install(DIRECTORY config
   DESTINATION share/${PROJECT_NAME}
 )
