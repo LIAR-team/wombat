@@ -9,6 +9,7 @@
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "wombat_control/models/diff_drive_model.hpp"
+#include "wombat_core/math/angles.hpp"
 
 inline bool operator==(
   const geometry_msgs::msg::Pose & pose1,
@@ -45,9 +46,7 @@ TEST(test_model, omega_integration)
   command.angular.z = 1.0;
   geometry_msgs::msg::Pose output_pose = unicycle.integration(command, dt);
   geometry_msgs::msg::Pose expected_pose;
-  tf2::Quaternion q;
-  q.setRPY(0.0, 0.0, dt);
-  expected_pose.orientation = tf2::toMsg(q);
+  expected_pose.orientation = wombat_core::quaternion_from_rpy(0.0, 0.0, dt);
 
   EXPECT_EQ(output_pose, expected_pose);
 }

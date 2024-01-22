@@ -7,6 +7,8 @@
 
 #include <type_traits>
 
+#include "geometry_msgs/msg/quaternion.hpp"
+
 namespace wombat_core
 {
 
@@ -90,5 +92,14 @@ constexpr T shortest_angular_distance(T angle_from, T angle_to) noexcept
   static_assert(std::is_floating_point<T>::value, "shortest_angular_distance requires floating point args");
   return angles_difference(angle_to, angle_from);
 }
+
+/**
+ * @brief Builds a quaternion message from roll, pitch and yaw angles.
+ * @param roll the roll angle
+ * @param pitch the pitch angle
+ * @param yaw the yaw angle
+ * @return geometry_msgs::msg::Quaternion
+ */
+geometry_msgs::msg::Quaternion quaternion_from_rpy(double roll, double pitch, double yaw);
 
 }  // namespace wombat_core

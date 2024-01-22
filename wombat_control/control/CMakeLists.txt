@@ -1,5 +1,5 @@
 
-add_library(control SHARED)
+add_library(control STATIC)
 add_library(wombat_control::control ALIAS control)
 
 target_sources(
