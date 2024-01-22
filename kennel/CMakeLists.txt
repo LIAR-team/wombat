@@ -6,6 +6,7 @@ set(PKG_DEPENDENCIES
   geometry_msgs
   nav2_map_server
   rclcpp
+  sensor_msgs
   tf2
   tf2_geometry_msgs
 )
@@ -20,12 +21,13 @@ add_library(kennel_lib SHARED)
 target_sources(
   kennel_lib
   PRIVATE
+    src/mobile_base/diff_kinematic_model.cpp
+    src/mobile_base/ground_truth_manager.cpp
+    src/mobile_base/mobile_base.cpp
+    src/mobile_base/slam_manager.cpp
+    src/sensors/lidar_2d.cpp
     src/kennel.cpp
-    src/diff-kinematic-model.cpp
-    src/ground-truth-manager.cpp
-    src/mobile-base.cpp
-    src/robot-sim.cpp
-    src/slam-manager.cpp
+    src/robot_sim.cpp
 )
 target_include_directories(
   kennel_lib

@@ -10,10 +10,13 @@
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/ground-truth-manager.hpp"
-#include "kennel/diff-kinematic-model.hpp"
+#include "kennel/mobile_base/ground_truth_manager.hpp"
+#include "kennel/mobile_base/diff_kinematic_model.hpp"
 #include "wombat_core/math/grid.hpp"
 #include "wombat_core/math/transformations.hpp"
+
+namespace kennel
+{
 
 GroundTruthManager::GroundTruthManager(
   rclcpp::Node * parent_node,
@@ -42,8 +45,8 @@ GroundTruthManager::pose_update(
   gt_transform.header.frame_id = m_ground_truth_frame_id.empty() ? map.header.frame_id : m_ground_truth_frame_id;
   gt_transform.child_frame_id = m_robot_base_frame_id;
 
-  if (!m_last_pose_update) {
-    m_last_pose_update = now;
+  if (!m_last_pose_update_time) {
+    m_last_pose_update_time = now;
     gt_transform.transform = wombat_core::pose_to_transform(last_gt_pose);
     return gt_transform;
   }
@@ -53,13 +56,13 @@ GroundTruthManager::pose_update(
   const bool cmd_is_valid = dt_since_last_cmd_received < m_cmd_timeout;
 
   if (cmd_is_valid) {
-    const auto dt_since_last_pose_update = now - m_last_pose_update.value();
+    const auto dt_since_last_pose_update = now - m_last_pose_update_time.value();
     m_kin_model->update(
       cmd_vel.twist,
       dt_since_last_pose_update);
   }
   const auto new_gt_pose = m_kin_model->get_pose();
-  m_last_pose_update = now;
+  m_last_pose_update_time = now;
 
   const auto map_pose = this->apply_map_constraints(map, last_gt_pose, new_gt_pose);
   m_kin_model->reset_pose(map_pose);
@@ -69,9 +72,23 @@ GroundTruthManager::pose_update(
   return gt_transform;
 }
 
+geometry_msgs::msg::TransformStamped GroundTruthManager::get_pose() const
+{
+  // This method is very hacky, should be rewritten
+  geometry_msgs::msg::TransformStamped gt_transform;
+  if (!m_last_pose_update_time) {
+    return gt_transform;
+  }
+  gt_transform.header.stamp = *m_last_pose_update_time;
+  gt_transform.header.frame_id = "ground_truth";
+  gt_transform.child_frame_id = m_robot_base_frame_id;
+  gt_transform.transform = wombat_core::pose_to_transform(m_kin_model->get_pose());
+  return gt_transform;
+}
+
 void GroundTruthManager::reset_pose(const geometry_msgs::msg::Pose & new_pose)
 {
-  m_last_pose_update = m_clock->now();
+  m_last_pose_update_time = m_clock->now();
   m_kin_model->reset_pose(new_pose);
 }
 
@@ -109,3 +126,5 @@ geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
   }
   return new_pose;
 }
+
+}  // namespace kennel

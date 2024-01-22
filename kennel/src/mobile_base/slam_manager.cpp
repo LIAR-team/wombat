@@ -3,7 +3,10 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#include "kennel/slam-manager.hpp"
+#include "kennel/mobile_base/slam_manager.hpp"
+
+namespace kennel
+{
 
 SlamManager::SlamManager(
   rclcpp::Node * parent_node,
@@ -16,7 +19,7 @@ SlamManager::SlamManager(
   RCLCPP_INFO(m_logger, "SLAM manager constructed");
 }
 
-std::optional<SlamManager::SlamData> SlamManager::slam_update(
+std::optional<LocalizationData> SlamManager::slam_update(
   const geometry_msgs::msg::TransformStamped & gt_T_base,
   const nav_msgs::msg::OccupancyGrid & gt_map)
 {
@@ -28,10 +31,12 @@ std::optional<SlamManager::SlamData> SlamManager::slam_update(
   m_last_update_time = now;
 
   // Naive implementation of SLAM: forward ground truth data
-  SlamData data;
-  data.map_T_base = gt_T_base;
-  data.map_T_base.header.frame_id = m_slam_frame_id;
+  LocalizationData data;
+  data.robot_pose = gt_T_base;
+  data.robot_pose.header.frame_id = m_slam_frame_id;
   data.map = gt_map;
 
   return data;
 }
+
+}  // namespace kennel

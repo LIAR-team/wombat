@@ -14,6 +14,9 @@
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
+namespace kennel
+{
+
 Kennel::Kennel(const rclcpp::NodeOptions & options)
 : rclcpp::Node("kennel", options)
 {
@@ -183,3 +186,5 @@ Kennel::start_executor(
 
   return thread_and_executor;
 }
+
+}  // namespace kennel

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <vector>
 
@@ -14,13 +15,18 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 
-#include "kennel/ground-truth-manager.hpp"
-#include "kennel/slam-manager.hpp"
+#include "kennel/mobile_base/ground_truth_manager.hpp"
+#include "kennel/mobile_base/slam_manager.hpp"
+
+namespace kennel
+{
 
 class MobileBase
 {
 public:
   explicit MobileBase(rclcpp::Node * parent_node);
+
+  LocalizationData get_ground_truth_data();
 
 private:
   void mobile_base_update();
@@ -50,5 +56,9 @@ private:
 
   std::unique_ptr<GroundTruthManager> m_gt_manager;
   std::unique_ptr<SlamManager> m_slam_manager;
+
+  std::mutex m_mutex;
   rclcpp::Logger m_logger;
 };
+
+}  // namespace kennel

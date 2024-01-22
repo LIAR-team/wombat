@@ -8,10 +8,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
-#include "kennel/ground-truth-manager.hpp"
-#include "kennel/mobile-base.hpp"
+#include "kennel/mobile_base/ground_truth_manager.hpp"
+#include "kennel/mobile_base/mobile_base.hpp"
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/math/transformations.hpp"
+
+namespace kennel
+{
 
 MobileBase::MobileBase(rclcpp::Node * parent_node)
 : m_parent_node(parent_node), m_logger(parent_node->get_logger())
@@ -56,8 +59,22 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
   RCLCPP_INFO(m_logger, "Mobile Base constructed");
 }
 
+LocalizationData MobileBase::get_ground_truth_data()
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+
+  LocalizationData data;
+  data.robot_pose = m_gt_manager->get_pose();
+  if (m_gt_map) {
+    data.map = *m_gt_map;
+  }
+  return data;
+}
+
 void MobileBase::mobile_base_update()
 {
+  std::lock_guard<std::mutex> lock(m_mutex);
+
   if (m_ground_truth_map_sub && !m_gt_map) {
     return;
   }
@@ -70,7 +87,7 @@ void MobileBase::mobile_base_update()
   // TODO: this is ugly, will need to rewrite.
   // We always need a full tree of transforms even if they are computed with different periods
   if (maybe_slam_data) {
-    sorted_tfs.push_back(maybe_slam_data->map_T_base);
+    sorted_tfs.push_back(maybe_slam_data->robot_pose);
   } else {
     if (m_last_transforms.size() >= sorted_tfs.size() + 1) {
       sorted_tfs.push_back(m_last_transforms[1]);
@@ -168,6 +185,7 @@ bool MobileBase::setup_ground_truth()
       rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
       [this](nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) {
         RCLCPP_INFO(m_logger, "Received ground truth map");
+        std::lock_guard<std::mutex> lock(m_mutex);
         m_gt_map = msg;
       });
   } else {
@@ -204,3 +222,5 @@ bool MobileBase::setup_slam()
 
   return true;
 }
+
+}  // namespace kennel

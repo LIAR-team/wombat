@@ -15,7 +15,10 @@
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/diff-kinematic-model.hpp"
+#include "kennel/mobile_base/diff_kinematic_model.hpp"
+
+namespace kennel
+{
 
 class GroundTruthManager
 {
@@ -29,6 +32,8 @@ public:
   geometry_msgs::msg::TransformStamped pose_update(
     const geometry_msgs::msg::TwistStamped & cmd_vel,
     const nav_msgs::msg::OccupancyGrid & map);
+
+  geometry_msgs::msg::TransformStamped get_pose() const;
 
   void reset_pose(const geometry_msgs::msg::Pose & new_pose);
 
@@ -46,5 +51,7 @@ private:
   std::chrono::milliseconds m_cmd_timeout {};
 
   std::unique_ptr<DiffKinematicModel> m_kin_model;
-  std::optional<rclcpp::Time> m_last_pose_update;
+  std::optional<rclcpp::Time> m_last_pose_update_time;
 };
+
+}  // namespace kennel

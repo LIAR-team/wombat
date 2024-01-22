@@ -11,6 +11,9 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+namespace kennel
+{
+
 /**
  * @brief Differential kinematic model
  */
@@ -23,10 +26,12 @@ public:
     const geometry_msgs::msg::Twist & vel_msg,
     const rclcpp::Duration & delta_time);
 
-  geometry_msgs::msg::Pose get_pose();
+  geometry_msgs::msg::Pose get_pose() const;
 
   void reset_pose(const geometry_msgs::msg::Pose & new_pose);
 
 private:
   geometry_msgs::msg::Pose m_current_pose;
 };
+
+}  // namespace kennel

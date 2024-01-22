@@ -12,21 +12,20 @@
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+#include "kennel/types.hpp"
+
+namespace kennel
+{
+
 class SlamManager
 {
 public:
-  struct SlamData
-  {
-    geometry_msgs::msg::TransformStamped map_T_base;
-    nav_msgs::msg::OccupancyGrid map;
-  };
-
   SlamManager(
     rclcpp::Node * parent_node,
     const rclcpp::Duration & update_period,
     const std::string & slam_frame_id);
 
-  std::optional<SlamData> slam_update(
+  std::optional<LocalizationData> slam_update(
     const geometry_msgs::msg::TransformStamped & gt_T_base,
     const nav_msgs::msg::OccupancyGrid & gt_map);
 
@@ -39,3 +38,5 @@ private:
   rclcpp::Duration m_update_period {std::chrono::nanoseconds(0)};
   std::string m_slam_frame_id {};
 };
+
+}  // namespace kennel
