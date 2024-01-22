@@ -14,7 +14,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rosgraph_msgs/msg/clock.hpp"
 
-#include "kennel/robot-sim.hpp"
+#include "kennel/robot_sim.hpp"
+
+namespace kennel {
 
 class Kennel : public rclcpp::Node
 {
@@ -52,3 +54,5 @@ private:
   std::vector<std::unique_ptr<ThreadWithExecutor>> m_executors;
   std::unique_ptr<std::thread> m_sim_time_thread;
 };
+
+}

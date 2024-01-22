@@ -36,7 +36,7 @@ int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  auto kennel = std::make_shared<Kennel>();
+  auto kennel = std::make_shared<kennel::Kennel>();
   kennel->run();
 
   wait_until_shutdown();

@@ -9,7 +9,9 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/mobile-base.hpp"
+#include "kennel/mobile_base/mobile_base.hpp"
+
+namespace kennel {
 
 class RobotSim : public rclcpp::Node
 {
@@ -19,3 +21,5 @@ public:
 private:
   std::unique_ptr<MobileBase> m_mobile_base;
 };
+
+}

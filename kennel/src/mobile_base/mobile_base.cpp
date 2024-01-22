@@ -8,10 +8,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
-#include "kennel/ground-truth-manager.hpp"
-#include "kennel/mobile-base.hpp"
+#include "kennel/mobile_base/ground_truth_manager.hpp"
+#include "kennel/mobile_base/mobile_base.hpp"
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/math/transformations.hpp"
+
+namespace kennel {
 
 MobileBase::MobileBase(rclcpp::Node * parent_node)
 : m_parent_node(parent_node), m_logger(parent_node->get_logger())
@@ -203,4 +205,6 @@ bool MobileBase::setup_slam()
   }
 
   return true;
+}
+
 }

@@ -12,6 +12,8 @@
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+namespace kennel {
+
 class SlamManager
 {
 public:
@@ -39,3 +41,5 @@ private:
   rclcpp::Duration m_update_period {std::chrono::nanoseconds(0)};
   std::string m_slam_frame_id {};
 };
+
+}

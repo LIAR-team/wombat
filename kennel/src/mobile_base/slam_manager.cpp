@@ -3,7 +3,9 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#include "kennel/slam-manager.hpp"
+#include "kennel/mobile_base/slam_manager.hpp"
+
+namespace kennel {
 
 SlamManager::SlamManager(
   rclcpp::Node * parent_node,
@@ -34,4 +36,6 @@ std::optional<SlamManager::SlamData> SlamManager::slam_update(
   data.map = gt_map;
 
   return data;
+}
+
 }

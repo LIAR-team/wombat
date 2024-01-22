@@ -14,8 +14,10 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 
-#include "kennel/ground-truth-manager.hpp"
-#include "kennel/slam-manager.hpp"
+#include "kennel/mobile_base/ground_truth_manager.hpp"
+#include "kennel/mobile_base/slam_manager.hpp"
+
+namespace kennel {
 
 class MobileBase
 {
@@ -52,3 +54,5 @@ private:
   std::unique_ptr<SlamManager> m_slam_manager;
   rclcpp::Logger m_logger;
 };
+
+}

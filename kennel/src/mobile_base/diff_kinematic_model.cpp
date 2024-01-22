@@ -12,8 +12,10 @@
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
-#include "kennel/diff-kinematic-model.hpp"
+#include "kennel/mobile_base/diff_kinematic_model.hpp"
 #include "wombat_core/math/angles.hpp"
+
+namespace kennel {
 
 void DiffKinematicModel::update(
   const geometry_msgs::msg::Twist & vel_msg,
@@ -38,4 +40,6 @@ geometry_msgs::msg::Pose DiffKinematicModel::get_pose()
 void DiffKinematicModel::reset_pose(const geometry_msgs::msg::Pose & new_pose)
 {
   m_current_pose = new_pose;
+}
+
 }

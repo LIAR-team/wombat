@@ -15,7 +15,9 @@
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/diff-kinematic-model.hpp"
+#include "kennel/mobile_base/diff_kinematic_model.hpp"
+
+namespace kennel {
 
 class GroundTruthManager
 {
@@ -48,3 +50,5 @@ private:
   std::unique_ptr<DiffKinematicModel> m_kin_model;
   std::optional<rclcpp::Time> m_last_pose_update;
 };
+
+}

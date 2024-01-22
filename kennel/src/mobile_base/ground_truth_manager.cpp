@@ -10,10 +10,12 @@
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/ground-truth-manager.hpp"
-#include "kennel/diff-kinematic-model.hpp"
+#include "kennel/mobile_base/ground_truth_manager.hpp"
+#include "kennel/mobile_base/diff_kinematic_model.hpp"
 #include "wombat_core/math/grid.hpp"
 #include "wombat_core/math/transformations.hpp"
+
+namespace kennel {
 
 GroundTruthManager::GroundTruthManager(
   rclcpp::Node * parent_node,
@@ -108,4 +110,6 @@ geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
     return old_pose;
   }
   return new_pose;
+}
+
 }
