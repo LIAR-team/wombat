@@ -1,8 +1,14 @@
 // Copyright 2024 Soragna Alberto.
 // All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
+
+#pragma once
 
 #include <cmath>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "nav2_map_server/map_server.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -19,7 +25,7 @@ class Kennel : public rclcpp::Node
   };
 
 public:
-  Kennel(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit Kennel(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
   void run();
 
@@ -34,7 +40,7 @@ private:
   std::unique_ptr<ThreadWithExecutor>
   start_executor(
     std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface> node_base);
-  
+
   void sim_time_loop();
 
   rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr m_sim_time_pub;

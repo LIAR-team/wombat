@@ -1,5 +1,7 @@
 // Copyright 2024 Soragna Alberto.
 // All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
 
 #include <cmath>
 #include <memory>
@@ -19,8 +21,8 @@ GroundTruthManager::GroundTruthManager(
   const std::string & ground_truth_frame_id,
   const std::string & robot_base_frame_id)
 : m_clock(parent_node->get_clock()), m_logger(parent_node->get_logger()),
-m_ground_truth_frame_id(ground_truth_frame_id), m_robot_base_frame_id(robot_base_frame_id),
-m_cmd_timeout(cmd_timeout)
+  m_ground_truth_frame_id(ground_truth_frame_id), m_robot_base_frame_id(robot_base_frame_id),
+  m_cmd_timeout(cmd_timeout)
 {
   m_kin_model = std::make_unique<DiffKinematicModel>();
 

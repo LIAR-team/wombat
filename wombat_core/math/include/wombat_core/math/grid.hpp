@@ -39,7 +39,7 @@ std::optional<grid_index_t> grid_coord_to_index(
 /**
  * @brief Converts a world point into its corresponding grid
  * coordinate
- * @param world_pt the world point to convert 
+ * @param world_pt the world point to convert
  * @param map_info information about the grid
  * @return std::optional<grid_coord_t> grid coord or nullopt if failed
  */
@@ -50,7 +50,7 @@ std::optional<grid_coord_t> world_pt_to_grid_coord(
 /**
  * @brief Converts a world point into the index used to access
  * the corresponding grid coordinate
- * @param world_pt the world point to convert 
+ * @param world_pt the world point to convert
  * @param map_info information about the grid
  * @return std::optional<grid_index_t> grid index or nullopt if failed
  */

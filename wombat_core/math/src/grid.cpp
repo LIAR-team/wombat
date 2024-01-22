@@ -27,8 +27,7 @@ std::optional<grid_coord_t> world_pt_to_grid_coord(
   const auto & map_origin_x = map_info.origin.position.x;
   const auto & map_origin_y = map_info.origin.position.y;
 
-  if (world_pt.x < map_origin_x || world_pt.y < map_origin_y)
-  {
+  if (world_pt.x < map_origin_x || world_pt.y < map_origin_y) {
     return std::nullopt;
   }
   const float map_resolution = map_info.resolution;
@@ -67,7 +66,7 @@ std::optional<grid_index_t> find_grid_coord_on_line(
 
   const double dx = to_world.x - from_world.x;
   const double dy = to_world.y - from_world.y;
-  const double dir_len_squared = dx*dx + dy*dy;
+  const double dir_len_squared = dx * dx + dy * dy;
   if (dir_len_squared == 0) {
     return std::nullopt;
   }
@@ -77,7 +76,7 @@ std::optional<grid_index_t> find_grid_coord_on_line(
   geometry_msgs::msg::Point current_world_point = from_world;
   while (true) {
     const double dist_from_start_squared = (to_world.x - current_world_point.x) * (to_world.x - current_world_point.x) +
-      (to_world.y - current_world_point.y) * (to_world.y - current_world_point.y); 
+      (to_world.y - current_world_point.y) * (to_world.y - current_world_point.y);
     if (dist_from_start_squared > dir_len_squared) {
       break;
     }

@@ -1,5 +1,7 @@
 // Copyright 2024 Soragna Alberto.
 // All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
 
 #include <chrono>
 #include <cmath>
@@ -19,9 +21,10 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
   m_real_time_factor = this->declare_parameter(
     "real_time_factor",
     rclcpp::ParameterValue{1.0}).get<double>();
-  m_sim_time_update_period = std::chrono::milliseconds(this->declare_parameter(
-    "sim_time_update_period_ms",
-    rclcpp::ParameterValue{5}).get<int>());
+  m_sim_time_update_period = std::chrono::milliseconds(
+    this->declare_parameter(
+      "sim_time_update_period_ms",
+      rclcpp::ParameterValue{5}).get<int>());
   if (m_real_time_factor <= 0.0) {
     throw std::runtime_error("Invalid real time factor: " + std::to_string(m_real_time_factor));
   }
@@ -61,9 +64,10 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
 void Kennel::run()
 {
   // Start sim time thread
-  m_sim_time_thread = std::make_unique<std::thread>([this](){
-    sim_time_loop();
-  });
+  m_sim_time_thread = std::make_unique<std::thread>(
+    [this]() {
+      sim_time_loop();
+    });
 
   // Start robot executor threads
   for (const auto & robot_node : m_robots) {
@@ -172,7 +176,7 @@ Kennel::start_executor(
   executor->add_node(node_base);
   auto thread_and_executor = std::make_unique<ThreadWithExecutor>();
   thread_and_executor->thread = std::make_unique<std::thread>(
-    [executor](){
+    [executor]() {
       executor->spin();
     });
   thread_and_executor->executor = executor;

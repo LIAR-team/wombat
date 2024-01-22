@@ -1,5 +1,7 @@
 // Copyright 2024 Soragna Alberto.
 // All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
 
 #include <memory>
 
@@ -15,12 +17,12 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
 : m_parent_node(parent_node), m_logger(parent_node->get_logger())
 {
   const bool gt_setup_success = this->setup_ground_truth();
-  if (!gt_setup_success){
+  if (!gt_setup_success) {
     throw std::runtime_error("Failed to setup ground truth manager");
   }
 
   const bool slam_setup_success = this->setup_slam();
-  if (!slam_setup_success){
+  if (!slam_setup_success) {
     throw std::runtime_error("Failed to setup SLAM manager");
   }
 
@@ -39,9 +41,10 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
 
   m_tf_broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(m_parent_node);
 
-  const auto mobile_base_update_period = std::chrono::milliseconds(m_parent_node->declare_parameter(
-    "mobile_base.update_period_ms",
-    rclcpp::ParameterValue{10}).get<int>());
+  const auto mobile_base_update_period = std::chrono::milliseconds(
+    m_parent_node->declare_parameter(
+      "mobile_base.update_period_ms",
+      rclcpp::ParameterValue{10}).get<int>());
 
   // TODO: is wall time ok here? Should we use simulated time?
   m_update_timer = m_parent_node->create_wall_timer(
@@ -99,15 +102,16 @@ MobileBase::process_transforms(
 
   // The transformations are assumed to be sorted and are required
   // to have the same child frame ID.
-  // Given a_T_x (a transformation from frame "a" to frame "x") and b_T_x 
+  // Given a_T_x (a transformation from frame "a" to frame "x") and b_T_x
   // (a transformation from frame "b" to frame "x"),
   // we want to compute a_T_b and b_T_x so that they can be concatenated in a tree structure.
   std::vector<geometry_msgs::msg::TransformStamped> tree_tfs;
   for (size_t i = 1; i < sorted_tfs.size(); i++) {
-    auto maybe_composed_tf = wombat_core::compose_tfs(sorted_tfs[i-1], sorted_tfs[i]);
+    auto maybe_composed_tf = wombat_core::compose_tfs(sorted_tfs[i - 1], sorted_tfs[i]);
     if (!maybe_composed_tf) {
-      RCLCPP_ERROR(m_logger, "Failed to compose '%s -> %s' with '%s -> %s'",
-        sorted_tfs[i-1].header.frame_id.c_str(), sorted_tfs[i-1].child_frame_id.c_str(),
+      RCLCPP_ERROR(
+        m_logger, "Failed to compose '%s -> %s' with '%s -> %s'",
+        sorted_tfs[i - 1].header.frame_id.c_str(), sorted_tfs[i - 1].child_frame_id.c_str(),
         sorted_tfs[i].header.frame_id.c_str(), sorted_tfs[i].child_frame_id.c_str());
       return std::nullopt;
     }
@@ -133,9 +137,10 @@ bool MobileBase::setup_ground_truth()
   const std::vector<double> start_pose_2d = m_parent_node->declare_parameter(
     "mobile_base.start_pose",
     rclcpp::ParameterValue{std::vector<double>({0.0, 0.0, 0.0})}).get<std::vector<double>>();
-  const auto control_msg_lifespan = std::chrono::milliseconds(m_parent_node->declare_parameter(
-    "mobile_base.control_msg_lifespan_ms",
-    rclcpp::ParameterValue{100}).get<int>());
+  const auto control_msg_lifespan = std::chrono::milliseconds(
+    m_parent_node->declare_parameter(
+      "mobile_base.control_msg_lifespan_ms",
+      rclcpp::ParameterValue{100}).get<int>());
 
   if (start_pose_2d.size() != 3u) {
     RCLCPP_ERROR(
@@ -180,9 +185,10 @@ bool MobileBase::setup_slam()
   const std::string slam_map_topic_name = m_parent_node->declare_parameter(
     "mobile_base.slam_map_topic_name",
     rclcpp::ParameterValue{std::string("map")}).get<std::string>();
-  const auto slam_update_period = std::chrono::milliseconds(m_parent_node->declare_parameter(
-    "mobile_base.slam_update_period_ms",
-    rclcpp::ParameterValue{50}).get<int>());
+  const auto slam_update_period = std::chrono::milliseconds(
+    m_parent_node->declare_parameter(
+      "mobile_base.slam_update_period_ms",
+      rclcpp::ParameterValue{50}).get<int>());
 
   m_slam_manager = std::make_unique<SlamManager>(
     m_parent_node,

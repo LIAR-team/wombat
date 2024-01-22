@@ -1,10 +1,13 @@
 // Copyright 2024 Soragna Alberto.
 // All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
 
 #pragma once
 
 #include <memory>
 #include <optional>
+#include <string>
 
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"

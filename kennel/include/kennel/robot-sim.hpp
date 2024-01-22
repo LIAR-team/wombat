@@ -1,5 +1,7 @@
 // Copyright 2024 Soragna Alberto.
 // All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
 
 #pragma once
 
@@ -12,7 +14,7 @@
 class RobotSim : public rclcpp::Node
 {
 public:
-  RobotSim(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit RobotSim(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 private:
   std::unique_ptr<MobileBase> m_mobile_base;

@@ -16,7 +16,7 @@ namespace wombat_core
 
 /**
  * @brief Given two transformations with the same child frame, such as
- * a_T_x (a transformation from frame "a" to frame "x") and b_T_x 
+ * a_T_x (a transformation from frame "a" to frame "x") and b_T_x
  * (a transformation from frame "b" to frame "x"), this function computes
  * a new transformation a_T_b that allows a tree-like composition of the transformations
  * retaining all the information (i.e. a_T_x = a_T_b * b_T_x)

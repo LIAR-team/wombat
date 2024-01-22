@@ -1,5 +1,7 @@
 // Copyright 2024 Soragna Alberto.
 // All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
 
 #include "kennel/slam-manager.hpp"
 
@@ -8,7 +10,7 @@ SlamManager::SlamManager(
   const rclcpp::Duration & update_period,
   const std::string & slam_frame_id)
 : m_clock(parent_node->get_clock()), m_logger(parent_node->get_logger()),
-m_update_period(update_period), m_slam_frame_id(slam_frame_id)
+  m_update_period(update_period), m_slam_frame_id(slam_frame_id)
 {
   m_last_update_time = m_clock->now();
   RCLCPP_INFO(m_logger, "SLAM manager constructed");

@@ -1,5 +1,7 @@
 // Copyright 2024 Soragna Alberto.
 // All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
 
 #pragma once
 
@@ -18,7 +20,7 @@
 class MobileBase
 {
 public:
-  MobileBase(rclcpp::Node * parent_node);
+  explicit MobileBase(rclcpp::Node * parent_node);
 
 private:
   void mobile_base_update();
