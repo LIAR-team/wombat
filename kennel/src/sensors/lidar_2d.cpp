@@ -29,12 +29,10 @@ sensor_msgs::msg::LaserScan Lidar2D::compute_laser_scan(
   // TODO: make it configurable
   scan_msg.header.frame_id = "base_link";
 
-  // Assume a 360 degree lidar
   // TODO: make it configurable
   scan_msg.angle_min = -wombat_core::PI / 2.0;
   scan_msg.angle_max = wombat_core::PI / 2.0;
-  // TODO: make it configurable and realistic
-  scan_msg.angle_increment = 1.0;
+  scan_msg.angle_increment = (scan_msg.angle_max + scan_msg.angle_min) / 360;
   scan_msg.range_min = 0.0;
   scan_msg.range_max = 20.0;
 
