@@ -18,7 +18,8 @@
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "kennel/mobile_base/slam_manager.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 class MobileBase
 {
@@ -60,4 +61,4 @@ private:
   rclcpp::Logger m_logger;
 };
 
-}
+}  // namespace kennel

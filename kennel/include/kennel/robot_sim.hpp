@@ -13,7 +13,8 @@
 #include "kennel/mobile_base/mobile_base.hpp"
 #include "kennel/sensors/lidar_2d.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 class RobotSim : public rclcpp::Node
 {
@@ -30,4 +31,4 @@ private:
   rclcpp::TimerBase::SharedPtr m_sensors_timer;
 };
 
-}
+}  // namespace kennel

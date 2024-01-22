@@ -10,7 +10,8 @@
 
 #include "kennel/types.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 class Lidar2D
 {
@@ -26,4 +27,4 @@ private:
   rclcpp::Logger m_logger;
 };
 
-}
+}  // namespace kennel

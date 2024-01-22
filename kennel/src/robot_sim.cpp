@@ -10,7 +10,8 @@
 #include "kennel/mobile_base/mobile_base.hpp"
 #include "kennel/robot_sim.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 RobotSim::RobotSim(const rclcpp::NodeOptions & options)
 : rclcpp::Node("robot_sim", options)
@@ -37,4 +38,4 @@ void RobotSim::sensors_update()
   m_lidar_pub->publish(laser_scan_msg);
 }
 
-}
+}  // namespace kennel

@@ -16,7 +16,8 @@
 
 #include "kennel/robot_sim.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 class Kennel : public rclcpp::Node
 {
@@ -55,4 +56,4 @@ private:
   std::unique_ptr<std::thread> m_sim_time_thread;
 };
 
-}
+}  // namespace kennel

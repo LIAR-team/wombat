@@ -13,7 +13,8 @@
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/math/transformations.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 MobileBase::MobileBase(rclcpp::Node * parent_node)
 : m_parent_node(parent_node), m_logger(parent_node->get_logger())
@@ -65,7 +66,7 @@ LocalizationData MobileBase::get_ground_truth_data()
   LocalizationData data;
   data.robot_pose = m_gt_manager->get_pose();
   if (m_gt_map) {
-    data.map = * m_gt_map;
+    data.map = *m_gt_map;
   }
   return data;
 }
@@ -222,4 +223,4 @@ bool MobileBase::setup_slam()
   return true;
 }
 
-}
+}  // namespace kennel

@@ -5,7 +5,8 @@
 
 #include "kennel/mobile_base/slam_manager.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 SlamManager::SlamManager(
   rclcpp::Node * parent_node,
@@ -38,4 +39,4 @@ std::optional<LocalizationData> SlamManager::slam_update(
   return data;
 }
 
-}
+}  // namespace kennel

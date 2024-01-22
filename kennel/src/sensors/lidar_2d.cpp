@@ -11,7 +11,8 @@
 #include "kennel/robot_sim.hpp"
 #include "wombat_core/math/angles.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 Lidar2D::Lidar2D(rclcpp::Node * parent_node)
 : m_clock(parent_node->get_clock()), m_logger(parent_node->get_logger())
@@ -30,7 +31,7 @@ sensor_msgs::msg::LaserScan Lidar2D::compute_laser_scan(
 
   // Assume a 360 degree lidar
   // TODO: make it configurable
-  scan_msg.angle_min = - wombat_core::PI / 2.0;
+  scan_msg.angle_min = -wombat_core::PI / 2.0;
   scan_msg.angle_max = wombat_core::PI / 2.0;
   // TODO: make it configurable and realistic
   scan_msg.angle_increment = 1.0;
@@ -45,4 +46,4 @@ sensor_msgs::msg::LaserScan Lidar2D::compute_laser_scan(
   return scan_msg;
 }
 
-}
+}  // namespace kennel

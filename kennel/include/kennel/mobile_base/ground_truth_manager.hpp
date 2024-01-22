@@ -17,7 +17,8 @@
 
 #include "kennel/mobile_base/diff_kinematic_model.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 class GroundTruthManager
 {
@@ -53,4 +54,4 @@ private:
   std::optional<rclcpp::Time> m_last_pose_update_time;
 };
 
-}
+}  // namespace kennel

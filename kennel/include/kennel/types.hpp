@@ -8,7 +8,8 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 struct LocalizationData
 {
@@ -16,4 +17,4 @@ struct LocalizationData
   nav_msgs::msg::OccupancyGrid map;
 };
 
-}
+}  // namespace kennel

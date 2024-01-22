@@ -15,7 +15,8 @@
 #include "wombat_core/math/grid.hpp"
 #include "wombat_core/math/transformations.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 GroundTruthManager::GroundTruthManager(
   rclcpp::Node * parent_node,
@@ -126,4 +127,4 @@ geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
   return new_pose;
 }
 
-}
+}  // namespace kennel

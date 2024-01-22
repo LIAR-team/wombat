@@ -14,7 +14,8 @@
 
 #include "kennel/types.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 class SlamManager
 {
@@ -38,4 +39,4 @@ private:
   std::string m_slam_frame_id {};
 };
 
-}
+}  // namespace kennel

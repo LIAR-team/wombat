@@ -11,7 +11,8 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace kennel {
+namespace kennel
+{
 
 /**
  * @brief Differential kinematic model
@@ -33,4 +34,4 @@ private:
   geometry_msgs::msg::Pose m_current_pose;
 };
 
-}
+}  // namespace kennel
