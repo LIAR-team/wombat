@@ -13,7 +13,7 @@ mkdir -p ${GIT_HOOKS_DIR}
 THIS_FILE=$(basename -- "$0")
 for file in $(ls -A ${THIS_DIR}); do
   file_abs_path=${THIS_DIR}/${file}
-  if [[ $file == "${THIS_FILE}" ]]; then
+  if [[ "${file}" == "${THIS_FILE}" ]]; then
     echo "Skipping ${file}"
     continue
   elif [[ -x ${file_abs_path} ]] && [[ ! -d ${file_abs_path} ]]; then

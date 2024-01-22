@@ -1,12 +1,21 @@
 
-add_library(math INTERFACE)
+add_library(math STATIC)
 add_library(wombat_core::math ALIAS math)
+
+target_sources(
+  math
+  PRIVATE
+    src/angles.cpp
+    src/grid.cpp
+    src/transformations.cpp
+)
 
 target_include_directories(
   math
-  INTERFACE
+  PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-ament_target_dependencies(math INTERFACE geometry_msgs)
+target_link_libraries(math PUBLIC tf2::tf2 tf2_geometry_msgs::tf2_geometry_msgs)
+ament_target_dependencies(math PUBLIC geometry_msgs nav_msgs)
 
 wombat_install_target(math)

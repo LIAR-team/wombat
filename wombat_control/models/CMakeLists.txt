@@ -1,5 +1,5 @@
 
-add_library(models SHARED)
+add_library(models STATIC)
 add_library(wombat_control::models ALIAS models)
 
 target_sources(
@@ -19,6 +19,7 @@ target_link_libraries(
   PRIVATE
     tf2::tf2
     tf2_geometry_msgs::tf2_geometry_msgs
+    wombat_core::math
 )
 ament_target_dependencies(models PUBLIC geometry_msgs)
 

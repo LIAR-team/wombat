@@ -15,7 +15,8 @@ target_include_directories(
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-ament_target_dependencies(hello_publisher PUBLIC rclcpp std_msgs)
+target_link_libraries(hello_publisher PUBLIC rclcpp::rclcpp)
+ament_target_dependencies(hello_publisher PUBLIC std_msgs)
 
 add_executable(hello_world src/main.cpp)
 target_link_libraries(hello_world PRIVATE wombat_hello_world::hello_publisher)

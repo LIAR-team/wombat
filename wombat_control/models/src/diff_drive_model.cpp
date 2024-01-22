@@ -9,6 +9,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "wombat_control/models/diff_drive_model.hpp"
+#include "wombat_core/math/angles.hpp"
 
 DiffDriveModel::DiffDriveModel(const geometry_msgs::msg::Pose & initial_pose)
 : m_current_pose(initial_pose)
@@ -25,9 +26,7 @@ geometry_msgs::msg::Pose DiffDriveModel::integration(
   m_current_pose.position.y += dt * (vel_commands.linear.x * std::sin(theta));
 
   theta += dt * (vel_commands.angular.z);
-  tf2::Quaternion q;
-  q.setRPY(0.0, 0.0, theta);
-  m_current_pose.orientation = tf2::toMsg(q);
+  m_current_pose.orientation = wombat_core::quaternion_from_rpy(0.0, 0.0, theta);
 
   return m_current_pose;
 }
