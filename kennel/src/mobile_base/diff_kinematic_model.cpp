@@ -32,7 +32,7 @@ void DiffKinematicModel::update(
   m_current_pose.orientation = wombat_core::quaternion_from_rpy(0.0, 0.0, theta);
 }
 
-geometry_msgs::msg::Pose DiffKinematicModel::get_pose()
+geometry_msgs::msg::Pose DiffKinematicModel::get_pose() const
 {
   return m_current_pose;
 }

@@ -6,6 +6,7 @@ set(PKG_DEPENDENCIES
   geometry_msgs
   nav2_map_server
   rclcpp
+  sensor_msgs
   tf2
   tf2_geometry_msgs
 )
@@ -24,6 +25,7 @@ target_sources(
     src/mobile_base/ground_truth_manager.cpp
     src/mobile_base/mobile_base.cpp
     src/mobile_base/slam_manager.cpp
+    src/sensors/lidar_2d.cpp
     src/kennel.cpp
     src/robot_sim.cpp
 )
