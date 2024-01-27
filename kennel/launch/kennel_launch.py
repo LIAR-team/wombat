@@ -17,11 +17,11 @@ from launch_ros.actions import Node
 def generate_launch_description():
     # Get the launch directory
     kennel_share_dir = get_package_share_directory('kennel')
-    # foxglove_bridge_share_dir = get_package_share_directory('foxglove_bridge')
+    wombat_externals_share_dir = get_package_share_directory('wombat_externals')
 
     # Define paths
     foxglove_bridge_launch_script = PathJoinSubstitution(
-        [kennel_share_dir, 'launch', 'foxglove_bridge_launch.py'])
+        [wombat_externals_share_dir, 'launch', 'foxglove_bridge_launch.py'])
 
     # Create the launch configuration variables
     use_foxglove_bridge = LaunchConfiguration('use_foxglove_bridge')
