@@ -20,6 +20,8 @@ def generate_launch_description():
         [wombat_bringup_dir, 'launch', 'unity_bridge_launch.py'])
     nav2_launch_script = PathJoinSubstitution(
         [nav2_bringup_dir, 'launch', 'bringup_launch.py'])
+    rviz_config_script = PathJoinSubstitution(
+        [wombat_bringup_dir, 'rviz', 'wombat_default_view.rviz'])
 
     # Create the launch configuration variables
     use_rviz = LaunchConfiguration('use_rviz')
@@ -43,7 +45,8 @@ def generate_launch_description():
     # Launch RViz
     rviz_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(rviz_launch_script),
-        condition=IfCondition(use_rviz))
+        condition=IfCondition(use_rviz),
+        launch_arguments={'rviz_config': rviz_config_script}.items())
 
     nav2_bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(nav2_launch_script),

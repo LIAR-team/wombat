@@ -8,14 +8,14 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 def generate_launch_description():
     # Get the launch directory
-    wombat_bringup_dir = get_package_share_directory('wombat_bringup')
+    wombat_externals_dir = get_package_share_directory('wombat_externals')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
 
     # Define paths
     rviz_launch_script = PathJoinSubstitution(
         [nav2_bringup_dir, 'launch', 'rviz_launch.py'])
     unity_launch_script = PathJoinSubstitution(
-        [wombat_bringup_dir, 'launch', 'unity_bridge_launch.py'])
+        [wombat_externals_dir, 'launch', 'unity_bridge_launch.py'])
     nav2_launch_script = PathJoinSubstitution(
         [nav2_bringup_dir, 'launch', 'bringup_launch.py'])
 
