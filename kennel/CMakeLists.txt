@@ -26,6 +26,7 @@ target_sources(
     src/mobile_base/mobile_base.cpp
     src/mobile_base/slam_manager.cpp
     src/sensors/lidar_2d.cpp
+    src/sensors/sensor_base.cpp
     src/kennel.cpp
     src/robot_sim.cpp
 )
@@ -42,6 +43,10 @@ target_link_libraries(kennel PRIVATE kennel_lib)
 
 wombat_install_target(kennel_lib)
 wombat_install_target(kennel)
+
+install(DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+)
 
 install(DIRECTORY config
   DESTINATION share/${PROJECT_NAME}

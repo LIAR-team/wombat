@@ -51,6 +51,7 @@ private:
   std::chrono::milliseconds m_cmd_timeout {};
 
   std::unique_ptr<DiffKinematicModel> m_kin_model;
+  geometry_msgs::msg::TransformStamped m_gt_transform;
   std::optional<rclcpp::Time> m_last_pose_update_time;
 };
 

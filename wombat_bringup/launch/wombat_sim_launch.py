@@ -34,7 +34,7 @@ def generate_launch_description():
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
         default_value=os.path.join(wombat_bringup_dir, 'params', 'nav2_params.yaml'),
-        description='Full path to the ROS2 parameters file to use for all launched nodes')
+        description='Full path to the ROS 2 parameters file to use for all launched nodes')
 
     # Launch ROS TCP endpoint to communicate with Unity simulation
     unity_bridge_cmd = IncludeLaunchDescription(

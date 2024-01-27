@@ -40,15 +40,14 @@ GroundTruthManager::pose_update(
   const auto now = m_clock->now();
   const auto last_gt_pose = m_kin_model->get_pose();
 
-  geometry_msgs::msg::TransformStamped gt_transform;
-  gt_transform.header.stamp = now;
-  gt_transform.header.frame_id = m_ground_truth_frame_id.empty() ? map.header.frame_id : m_ground_truth_frame_id;
-  gt_transform.child_frame_id = m_robot_base_frame_id;
+  m_gt_transform.header.stamp = now;
+  m_gt_transform.header.frame_id = m_ground_truth_frame_id.empty() ? map.header.frame_id : m_ground_truth_frame_id;
+  m_gt_transform.child_frame_id = m_robot_base_frame_id;
 
   if (!m_last_pose_update_time) {
     m_last_pose_update_time = now;
-    gt_transform.transform = wombat_core::pose_to_transform(last_gt_pose);
-    return gt_transform;
+    m_gt_transform.transform = wombat_core::pose_to_transform(last_gt_pose);
+    return m_gt_transform;
   }
 
   // Do not apply commands that are too old
@@ -67,23 +66,14 @@ GroundTruthManager::pose_update(
   const auto map_pose = this->apply_map_constraints(map, last_gt_pose, new_gt_pose);
   m_kin_model->reset_pose(map_pose);
 
-  gt_transform.transform = wombat_core::pose_to_transform(map_pose);
+  m_gt_transform.transform = wombat_core::pose_to_transform(map_pose);
 
-  return gt_transform;
+  return m_gt_transform;
 }
 
 geometry_msgs::msg::TransformStamped GroundTruthManager::get_pose() const
 {
-  // This method is very hacky, should be rewritten
-  geometry_msgs::msg::TransformStamped gt_transform;
-  if (!m_last_pose_update_time) {
-    return gt_transform;
-  }
-  gt_transform.header.stamp = *m_last_pose_update_time;
-  gt_transform.header.frame_id = "ground_truth";
-  gt_transform.child_frame_id = m_robot_base_frame_id;
-  gt_transform.transform = wombat_core::pose_to_transform(m_kin_model->get_pose());
-  return gt_transform;
+  return m_gt_transform;
 }
 
 void GroundTruthManager::reset_pose(const geometry_msgs::msg::Pose & new_pose)
