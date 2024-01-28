@@ -26,7 +26,6 @@ target_sources(
     src/mobile_base/mobile_base.cpp
     src/mobile_base/slam_manager.cpp
     src/sensors/lidar_2d.cpp
-    src/sensors/sensor_base.cpp
     src/kennel.cpp
     src/robot_sim.cpp
 )

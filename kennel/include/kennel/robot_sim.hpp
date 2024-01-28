@@ -6,11 +6,12 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 
 #include "kennel/mobile_base/mobile_base.hpp"
-#include "kennel/sensors/lidar_2d.hpp"
+#include "kennel/sensors/sensor_interface.hpp"
 
 namespace kennel
 {
@@ -25,7 +26,7 @@ private:
 
   std::unique_ptr<MobileBase> m_mobile_base;
 
-  std::unique_ptr<Lidar2D> m_lidar2d;
+  std::vector<std::unique_ptr<SensorInterface>> m_sensors;
   rclcpp::TimerBase::SharedPtr m_sensors_timer;
 };
 
