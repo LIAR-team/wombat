@@ -20,7 +20,6 @@ target_link_libraries(
     rclcpp::rclcpp
     ${geometry_msgs_TARGETS}
   PRIVATE
-    rclcpp::rclcpp
     tf2::tf2
     tf2_geometry_msgs::tf2_geometry_msgs
     wombat_core::math
