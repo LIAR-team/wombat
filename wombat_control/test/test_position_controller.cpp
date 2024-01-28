@@ -25,12 +25,12 @@ inline bool operator==(
 
 TEST(test_controller, waypoint_control)
 {
-  double dt = 0.01;  // [s]
+  auto delta_time = rclcpp::Duration(std::chrono::milliseconds(10));
   double final_time = 15;  // [s]
   double len = 0.5;  // [m]
   double gain_x = 1;
   double gain_y = 1;
-  geometry_msgs::msg::Pose initial_pose;
+  geometry_msgs::msg::Pose robot_pose;
   double goal_x = 10;
   double goal_y = 10;
   bool goal_reached = false;
@@ -43,13 +43,11 @@ TEST(test_controller, waypoint_control)
   EXPECT_EQ(input_signal, expected_input_signal);
 
   // Test 2
-  DiffDriveModel unicycle = DiffDriveModel(initial_pose);
-  geometry_msgs::msg::Pose robot_pose = initial_pose;
   double e_x = robot_pose.position.x - goal_x;
   double e_y = robot_pose.position.y - goal_y;
   double t = 0;
 
-  for (t = 0; t <= final_time; t = t + dt) {
+  for (t = 0; t <= final_time; t = t + delta_time.seconds()) {
     e_x = robot_pose.position.x - goal_x;
     e_y = robot_pose.position.y - goal_y;
     if (std::abs(e_x) <= 1e-3 && std::abs(e_y) <= 1e-3) {
@@ -57,7 +55,10 @@ TEST(test_controller, waypoint_control)
       break;
     }
     input_signal = pos_controller.input_function({e_x, e_y}, robot_pose);
-    robot_pose = unicycle.integration(input_signal, dt);
+    robot_pose = wombat_control::diff_drive_model_integration(
+      robot_pose,
+      input_signal,
+      delta_time);
   }
 
   EXPECT_TRUE(goal_reached);

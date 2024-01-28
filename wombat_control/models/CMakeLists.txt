@@ -16,11 +16,13 @@ target_include_directories(
 
 target_link_libraries(
   models
+  PUBLIC
+    rclcpp::rclcpp
+    ${geometry_msgs_TARGETS}
   PRIVATE
     tf2::tf2
     tf2_geometry_msgs::tf2_geometry_msgs
     wombat_core::math
 )
-ament_target_dependencies(models PUBLIC geometry_msgs)
 
 wombat_install_target(models)

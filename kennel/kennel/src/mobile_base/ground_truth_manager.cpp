@@ -11,7 +11,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "kennel/mobile_base/ground_truth_manager.hpp"
-#include "kennel/mobile_base/diff_kinematic_model.hpp"
+#include "wombat_control/models/diff_drive_model.hpp"
 #include "wombat_core/math/grid.hpp"
 #include "wombat_core/math/transformations.hpp"
 
@@ -27,8 +27,6 @@ GroundTruthManager::GroundTruthManager(
   m_ground_truth_frame_id(ground_truth_frame_id), m_robot_base_frame_id(robot_base_frame_id),
   m_cmd_timeout(cmd_timeout)
 {
-  m_kin_model = std::make_unique<DiffKinematicModel>();
-
   RCLCPP_INFO(m_logger, "Ground truth manager constructed");
 }
 
@@ -38,7 +36,6 @@ GroundTruthManager::pose_update(
   const nav_msgs::msg::OccupancyGrid & map)
 {
   const auto now = m_clock->now();
-  const auto last_gt_pose = m_kin_model->get_pose();
 
   m_gt_transform.header.stamp = now;
   m_gt_transform.header.frame_id = m_ground_truth_frame_id.empty() ? map.header.frame_id : m_ground_truth_frame_id;
@@ -46,7 +43,7 @@ GroundTruthManager::pose_update(
 
   if (!m_last_pose_update_time) {
     m_last_pose_update_time = now;
-    m_gt_transform.transform = wombat_core::pose_to_transform(last_gt_pose);
+    m_gt_transform.transform = wombat_core::pose_to_transform(m_gt_pose);
     return m_gt_transform;
   }
 
@@ -56,17 +53,17 @@ GroundTruthManager::pose_update(
 
   if (cmd_is_valid) {
     const auto dt_since_last_pose_update = now - m_last_pose_update_time.value();
-    m_kin_model->update(
+    auto new_pose = wombat_control::diff_drive_model_integration(
+      m_gt_pose,
       cmd_vel.twist,
       dt_since_last_pose_update);
+
+    // Validate the new pose before updating the ground truth member variable
+    m_gt_pose = this->apply_map_constraints(map, m_gt_pose, new_pose);
   }
-  const auto new_gt_pose = m_kin_model->get_pose();
+
   m_last_pose_update_time = now;
-
-  const auto map_pose = this->apply_map_constraints(map, last_gt_pose, new_gt_pose);
-  m_kin_model->reset_pose(map_pose);
-
-  m_gt_transform.transform = wombat_core::pose_to_transform(map_pose);
+  m_gt_transform.transform = wombat_core::pose_to_transform(m_gt_pose);
 
   return m_gt_transform;
 }
@@ -79,7 +76,7 @@ geometry_msgs::msg::TransformStamped GroundTruthManager::get_pose() const
 void GroundTruthManager::reset_pose(const geometry_msgs::msg::Pose & new_pose)
 {
   m_last_pose_update_time = m_clock->now();
-  m_kin_model->reset_pose(new_pose);
+  m_gt_pose = new_pose;
 }
 
 geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(

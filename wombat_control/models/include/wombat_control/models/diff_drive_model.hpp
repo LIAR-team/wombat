@@ -7,17 +7,22 @@
 
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/twist.hpp"
+#include "rclcpp/duration.hpp"
 
-class DiffDriveModel
+namespace wombat_control
 {
-public:
-  explicit DiffDriveModel(const geometry_msgs::msg::Pose & initial_pose);
 
-  // v [m/s], omega [rad/s], dt [s]
-  geometry_msgs::msg::Pose integration(
-    const geometry_msgs::msg::Twist & vel_commands,
-    double dt);
+/**
+ * @brief Integrate a velocity command over the specified delta time
+ * and computes an update robot pose
+ * @param robot_pose current robot pose
+ * @param vel_msg velocity command
+ * @param delta_time integration time
+ * @return geometry_msgs::msg::Pose updated pose
+ */
+geometry_msgs::msg::Pose diff_drive_model_integration(
+  const geometry_msgs::msg::Pose & robot_pose,
+  const geometry_msgs::msg::Twist & vel_msg,
+  const rclcpp::Duration & delta_time);
 
-private:
-  geometry_msgs::msg::Pose m_current_pose;
-};
+}  // namespace wombat_control

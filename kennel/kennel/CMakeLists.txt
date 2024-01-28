@@ -2,7 +2,6 @@ add_library(kennel_lib SHARED)
 target_sources(
   kennel_lib
   PRIVATE
-    src/mobile_base/diff_kinematic_model.cpp
     src/mobile_base/ground_truth_manager.cpp
     src/mobile_base/mobile_base.cpp
     src/mobile_base/slam_manager.cpp
@@ -24,6 +23,7 @@ target_link_libraries(
     ${nav_msgs_TARGETS}
     ${rosgraph_msgs_TARGETS}
   PRIVATE
+    wombat_control::models
     wombat_core::math
 )
 
