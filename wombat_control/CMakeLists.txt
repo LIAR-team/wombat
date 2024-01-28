@@ -3,6 +3,7 @@ project(wombat_control)
 
 find_package(Eigen3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(wombat_cmake REQUIRED)
@@ -21,4 +22,5 @@ wombat_package_install(
   EXPORT_DEPS
     Eigen3
     geometry_msgs
+    rclcpp
 )

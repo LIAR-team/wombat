@@ -27,57 +27,66 @@ inline bool operator==(
 
 TEST(test_model, zero_vels_integration)
 {
-  double dt = 0.1;  // [s]
   geometry_msgs::msg::Pose initial_pose;
   EXPECT_NEAR(initial_pose.position.x, 0.0, 1e-5);
   EXPECT_NEAR(initial_pose.orientation.w, 1.0, 1e-5);
 
-  DiffDriveModel unicycle = DiffDriveModel(initial_pose);
   geometry_msgs::msg::Twist command;
-  geometry_msgs::msg::Pose output_pose = unicycle.integration(command, dt);
+  geometry_msgs::msg::Pose output_pose = wombat_control::diff_drive_model_integration(
+    initial_pose,
+    command,
+    rclcpp::Duration(std::chrono::milliseconds(100))
+  );
   EXPECT_EQ(output_pose, initial_pose);
 }
 
 TEST(test_model, omega_integration)
 {
-  double dt = 0.1;  // [s]
-  DiffDriveModel unicycle = DiffDriveModel(geometry_msgs::msg::Pose());
+  auto delta_time = rclcpp::Duration(std::chrono::milliseconds(100));
   geometry_msgs::msg::Twist command;
   command.angular.z = 1.0;
-  geometry_msgs::msg::Pose output_pose = unicycle.integration(command, dt);
+  auto output_pose = wombat_control::diff_drive_model_integration(
+    geometry_msgs::msg::Pose(),
+    command,
+    delta_time);
   geometry_msgs::msg::Pose expected_pose;
-  expected_pose.orientation = wombat_core::quaternion_from_rpy(0.0, 0.0, dt);
+  expected_pose.orientation = wombat_core::quaternion_from_rpy(0.0, 0.0, delta_time.seconds());
 
   EXPECT_EQ(output_pose, expected_pose);
 }
 
 TEST(test_model, vel_integration)
 {
-  double dt = 0.1;  // [s]
-  DiffDriveModel unicycle = DiffDriveModel(geometry_msgs::msg::Pose());
+  auto delta_time = rclcpp::Duration(std::chrono::milliseconds(100));
 
   geometry_msgs::msg::Twist command;
   command.linear.x = 1.0;
-  geometry_msgs::msg::Pose output_pose = unicycle.integration(command, dt);
+  auto output_pose = wombat_control::diff_drive_model_integration(
+    geometry_msgs::msg::Pose(),
+    command,
+    delta_time);
   geometry_msgs::msg::Pose expected_pose;
-  expected_pose.position.x = dt;
+  expected_pose.position.x = delta_time.seconds();
   EXPECT_EQ(output_pose, expected_pose);
 }
 
 TEST(test_model, multiple_integrations)
 {
-  double dt = 0.1;  // [s]
+  auto delta_time = rclcpp::Duration(std::chrono::milliseconds(100));
   double final_time = 2.0;  // [s]
-  DiffDriveModel unicycle = DiffDriveModel(geometry_msgs::msg::Pose());
 
-  geometry_msgs::msg::Pose output_pose;
-  for (double i = 0; i <= final_time; i = i + dt) {
-    geometry_msgs::msg::Twist command;
-    command.linear.x = 1.0;
-    output_pose = unicycle.integration(command, dt);
+  geometry_msgs::msg::Pose robot_pose;
+  geometry_msgs::msg::Twist command;
+  command.linear.x = 1.0;
+  for (double i = 0; i <= final_time; i = i + delta_time.seconds()) {
+    auto output_pose = wombat_control::diff_drive_model_integration(
+      robot_pose,
+      command,
+      delta_time);
     geometry_msgs::msg::Pose expected_pose;
-    expected_pose.position.x = i + dt;
+    expected_pose.position.x = i + delta_time.seconds();
     EXPECT_EQ(output_pose, expected_pose);
+    robot_pose = output_pose;
   }
 }
 

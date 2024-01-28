@@ -1,32 +1,37 @@
-// Copyright 2021-2022 Azzollini Ilario, Soragna Alberto.
+// Copyright 2021-2024 Azzollini Ilario, Soragna Alberto.
 // All Rights Reserved.
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#include <tf2/utils.h>
-
 #include <cmath>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+
+#include "tf2/utils.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 #include "wombat_control/models/diff_drive_model.hpp"
 #include "wombat_core/math/angles.hpp"
 
-DiffDriveModel::DiffDriveModel(const geometry_msgs::msg::Pose & initial_pose)
-: m_current_pose(initial_pose)
-{}
-
-geometry_msgs::msg::Pose DiffDriveModel::integration(
-  const geometry_msgs::msg::Twist & vel_commands,
-  double dt)
+namespace wombat_control
 {
-  double theta = tf2::getYaw(m_current_pose.orientation);
 
-  // Integration
-  m_current_pose.position.x += dt * (vel_commands.linear.x * std::cos(theta));
-  m_current_pose.position.y += dt * (vel_commands.linear.x * std::sin(theta));
+geometry_msgs::msg::Pose diff_drive_model_integration(
+  const geometry_msgs::msg::Pose & robot_pose,
+  const geometry_msgs::msg::Twist & vel_msg,
+  const rclcpp::Duration & delta_time)
+{
+  geometry_msgs::msg::Pose updated_pose;
 
-  theta += dt * (vel_commands.angular.z);
-  m_current_pose.orientation = wombat_core::quaternion_from_rpy(0.0, 0.0, theta);
+  double theta = tf2::getYaw(robot_pose.orientation);
 
-  return m_current_pose;
+  updated_pose.position.x = robot_pose.position.x + vel_msg.linear.x * std::cos(theta) * delta_time.seconds();
+  updated_pose.position.y = robot_pose.position.y + vel_msg.linear.x * std::sin(theta) * delta_time.seconds();
+  updated_pose.position.z = 0.0;
+
+  theta += vel_msg.angular.z * delta_time.seconds();
+
+  updated_pose.orientation = wombat_core::quaternion_from_rpy(0.0, 0.0, theta);
+
+  return updated_pose;
 }
+
+}  // namespace wombat_control

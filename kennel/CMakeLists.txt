@@ -14,6 +14,7 @@ set(PKG_DEPENDENCIES
   tf2
   tf2_geometry_msgs
   tf2_ros
+  wombat_control
   wombat_core
 )
 foreach(PKG ${PKG_DEPENDENCIES})
