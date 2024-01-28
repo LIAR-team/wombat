@@ -72,6 +72,12 @@ void Kennel::run()
       sim_time_loop();
     });
 
+  // Start executor for this node
+  {
+    auto executor = start_executor(this->get_node_base_interface());
+    m_executors.push_back(std::move(executor));
+  }
+
   // Start robot executor threads
   for (const auto & robot_node : m_robots) {
     auto executor = start_executor(robot_node->get_node_base_interface());
