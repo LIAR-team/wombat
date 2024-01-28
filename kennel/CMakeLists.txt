@@ -4,13 +4,16 @@ project(kennel)
 find_package(wombat_cmake REQUIRED)
 set(PKG_DEPENDENCIES
   geometry_msgs
+  nav_msgs
   nav2_map_server
   pluginlib
   rclcpp
   rcl_interfaces
+  rosgraph_msgs
   sensor_msgs
   tf2
   tf2_geometry_msgs
+  tf2_ros
   wombat_core
 )
 foreach(PKG ${PKG_DEPENDENCIES})
