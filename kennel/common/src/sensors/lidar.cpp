@@ -5,16 +5,17 @@
 
 #include <memory>
 
-#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/laser_scan.hpp"
 
-#include "kennel/sensors/lidar_2d.hpp"
+#include "kennel/common/types.hpp"
+#include "kennel/common/sensors/lidar.hpp"
 #include "wombat_core/math/angles.hpp"
 
 namespace kennel
 {
 
 std::unique_ptr<sensor_msgs::msg::LaserScan>
-Lidar2D::make_sensor_ros2_msg(const LocalizationData & gt_data)
+make_laser_scan_msg(const LocalizationData & gt_data)
 {
   auto scan_msg = std::make_unique<sensor_msgs::msg::LaserScan>();
   scan_msg->header.stamp = gt_data.robot_pose.header.stamp;

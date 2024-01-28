@@ -3,15 +3,14 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#pragma once
-
 #include <memory>
 
 #include "sensor_msgs/msg/laser_scan.hpp"
-#include "rclcpp/rclcpp.hpp"
 
-#include "kennel/sensors/sensor_ros2_base.hpp"
-#include "kennel/types.hpp"
+#include "kennel/common/sensors/lidar.hpp"
+#include "kennel/common/sensors/sensor_interface.hpp"
+#include "kennel/common/sensors/sensor_ros2_base.hpp"
+#include "kennel/common/types.hpp"
 
 namespace kennel
 {
@@ -23,7 +22,13 @@ public:
 
 private:
   std::unique_ptr<sensor_msgs::msg::LaserScan>
-  make_sensor_ros2_msg(const LocalizationData & gt_data) override;
+  make_sensor_ros2_msg(const LocalizationData & gt_data) override
+  {
+    return make_laser_scan_msg(gt_data);
+  }
 };
 
 }  // namespace kennel
+
+#include "pluginlib/class_list_macros.hpp"
+PLUGINLIB_EXPORT_CLASS(kennel::Lidar2D, kennel::SensorInterface)

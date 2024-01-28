@@ -1,0 +1,5 @@
+<library path="kennel_sensor_plugins">
+  <class type="kennel::Lidar2D" base_class_type="kennel::SensorInterface">
+    <description>2D Lidar sensor plugin.</description>
+  </class>
+</library>

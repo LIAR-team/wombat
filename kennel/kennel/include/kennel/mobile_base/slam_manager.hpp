@@ -12,7 +12,7 @@
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/types.hpp"
+#include "kennel/common/types.hpp"
 
 namespace kennel
 {

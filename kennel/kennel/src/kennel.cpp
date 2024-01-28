@@ -124,7 +124,7 @@ bool Kennel::setup_robot(const std::string & robot_name)
   std::vector<std::string> remap_rules;
   remap_rules.push_back("--ros-args");
   remap_rules.push_back("-r");
-  remap_rules.push_back("__node:=" + robot_name);
+  remap_rules.push_back("__ns:=/" + robot_name);
 
   std::vector<rclcpp::Parameter> parameters;
   parameters.push_back(rclcpp::Parameter("use_sim_time", true));
