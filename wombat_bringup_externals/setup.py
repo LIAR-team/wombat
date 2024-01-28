@@ -6,7 +6,7 @@ from setuptools import setup, SetuptoolsDeprecationWarning
 
 # https://github.com/colcon/colcon-core/issues/454
 warnings.filterwarnings('ignore', category=SetuptoolsDeprecationWarning)
-package_name = 'wombat_externals'
+package_name = 'wombat_bringup_externals'
 
 setup(
     name=package_name,

@@ -8,7 +8,7 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 def generate_launch_description():
     # Get the launch directory
-    wombat_externals_dir = get_package_share_directory('wombat_externals')
+    wombat_externals_dir = get_package_share_directory('wombat_bringup_externals')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
 
     # Define paths
