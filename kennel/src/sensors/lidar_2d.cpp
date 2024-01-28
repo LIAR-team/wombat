@@ -13,17 +13,8 @@
 namespace kennel
 {
 
-bool Lidar2D::sensor_setup(rclcpp::Node * parent_node)
-{
-  m_lidar_pub = parent_node->create_publisher<sensor_msgs::msg::LaserScan>(
-    "base_scan",
-    rclcpp::QoS(rclcpp::KeepLast(10)));
-
-  RCLCPP_INFO(this->get_logger(), "Sensor constructed");
-  return true;
-}
-
-void Lidar2D::produce_sensor_data(const LocalizationData & gt_data)
+std::unique_ptr<sensor_msgs::msg::LaserScan>
+Lidar2D::make_sensor_ros2_msg(const LocalizationData & gt_data)
 {
   auto scan_msg = std::make_unique<sensor_msgs::msg::LaserScan>();
   scan_msg->header.stamp = gt_data.robot_pose.header.stamp;
@@ -43,7 +34,7 @@ void Lidar2D::produce_sensor_data(const LocalizationData & gt_data)
     scan_msg->ranges.push_back(2.0);
   }
 
-  m_lidar_pub->publish(std::move(scan_msg));
+  return scan_msg;
 }
 
 }  // namespace kennel

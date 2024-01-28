@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <memory>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
@@ -15,26 +14,16 @@
 namespace kennel
 {
 
-class SensorBase
+class SensorInterface
 {
 public:
-  SensorBase() = default;
+  SensorInterface() = default;
 
-  bool register_sensor(
+  virtual bool initialize_sensor(
     rclcpp::Node * parent_node,
-    const std::string & sensor_name);
+    const std::string & sensor_name) = 0;
 
   virtual void produce_sensor_data(const LocalizationData & gt_data) = 0;
-
-protected:
-  rclcpp::Logger get_logger();
-
-private:
-  virtual bool sensor_setup(rclcpp::Node * parent_node) = 0;
-
-  rclcpp::Clock::SharedPtr m_clock;
-  std::shared_ptr<rclcpp::node_interfaces::NodeLoggingInterface> m_log_interface;
-  std::string m_sensor_name;
 };
 
 }  // namespace kennel
