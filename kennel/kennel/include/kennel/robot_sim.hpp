@@ -10,8 +10,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "kennel/common/sensors/sensor_interface.hpp"
 #include "kennel/mobile_base/mobile_base.hpp"
-#include "kennel/sensors/sensor_interface.hpp"
 
 namespace kennel
 {

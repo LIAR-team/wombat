@@ -3,15 +3,12 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#pragma once
-
 #include <memory>
 
 #include "sensor_msgs/msg/laser_scan.hpp"
-#include "rclcpp/rclcpp.hpp"
 
-#include "kennel/sensors/sensor_ros2_base.hpp"
-#include "kennel/types.hpp"
+#include "kennel/common/sensors/sensor_ros2_base.hpp"
+#include "kennel/common/types.hpp"
 
 namespace kennel
 {

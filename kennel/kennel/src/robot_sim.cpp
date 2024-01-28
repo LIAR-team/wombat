@@ -7,9 +7,11 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "kennel/common/sensors/lidar.hpp"
 #include "kennel/mobile_base/mobile_base.hpp"
 #include "kennel/robot_sim.hpp"
-#include "kennel/sensors/lidar_2d.hpp"
+
+#include "kennel/plugins/lidar_2d.hpp"
 
 namespace kennel
 {
@@ -20,10 +22,11 @@ RobotSim::RobotSim(const rclcpp::NodeOptions & options)
   m_mobile_base = std::make_unique<MobileBase>(this);
   RCLCPP_INFO(this->get_logger(), "Robot simulation constructed");
 
+  const std::string plugin_name = "base_scan";
   auto lidar_2d = std::make_unique<Lidar2D>();
-  bool success = lidar_2d->initialize_sensor(this, "base_scan");
+  bool success = lidar_2d->initialize_sensor(this, plugin_name);
   if (!success) {
-    throw std::runtime_error("Failed to register lidar");
+    throw std::runtime_error("Failed to register plugin: " + plugin_name);
   }
   m_sensors.push_back(std::move(lidar_2d));
 

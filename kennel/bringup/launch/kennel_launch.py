@@ -17,7 +17,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     # Get the launch directory
     kennel_share_dir = get_package_share_directory('kennel')
-    wombat_externals_share_dir = get_package_share_directory('wombat_externals')
+    wombat_externals_share_dir = get_package_share_directory('wombat_bringup_externals')
 
     # Define paths
     foxglove_bridge_launch_script = PathJoinSubstitution(

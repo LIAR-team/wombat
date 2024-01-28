@@ -9,7 +9,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/types.hpp"
+#include "kennel/common/types.hpp"
 
 namespace kennel
 {

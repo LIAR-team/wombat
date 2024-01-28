@@ -2,7 +2,7 @@ kennel:
   ros__parameters:
     real_time_factor: 2.0
     sim_time_update_period_ms: 2
-    map_yaml_filename: /home/docker-dev/wombat/kennel/maps/hospital_section.yaml
+    map_yaml_filename: /home/docker-dev/wombat/kennel/bringup/maps/hospital_section.yaml
     map_frame_id: ground_truth
     map_topic_name: ground_truth_map
     robots:
@@ -18,3 +18,8 @@ my_robot:
         control_topic_name: /cmd_vel
         control_msg_lifespan_ms: 200
         start_pose: [1.0, 1.0, 0.0]
+      sensors:
+        - "base_scan"
+      base_scan:
+        plugin_type: "kennel::Lidar2D"
+        period_ms: 50
