@@ -52,7 +52,7 @@ bool RobotSim::load_plugins()
 
     // Load and initialize the plugin
     auto loaded_plugin = m_plugin_loader.createSharedInstance(plugin_type);
-    const bool plugin_init_success = loaded_plugin->initialize_sensor(this, plugin_name); 
+    const bool plugin_init_success = loaded_plugin->initialize_sensor(this, plugin_name);
     if (!plugin_init_success) {
       RCLCPP_WARN(this->get_logger(), "Failed to initialize plugin %s", plugin_name.c_str());
       return false;
