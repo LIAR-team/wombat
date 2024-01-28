@@ -40,7 +40,7 @@ function(__wombat_install_library_target TARGET_NAME)
       $<INSTALL_INTERFACE:${TARGET_NAME}/include>
   )
   # Install include directories
-  set(include_dir include/${PROJECT_NAME})
+  set(include_dir ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME})
   if(EXISTS ${include_dir})
     install(
       DIRECTORY ${include_dir}
