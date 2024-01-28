@@ -40,10 +40,13 @@ function(__wombat_install_library_target TARGET_NAME)
       $<INSTALL_INTERFACE:${TARGET_NAME}/include>
   )
   # Install include directories
-  install(
-    DIRECTORY include/${PROJECT_NAME}
-    DESTINATION ${TARGET_NAME}/include
-  )
+  set(include_dir include/${PROJECT_NAME})
+  if(EXISTS ${include_dir})
+    install(
+      DIRECTORY ${include_dir}
+      DESTINATION ${TARGET_NAME}/include
+    )
+  endif()
   # Install the library target and associate it with the export target
   install(
     TARGETS ${TARGET_NAME}

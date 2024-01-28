@@ -14,12 +14,11 @@ target_include_directories(
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-ament_target_dependencies(kennel_lib PUBLIC nav2_map_server tf2 tf2_geometry_msgs tf2_ros)
+ament_target_dependencies(kennel_lib PUBLIC nav2_map_server pluginlib tf2 tf2_geometry_msgs tf2_ros)
 target_link_libraries(
   kennel_lib
   PUBLIC
     kennel::common
-    kennel_sensor_plugins
     rclcpp::rclcpp
     ${geometry_msgs_TARGETS}
     ${nav_msgs_TARGETS}
