@@ -21,6 +21,10 @@
 namespace kennel
 {
 
+/**
+ * @brief Class responsible for managing the movements and state
+ * estimation of a mobile robot.
+ */
 class MobileBase
 {
 public:

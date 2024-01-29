@@ -11,14 +11,14 @@
 #include "wombat_control/control/position_controller.hpp"
 #include "wombat_core/math/utils.hpp"
 
-PosCtrl::PosCtrl(const Params & params)
+PositionController::PositionController(const Params & params)
 {
   m_len = params.len;
   m_gain_x = params.gain_x;
   m_gain_y = params.gain_y;
 }
 
-geometry_msgs::msg::Twist PosCtrl::input_function(
+geometry_msgs::msg::Twist PositionController::input_function(
   const Eigen::Vector2d & error,
   const geometry_msgs::msg::Pose & pose) const
 {

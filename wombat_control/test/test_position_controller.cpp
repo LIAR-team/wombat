@@ -37,7 +37,7 @@ TEST(test_controller, waypoint_control)
 
   // Test 1
   geometry_msgs::msg::Pose current_pose;
-  PosCtrl pos_controller = PosCtrl({len, gain_x, gain_y});
+  PositionController pos_controller = PositionController({len, gain_x, gain_y});
   geometry_msgs::msg::Twist input_signal = pos_controller.input_function({0, 0}, current_pose);
   geometry_msgs::msg::Twist expected_input_signal;
   EXPECT_EQ(input_signal, expected_input_signal);

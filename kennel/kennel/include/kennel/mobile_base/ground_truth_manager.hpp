@@ -18,6 +18,10 @@
 namespace kennel
 {
 
+/**
+ * @brief Class responsible for keeping track of the ground truth
+ * pose of a mobile robot.
+ */
 class GroundTruthManager
 {
 public:

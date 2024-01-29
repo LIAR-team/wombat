@@ -19,6 +19,8 @@
 namespace kennel
 {
 
+/// Structure containing the fields necessary to declare and initialize a
+/// ROS 2 parameter.
 struct DefaultParameterInfo
 {
   std::string name;

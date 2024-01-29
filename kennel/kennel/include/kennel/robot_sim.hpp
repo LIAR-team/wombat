@@ -17,6 +17,10 @@
 namespace kennel
 {
 
+/**
+ * @brief Class used to simulate a single, whole, robot in the
+ * kennel environment
+ */
 class RobotSim : public rclcpp::Node
 {
 public:

@@ -15,7 +15,7 @@ CONFIG_FILE=${THIS_DIR}/config
 WORKSPACE_DIR=${THIS_DIR}/../../_ws
 OUTPUT_DIRECTORY=${WORKSPACE_DIR}/doxygen
 
-if [! -f ${CONFIG_FILE} ]; then
+if [ ! -f ${CONFIG_FILE} ]; then
   echo "Doxygen config file not found: ${CONFIG_FILE}"
   exit 1
 fi 
