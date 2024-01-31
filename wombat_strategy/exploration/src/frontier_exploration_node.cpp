@@ -284,7 +284,13 @@ void FrontierExplorationNode::drive_to_pose(const geometry_msgs::msg::Pose & goa
   // Set callbacks to be notified about this asynchronous goal
   auto send_goal_options = NavigateActionClient::SendGoalOptions();
   send_goal_options.goal_response_callback =
-    std::bind(&FrontierExplorationNode::navigate_goal_response_callback, this, _1);
+    [this](const NavigateGoalHandle::SharedPtr & goal_handle) {
+      if (!goal_handle) {
+        RCLCPP_ERROR(this->get_logger(), "Navigation goal was rejected by the server");
+        return;
+      }
+      m_navigation_goal_handle = goal_handle;
+    };
   send_goal_options.result_callback =
     std::bind(&FrontierExplorationNode::navigate_result_callback, this, _1);
 
@@ -295,16 +301,6 @@ void FrontierExplorationNode::drive_to_pose(const geometry_msgs::msg::Pose & goa
     action_goal.pose.pose.position.x,
     action_goal.pose.pose.position.y);
   m_navigate_client->async_send_goal(action_goal, send_goal_options);
-}
-
-void FrontierExplorationNode::navigate_goal_response_callback(
-  const NavigateGoalHandle::SharedPtr & goal_handle)
-{
-  if (!goal_handle) {
-    RCLCPP_ERROR(this->get_logger(), "Navigation goal was rejected by the server");
-    return;
-  }
-  m_navigation_goal_handle = goal_handle;
 }
 
 void FrontierExplorationNode::navigate_result_callback(const NavigateGoalHandle::WrappedResult & result)

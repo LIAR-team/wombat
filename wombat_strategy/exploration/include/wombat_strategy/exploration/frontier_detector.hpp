@@ -38,8 +38,12 @@ public:
   /** @brief Default constructor */
   FrontierDetector() = default;
 
-  /** @brief Class constructor, simply stores provided parameters */
+  /**
+   * @brief Class constructor to stores provided parametes
+   * @param params configuration parameters
+   */
   explicit FrontierDetector(const Params & params);
+
 
   /**
     * @brief Provide a pointer to a costmap that is used for frontier detection.
@@ -89,6 +93,7 @@ private:
     * NOTE: This method will not assign a score to the frontier
     * @param starting_cell_idx first identified index belonging to the frontier
     * @param already_included_frontier_indices
+    * @return Frontier the constructed frontier
     */
   Frontier build_frontier(unsigned int starting_cell_idx, std::vector<bool> & already_included_frontier_indices);
 

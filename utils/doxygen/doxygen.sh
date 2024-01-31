@@ -18,7 +18,7 @@ OUTPUT_DIRECTORY=${WORKSPACE_DIR}/doxygen
 if [ ! -f ${CONFIG_FILE} ]; then
   echo "Doxygen config file not found: ${CONFIG_FILE}"
   exit 1
-fi 
+fi
 
 # Override the doxygen `OUTPUT_DIRECTORY` field to point to the workspace
 # and ensure that it exists

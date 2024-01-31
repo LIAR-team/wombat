@@ -31,7 +31,10 @@ namespace wombat_strategy
 class FrontierExplorationNode : public rclcpp::Node
 {
 public:
-  /** @brief Node constructor, initializes ROS 2 entities */
+  /**
+   * @brief Node constructor, initializes ROS 2 entities
+   * @param options 
+   */
   explicit FrontierExplorationNode(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 private:
@@ -46,27 +49,50 @@ private:
   /** @brief ExploreActionServer callback, it performs the whole exploration task */
   void explore();
 
-  /** @brief Select a goal location to drive to */
+  /** @brief */
+  
+  /**
+   * @brief Select a goal location among a set of frontiers
+   * @param frontiers set of frontiers among which to select the goal
+   * @return geometry_msgs::msg::Pose::UniquePtr goal location
+   */
   geometry_msgs::msg::Pose::UniquePtr
   select_exploration_goal(const std::vector<Frontier> & frontiers);
 
-  /** @brief Select a goal pose suitable to explore a given frontier */
+  /**
+   * @brief Select a goal location from a single frontier
+   * @param frontier frontier where we want to drive
+   * @return geometry_msgs::msg::Pose goal to explore this frontier
+   */
   geometry_msgs::msg::Pose
   goal_pose_from_frontier(const Frontier & frontier);
 
   /** @brief Send a NavigateToPose action goal to drive towards chosen goal */
+
+  /**
+   * @brief Asynchronously send request to drive to a pose
+   * @param goal the goal pose
+   */
   void drive_to_pose(const geometry_msgs::msg::Pose & goal);
 
-  /** @brief Navigate action server callback to be notified about whether a goal is accepted or not */
-  void navigate_goal_response_callback(const NavigateGoalHandle::SharedPtr & goal_handle);
-
-  /** @brief Navigate action server callback to be notified about navigation result */
+  /**
+   * @brief Handle a navigate to pose action result
+   * @param result the result
+   */
   void navigate_result_callback(const NavigateGoalHandle::WrappedResult & result);
 
   /** @brief Message callback for occupancy grid topic */
+  
+  /**
+   * @brief Process an incoming map message
+   * @param msg the latest map message
+   */
   void map_callback(nav_msgs::msg::OccupancyGrid::SharedPtr msg);
 
-  /** @brief Helper function that publish the frontiers as a MarkerArray message */
+  /**
+   * @brief Publishes visualizable information about the current drive goal and frontiers
+   * @param frontiers the list of active frontiers
+   */
   void visualize_frontiers(const geometry_msgs::msg::Pose & goal, const std::vector<Frontier> & frontiers);
 
   std::shared_ptr<nav2_costmap_2d::Costmap2D> m_costmap;

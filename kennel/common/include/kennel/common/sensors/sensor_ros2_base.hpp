@@ -43,7 +43,9 @@ public:
   SensorRos2Base() = default;
 
   /**
-   * @brief @see SensorInterface::initialize_sensor
+   * @brief @sa SensorInterface::initialize_sensor
+   * @param parent_node ROS 2 node loading the plugin
+   * @param sensor_name name for this plugin
    * @return true if success
    */
   bool initialize_sensor(
