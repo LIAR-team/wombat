@@ -49,8 +49,6 @@ private:
   /** @brief ExploreActionServer callback, it performs the whole exploration task */
   void explore();
 
-  /** @brief */
-  
   /**
    * @brief Select a goal location among a set of frontiers
    * @param frontiers set of frontiers among which to select the goal
@@ -81,8 +79,6 @@ private:
    */
   void navigate_result_callback(const NavigateGoalHandle::WrappedResult & result);
 
-  /** @brief Message callback for occupancy grid topic */
-  
   /**
    * @brief Process an incoming map message
    * @param msg the latest map message
