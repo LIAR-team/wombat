@@ -60,4 +60,4 @@ jobs:
     steps:
       - name: Build doxygen
         run: |
-          bash ${{ github.workspace }}/utils/doxygen/doxygen.sh
+          $PWD/utils/doxygen/doxygen.sh

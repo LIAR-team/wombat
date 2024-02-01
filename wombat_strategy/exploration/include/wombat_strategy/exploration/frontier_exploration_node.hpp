@@ -33,7 +33,7 @@ class FrontierExplorationNode : public rclcpp::Node
 public:
   /**
    * @brief Node constructor, initializes ROS 2 entities
-   * @param options 
+   * @param options
    */
   explicit FrontierExplorationNode(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
