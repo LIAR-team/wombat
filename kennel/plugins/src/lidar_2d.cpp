@@ -15,6 +15,7 @@
 namespace kennel
 {
 
+/// Lidar 2D sensor plugin
 class Lidar2D : public SensorRos2Base<sensor_msgs::msg::LaserScan>
 {
 public:

@@ -11,6 +11,7 @@
 namespace kennel
 {
 
+/// Structure containing data used to define the robot pose in space
 struct LocalizationData
 {
   geometry_msgs::msg::TransformStamped robot_pose;

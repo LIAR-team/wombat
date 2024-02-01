@@ -17,6 +17,10 @@
 namespace kennel
 {
 
+/**
+ * @brief Class responsible for keeping track of the pose and
+ * map estimates of a mobile robot using pseudo-SLAM algorithms
+ */
 class SlamManager
 {
 public:

@@ -9,9 +9,13 @@
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
-class PosCtrl
+/**
+ * @brief Proportional (P) position controller
+ */
+class PositionController
 {
 public:
+  /// Configuration parameters for the controller
   struct Params
   {
     double len {0.0};
@@ -19,7 +23,7 @@ public:
     double gain_y {0.0};
   };
 
-  explicit PosCtrl(const Params & params);
+  explicit PositionController(const Params & params);
 
   geometry_msgs::msg::Twist input_function(
     const Eigen::Vector2d & error,

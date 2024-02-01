@@ -1,7 +1,10 @@
-# Wombat ignore
+#### Wombat ignore
 /.vscode
 /.devdocker
 _ws
+
+#### Generic ignore
+.DS_Store
 
 #### C/C++ ignore
 

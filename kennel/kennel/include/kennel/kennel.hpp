@@ -19,6 +19,10 @@
 namespace kennel
 {
 
+/**
+ * @brief Main entry-point for the Kennel library.
+ * Used to setup one or more simulated robots in the environment.
+ */
 class Kennel : public rclcpp::Node
 {
   struct ThreadWithExecutor

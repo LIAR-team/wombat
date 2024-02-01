@@ -51,3 +51,13 @@ jobs:
         run: |
           source /home/docker-dev/.bashrc \
           && VERBOSE=1 colcon test --mixin linters --return-code-on-test-failure --event-handlers=console_cohesion+
+
+  Documentation:
+    needs: Setup-Wombat
+    runs-on: self-hosted
+    container:
+      image: ${{ needs.Setup-Wombat.outputs.DEV_ENV_IMAGE }}
+    steps:
+      - name: Build doxygen
+        run: |
+          $PWD/utils/doxygen/doxygen.sh
