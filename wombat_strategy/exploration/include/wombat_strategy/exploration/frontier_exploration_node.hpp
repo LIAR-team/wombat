@@ -87,6 +87,7 @@ private:
 
   /**
    * @brief Publishes visualizable information about the current drive goal and frontiers
+   * @param goal the goal we are driving towards
    * @param frontiers the list of active frontiers
    */
   void visualize_frontiers(const geometry_msgs::msg::Pose & goal, const std::vector<Frontier> & frontiers);
