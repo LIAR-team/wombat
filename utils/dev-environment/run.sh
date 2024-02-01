@@ -71,15 +71,30 @@ if [ ! -f ${BASH_HISTORY_FILE} ]; then
 fi
 BASH_HISTORY_ARGS="--volume=${BASH_HISTORY_FILE}:${DOCKER_BASH_HISTORY_FILE}:rw"
 
-# Persistent ccache directory
-CCACHE_DIR=${THIS_DIR}/.cache/ccache
-DOCKER_CCACHE_DIR=${DOCKER_HOME}/.cache/ccache
-if [ ! -d $CCACHE_DIR ]; then
-  mkdir -p ${CCACHE_DIR}
-fi
-CCACHE_ENV_ARG="--env CCACHE_DIR=${DOCKER_CCACHE_DIR}"
-CCACHE_VOLUME_ARG="--volume=${CCACHE_DIR}:${DOCKER_CCACHE_DIR}:rw"
-CCACHE_ARGS="${CCACHE_ENV_ARG} ${CCACHE_VOLUME_ARG}"
+# Utility to create a local cache directory, mount it as a volume and point an env variable to it
+setup_cache_dir() {
+  DIR_NAME=$1
+  ENV_VAR_NAME=$2
+
+  if [ -z "${DIR_NAME}" ]; then
+    echo "No directory name passed to setup_cache_dir" >&2
+    exit 1
+  fi
+  LOCAL_DIR=${THIS_DIR}/.cache/${DIR_NAME}
+  DOCKER_DIR=${DOCKER_HOME}/.cache/${DIR_NAME}
+  if [ ! -d "${LOCAL_DIR}" ]; then
+    mkdir -p ${LOCAL_DIR}
+  fi
+  VOLUME_ARG="--volume=${LOCAL_DIR}:${DOCKER_DIR}:rw"
+  ENV_ARG=""
+  if [ ! -z "${ENV_VAR_NAME}" ]; then
+    ENV_ARG="--env ${ENV_VAR_NAME}=${DOCKER_DIR}"
+  fi
+
+  echo "${VOLUME_ARG} ${ENV_ARG}"
+}
+
+CACHE_ARGS="$(setup_cache_dir ccache CCACHE_DIR) $(setup_cache_dir pre-commit PRE_COMMIT_HOME)"
 
 # Check if we have gitconfig
 GITCONFIG=${HOME}/.gitconfig
@@ -152,7 +167,7 @@ fi
 # Define the full command to start the container
 CMD=(docker run -it --rm \
   ${BASH_HISTORY_ARGS} \
-  ${CCACHE_ARGS} \
+  ${CACHE_ARGS} \
   ${DISPLAY_ARGS} \
   ${GITCONFIG_ARGS} \
   ${GPU_ARGS} \

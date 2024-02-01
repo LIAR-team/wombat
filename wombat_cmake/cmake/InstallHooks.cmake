@@ -10,12 +10,8 @@
 # @private
 #
 macro(run_install_githooks_script)
-  # List of githook files.
-  # If a file is not here, we will monitor it for changes (added/removed/modified).
-  set(GITHOOK_FILES
-    ${CMAKE_SOURCE_DIR}/githooks/install_hooks.sh
-    ${CMAKE_SOURCE_DIR}/githooks/pre-push
-  )
+
+  set(GITHOOKS_CONFIG_FILE ${CMAKE_SOURCE_DIR}/git-hooks-config.yaml)
 
   # Add a configuration-time dependency on the githook files to re-run the install script when
   # a change is detected (i.e. when a change is detected we force a reconfiguration of this package).
@@ -24,12 +20,12 @@ macro(run_install_githooks_script)
     APPEND
     PROPERTY
       CMAKE_CONFIGURE_DEPENDS
-      ${GITHOOK_FILES}
+      ${GITHOOKS_CONFIG_FILE}
   )
 
   # Install repository githooks as part of this package CMake configuration step.
   execute_process(
-    COMMAND ${CMAKE_SOURCE_DIR}/githooks/install_hooks.sh
+    COMMAND pre-commit install --overwrite --config ${GITHOOKS_CONFIG_FILE}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     RESULT_VARIABLE install_hooks_ret
   )
