@@ -23,6 +23,8 @@ class SensorInterface
 public:
   SensorInterface() = default;
 
+  virtual ~SensorInterface() = default;
+
   /**
    * @brief Initialization function for the plugins.
    * This will be called by the entity loading the plugins, right after their construction.

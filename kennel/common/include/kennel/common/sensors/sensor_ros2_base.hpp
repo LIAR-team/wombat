@@ -42,6 +42,8 @@ class SensorRos2Base : public SensorInterface
 public:
   SensorRos2Base() = default;
 
+  ~SensorRos2Base() override = default;
+
   /**
    * @brief @sa SensorInterface::initialize_sensor
    * @param parent_node ROS 2 node loading the plugin
