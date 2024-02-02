@@ -136,7 +136,7 @@ fi
 # Check if we have GPUs
 GPU_ARGS=""
 if [ -n "${IS_UBUNTU_HOST}" ]; then
-  if type "nvidia-container-cli" &> /dev/null && nvidia-container-cli info &> /dev/null; then 
+  if type "nvidia-container-cli" &> /dev/null && nvidia-container-cli info &> /dev/null; then
     GPU_ARGS="--gpus=all"
   fi
 fi

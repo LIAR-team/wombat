@@ -1,3 +1,6 @@
+## Documentation: https://pre-commit.com/
+## To run the hooks on all files: pre-commit run --config wombat_cmake/git-hooks-config.yaml --all-files
+
 # Only the hooks associated with these stages will be automatically installed
 default_install_hook_types: [pre-commit, pre-push]
 repos:
