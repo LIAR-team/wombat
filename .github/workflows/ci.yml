@@ -2,7 +2,7 @@ name: wombat CI
 
 on:
   pull_request:
-    branches:    
+    branches:
       - 'main'
   push:
     branches:

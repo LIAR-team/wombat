@@ -1,0 +1,32 @@
+## Documentation: https://pre-commit.com/
+## To run the hooks on all files: pre-commit run --config wombat_cmake/git-hooks-config.yaml --all-files
+
+# Only the hooks associated with these stages will be automatically installed
+default_install_hook_types: [pre-commit, pre-push]
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+    # Prevent committing large files
+    -   id: check-added-large-files
+        args: ['--maxkb=100']
+        stages: [pre-commit]
+    # Check whether Python files are valid
+    -   id: check-ast
+        stages: [pre-commit]
+    # Check for the >>>> <<<< strings indicating unresolved merge conflicts
+    -   id: check-merge-conflict
+        stages: [pre-commit]
+    # Check symlinks validity
+    -   id: check-symlinks
+        stages: [pre-commit]
+    # Check that files end with a new line (if not empty)
+    -   id: end-of-file-fixer
+        stages: [pre-commit]
+    # Trim trailing whitespaces
+    -   id: trailing-whitespace
+        stages: [pre-commit]
+    # Prevent pushing to main branch
+    -   id: no-commit-to-branch
+        args: [--branch, main]
+        stages: [pre-push]
