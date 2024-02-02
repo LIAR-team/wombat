@@ -1,5 +1,6 @@
 ## Documentation: https://pre-commit.com/
-## To run the hooks on all files: pre-commit run --config wombat_cmake/git-hooks-config.yaml --all-files
+## To run the hooks on all files:
+## pre-commit run --config wombat_cmake/git-hooks-config.yaml --all-files
 
 # Only the hooks associated with these stages will be automatically installed
 default_install_hook_types: [pre-commit, pre-push]
@@ -7,12 +8,21 @@ repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-    # Prevent committing large files
+    # Prevent giant files from being committed.
     -   id: check-added-large-files
         args: ['--maxkb=100']
         stages: [pre-commit]
-    # Check whether Python files are valid
+    # Simply check whether files parse as valid python.
     -   id: check-ast
+        stages: [pre-commit]
+    # Checks for a common error of placing code before the docstring.
+    -   id: check-docstring-first
+        stages: [pre-commit]
+    # Attempts to load all yaml files to verify syntax.
+    -   id: check-yaml
+        stages: [pre-commit]
+    # Attempts to load all xml files to verify syntax.
+    -   id: check-xml
         stages: [pre-commit]
     # Check for the >>>> <<<< strings indicating unresolved merge conflicts
     -   id: check-merge-conflict
@@ -20,13 +30,22 @@ repos:
     # Check symlinks validity
     -   id: check-symlinks
         stages: [pre-commit]
-    # Check that files end with a new line (if not empty)
+    # Check that files end with a newline (if not empty)
     -   id: end-of-file-fixer
         stages: [pre-commit]
     # Trim trailing whitespaces
     -   id: trailing-whitespace
         stages: [pre-commit]
+    # Check for private kyes committed by mistake
+    -   id: detect-private-key
+        stages: [pre-commit]
     # Prevent pushing to main branch
     -   id: no-commit-to-branch
         args: [--branch, main]
         stages: [pre-push]
+-   repo: https://github.com/codespell-project/codespell
+    rev: v2.2.6
+    hooks:
+    # Prevent giant files from being committed.
+    -   id: codespell
+        args: ['--write-changes']

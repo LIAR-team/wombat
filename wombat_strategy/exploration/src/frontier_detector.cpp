@@ -119,7 +119,7 @@ Frontier FrontierDetector::build_frontier(
 
 void FrontierDetector::rank_frontiers(std::vector<Frontier> & frontiers)
 {
-  // Find miminum distance to a frontier and maximum frontier size to compute normalized scores
+  // Find minimum distance to a frontier and maximum frontier size to compute normalized scores
   double min_distance = std::numeric_limits<double>::max();
   size_t max_size = 0;
   // Vector to store distances, to avoid computing them twice

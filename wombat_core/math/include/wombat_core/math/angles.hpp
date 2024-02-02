@@ -68,7 +68,7 @@ constexpr T wrap_angle(T angle) noexcept
  * See [On wrapping the Kalman filter and estimating with the SO(2) group](https://arxiv.org/pdf/1708.05551.pdf)
  * @tparam T scalar type used to represent the input angles and the result (e.g. double)
  * @param angle1 angle to subtract from
- * @param angle2 angle to substract
+ * @param angle2 angle to subtract
  * @return constexpr T difference angle wrapped in [-pi, pi]
  */
 template<typename T>

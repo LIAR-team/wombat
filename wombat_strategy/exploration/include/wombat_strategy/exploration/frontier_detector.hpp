@@ -39,7 +39,7 @@ public:
   FrontierDetector() = default;
 
   /**
-   * @brief Class constructor to stores provided parametes
+   * @brief Class constructor to store provided parameters
    * @param params configuration parameters
    */
   explicit FrontierDetector(const Params & params);
