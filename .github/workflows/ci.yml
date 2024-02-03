@@ -22,7 +22,7 @@ jobs:
       DEV_ENV_IMAGE: ${{ steps.set_version.outputs.DEV_ENV_IMAGE }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Read VERSION
         run: |
           VER=$(cat ${{ github.workspace }}/utils/dev-environment/VERSION) \
@@ -39,6 +39,26 @@ jobs:
     env:
       COLCON_HOME: ${{ github.workspace }}/.colcon
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          # Required by tj-actions/changed-files
+          fetch-depth: 2
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v42
+      - name: Get changed packages
+        id: changed-packages
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          CHANGED_PKGS=""
+          for file in ${ALL_CHANGED_FILES}; do
+            FILE_PACKAGE_DIR=$(echo ${file} | cut -d "/" -f1)
+            CHANGED_PKGS="${FILE_PACKAGE_DIR} ${CHANGED_PKGS}"
+          done
+          echo "Changed packages: ${CHANGED_PKGS}"
+          echo "ALL_CHANGED_PACKAGES=${CHANGED_PKGS}" >> "$GITHUB_OUTPUT"
       - name: Build wombat
         run: |
           source /home/docker-dev/.bashrc \
@@ -46,11 +66,17 @@ jobs:
       - name: Run unit-tests
         run: |
           source /home/docker-dev/.bashrc \
-          && VERBOSE=1 colcon test --mixin no-linters --return-code-on-test-failure --event-handlers=console_cohesion+
-      - name: Run linters
+          && VERBOSE=1 colcon test --mixin no-lint --return-code-on-test-failure --event-handlers=console_cohesion+
+      - name: Run linters (no clang)
         run: |
           source /home/docker-dev/.bashrc \
-          && VERBOSE=1 colcon test --mixin linters --return-code-on-test-failure --event-handlers=console_cohesion+
+          && VERBOSE=1 colcon test --mixin lint --return-code-on-test-failure --event-handlers=console_cohesion+
+      - name: Run clang on modified packages
+        env:
+          ALL_CHANGED_PACKAGES: ${{ steps.changed-packages.outputs.ALL_CHANGED_PACKAGES }}
+        run: |
+          source /home/docker-dev/.bashrc \
+          && VERBOSE=1 colcon test --packages-select ${ALL_CHANGED_PACKAGES} --mixin clang --return-code-on-test-failure --event-handlers=console_cohesion+
 
   Documentation:
     needs: Setup-Wombat

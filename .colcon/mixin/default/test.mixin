@@ -3,11 +3,11 @@
     "all": {
       "ctest-args": [],
     },
-    "linters": {
-      "ctest-args": ["-L", "linter"],
+    "lint": {
+      "ctest-args": ["-L", "linter", "-E", "clang"],
       "pytest-args": ["-m", "linter"],
     },
-    "no-linters": {
+    "no-lint": {
       "ctest-args": ["-LE", "linter"],
       "pytest-args": ["-m", "not linter"],
     },
