@@ -23,7 +23,7 @@ public:
 
 private:
   std::unique_ptr<sensor_msgs::msg::LaserScan>
-  make_sensor_ros2_msg(const LocalizationData & gt_data) override
+  make_sensor_ros2_msg(const localization_data_t & gt_data) override
   {
     return make_laser_scan_msg(gt_data);
   }

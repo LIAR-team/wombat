@@ -21,7 +21,7 @@ namespace kennel
 
 /// Structure containing the fields necessary to declare and initialize a
 /// ROS 2 parameter.
-struct DefaultParameterInfo
+struct default_parameter_info_t
 {
   std::string name;
   rclcpp::ParameterValue value;
@@ -59,7 +59,7 @@ public:
    * This implementation will publish the sensor data on a ROS 2 topic
    * @param gt_data ground truth information that can be used to generate sensor data
    */
-  void produce_sensor_data(const LocalizationData & gt_data) override;
+  void produce_sensor_data(const localization_data_t & gt_data) override;
 
 protected:
   rclcpp::Logger get_logger();
@@ -76,7 +76,7 @@ private:
    * @param gt_data ground truth information that can be used to generate sensor data
    * @return std::unique_ptr<MsgT> the sensor data that will be published
    */
-  virtual std::unique_ptr<MsgT> make_sensor_ros2_msg(const LocalizationData & gt_data) = 0;
+  virtual std::unique_ptr<MsgT> make_sensor_ros2_msg(const localization_data_t & gt_data) = 0;
 
   /**
    * @brief Optional definition of plugin-specific parameters.
@@ -84,10 +84,10 @@ private:
    * by providing their names, a default value and information.
    * After the initialization, true value of the parameters will be accessible via the
    * m_parameters member variable.
-   * @return std::vector<DefaultParameterInfo> information about the parameters
+   * @return std::vector<default_parameter_info_t> information about the parameters
    * to define
    */
-  virtual std::vector<DefaultParameterInfo> setup_parameters();
+  virtual std::vector<default_parameter_info_t> setup_parameters();
 
   /////////
 
@@ -101,7 +101,7 @@ private:
    * @return true if parameters have been successfully declared
    */
   bool declare_parameters(
-    const std::vector<DefaultParameterInfo> & default_parameters_info,
+    const std::vector<default_parameter_info_t> & default_parameters_info,
     rclcpp::Node * parent_node);
 
   std::shared_ptr<rclcpp::Publisher<MsgT>> m_sensor_publisher;

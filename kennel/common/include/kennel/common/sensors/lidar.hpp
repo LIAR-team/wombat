@@ -15,6 +15,6 @@ namespace kennel
 {
 
 std::unique_ptr<sensor_msgs::msg::LaserScan>
-make_laser_scan_msg(const LocalizationData & gt_data);
+make_laser_scan_msg(const localization_data_t & gt_data);
 
 }  // namespace kennel

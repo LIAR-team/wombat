@@ -16,14 +16,14 @@ class PositionController
 {
 public:
   /// Configuration parameters for the controller
-  struct Params
+  struct params_t
   {
     double len {0.0};
     double gain_x {0.0};
     double gain_y {0.0};
   };
 
-  explicit PositionController(const Params & params);
+  explicit PositionController(const params_t & params);
 
   geometry_msgs::msg::Twist input_function(
     const Eigen::Vector2d & error,

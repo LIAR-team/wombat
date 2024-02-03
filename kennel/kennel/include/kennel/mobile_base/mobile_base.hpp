@@ -30,7 +30,7 @@ class MobileBase
 public:
   explicit MobileBase(rclcpp::Node * parent_node);
 
-  LocalizationData get_ground_truth_data();
+  localization_data_t get_ground_truth_data();
 
 private:
   void mobile_base_update();

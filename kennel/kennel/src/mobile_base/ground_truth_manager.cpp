@@ -20,11 +20,11 @@ namespace kennel
 
 GroundTruthManager::GroundTruthManager(
   rclcpp::Node * parent_node,
+  std::string ground_truth_frame_id,
   const std::chrono::milliseconds & cmd_timeout,
-  const std::string & ground_truth_frame_id,
-  const std::string & robot_base_frame_id)
+  std::string robot_base_frame_id)
 : m_clock(parent_node->get_clock()), m_logger(parent_node->get_logger()),
-  m_ground_truth_frame_id(ground_truth_frame_id), m_robot_base_frame_id(robot_base_frame_id),
+  m_ground_truth_frame_id(std::move(ground_truth_frame_id)), m_robot_base_frame_id(std::move(robot_base_frame_id)),
   m_cmd_timeout(cmd_timeout)
 {
   RCLCPP_INFO(m_logger, "Ground truth manager constructed");

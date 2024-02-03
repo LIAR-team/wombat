@@ -11,15 +11,15 @@ namespace kennel
 SlamManager::SlamManager(
   rclcpp::Node * parent_node,
   const rclcpp::Duration & update_period,
-  const std::string & slam_frame_id)
+  std::string slam_frame_id)
 : m_clock(parent_node->get_clock()), m_logger(parent_node->get_logger()),
-  m_update_period(update_period), m_slam_frame_id(slam_frame_id)
+  m_update_period(update_period), m_slam_frame_id(std::move(slam_frame_id))
 {
   m_last_update_time = m_clock->now();
   RCLCPP_INFO(m_logger, "SLAM manager constructed");
 }
 
-std::optional<LocalizationData> SlamManager::slam_update(
+std::optional<localization_data_t> SlamManager::slam_update(
   const geometry_msgs::msg::TransformStamped & gt_T_base,
   const nav_msgs::msg::OccupancyGrid & gt_map)
 {
@@ -31,7 +31,7 @@ std::optional<LocalizationData> SlamManager::slam_update(
   m_last_update_time = now;
 
   // Naive implementation of SLAM: forward ground truth data
-  LocalizationData data;
+  localization_data_t data;
   data.robot_pose = gt_T_base;
   data.robot_pose.header.frame_id = m_slam_frame_id;
   data.map = gt_map;

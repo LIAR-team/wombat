@@ -12,7 +12,7 @@
 namespace wombat_strategy
 {
 
-struct Frontier
+struct frontier_t
 {
   /** @brief Points belonging to frontier in map reference frame */
   std::vector<geometry_msgs::msg::Point> points {};
@@ -23,7 +23,7 @@ struct Frontier
   /** @brief Score assigned by the frontier detector to this frontier */
   double score {0.0};
 
-  bool operator>(const Frontier & other) const
+  bool operator>(const frontier_t & other) const
   {
     return score > other.score;
   }

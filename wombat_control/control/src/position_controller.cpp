@@ -11,7 +11,7 @@
 #include "wombat_control/control/position_controller.hpp"
 #include "wombat_core/math/utils.hpp"
 
-PositionController::PositionController(const Params & params)
+PositionController::PositionController(const params_t & params)
 {
   m_len = params.len;
   m_gain_x = params.gain_x;

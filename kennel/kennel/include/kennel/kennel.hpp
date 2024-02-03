@@ -25,7 +25,7 @@ namespace kennel
  */
 class Kennel : public rclcpp::Node
 {
-  struct ThreadWithExecutor
+  struct thread_with_executor_t
   {
     std::unique_ptr<std::thread> thread;
     std::shared_ptr<rclcpp::Executor> executor;
@@ -44,7 +44,7 @@ private:
     const std::string & map_frame_id,
     const std::string & map_topic_name);
 
-  std::unique_ptr<ThreadWithExecutor>
+  std::unique_ptr<thread_with_executor_t>
   start_executor(
     std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface> node_base);
 
@@ -56,7 +56,7 @@ private:
 
   std::shared_ptr<nav2_map_server::MapServer> m_map_server;
   std::vector<std::shared_ptr<RobotSim>> m_robots;
-  std::vector<std::unique_ptr<ThreadWithExecutor>> m_executors;
+  std::vector<std::unique_ptr<thread_with_executor_t>> m_executors;
   std::unique_ptr<std::thread> m_sim_time_thread;
 };
 

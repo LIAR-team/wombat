@@ -17,7 +17,7 @@
 namespace wombat_strategy
 {
 
-FrontierDetector::FrontierDetector(const FrontierDetector::Params & params)
+FrontierDetector::FrontierDetector(const FrontierDetector::params_t & params)
 : m_params(params)
 {
   bool valid_scale_factor =
@@ -25,10 +25,10 @@ FrontierDetector::FrontierDetector(const FrontierDetector::Params & params)
   assert(valid_scale_factor && "Invalid scaling factor, must be [0, 1]");
 }
 
-std::vector<Frontier> FrontierDetector::search_frontiers()
+std::vector<frontier_t> FrontierDetector::search_frontiers()
 {
   // Output data structure
-  std::vector<Frontier> frontiers;
+  std::vector<frontier_t> frontiers;
 
   assert(m_costmap != nullptr && "Costamp not initialized yet");
 
@@ -50,7 +50,7 @@ std::vector<Frontier> FrontierDetector::search_frontiers()
     to_be_visited.pop();
     // Check if a new frontier can be started from current cell
     if (is_frontier_cell(cell_idx) && !already_included_frontier_indices[cell_idx]) {
-      Frontier f = build_frontier(cell_idx, already_included_frontier_indices);
+      frontier_t f = build_frontier(cell_idx, already_included_frontier_indices);
       if (frontier_is_valid(f)) {
         frontiers.push_back(f);
       }
@@ -73,12 +73,12 @@ std::vector<Frontier> FrontierDetector::search_frontiers()
   return frontiers;
 }
 
-Frontier FrontierDetector::build_frontier(
+frontier_t FrontierDetector::build_frontier(
   unsigned int starting_cell_idx,
   std::vector<bool> & already_included_frontier_indices)
 {
   // Output frontier
-  Frontier f;
+  frontier_t f;
 
   // We consider the first frontier cell found as the closest to the robot
   f.closest_point = wombat_core::index_to_world(starting_cell_idx, m_costmap);
@@ -117,7 +117,7 @@ Frontier FrontierDetector::build_frontier(
   return f;
 }
 
-void FrontierDetector::rank_frontiers(std::vector<Frontier> & frontiers)
+void FrontierDetector::rank_frontiers(std::vector<frontier_t> & frontiers)
 {
   // Find minimum distance to a frontier and maximum frontier size to compute normalized scores
   double min_distance = std::numeric_limits<double>::max();
@@ -125,7 +125,7 @@ void FrontierDetector::rank_frontiers(std::vector<Frontier> & frontiers)
   // Vector to store distances, to avoid computing them twice
   std::vector<double> distances(frontiers.size());
   for (size_t i = 0; i < frontiers.size(); i++) {
-    const Frontier & f = frontiers[i];
+    const frontier_t & f = frontiers[i];
     if (f.points.size() > max_size) {
       max_size = f.points.size();
     }
@@ -139,7 +139,7 @@ void FrontierDetector::rank_frontiers(std::vector<Frontier> & frontiers)
   // Compute and assign normalized score to each frontier object
   double distance_scaling_factor = 1.0f - m_params.frontier_size_scaling_factor;
   for (size_t i = 0; i < frontiers.size(); i++) {
-    Frontier & f = frontiers[i];
+    frontier_t & f = frontiers[i];
     double distance_score = distance_scaling_factor * min_distance / distances[i];
     double information_gain_score =
       m_params.frontier_size_scaling_factor * static_cast<double>(f.points.size()) / static_cast<double>(max_size);
@@ -147,10 +147,10 @@ void FrontierDetector::rank_frontiers(std::vector<Frontier> & frontiers)
   }
 
   // Sort frontiers according to the just assigned scores
-  std::sort(frontiers.begin(), frontiers.end(), std::greater<Frontier>());
+  std::sort(frontiers.begin(), frontiers.end(), std::greater<frontier_t>());
 }
 
-bool FrontierDetector::frontier_is_valid(const Frontier & f, bool trusted)
+bool FrontierDetector::frontier_is_valid(const frontier_t & f, bool trusted)
 {
   // Get number of cells that the frontier is made of
   size_t num_frontier_cells = 0;

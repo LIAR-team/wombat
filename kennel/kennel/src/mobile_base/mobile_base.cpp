@@ -59,11 +59,11 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
   RCLCPP_INFO(m_logger, "Mobile Base constructed");
 }
 
-LocalizationData MobileBase::get_ground_truth_data()
+localization_data_t MobileBase::get_ground_truth_data()
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
-  LocalizationData data;
+  localization_data_t data;
   data.robot_pose = m_gt_manager->get_pose();
   if (m_gt_map) {
     data.map = *m_gt_map;
@@ -168,8 +168,8 @@ bool MobileBase::setup_ground_truth()
   }
   m_gt_manager = std::make_unique<GroundTruthManager>(
     m_parent_node,
-    control_msg_lifespan,
     ground_truth_frame_id,
+    control_msg_lifespan,
     robot_base_frame_id);
 
   geometry_msgs::msg::Pose start_pose;

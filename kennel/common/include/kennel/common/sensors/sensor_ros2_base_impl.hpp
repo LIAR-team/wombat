@@ -43,7 +43,7 @@ bool SensorRos2Base<MsgT>::initialize_sensor(
 }
 
 template<typename MsgT>
-void SensorRos2Base<MsgT>::produce_sensor_data(const LocalizationData & gt_data)
+void SensorRos2Base<MsgT>::produce_sensor_data(const localization_data_t & gt_data)
 {
   auto sensor_msg = make_sensor_ros2_msg(gt_data);
   m_sensor_publisher->publish(std::move(sensor_msg));
@@ -56,15 +56,15 @@ rclcpp::Logger SensorRos2Base<MsgT>::get_logger()
 }
 
 template<typename MsgT>
-std::vector<DefaultParameterInfo>
+std::vector<default_parameter_info_t>
 SensorRos2Base<MsgT>::setup_parameters()
 {
-  return std::vector<DefaultParameterInfo>();
+  return std::vector<default_parameter_info_t>();
 }
 
 template<typename MsgT>
 bool SensorRos2Base<MsgT>::declare_parameters(
-  const std::vector<DefaultParameterInfo> & default_parameters_info,
+  const std::vector<default_parameter_info_t> & default_parameters_info,
   rclcpp::Node * parent_node)
 {
   for (const auto & default_info : default_parameters_info) {
