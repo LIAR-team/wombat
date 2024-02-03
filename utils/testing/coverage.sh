@@ -5,21 +5,20 @@
 set -o errexit
 
 THIS_DIR=$(dirname $(realpath -s $0))
-WOMBAT_DIR=$THIS_DIR/../..
+WOMBAT_DIR=${THIS_DIR}/../..
 
 # Change directory to the root of the repository
-cd $WOMBAT_DIR
+cd ${WOMBAT_DIR}
 
 # Build workspace
 colcon build --mixin wombat coverage
 # Run tests
 colcon test --mixin no-linters coverage
 
-WORKSPACE_DIR=$WOMBAT_DIR/_ws
-BUILD_DIR=$WORKSPACE_DIR/build
-INSTALL_DIR=$WORKSPACE_DIR/install
-RELATIVE_INSTALL_DIR=$(realpath  --relative-to="$WOMBAT_DIR" "$INSTALL_DIR")
-COVERAGE_FILE=$WORKSPACE_DIR/coverage.info
+WORKSPACE_DIR=${WOMBAT_DIR}/_ws
+BUILD_DIR=${WORKSPACE_DIR}/build
+INSTALL_DIR=${WORKSPACE_DIR}/install
+RELATIVE_INSTALL_DIR=$(realpath  --relative-to="${WOMBAT_DIR}" "${INSTALL_DIR}")
 
 # Exclude packages:
 # - *_msgs packages contain automatically generated files
@@ -37,8 +36,11 @@ INCLUDE_PACKAGES=$(
       $EXCLUDE_PACKAGES \
   | xargs)
 
+COVERAGE_FILE=${WORKSPACE_DIR}/coverage.info
 # Remove old coverage file
-rm ${COVERAGE_FILE}
+if [ -f "${COVERAGE_FILE}" ]; then
+  rm ${COVERAGE_FILE}
+fi
 
 # Capture executed code data.
 fastcov --lcov \
@@ -50,10 +52,11 @@ fastcov --lcov \
   --dump-statistic \
   --output ${COVERAGE_FILE}
 
-HTML_DIR=$WORKSPACE_DIR/coverage
-
+HTML_DIR=${WORKSPACE_DIR}/coverage
 # Remove old html directory
-rm -rf ${HTML_DIR}
+if [ -d "${HTML_DIR}" ]; then
+  rm -rf ${HTML_DIR}
+fi
 
 # Generate html visualization
 genhtml ${COVERAGE_FILE} --output-directory ${HTML_DIR}
