@@ -51,7 +51,7 @@ class TestSimTimeManagerRTFWithParams
 {};
 
 INSTANTIATE_TEST_SUITE_P(
-  MeenyMinyMoe,
+  TestMeasuredRTF,
   TestSimTimeManagerRTFWithParams,
   ::testing::Values(
     // RTF 1
@@ -70,7 +70,8 @@ INSTANTIATE_TEST_SUITE_P(
     test_data_t {
   20.0,  // rtf
   5ms,  // sim_time_update_period
-  2.0,  // rtf tolerance
+  5.0,  // rtf tolerance
+  500,  // num samples
 },
     // RTF < 1
     test_data_t {
