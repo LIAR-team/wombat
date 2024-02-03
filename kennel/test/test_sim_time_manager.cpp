@@ -57,27 +57,30 @@ INSTANTIATE_TEST_SUITE_P(
     // RTF 1
     test_data_t {
   1.0,  // rtf
-  5ms,  // sim_time_update_period
+  1ms,  // sim_time_update_period
   0.1,  // rtf tolerance
+  500,  // num samples
 },
     // RTF > 1
     test_data_t {
   2.0,  // rtf
-  5ms,  // sim_time_update_period
-  0.2,  // rtf tolerance
+  1ms,  // sim_time_update_period
+  0.5,  // rtf tolerance
+  500,  // num samples
 },
     // RTF >> 1
     test_data_t {
-  20.0,  // rtf
-  5ms,  // sim_time_update_period
+  15.0,  // rtf
+  1ms,  // sim_time_update_period
   5.0,  // rtf tolerance
-  500,  // num samples
+  5000,  // num samples
 },
     // RTF < 1
     test_data_t {
   0.5,  // rtf
-  5ms,  // sim_time_update_period
+  1ms,  // sim_time_update_period
   0.1,  // rtf tolerance
+  500,  // num samples
 }
   ),
   [](const ::testing::TestParamInfo<TestSimTimeManagerRTFWithParams::ParamType> & my_info)
