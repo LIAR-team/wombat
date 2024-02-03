@@ -27,9 +27,9 @@ public:
   SlamManager(
     rclcpp::Node * parent_node,
     const rclcpp::Duration & update_period,
-    const std::string & slam_frame_id);
+    std::string slam_frame_id);
 
-  std::optional<LocalizationData> slam_update(
+  std::optional<localization_data_t> slam_update(
     const geometry_msgs::msg::TransformStamped & gt_T_base,
     const nav_msgs::msg::OccupancyGrid & gt_map);
 

@@ -27,9 +27,9 @@ class GroundTruthManager
 public:
   GroundTruthManager(
     rclcpp::Node * parent_node,
+    std::string ground_truth_frame_id,
     const std::chrono::milliseconds & cmd_timeout,
-    const std::string & ground_truth_frame_id,
-    const std::string & robot_base_frame_id);
+    std::string robot_base_frame_id = "base_link");
 
   geometry_msgs::msg::TransformStamped pose_update(
     const geometry_msgs::msg::TwistStamped & cmd_vel,

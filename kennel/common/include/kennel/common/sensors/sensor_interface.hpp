@@ -23,6 +23,8 @@ class SensorInterface
 public:
   SensorInterface() = default;
 
+  virtual ~SensorInterface() = default;
+
   /**
    * @brief Initialization function for the plugins.
    * This will be called by the entity loading the plugins, right after their construction.
@@ -42,7 +44,7 @@ public:
    * sensor data and produce it.
    * @param gt_data current ground truth information
    */
-  virtual void produce_sensor_data(const LocalizationData & gt_data) = 0;
+  virtual void produce_sensor_data(const localization_data_t & gt_data) = 0;
 };
 
 }  // namespace kennel

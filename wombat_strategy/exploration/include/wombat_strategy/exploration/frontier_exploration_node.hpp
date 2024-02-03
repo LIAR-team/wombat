@@ -55,7 +55,7 @@ private:
    * @return geometry_msgs::msg::Pose::UniquePtr goal location
    */
   geometry_msgs::msg::Pose::UniquePtr
-  select_exploration_goal(const std::vector<Frontier> & frontiers);
+  select_exploration_goal(const std::vector<frontier_t> & frontiers);
 
   /**
    * @brief Select a goal location from a single frontier
@@ -63,7 +63,7 @@ private:
    * @return geometry_msgs::msg::Pose goal to explore this frontier
    */
   geometry_msgs::msg::Pose
-  goal_pose_from_frontier(const Frontier & frontier);
+  goal_pose_from_frontier(const frontier_t & frontier);
 
   /** @brief Send a NavigateToPose action goal to drive towards chosen goal */
 
@@ -90,7 +90,7 @@ private:
    * @param goal the goal we are driving towards
    * @param frontiers the list of active frontiers
    */
-  void visualize_frontiers(const geometry_msgs::msg::Pose & goal, const std::vector<Frontier> & frontiers);
+  void visualize_frontiers(const geometry_msgs::msg::Pose & goal, const std::vector<frontier_t> & frontiers);
 
   std::shared_ptr<nav2_costmap_2d::Costmap2D> m_costmap;
   FrontierDetector m_detector;
@@ -102,7 +102,7 @@ private:
 
   NavigateGoalHandle::SharedPtr m_navigation_goal_handle;
   geometry_msgs::msg::Pose m_current_goal;
-  Frontier m_target_frontier;
+  frontier_t m_target_frontier;
   std::vector<geometry_msgs::msg::Pose> m_attempted_goals;
   double m_exploration_rate;
   double m_min_attempted_goals_distance;

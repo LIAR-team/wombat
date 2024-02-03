@@ -1,3 +1,5 @@
+ExtraArgs:
+  - -std=c++17
 # Full list of available checks: https://releases.llvm.org/10.0.0/tools/clang/tools/extra/docs/clang-tidy/checks/list.html
 Checks:
   bugprone-*,
@@ -40,10 +42,12 @@ CheckOptions:
     value: shared_ptr;SharedPtr
   - key: readability-identifier-naming.ClassCase
     value: CamelCase
-  - key: readability-identifier-naming.StructCase
-    value: CamelCase
   - key: readability-identifier-naming.EnumCase
     value: CamelCase
+  - key: readability-identifier-naming.StructCase
+    value: lower_case
+  - key: readability-identifier-naming.StructSuffix
+    value: _t
   - key: readability-identifier-naming.VariableCase
     value: lower_case
   - key: readability-identifier-naming.FunctionCase,
@@ -64,3 +68,5 @@ CheckOptions:
     value: m_
   - key: readability-identifier-naming.StaticVariablePrefix
     value: s_
+  - key: readability-identifier-naming.VariableIgnoredRegexp
+    value: '([a-z0-9_]+_T_[a-z0-9_]+)'

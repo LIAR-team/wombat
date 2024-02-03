@@ -1,6 +1,5 @@
 # Frontier Exploration
 
-
 Run the frontier exploration node
 
 ```

@@ -13,8 +13,6 @@
 #include "tf2_eigen/tf2_eigen.hpp"
 #include "wombat_core/math/geometry_point.hpp"
 
-using std::placeholders::_1;
-
 namespace wombat_strategy
 {
 
@@ -51,7 +49,7 @@ FrontierExplorationNode::FrontierExplorationNode(const rclcpp::NodeOptions & opt
   m_map_subscription = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
     map_topic,
     10,
-    std::bind(&FrontierExplorationNode::map_callback, this, _1));
+    std::bind(&FrontierExplorationNode::map_callback, this, std::placeholders::_1));
 
   m_prev_num_frontiers = 0;
   if (m_publish_frontiers) {
@@ -85,7 +83,7 @@ FrontierExplorationNode::FrontierExplorationNode(const rclcpp::NodeOptions & opt
   m_tf->setUsingDedicatedThread(true);
   m_tf_listener = std::make_shared<tf2_ros::TransformListener>(*m_tf, this, false);
 
-  FrontierDetector::Params params;
+  FrontierDetector::params_t params;
   params.search_only_free_space = search_only_free_space;
   params.min_unknown_neighbors = min_unknown_neighbors;
   params.min_free_neighbors = min_free_neighbors;
@@ -94,7 +92,7 @@ FrontierExplorationNode::FrontierExplorationNode(const rclcpp::NodeOptions & opt
   params.frontier_size_scaling_factor = frontier_size_scaling_factor;
   m_detector = FrontierDetector(params);
 
-  RCLCPP_INFO(this->get_logger(), "Frontier exploration node created, must be initialized before use!");
+  RCLCPP_INFO(this->get_logger(), "frontier_t exploration node created, must be initialized before use!");
 }
 
 void FrontierExplorationNode::explore()
@@ -218,7 +216,7 @@ void FrontierExplorationNode::explore()
 
 geometry_msgs::msg::Pose::UniquePtr
 FrontierExplorationNode::select_exploration_goal(
-  const std::vector<Frontier> & frontiers)
+  const std::vector<frontier_t> & frontiers)
 {
   // Frontiers are already sorted according to score.
   // We compute a goal location from each sorted frontiers and we select the first valid one.
@@ -227,7 +225,7 @@ FrontierExplorationNode::select_exploration_goal(
   // TODO: this should be optional, not a pointer
   geometry_msgs::msg::Pose::UniquePtr exploration_goal;
 
-  for (const Frontier & f : frontiers) {
+  for (const frontier_t & f : frontiers) {
     geometry_msgs::msg::Pose goal = goal_pose_from_frontier(f);
 
     // A goal is valid if it is far enough from any already attempted goal
@@ -250,7 +248,7 @@ FrontierExplorationNode::select_exploration_goal(
 }
 
 geometry_msgs::msg::Pose
-FrontierExplorationNode::goal_pose_from_frontier(const Frontier & frontier)
+FrontierExplorationNode::goal_pose_from_frontier(const frontier_t & frontier)
 {
   geometry_msgs::msg::Pose goal;
 
@@ -292,7 +290,7 @@ void FrontierExplorationNode::drive_to_pose(const geometry_msgs::msg::Pose & goa
       m_navigation_goal_handle = goal_handle;
     };
   send_goal_options.result_callback =
-    std::bind(&FrontierExplorationNode::navigate_result_callback, this, _1);
+    std::bind(&FrontierExplorationNode::navigate_result_callback, this, std::placeholders::_1);
 
   // Send the goal request
   RCLCPP_INFO(
@@ -370,13 +368,13 @@ void FrontierExplorationNode::map_callback(nav_msgs::msg::OccupancyGrid::SharedP
 
 void FrontierExplorationNode::visualize_frontiers(
   const geometry_msgs::msg::Pose & goal,
-  const std::vector<Frontier> & frontiers)
+  const std::vector<frontier_t> & frontiers)
 {
   RCLCPP_DEBUG(this->get_logger(), "Visualizing frontiers");
 
   // Visualize frontiers as point markers.
   // The color of the frontier indicates its score: red is higher score, blue is lower score
-  float color_scale_factor = 1.0f / frontiers.size();
+  const float color_scale_factor = 1.0f / static_cast<float>(frontiers.size());
 
   visualization_msgs::msg::MarkerArray markers_msg;
 
@@ -387,27 +385,27 @@ void FrontierExplorationNode::visualize_frontiers(
   m.scale.x = 0.03;
   m.scale.y = 0.03;
   m.scale.z = 0.03;
-  m.color.g = 0.0;
-  m.color.a = 1.0;
+  m.color.g = 0.0f;
+  m.color.a = 1.0f;
   m.type = visualization_msgs::msg::Marker::POINTS;
   m.lifetime = rclcpp::Duration::from_nanoseconds(0);
   m.frame_locked = true;
 
   for (size_t i = 0; i < frontiers.size(); i++) {
-    m.color.r = 1.0 - i * color_scale_factor;
-    m.color.b = i * color_scale_factor;
-    m.id = i;
+    m.color.r = 1.0f - static_cast<float>(i) * color_scale_factor;
+    m.color.b = static_cast<float>(i) * color_scale_factor;
+    m.id = static_cast<int>(i);
     m.points = frontiers[i].points;
     markers_msg.markers.push_back(m);
   }
   // Draw goal points in green
-  m.color.r = 0.0;
-  m.color.g = 1.0;
-  m.color.b = 0.0;
+  m.color.r = 0.0f;
+  m.color.g = 1.0f;
+  m.color.b = 0.0f;
   m.scale.x = 0.2;
   m.scale.y = 0.2;
   m.scale.z = 0.03;
-  m.id = frontiers.size();
+  m.id = static_cast<int>(frontiers.size());
   m.points = {{goal.position}};
   markers_msg.markers.push_back(m);
   // Frontiers + goal marker
@@ -417,7 +415,7 @@ void FrontierExplorationNode::visualize_frontiers(
   if (m_prev_num_frontiers > frontiers.size()) {
     m.action = visualization_msgs::msg::Marker::DELETE;
     for (size_t i = current_markers; i < m_prev_num_frontiers; i++) {
-      m.id = i;
+      m.id = static_cast<int>(i);
       markers_msg.markers.push_back(m);
     }
   }

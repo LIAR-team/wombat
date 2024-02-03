@@ -55,7 +55,7 @@ std::optional<grid_index_t> find_grid_coord_on_line(
   const geometry_msgs::msg::Point & from_world,
   const geometry_msgs::msg::Point & to_world,
   const nav_msgs::msg::MapMetaData & map_info,
-  std::function<bool(grid_index_t)> eval_func)
+  const std::function<bool(grid_index_t)> & eval_func)
 {
   // TODO: use a better algorithm (e.g. Bresenham’s)
   // This is not precise and very inefficient.

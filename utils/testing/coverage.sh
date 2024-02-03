@@ -55,5 +55,5 @@ HTML_DIR=$WORKSPACE_DIR/coverage
 # Remove old html directory
 rm -rf ${HTML_DIR}
 
-# Generage html visualization
+# Generate html visualization
 genhtml ${COVERAGE_FILE} --output-directory ${HTML_DIR}

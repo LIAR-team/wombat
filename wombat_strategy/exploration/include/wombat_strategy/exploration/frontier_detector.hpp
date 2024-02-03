@@ -19,7 +19,7 @@ class FrontierDetector
 {
 public:
   /** @brief Parameters to customize the frontier detection operation */
-  struct Params
+  struct params_t
   {
     // If true frontiers search propagates only through FREE cells
     bool search_only_free_space {false};
@@ -39,10 +39,10 @@ public:
   FrontierDetector() = default;
 
   /**
-   * @brief Class constructor to stores provided parametes
+   * @brief Class constructor to store provided parameters
    * @param params configuration parameters
    */
-  explicit FrontierDetector(const Params & params);
+  explicit FrontierDetector(const params_t & params);
 
 
   /**
@@ -68,7 +68,7 @@ public:
     * It requires that a valid pointer to a costmap has already been provided.
     * @return frontiers ranked from best to worst
     */
-  std::vector<Frontier> search_frontiers();
+  std::vector<frontier_t> search_frontiers();
 
   /**
     * @brief Helper function that checks if a frontier is valid.
@@ -76,7 +76,7 @@ public:
     * @param trusted whether the map has been updated or not since when the frontier was computed
     * @return true if the frontier is still valid
     */
-  bool frontier_is_valid(const Frontier & frontier, bool trusted = true);
+  bool frontier_is_valid(const frontier_t & frontier, bool trusted = true);
 
 private:
   static constexpr unsigned int FREE_CELL = 0;
@@ -85,7 +85,7 @@ private:
 
   std::shared_ptr<nav2_costmap_2d::Costmap2D> m_costmap;
   geometry_msgs::msg::Point m_robot_position;  // robot position in world frame
-  Params m_params;
+  params_t m_params;
 
   /**
     * @brief Create a frontier object starting from a given index.
@@ -93,15 +93,15 @@ private:
     * NOTE: This method will not assign a score to the frontier
     * @param starting_cell_idx first identified index belonging to the frontier
     * @param already_included_frontier_indices
-    * @return Frontier the constructed frontier
+    * @return frontier_t the constructed frontier
     */
-  Frontier build_frontier(unsigned int starting_cell_idx, std::vector<bool> & already_included_frontier_indices);
+  frontier_t build_frontier(unsigned int starting_cell_idx, std::vector<bool> & already_included_frontier_indices);
 
   /**
     * @brief Assign a score and ranks the frontiers according to it
     * @param frontiers will be re-ordered according to their descending score
     */
-  void rank_frontiers(std::vector<Frontier> & frontiers);
+  void rank_frontiers(std::vector<frontier_t> & frontiers);
 
   /**
     * @brief checks if a cell denotes a frontier on the current costmap
