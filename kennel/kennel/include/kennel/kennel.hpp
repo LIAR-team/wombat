@@ -12,9 +12,9 @@
 
 #include "nav2_map_server/map_server.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "rosgraph_msgs/msg/clock.hpp"
 
 #include "kennel/robot_sim.hpp"
+#include "kennel/sim_time_manager.hpp"
 
 namespace kennel
 {
@@ -48,12 +48,7 @@ private:
   start_executor(
     std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface> node_base);
 
-  void sim_time_loop();
-
-  rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr m_sim_time_pub;
-  double m_real_time_factor {0.0};
-  std::chrono::milliseconds m_sim_time_update_period {};
-
+  std::unique_ptr<SimTimeManager> m_sim_time_manager;
   std::shared_ptr<nav2_map_server::MapServer> m_map_server;
   std::vector<std::shared_ptr<RobotSim>> m_robots;
   std::vector<std::unique_ptr<thread_with_executor_t>> m_executors;

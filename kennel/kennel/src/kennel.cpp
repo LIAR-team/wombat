@@ -21,19 +21,20 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
 : rclcpp::Node("kennel", options)
 {
   // Simulated time setup
-  m_real_time_factor = this->declare_parameter(
+  const auto rtf = this->declare_parameter(
     "real_time_factor",
     rclcpp::ParameterValue{1.0}).get<double>();
-  m_sim_time_update_period = std::chrono::milliseconds(
+  const auto sim_time_update_period = std::chrono::milliseconds(
     this->declare_parameter(
       "sim_time_update_period_ms",
       rclcpp::ParameterValue{5}).get<int>());
-  if (m_real_time_factor <= 0.0) {
-    throw std::runtime_error("Invalid real time factor: " + std::to_string(m_real_time_factor));
+  if (rtf <= 0.0) {
+    throw std::runtime_error("Invalid real time factor: " + std::to_string(rtf));
   }
-  m_sim_time_pub = this->create_publisher<rosgraph_msgs::msg::Clock>(
-    "/clock",
-    rclcpp::ClockQoS());
+  m_sim_time_manager = std::make_unique<SimTimeManager>(
+    this,
+    rtf,
+    std::chrono::milliseconds(sim_time_update_period));
 
   // Map server setup
   std::string map_yaml_filename = this->declare_parameter(
@@ -69,7 +70,7 @@ void Kennel::run()
   // Start sim time thread
   m_sim_time_thread = std::make_unique<std::thread>(
     [this]() {
-      sim_time_loop();
+      m_sim_time_manager->run();
     });
 
   // Start executor for this node
@@ -88,30 +89,6 @@ void Kennel::run()
   if (m_map_server) {
     auto executor = start_executor(m_map_server->get_node_base_interface());
     m_executors.push_back(std::move(executor));
-  }
-}
-
-void Kennel::sim_time_loop()
-{
-  auto last_loop_ts = std::chrono::steady_clock::now();
-  int64_t sim_time_nanoseconds = 0;
-  while (rclcpp::ok()) {
-    const auto now = std::chrono::steady_clock::now();
-    const auto steady_time_since_last_loop = now - last_loop_ts;
-    const auto steady_time_since_last_loop_nanoseconds =
-      std::chrono::duration_cast<std::chrono::nanoseconds>(steady_time_since_last_loop);
-
-    sim_time_nanoseconds +=
-      static_cast<int64_t>(m_real_time_factor * static_cast<double>(steady_time_since_last_loop_nanoseconds.count()));
-    last_loop_ts = now;
-
-    // Publish the simulated time
-    auto clock_msg = std::make_unique<rosgraph_msgs::msg::Clock>();
-    clock_msg->clock = rclcpp::Time(sim_time_nanoseconds, RCL_ROS_TIME);
-    m_sim_time_pub->publish(std::move(clock_msg));
-
-    // Sleep until next iteration
-    std::this_thread::sleep_for(m_sim_time_update_period);
   }
 }
 

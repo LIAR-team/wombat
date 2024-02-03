@@ -1,4 +1,5 @@
 add_library(kennel_lib SHARED)
+add_library(kennel::kennel ALIAS kennel_lib)
 target_sources(
   kennel_lib
   PRIVATE
@@ -6,6 +7,7 @@ target_sources(
     src/mobile_base/mobile_base.cpp
     src/mobile_base/slam_manager.cpp
     src/kennel.cpp
+    src/sim_time_manager.cpp
     src/robot_sim.cpp
 )
 target_include_directories(
@@ -28,7 +30,7 @@ target_link_libraries(
 )
 
 add_executable(kennel main.cpp)
-target_link_libraries(kennel PRIVATE kennel_lib)
+target_link_libraries(kennel PRIVATE kennel::kennel)
 
 wombat_install_target(kennel_lib)
 wombat_install_target(kennel)
