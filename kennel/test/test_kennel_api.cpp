@@ -17,7 +17,6 @@ static std::filesystem::path s_data_dir;
 static std::string get_data_path(const std::string & filename)
 {
   auto file_path = s_data_dir / filename;
-  std::cout<<"PATH "<< file_path.string()<<std::endl;
   return file_path.string();
 }
 
