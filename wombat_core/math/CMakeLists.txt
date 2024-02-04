@@ -15,7 +15,13 @@ target_include_directories(
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-target_link_libraries(math PUBLIC tf2::tf2 tf2_geometry_msgs::tf2_geometry_msgs)
-ament_target_dependencies(math PUBLIC geometry_msgs nav_msgs)
+target_link_libraries(
+  math
+  PUBLIC
+    ${geometry_msgs_TARGETS}
+    ${nav_msgs_TARGETS}
+  PRIVATE
+    tf2::tf2
+    tf2_geometry_msgs::tf2_geometry_msgs)
 
 wombat_install_target(math)

@@ -13,7 +13,11 @@ target_include_directories(
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-
-ament_target_dependencies(costmap PUBLIC geometry_msgs nav2_costmap_2d)
+target_link_libraries(
+  costmap
+  PUBLIC
+    ${geometry_msgs_TARGETS}
+)
+ament_target_dependencies(costmap PUBLIC nav2_costmap_2d)
 
 wombat_install_target(costmap)
