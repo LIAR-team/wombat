@@ -36,13 +36,18 @@ public:
 
   void run();
 
+  void stop();
+
 private:
-  bool setup_robot(const std::string & robot_name);
+  bool setup_robot(
+    const std::string & robot_name,
+    const rclcpp::NodeOptions & node_options);
 
   bool setup_map_manager(
     const std::string & map_yaml_filename,
     const std::string & map_frame_id,
-    const std::string & map_topic_name);
+    const std::string & map_topic_name,
+    const rclcpp::NodeOptions & node_options);
 
   std::unique_ptr<thread_with_executor_t>
   start_executor(

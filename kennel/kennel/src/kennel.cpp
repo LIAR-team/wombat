@@ -37,28 +37,32 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
     std::chrono::milliseconds(sim_time_update_period));
 
   // Map server setup
-  std::string map_yaml_filename = this->declare_parameter(
+  const std::string map_yaml_filename = this->declare_parameter(
     "map_yaml_filename",
     rclcpp::ParameterValue{std::string("")}).get<std::string>();
-  std::string map_frame_id = this->declare_parameter(
+  const std::string map_frame_id = this->declare_parameter(
     "map_frame_id",
     rclcpp::ParameterValue{std::string("map")}).get<std::string>();
-  std::string map_topic_name = this->declare_parameter(
+  const std::string map_topic_name = this->declare_parameter(
     "map_topic_name",
     rclcpp::ParameterValue{std::string("map")}).get<std::string>();
   if (!map_yaml_filename.empty()) {
-    bool map_setup_success = setup_map_manager(map_yaml_filename, map_frame_id, map_topic_name);
+    const bool map_setup_success = setup_map_manager(
+      map_yaml_filename,
+      map_frame_id,
+      map_topic_name,
+      options);
     if (!map_setup_success) {
       throw std::runtime_error("Failed to setup map: " + map_yaml_filename);
     }
   }
 
   // Robots setup
-  std::vector<std::string> robot_names = this->declare_parameter(
+  const std::vector<std::string> robot_names = this->declare_parameter(
     "robots",
     rclcpp::ParameterValue{std::vector<std::string>()}).get<std::vector<std::string>>();
   for (const auto & name : robot_names) {
-    bool robot_setup_success = setup_robot(name);
+    const bool robot_setup_success = setup_robot(name, options);
     if (!robot_setup_success) {
       throw std::runtime_error("Failed to setup robot: " + name);
     }
@@ -92,7 +96,22 @@ void Kennel::run()
   }
 }
 
-bool Kennel::setup_robot(const std::string & robot_name)
+void Kennel::stop()
+{
+  for (auto & exec_with_thread : m_executors) {
+    exec_with_thread->executor->cancel();
+    exec_with_thread->thread->join();
+  }
+  m_executors.clear();
+
+  m_sim_time_manager->stop();
+  m_sim_time_thread->join();
+  m_sim_time_thread.reset();
+}
+
+bool Kennel::setup_robot(
+  const std::string & robot_name,
+  const rclcpp::NodeOptions & node_options)
 {
   // A robot must have a name
   // TODO: enforce that names are unique
@@ -100,17 +119,15 @@ bool Kennel::setup_robot(const std::string & robot_name)
     return false;
   }
 
-  std::vector<std::string> remap_rules;
-  remap_rules.push_back("--ros-args");
-  remap_rules.push_back("-r");
-  remap_rules.push_back("__ns:=/" + robot_name);
+  auto robot_node_options = node_options;
 
-  std::vector<rclcpp::Parameter> parameters;
-  parameters.push_back(rclcpp::Parameter("use_sim_time", true));
+  auto robot_arguments = robot_node_options.arguments();
+  robot_arguments.push_back("--ros-args");
+  robot_arguments.push_back("-r");
+  robot_arguments.push_back("__ns:=/" + robot_name);
 
-  auto robot_node_options = rclcpp::NodeOptions()
-    .arguments(remap_rules)
-    .parameter_overrides(parameters);
+  robot_node_options.append_parameter_override("use_sim_time", true);
+  robot_node_options.arguments(robot_arguments);
 
   auto robot_node = std::make_shared<RobotSim>(robot_node_options);
   m_robots.push_back(robot_node);
@@ -121,7 +138,8 @@ bool Kennel::setup_robot(const std::string & robot_name)
 bool Kennel::setup_map_manager(
   const std::string & map_yaml_filename,
   const std::string & map_frame_id,
-  const std::string & map_topic_name)
+  const std::string & map_topic_name,
+  const rclcpp::NodeOptions & node_options)
 {
   // The map server requires a filename defining the map
   // TODO: check that the file exists and is valid
@@ -130,27 +148,27 @@ bool Kennel::setup_map_manager(
     return false;
   }
 
-  std::vector<rclcpp::Parameter> parameters;
-  parameters.push_back(rclcpp::Parameter("yaml_filename", map_yaml_filename));
+  auto map_options = node_options;
+  map_options.append_parameter_override("yaml_filename", map_yaml_filename);
+  map_options.append_parameter_override("use_sim_time", true);
   if (!map_frame_id.empty()) {
-    parameters.push_back(rclcpp::Parameter("frame_id", map_frame_id));
+    map_options.append_parameter_override("frame_id", map_frame_id);
   }
   if (!map_topic_name.empty()) {
-    parameters.push_back(rclcpp::Parameter("topic_name", map_topic_name));
+    map_options.append_parameter_override("topic_name", map_topic_name);
   }
-  parameters.push_back(rclcpp::Parameter("use_sim_time", true));
-  auto map_options = rclcpp::NodeOptions()
-    .parameter_overrides(parameters);
 
   m_map_server = std::make_shared<nav2_map_server::MapServer>(map_options);
   CallbackReturn ret {CallbackReturn::FAILURE};
   m_map_server->configure(ret);
   if (ret != CallbackReturn::SUCCESS) {
-    assert(0 && "Failed to configure");
+    RCLCPP_ERROR(this->get_logger(), "Map server configuration failed");
+    return false;
   }
   m_map_server->activate(ret);
   if (ret != CallbackReturn::SUCCESS) {
-    assert(0 && "Failed to activate");
+    RCLCPP_ERROR(this->get_logger(), "Map server activation failed");
+    return false;
   }
 
   return true;
