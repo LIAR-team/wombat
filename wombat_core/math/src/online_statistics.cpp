@@ -25,7 +25,7 @@ void OnlineStatistics::add_sample(double new_sample)
 
   m_num_samples++;
   const auto delta = new_sample - m_mean;
-  m_mean += delta / m_num_samples;
+  m_mean += delta / static_cast<double>(m_num_samples);
   const auto delta2 = new_sample - m_mean;
   m_m2 += delta * delta2;
 }
@@ -44,7 +44,7 @@ double OnlineStatistics::variance() const
     return 0;
   }
 
-  return m_m2 / m_num_samples;
+  return m_m2 / static_cast<double>(m_num_samples);
 }
 
 double OnlineStatistics::stddev() const
