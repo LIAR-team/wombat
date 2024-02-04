@@ -21,6 +21,7 @@ target_link_libraries(
   PUBLIC
     kennel::common
     rclcpp::rclcpp
+    wombat_core::ros2
     ${geometry_msgs_TARGETS}
     ${nav_msgs_TARGETS}
     ${rosgraph_msgs_TARGETS}
