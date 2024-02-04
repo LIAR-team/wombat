@@ -15,6 +15,7 @@
 
 #include "kennel/robot_sim.hpp"
 #include "kennel/sim_time_manager.hpp"
+#include "wombat_core/ros2/node_interfaces.hpp"
 
 namespace kennel
 {
@@ -23,19 +24,26 @@ namespace kennel
  * @brief Main entry-point for the Kennel library.
  * Used to setup one or more simulated robots in the environment.
  */
-class Kennel : public rclcpp::Node
+class Kennel
 {
-  struct thread_with_executor_t
+  struct node_execution_data_t
   {
     std::unique_ptr<std::thread> thread;
     std::shared_ptr<rclcpp::Executor> executor;
+    std::shared_ptr<wombat_core::NodeInterfaces> node_interfaces;
   };
 
 public:
+  /**
+   * @brief Construct the kennel.
+   * @param options ROS 2 node options that will be forwarded to all internal nodes
+   */
   explicit Kennel(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
+  /** @brief Start running the kennel until instructed to stop */
   void run();
 
+  /** @brief Stop the kennel. This function will block until it's fully stopped */
   void stop();
 
 private:
@@ -49,14 +57,17 @@ private:
     const std::string & map_topic_name,
     const rclcpp::NodeOptions & node_options);
 
-  std::unique_ptr<thread_with_executor_t>
+  rclcpp::Logger get_logger();
+
+  std::unique_ptr<node_execution_data_t>
   start_executor(
-    std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface> node_base);
+    std::shared_ptr<wombat_core::NodeInterfaces> node_interfaces);
 
   std::unique_ptr<SimTimeManager> m_sim_time_manager;
+  std::shared_ptr<rclcpp::Node> m_kennel_node;
   std::shared_ptr<nav2_map_server::MapServer> m_map_server;
   std::vector<std::shared_ptr<RobotSim>> m_robots;
-  std::vector<std::unique_ptr<thread_with_executor_t>> m_executors;
+  std::vector<std::unique_ptr<node_execution_data_t>> m_executors;
   std::unique_ptr<std::thread> m_sim_time_thread;
 };
 

@@ -18,32 +18,33 @@ namespace kennel
 {
 
 Kennel::Kennel(const rclcpp::NodeOptions & options)
-: rclcpp::Node("kennel", options)
 {
+  m_kennel_node = std::make_shared<rclcpp::Node>("kennel", options);
+
   // Simulated time setup
-  const auto rtf = this->declare_parameter(
+  const auto rtf = m_kennel_node->declare_parameter(
     "real_time_factor",
     rclcpp::ParameterValue{1.0}).get<double>();
   const auto sim_time_update_period = std::chrono::milliseconds(
-    this->declare_parameter(
+    m_kennel_node->declare_parameter(
       "sim_time_update_period_ms",
       rclcpp::ParameterValue{5}).get<int>());
   if (rtf <= 0.0) {
     throw std::runtime_error("Invalid real time factor: " + std::to_string(rtf));
   }
   m_sim_time_manager = std::make_unique<SimTimeManager>(
-    this,
+    m_kennel_node.get(),
     rtf,
     std::chrono::milliseconds(sim_time_update_period));
 
   // Map server setup
-  const std::string map_yaml_filename = this->declare_parameter(
+  const std::string map_yaml_filename = m_kennel_node->declare_parameter(
     "map_yaml_filename",
     rclcpp::ParameterValue{std::string("")}).get<std::string>();
-  const std::string map_frame_id = this->declare_parameter(
+  const std::string map_frame_id = m_kennel_node->declare_parameter(
     "map_frame_id",
     rclcpp::ParameterValue{std::string("map")}).get<std::string>();
-  const std::string map_topic_name = this->declare_parameter(
+  const std::string map_topic_name = m_kennel_node->declare_parameter(
     "map_topic_name",
     rclcpp::ParameterValue{std::string("map")}).get<std::string>();
   if (!map_yaml_filename.empty()) {
@@ -58,7 +59,7 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
   }
 
   // Robots setup
-  const std::vector<std::string> robot_names = this->declare_parameter(
+  const std::vector<std::string> robot_names = m_kennel_node->declare_parameter(
     "robots",
     rclcpp::ParameterValue{std::vector<std::string>()}).get<std::vector<std::string>>();
   for (const auto & name : robot_names) {
@@ -77,21 +78,21 @@ void Kennel::run()
       m_sim_time_manager->run();
     });
 
-  // Start executor for this node
+  // Start executor for the kennel node
   {
-    auto executor = start_executor(this->get_node_base_interface());
+    auto executor = start_executor(std::make_shared<wombat_core::NodeInterfaces>(m_kennel_node));
     m_executors.push_back(std::move(executor));
   }
 
   // Start robot executor threads
   for (const auto & robot_node : m_robots) {
-    auto executor = start_executor(robot_node->get_node_base_interface());
+    auto executor = start_executor(std::make_shared<wombat_core::NodeInterfaces>(robot_node));
     m_executors.push_back(std::move(executor));
   }
 
   // Start map server executor thread
   if (m_map_server) {
-    auto executor = start_executor(m_map_server->get_node_base_interface());
+    auto executor = start_executor(std::make_shared<wombat_core::NodeInterfaces>(m_map_server));
     m_executors.push_back(std::move(executor));
   }
 }
@@ -174,20 +175,26 @@ bool Kennel::setup_map_manager(
   return true;
 }
 
-std::unique_ptr<Kennel::thread_with_executor_t>
+std::unique_ptr<Kennel::node_execution_data_t>
 Kennel::start_executor(
-  std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface> node_base)
+  std::shared_ptr<wombat_core::NodeInterfaces> node_interfaces)
 {
   auto executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
-  executor->add_node(node_base);
-  auto thread_and_executor = std::make_unique<thread_with_executor_t>();
-  thread_and_executor->thread = std::make_unique<std::thread>(
+  executor->add_node(node_interfaces->get_node_base_interface());
+  auto data = std::make_unique<node_execution_data_t>();
+  data->thread = std::make_unique<std::thread>(
     [executor]() {
       executor->spin();
     });
-  thread_and_executor->executor = executor;
+  data->executor = executor;
+  data->node_interfaces = std::move(node_interfaces);
 
-  return thread_and_executor;
+  return data;
+}
+
+rclcpp::Logger Kennel::get_logger()
+{
+  return m_kennel_node->get_logger();
 }
 
 }  // namespace kennel
