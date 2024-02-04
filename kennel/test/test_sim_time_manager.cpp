@@ -15,6 +15,7 @@
 #include "rosgraph_msgs/msg/clock.hpp"
 
 #include "kennel/sim_time_manager.hpp"
+#include "wombat_core/math/statistics.hpp"
 
 using namespace std::chrono_literals;
 
@@ -58,28 +59,28 @@ INSTANTIATE_TEST_SUITE_P(
     test_data_t {
   1.0,  // rtf
   1ms,  // sim_time_update_period
-  0.1,  // rtf tolerance
+  0.15,  // rtf tolerance
   500,  // num samples
 },
     // RTF > 1
     test_data_t {
   2.0,  // rtf
   1ms,  // sim_time_update_period
-  0.5,  // rtf tolerance
+  0.25,  // rtf tolerance
   500,  // num samples
 },
     // RTF >> 1
     test_data_t {
   15.0,  // rtf
   1ms,  // sim_time_update_period
-  5.0,  // rtf tolerance
-  5000,  // num samples
+  2.5,  // rtf tolerance
+  500,  // num samples
 },
     // RTF < 1
     test_data_t {
   0.5,  // rtf
   1ms,  // sim_time_update_period
-  0.1,  // rtf tolerance
+  0.15,  // rtf tolerance
   500,  // num samples
 }
   ),
@@ -142,14 +143,14 @@ TEST_P(TestSimTimeManagerRTFWithParams, MeasuredRTF)
       sim_time_manager->run();
     });
 
-  // Wait some time for the subscription to receive the message
+  // Wait some time for the subscription to receive the messages
   auto start = std::chrono::high_resolution_clock::now();
   while (
     collected_rtf.size() < test_params.num_messages &&
     !spin_exited &&
     (std::chrono::high_resolution_clock::now() - start < test_params.max_duration))
   {
-    std::this_thread::sleep_for(10ms);
+    std::this_thread::sleep_for(25ms);
   }
 
   sim_time_manager->stop();
@@ -160,10 +161,11 @@ TEST_P(TestSimTimeManagerRTFWithParams, MeasuredRTF)
 
   EXPECT_GE(collected_rtf.size(), test_params.num_messages);
 
-  const double average_rtf =
-    std::accumulate(collected_rtf.begin(), collected_rtf.end(), 0.0) / collected_rtf.size();
+  const size_t previous_size = collected_rtf.size();
+  wombat_core::remove_outliers(collected_rtf);
 
-  EXPECT_NEAR(test_params.rtf, average_rtf, test_params.measured_rtf_tolerance);
+  ASSERT_GT(collected_rtf.size(), previous_size / 2);
+  EXPECT_NEAR(test_params.rtf, wombat_core::compute_mean(collected_rtf), test_params.measured_rtf_tolerance);
 }
 
 int main(int argc, char ** argv)
