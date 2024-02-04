@@ -38,6 +38,8 @@ jobs:
     container:
       image: ${{ needs.Setup-Wombat.outputs.DEV_ENV_IMAGE }}
     env:
+      # This variable is correct (it's pointing to a valid path in the docker)
+      # depsite the presence of https://github.com/actions/runner/issues/2058
       COLCON_HOME: ${{ github.workspace }}/.colcon
     steps:
       - name: Check out repository code
@@ -53,11 +55,14 @@ jobs:
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          CHANGED_PKGS=""
+          CHANGED_DIRS=""
           for file in ${ALL_CHANGED_FILES}; do
             FILE_PACKAGE_DIR=$(echo ${file} | cut -d "/" -f1)
-            CHANGED_PKGS="${FILE_PACKAGE_DIR} ${CHANGED_PKGS}"
+            CHANGED_DIRS="${FILE_PACKAGE_DIR} ${CHANGED_DIRS}"
           done
+          UNIQUE_CHANGED_DIRS=$(echo "$b" | xargs -n1 | sort -u | xargs)
+          ALL_PKGS=$(colcon list --names-only | xargs)
+          CHANGED_PKGS=$(comm -12 <(echo ${UNIQUE_CHANGED_DIRS} | tr " " "\n" | sort) <(echo ${ALL_PKGS} | tr " " "\n" | sort))
           echo "Changed packages: ${CHANGED_PKGS}"
           echo "ALL_CHANGED_PACKAGES=${CHANGED_PKGS}" >> "$GITHUB_OUTPUT"
       - name: Build wombat
@@ -85,6 +90,9 @@ jobs:
     container:
       image: ${{ needs.Setup-Wombat.outputs.DEV_ENV_IMAGE }}
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
       - name: Build doxygen
         run: |
-          $PWD/utils/doxygen/doxygen.sh
+          source /home/docker-dev/.bashrc \
+          && ${GITHUB_WORKSPACE}/utils/doxygen/doxygen.sh
