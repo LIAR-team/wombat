@@ -18,17 +18,40 @@ namespace kennel
 {
 
 Kennel::Kennel(const rclcpp::NodeOptions & options)
+: m_node_options(options)
 {
-  m_kennel_node = std::make_shared<rclcpp::Node>("kennel", options);
+  m_kennel_node = std::make_shared<rclcpp::Node>("kennel", m_node_options);
 
-  // Simulated time setup
-  const auto rtf = m_kennel_node->declare_parameter(
+  // Declare parameters
+  m_kennel_node->declare_parameter(
     "real_time_factor",
-    rclcpp::ParameterValue{1.0}).get<double>();
-  const auto sim_time_update_period = std::chrono::milliseconds(
-    m_kennel_node->declare_parameter(
-      "sim_time_update_period_ms",
-      rclcpp::ParameterValue{5}).get<int>());
+    rclcpp::ParameterValue{1.0});
+  m_kennel_node->declare_parameter(
+    "sim_time_update_period_ms",
+    rclcpp::ParameterValue{5});
+
+  m_kennel_node->declare_parameter(
+    "map_yaml_filename",
+    rclcpp::ParameterValue{std::string("")});
+  m_kennel_node->declare_parameter(
+    "map_frame_id",
+    rclcpp::ParameterValue{std::string("map")});
+  m_kennel_node->declare_parameter(
+    "map_topic_name",
+    rclcpp::ParameterValue{std::string("map")});
+
+  m_kennel_node->declare_parameter(
+    "robots",
+    rclcpp::ParameterValue{std::vector<std::string>()});
+}
+
+void Kennel::configure()
+{
+  // Simulated time setup
+  const auto rtf = m_kennel_node->get_parameter("real_time_factor")
+    .get_value<double>();
+  const auto sim_time_update_period = m_kennel_node->get_parameter("sim_time_update_period_ms")
+    .get_value<int>();
   if (rtf <= 0.0) {
     throw std::runtime_error("Invalid real time factor: " + std::to_string(rtf));
   }
@@ -38,40 +61,82 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
     std::chrono::milliseconds(sim_time_update_period));
 
   // Map server setup
-  const std::string map_yaml_filename = m_kennel_node->declare_parameter(
-    "map_yaml_filename",
-    rclcpp::ParameterValue{std::string("")}).get<std::string>();
-  const std::string map_frame_id = m_kennel_node->declare_parameter(
-    "map_frame_id",
-    rclcpp::ParameterValue{std::string("map")}).get<std::string>();
-  const std::string map_topic_name = m_kennel_node->declare_parameter(
-    "map_topic_name",
-    rclcpp::ParameterValue{std::string("map")}).get<std::string>();
+  const auto map_yaml_filename = m_kennel_node->get_parameter("map_yaml_filename")
+    .get_value<std::string>();
+  const auto map_frame_id = m_kennel_node->get_parameter("map_frame_id")
+    .get_value<std::string>();
+  const auto map_topic_name = m_kennel_node->get_parameter("map_topic_name")
+    .get_value<std::string>();
   if (!map_yaml_filename.empty()) {
     const bool map_setup_success = setup_map_manager(
       map_yaml_filename,
       map_frame_id,
       map_topic_name,
-      options);
+      m_node_options);
     if (!map_setup_success) {
       throw std::runtime_error("Failed to setup map: " + map_yaml_filename);
     }
   }
 
   // Robots setup
-  const std::vector<std::string> robot_names = m_kennel_node->declare_parameter(
-    "robots",
-    rclcpp::ParameterValue{std::vector<std::string>()}).get<std::vector<std::string>>();
+  const auto robot_names = m_kennel_node->get_parameter("robots")
+    .get_value<std::vector<std::string>>();
   for (const auto & name : robot_names) {
-    const bool robot_setup_success = setup_robot(name, options);
+    const bool robot_setup_success = setup_robot(name, m_node_options);
     if (!robot_setup_success) {
       throw std::runtime_error("Failed to setup robot: " + name);
     }
   }
+
+  m_is_configured = true;
 }
 
-void Kennel::run()
+bool Kennel::load_parameters_yaml(const std::string & yaml_file_path)
 {
+  rclcpp::ParameterMap parameters_map;
+  try {
+    parameters_map = rclcpp::parameter_map_from_yaml_file(yaml_file_path);
+  } catch (std::runtime_error & ex) {
+    RCLCPP_ERROR(this->get_logger(), "Exception while creating parameters map: %s", ex.what());
+    return false;
+  }
+
+  for (auto & node_data : m_executors) {
+    const auto node_fully_qualified_name =
+      node_data->node_interfaces->node_base->get_fully_qualified_name();
+    const auto node_parameters = rclcpp::parameters_from_map(
+      parameters_map,
+      node_fully_qualified_name);
+    const auto params_result =
+      node_data->node_interfaces->node_parameters->set_parameters(node_parameters);
+
+    // Check that all parameters have been successfully set
+    for (const auto & result : params_result) {
+      if (!result.successful) {
+        RCLCPP_WARN(
+          this->get_logger(), "Failed to set params for %s: %s",
+          node_fully_qualified_name,
+          result.reason.c_str());
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+void Kennel::start()
+{
+  if (m_is_started) {
+    RCLCPP_WARN(this->get_logger(), "Kennel is already started");
+    return;
+  }
+
+  if (!m_is_configured) {
+    RCLCPP_INFO(this->get_logger(), "Kennel was not configured before running: doing it now");
+    this->configure();
+  }
+
   // Start sim time thread
   m_sim_time_thread = std::make_unique<std::thread>(
     [this]() {
@@ -95,11 +160,25 @@ void Kennel::run()
     auto executor = start_executor(std::make_shared<wombat_core::NodeInterfaces>(m_map_server));
     m_executors.push_back(std::move(executor));
   }
+
+  m_is_started = true;
+  RCLCPP_INFO(this->get_logger(), "Kennel has been started");
 }
 
 void Kennel::stop()
 {
+  if (!m_is_started) {
+    RCLCPP_WARN(this->get_logger(), "Kennel wasn't started, nothing to stop");
+    return;
+  }
+
   for (auto & exec_with_thread : m_executors) {
+    // Cancelling a timer that isn't spinning is a no-op.
+    // First wait for the timers to be spinning before issuing the signal.
+    // Note that if rclcpp context is shutdown we should stop waiting.
+    while (!exec_with_thread->executor->is_spinning() && rclcpp::ok()) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
     exec_with_thread->executor->cancel();
     exec_with_thread->thread->join();
   }
@@ -108,6 +187,11 @@ void Kennel::stop()
   m_sim_time_manager->stop();
   m_sim_time_thread->join();
   m_sim_time_thread.reset();
+
+  m_is_configured = false;
+  m_is_started = false;
+
+  RCLCPP_INFO(this->get_logger(), "Kennel has been stopped");
 }
 
 bool Kennel::setup_robot(

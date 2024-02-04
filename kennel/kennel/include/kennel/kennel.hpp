@@ -22,7 +22,8 @@ namespace kennel
 
 /**
  * @brief Main entry-point for the Kennel library.
- * Used to setup one or more simulated robots in the environment.
+ * Used to setup and run one or more simulated robots in the environment.
+ * The use of this class is not thread-safe.
  */
 class Kennel
 {
@@ -41,12 +42,21 @@ public:
   explicit Kennel(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
   /** @brief Start running the kennel until instructed to stop */
-  void run();
+  void start();
 
   /** @brief Stop the kennel. This function will block until it's fully stopped */
   void stop();
 
+  /**
+   * @brief Loads a yaml file and sets parameters for all the internal nodes.
+   * @param yaml_file_path path to the yaml file to read
+   * @return true if file was loaded and parameters set successfully
+   */
+  bool load_parameters_yaml(const std::string & yaml_file_path);
+
 private:
+  void configure();
+
   bool setup_robot(
     const std::string & robot_name,
     const rclcpp::NodeOptions & node_options);
@@ -62,6 +72,10 @@ private:
   std::unique_ptr<node_execution_data_t>
   start_executor(
     std::shared_ptr<wombat_core::NodeInterfaces> node_interfaces);
+
+  rclcpp::NodeOptions m_node_options;
+  bool m_is_configured {false};
+  bool m_is_started {false};
 
   std::unique_ptr<SimTimeManager> m_sim_time_manager;
   std::shared_ptr<rclcpp::Node> m_kennel_node;
