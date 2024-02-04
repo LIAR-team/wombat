@@ -55,4 +55,10 @@ inline typename ContainerT::value_type compute_variance(const ContainerT & popul
   return variance;
 }
 
+/**
+ * @brief Removes outliers from a population using the IQR method.
+ * @param data the population: this will be modified in-place
+ */
+void remove_outliers(std::vector<double> & data);
+
 }  // namespace wombat_core

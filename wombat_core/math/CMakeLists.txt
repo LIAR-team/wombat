@@ -8,6 +8,7 @@ target_sources(
     src/angles.cpp
     src/grid.cpp
     src/online_statistics.cpp
+    src/statistics.cpp
     src/transformations.cpp
 )
 
