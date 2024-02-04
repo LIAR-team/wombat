@@ -7,6 +7,7 @@ target_sources(
   PRIVATE
     src/angles.cpp
     src/grid.cpp
+    src/online_statistics.cpp
     src/transformations.cpp
 )
 
