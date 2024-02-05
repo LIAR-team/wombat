@@ -13,7 +13,7 @@ cd ${WOMBAT_DIR}
 # Build workspace
 colcon build --mixin wombat coverage
 # Run tests
-colcon test --mixin no-linters coverage
+colcon test --mixin no-lint coverage
 
 WORKSPACE_DIR=${WOMBAT_DIR}/_ws
 BUILD_DIR=${WORKSPACE_DIR}/build
