@@ -48,6 +48,11 @@ void SimTimeManager::run()
   }
 }
 
+bool SimTimeManager::is_running() const
+{
+  return m_should_run;
+}
+
 void SimTimeManager::stop()
 {
   m_should_run = false;

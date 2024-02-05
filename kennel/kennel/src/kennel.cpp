@@ -184,6 +184,9 @@ void Kennel::stop()
   }
   m_executors.clear();
 
+  while (!m_sim_time_manager->is_running() && rclcpp::ok()) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+  }
   m_sim_time_manager->stop();
   m_sim_time_thread->join();
   m_sim_time_thread.reset();
