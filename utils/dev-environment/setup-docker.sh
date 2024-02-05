@@ -10,6 +10,9 @@ UTILS_SCRIPT=${THIS_DIR}/utils.sh
 
 source ${UTILS_SCRIPT}
 
+# Parse command line arguments
+COMMAND_LINE_ARGS="$@"
+
 # Change directory to the root of the repository
 cd ${REPO_DIR}
 
@@ -17,6 +20,13 @@ cd ${REPO_DIR}
 RESTART_SUGGESTED=0
 
 IS_UBUNTU_HOST=$(is_ubuntu_host)
+
+GPU_SUPPORT="true"
+NO_GPU_ARG="--no-gpu"
+if [[ ${NO_GPU_ARG} =~ "${COMMAND_LINE_ARGS}" ]] && [ -n "${IS_UBUNTU_HOST}" ]; then
+  echo "Ignoring GPU support"
+  GPU_SUPPORT=""
+fi
 
 # Make sure docker is already installed on the system
 if [ -x "$(command -v docker)" ]; then
@@ -56,7 +66,7 @@ elif [ -n "${IS_UBUNTU_HOST}" ]; then
 fi
 
 # Try to install nvidia GPU drivers and related docker support
-if [ -n "${IS_UBUNTU_HOST}" ]; then
+if [ -n "${GPU_SUPPORT}" ]; then
   if [ ! -x "$(command -v lshw)" ]; then
     sudo apt-get update && sudo apt-get install -y lshw
   fi
