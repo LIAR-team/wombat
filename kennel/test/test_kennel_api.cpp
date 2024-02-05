@@ -12,13 +12,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "kennel/kennel.hpp"
-
-static std::filesystem::path s_data_dir;
-static std::string get_data_path(const std::string & filename)
-{
-  auto file_path = s_data_dir / filename;
-  return file_path.string();
-}
+#include "utils.hpp"
 
 class TestKennelRos : public testing::Test
 {
@@ -72,10 +66,10 @@ TEST_F(TestKennelRos, shutdown_before_stop)
   kennel->stop();
 }
 
-TEST_F(TestKennelRos, load_parameters_yaml)
+TEST_F(TestKennelRos, configure_yaml)
 {
   auto kennel = std::make_unique<kennel::Kennel>();
-  bool load_success = kennel->load_parameters_yaml(get_data_path("empty_world.yaml"));
+  bool load_success = kennel->configure(get_data_path("empty_world.yaml"));
   ASSERT_TRUE(load_success);
   kennel->start();
   kennel->stop();
@@ -84,7 +78,7 @@ TEST_F(TestKennelRos, load_parameters_yaml)
 TEST_F(TestKennelRos, non_existant_parameters)
 {
   auto kennel = std::make_unique<kennel::Kennel>();
-  bool load_success = kennel->load_parameters_yaml(get_data_path("this_does_not_exist"));
+  bool load_success = kennel->configure(get_data_path("this_does_not_exist"));
   ASSERT_FALSE(load_success);
   kennel->start();
   kennel->stop();
@@ -92,15 +86,7 @@ TEST_F(TestKennelRos, non_existant_parameters)
 
 int main(int argc, char ** argv)
 {
-  const auto env_var = "KENNEL_TEST_DATADIR";
-  char * value = std::getenv(env_var);
-  if (value != NULL) {
-    s_data_dir = value;
-  } else {
-    std::cout << "The " << env_var << " environment variable is not set." << std::endl;
-    assert(0);
-  }
-
+  setup_data_dir_path();
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

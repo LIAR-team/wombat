@@ -48,18 +48,29 @@ public:
   void stop();
 
   /**
-   * @brief Loads a yaml file and sets parameters for all the internal nodes.
-   * @param yaml_file_path path to the yaml file to read
-   * @return true if file was loaded and parameters set successfully
+   * @brief Configure the Kennel, preparing it for the next start
+   * @param yaml_file_path optional path to a yaml configuration file
+   * @return true if configuration is successful
    */
-  bool load_parameters_yaml(const std::string & yaml_file_path);
+  bool configure(const std::string & yaml_file_path = "");
 
 private:
-  void configure();
+  /**
+   * @brief Loads a yaml file and sets parameters for the provided node
+   * @param yaml_file_path path to the yaml file to read
+   * @param node_base_ifc node base interface for the node where to load parameters
+   * @param node_parameters_ifc node parameters interface for the node where to load parameters
+   * @return true if file was loaded and parameters set successfully
+   */
+  bool load_parameters_from_yaml(
+    const std::string & yaml_file_path,
+    rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_ifc,
+    rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters_ifc);
 
   bool setup_robot(
     const std::string & robot_name,
-    const rclcpp::NodeOptions & node_options);
+    const rclcpp::NodeOptions & node_options,
+    const std::string & yaml_file_path);
 
   bool setup_map_manager(
     const std::string & map_yaml_filename,
