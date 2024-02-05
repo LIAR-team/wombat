@@ -45,15 +45,28 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
     rclcpp::ParameterValue{std::vector<std::string>()});
 }
 
-void Kennel::configure()
+bool Kennel::configure(const std::string & yaml_file_path)
 {
+  // Setup kennel parameters
+  if (!yaml_file_path.empty()) {
+    const bool load_success = this->load_parameters_from_yaml(
+      yaml_file_path,
+      m_kennel_node->get_node_base_interface(),
+      m_kennel_node->get_node_parameters_interface());
+    if (!load_success) {
+      RCLCPP_WARN(this->get_logger(), "Failed to load yaml parameters for kennel node: %s", yaml_file_path.c_str());
+      return false;
+    }
+  }
+
   // Simulated time setup
   const auto rtf = m_kennel_node->get_parameter("real_time_factor")
     .get_value<double>();
   const auto sim_time_update_period = m_kennel_node->get_parameter("sim_time_update_period_ms")
     .get_value<int>();
   if (rtf <= 0.0) {
-    throw std::runtime_error("Invalid real time factor: " + std::to_string(rtf));
+    RCLCPP_WARN(this->get_logger(), "Real-Time factor must be a positive definite number: %f", rtf);
+    return false;
   }
   m_sim_time_manager = std::make_unique<SimTimeManager>(
     m_kennel_node.get(),
@@ -74,7 +87,8 @@ void Kennel::configure()
       map_topic_name,
       m_node_options);
     if (!map_setup_success) {
-      throw std::runtime_error("Failed to setup map: " + map_yaml_filename);
+      RCLCPP_WARN(this->get_logger(), "Failed to setup map: %s", map_yaml_filename.c_str());
+      return false;
     }
   }
 
@@ -82,16 +96,21 @@ void Kennel::configure()
   const auto robot_names = m_kennel_node->get_parameter("robots")
     .get_value<std::vector<std::string>>();
   for (const auto & name : robot_names) {
-    const bool robot_setup_success = setup_robot(name, m_node_options);
+    const bool robot_setup_success = setup_robot(name, m_node_options, yaml_file_path);
     if (!robot_setup_success) {
-      throw std::runtime_error("Failed to setup robot: " + name);
+      RCLCPP_WARN(this->get_logger(), "Failed to setup robot: %s", name.c_str());
+      return false;
     }
   }
 
   m_is_configured = true;
+  return true;
 }
 
-bool Kennel::load_parameters_yaml(const std::string & yaml_file_path)
+bool Kennel::load_parameters_from_yaml(
+  const std::string & yaml_file_path,
+  rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_ifc,
+  rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters_ifc)
 {
   rclcpp::ParameterMap parameters_map;
   try {
@@ -101,40 +120,40 @@ bool Kennel::load_parameters_yaml(const std::string & yaml_file_path)
     return false;
   }
 
-  for (auto & node_data : m_executors) {
-    const auto node_fully_qualified_name =
-      node_data->node_interfaces->node_base->get_fully_qualified_name();
-    const auto node_parameters = rclcpp::parameters_from_map(
-      parameters_map,
-      node_fully_qualified_name);
-    const auto params_result =
-      node_data->node_interfaces->node_parameters->set_parameters(node_parameters);
+  const auto node_parameters = rclcpp::parameters_from_map(
+    parameters_map,
+    node_base_ifc->get_fully_qualified_name());
 
-    // Check that all parameters have been successfully set
-    for (const auto & result : params_result) {
-      if (!result.successful) {
-        RCLCPP_WARN(
-          this->get_logger(), "Failed to set params for %s: %s",
-          node_fully_qualified_name,
-          result.reason.c_str());
-        return false;
-      }
+  const auto params_result = node_parameters_ifc->set_parameters(node_parameters);
+
+  // Check that all parameters have been successfully set
+  for (const auto & result : params_result) {
+    if (!result.successful) {
+      RCLCPP_WARN(
+        this->get_logger(), "Failed to set params for %s: %s",
+        node_base_ifc->get_fully_qualified_name(),
+        result.reason.c_str());
+      return false;
     }
   }
 
   return true;
 }
 
-void Kennel::start()
+bool Kennel::start()
 {
   if (m_is_started) {
     RCLCPP_WARN(this->get_logger(), "Kennel is already started");
-    return;
+    return true;
   }
 
   if (!m_is_configured) {
     RCLCPP_INFO(this->get_logger(), "Kennel was not configured before running: doing it now");
-    this->configure();
+    bool configure_success = this->configure();
+    if (!configure_success) {
+      RCLCPP_WARN(this->get_logger(), "Failed to configure");
+      return false;
+    }
   }
 
   // Start sim time thread
@@ -163,13 +182,14 @@ void Kennel::start()
 
   m_is_started = true;
   RCLCPP_INFO(this->get_logger(), "Kennel has been started");
+  return m_is_started;
 }
 
-void Kennel::stop()
+bool Kennel::stop()
 {
   if (!m_is_started) {
     RCLCPP_WARN(this->get_logger(), "Kennel wasn't started, nothing to stop");
-    return;
+    return true;
   }
 
   for (auto & exec_with_thread : m_executors) {
@@ -184,6 +204,9 @@ void Kennel::stop()
   }
   m_executors.clear();
 
+  while (!m_sim_time_manager->is_running() && rclcpp::ok()) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+  }
   m_sim_time_manager->stop();
   m_sim_time_thread->join();
   m_sim_time_thread.reset();
@@ -192,11 +215,13 @@ void Kennel::stop()
   m_is_started = false;
 
   RCLCPP_INFO(this->get_logger(), "Kennel has been stopped");
+  return !m_is_started;
 }
 
 bool Kennel::setup_robot(
   const std::string & robot_name,
-  const rclcpp::NodeOptions & node_options)
+  const rclcpp::NodeOptions & node_options,
+  const std::string & yaml_file_path)
 {
   // A robot must have a name
   // TODO: enforce that names are unique
@@ -210,6 +235,10 @@ bool Kennel::setup_robot(
   robot_arguments.push_back("--ros-args");
   robot_arguments.push_back("-r");
   robot_arguments.push_back("__ns:=/" + robot_name);
+  if (!yaml_file_path.empty()) {
+    robot_arguments.push_back("--params-file");
+    robot_arguments.push_back(yaml_file_path);
+  }
 
   robot_node_options.append_parameter_override("use_sim_time", true);
   robot_node_options.arguments(robot_arguments);

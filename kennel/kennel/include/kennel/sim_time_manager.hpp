@@ -43,6 +43,12 @@ public:
   void run();
 
   /**
+   * @brief Check whether the time manager is currently running
+   * @return true if it's running
+   */
+  bool is_running() const;
+
+  /**
    * @brief Indicate to the @sa run() function to return.
    */
   void stop();
