@@ -3,10 +3,14 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
+#pragma once
+
 #include <gtest/gtest.h>
 
+#include <cstdlib>
 #include <iostream>
 #include <filesystem>
+#include <string>
 
 static std::filesystem::path s_data_dir;
 

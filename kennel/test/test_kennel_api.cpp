@@ -5,10 +5,6 @@
 
 #include <gtest/gtest.h>
 
-#include <cstdlib>
-#include <iostream>
-#include <filesystem>
-
 #include "rclcpp/rclcpp.hpp"
 
 #include "kennel/kennel.hpp"

@@ -179,7 +179,7 @@ bool MobileBase::setup_ground_truth()
   m_gt_manager->reset_pose(start_pose);
 
   if (!ground_truth_map_topic_name.empty()) {
-    RCLCPP_INFO(m_logger, "Creating ground truth map subscription");
+    RCLCPP_INFO(m_logger, "Creating ground truth map subscription: %s", ground_truth_map_topic_name.c_str());
     m_ground_truth_map_sub = m_parent_node->create_subscription<nav_msgs::msg::OccupancyGrid>(
       ground_truth_map_topic_name,
       rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
