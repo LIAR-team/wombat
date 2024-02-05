@@ -49,7 +49,8 @@ TEST_F(TestKennelRos, drive_straight)
   auto kennel = std::make_unique<kennel::Kennel>();
   bool load_success = kennel->configure(get_data_path("empty_world.yaml"));
   ASSERT_TRUE(load_success);
-  kennel->start();
+  bool start_success = kennel->start();
+  ASSERT_TRUE(start_success);
 
   geometry_msgs::msg::TransformStamped robot_pose;
   try {
@@ -104,7 +105,9 @@ TEST_F(TestKennelRos, drive_straight)
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.w, 1.0);
-  kennel->stop();
+
+  bool stop_success = kennel->stop();
+  ASSERT_TRUE(stop_success);
 
   executor.cancel();
   executor_thread.join();

@@ -41,11 +41,17 @@ public:
    */
   explicit Kennel(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
-  /** @brief Start running the kennel until instructed to stop */
-  void start();
+  /**
+   * @brief Start running the kennel until instructed to stop
+   * @return true if kennel is now started
+   */
+  bool start();
 
-  /** @brief Stop the kennel. This function will block until it's fully stopped */
-  void stop();
+  /**
+   * @brief Stop the kennel. This function will block until it's fully stopped
+   * @return true if kennel is now stopped
+   */
+  bool stop();
 
   /**
    * @brief Configure the Kennel, preparing it for the next start

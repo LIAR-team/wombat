@@ -140,11 +140,11 @@ bool Kennel::load_parameters_from_yaml(
   return true;
 }
 
-void Kennel::start()
+bool Kennel::start()
 {
   if (m_is_started) {
     RCLCPP_WARN(this->get_logger(), "Kennel is already started");
-    return;
+    return true;
   }
 
   if (!m_is_configured) {
@@ -152,7 +152,7 @@ void Kennel::start()
     bool configure_success = this->configure();
     if (!configure_success) {
       RCLCPP_WARN(this->get_logger(), "Failed to configure");
-      return;
+      return false;
     }
   }
 
@@ -182,13 +182,14 @@ void Kennel::start()
 
   m_is_started = true;
   RCLCPP_INFO(this->get_logger(), "Kennel has been started");
+  return m_is_started;
 }
 
-void Kennel::stop()
+bool Kennel::stop()
 {
   if (!m_is_started) {
     RCLCPP_WARN(this->get_logger(), "Kennel wasn't started, nothing to stop");
-    return;
+    return true;
   }
 
   for (auto & exec_with_thread : m_executors) {
@@ -214,6 +215,7 @@ void Kennel::stop()
   m_is_started = false;
 
   RCLCPP_INFO(this->get_logger(), "Kennel has been stopped");
+  return !m_is_started;
 }
 
 bool Kennel::setup_robot(
