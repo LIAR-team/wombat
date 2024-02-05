@@ -17,6 +17,9 @@ This step updates the `wombat-base` Docker image.
 ./utils/dev-environment/setup-docker.sh
 ```
 
+This script will by default try to install GPU support.
+it's possible to skip it by passing the additional argument `--no-gpu` to the `setup-docker.sh` script.
+
 ### Build `wombat`
 
 **The `wombat` software is built in a developer Docker container using the `colcon` build tool.**
