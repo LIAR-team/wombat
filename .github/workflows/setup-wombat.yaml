@@ -11,7 +11,7 @@ on:
         value: ${{ jobs.setup-wombat.outputs.base-image }}
 
 jobs:
-    setup-wombat:
+  setup-wombat:
     runs-on: self-hosted
     # Map the job outputs to step outputs
     outputs:
