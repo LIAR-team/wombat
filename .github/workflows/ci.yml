@@ -47,24 +47,9 @@ jobs:
         with:
           # Required by tj-actions/changed-files
           fetch-depth: 2
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v42
-      - name: Get changed packages
-        id: changed-packages
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: |
-          CHANGED_DIRS=""
-          for file in ${ALL_CHANGED_FILES}; do
-            FILE_PACKAGE_DIR=$(echo ${file} | cut -d "/" -f1)
-            CHANGED_DIRS="${FILE_PACKAGE_DIR} ${CHANGED_DIRS}"
-          done
-          UNIQUE_CHANGED_DIRS=$(echo "$b" | xargs -n1 | sort -u | xargs)
-          ALL_PKGS=$(colcon list --names-only | xargs)
-          CHANGED_PKGS=$(comm -12 <(echo ${UNIQUE_CHANGED_DIRS} | tr " " "\n" | sort) <(echo ${ALL_PKGS} | tr " " "\n" | sort))
-          echo "Changed packages: ${CHANGED_PKGS}"
-          echo "ALL_CHANGED_PACKAGES=${CHANGED_PKGS}" >> "$GITHUB_OUTPUT"
+      - name: Get changed ROS 2 packages
+        id: changed-ros2-pkgs
+        uses: ./.github/actions/changed-ros2-packages
       - name: Build wombat
         run: |
           source /home/docker-dev/.bashrc \
@@ -79,10 +64,10 @@ jobs:
           && VERBOSE=1 colcon test --mixin lint --return-code-on-test-failure --event-handlers=console_cohesion+
       - name: Run clang on modified packages
         env:
-          ALL_CHANGED_PACKAGES: ${{ steps.changed-packages.outputs.ALL_CHANGED_PACKAGES }}
+          ALL_CHANGED_PACKAGES: ${{ steps.changed-ros2-pkgs.outputs.all-changed-ros2-packages }}
         run: |
           source /home/docker-dev/.bashrc \
-          && VERBOSE=1 colcon test --packages-select ${ALL_CHANGED_PACKAGES} --mixin clang --return-code-on-test-failure --event-handlers=console_cohesion+
+          && VERBOSE=1 colcon test --packages-above ${ALL_CHANGED_PACKAGES} --mixin clang --return-code-on-test-failure --event-handlers=console_cohesion+
 
   Documentation:
     needs: Setup-Wombat
