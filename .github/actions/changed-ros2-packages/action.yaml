@@ -6,16 +6,13 @@ outputs:
     description: ""
     value: ${{ steps.changed-packages.outputs.all-changed-ros2-packages }}
 
-defaults:
-  run:
-    shell: bash
-
 runs:
   using: composite
   steps:
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v42
+      shell: bash
     - name: Get changed packages
       id: changed-packages
       env:
@@ -32,3 +29,4 @@ runs:
         echo "Changed files: ${ALL_CHANGED_FILES}"
         echo "Changed ROS 2 packages: ${CHANGED_PKGS}"
         echo "all-changed-ros2-packages=${CHANGED_PKGS}" >> $GITHUB_OUTPUT
+      shell: bash
