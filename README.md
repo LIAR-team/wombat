@@ -1,6 +1,6 @@
 # wombat
 
-[![Testing](https://github.com/LIAR-team/wombat/actions/workflows/ci.yml/badge.svg)](https://github.com/LIAR-team/wombat/actions/workflows/ci.yml)
+[![Testing](https://github.com/LIAR-team/wombat/actions/workflows/ci.yaml/badge.svg)](https://github.com/LIAR-team/wombat/actions/workflows/ci.yaml)
 
 ### Requirements
 

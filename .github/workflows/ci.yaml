@@ -14,29 +14,14 @@ defaults:
     shell: bash
 
 jobs:
-  # Hack to inject VERSION into container. See:
-  # https://github.community/t/how-to-use-env-with-container-image/17252
-  # https://stackoverflow.com/questions/64721253
   Setup-Wombat:
-    runs-on: self-hosted
-    outputs:
-      DEV_ENV_IMAGE: ${{ steps.set_version.outputs.DEV_ENV_IMAGE }}
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - name: Read VERSION
-        run: |
-          VER=$(cat ${{ github.workspace }}/utils/dev-environment/VERSION) \
-          && echo "DEV_ENV_IMAGE=$VER" >> $GITHUB_ENV
-      - name: Set VERSION
-        id: set_version
-        run: echo "DEV_ENV_IMAGE=${{ env.DEV_ENV_IMAGE }}" >> $GITHUB_OUTPUT
+    uses: ./.github/workflows/setup-wombat.yaml
 
   Build-and-Test:
     needs: Setup-Wombat
     runs-on: self-hosted
     container:
-      image: ${{ needs.Setup-Wombat.outputs.DEV_ENV_IMAGE }}
+      image: ${{ needs.Setup-Wombat.outputs.base-image }}
     env:
       # This variable is correct (it's pointing to a valid path in the docker)
       # depsite the presence of https://github.com/actions/runner/issues/2058
@@ -47,24 +32,9 @@ jobs:
         with:
           # Required by tj-actions/changed-files
           fetch-depth: 2
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v42
-      - name: Get changed packages
-        id: changed-packages
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: |
-          CHANGED_DIRS=""
-          for file in ${ALL_CHANGED_FILES}; do
-            FILE_PACKAGE_DIR=$(echo ${file} | cut -d "/" -f1)
-            CHANGED_DIRS="${FILE_PACKAGE_DIR} ${CHANGED_DIRS}"
-          done
-          UNIQUE_CHANGED_DIRS=$(echo "$b" | xargs -n1 | sort -u | xargs)
-          ALL_PKGS=$(colcon list --names-only | xargs)
-          CHANGED_PKGS=$(comm -12 <(echo ${UNIQUE_CHANGED_DIRS} | tr " " "\n" | sort) <(echo ${ALL_PKGS} | tr " " "\n" | sort))
-          echo "Changed packages: ${CHANGED_PKGS}"
-          echo "ALL_CHANGED_PACKAGES=${CHANGED_PKGS}" >> "$GITHUB_OUTPUT"
+      - name: Get changed ROS 2 packages
+        id: changed-ros2-pkgs
+        uses: ./.github/actions/changed-ros2-packages
       - name: Build wombat
         run: |
           source /home/docker-dev/.bashrc \
@@ -79,7 +49,7 @@ jobs:
           && VERBOSE=1 colcon test --mixin lint --return-code-on-test-failure --event-handlers=console_cohesion+
       - name: Run clang on modified packages
         env:
-          ALL_CHANGED_PACKAGES: ${{ steps.changed-packages.outputs.ALL_CHANGED_PACKAGES }}
+          ALL_CHANGED_PACKAGES: ${{ steps.changed-ros2-pkgs.outputs.all-changed-ros2-packages }}
         run: |
           source /home/docker-dev/.bashrc \
           && VERBOSE=1 colcon test --packages-select ${ALL_CHANGED_PACKAGES} --mixin clang --return-code-on-test-failure --event-handlers=console_cohesion+
@@ -88,7 +58,7 @@ jobs:
     needs: Setup-Wombat
     runs-on: self-hosted
     container:
-      image: ${{ needs.Setup-Wombat.outputs.DEV_ENV_IMAGE }}
+      image: ${{ needs.Setup-Wombat.outputs.base-image }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4

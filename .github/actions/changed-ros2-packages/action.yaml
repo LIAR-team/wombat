@@ -1,0 +1,31 @@
+name: changed-ros2-packages
+description: "Get the list of unique changed ROS 2 packages"
+
+outputs:
+  all-changed-ros2-packages:
+    description: ""
+    value: ${{ steps.changed-packages.outputs.all-changed-ros2-packages }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v42
+    - name: Get changed packages
+      id: changed-packages
+      env:
+        ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+      run: |
+        CHANGED_DIRS=""
+        for file in ${ALL_CHANGED_FILES}; do
+          FILE_PACKAGE_DIR=$(echo ${file} | cut -d "/" -f1)
+          CHANGED_DIRS="${FILE_PACKAGE_DIR} ${CHANGED_DIRS}"
+        done
+        UNIQUE_CHANGED_DIRS=$(echo "$b" | xargs -n1 | sort -u | xargs)
+        ALL_PKGS=$(colcon list --names-only | xargs)
+        CHANGED_PKGS=$(comm -12 <(echo ${UNIQUE_CHANGED_DIRS} | tr " " "\n" | sort) <(echo ${ALL_PKGS} | tr " " "\n" | sort))
+        echo "Changed files: ${ALL_CHANGED_FILES}"
+        echo "Changed ROS 2 packages: ${CHANGED_PKGS}"
+        echo "all-changed-ros2-packages=${CHANGED_PKGS}" >> $GITHUB_OUTPUT
+      shell: bash
