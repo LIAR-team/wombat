@@ -12,7 +12,6 @@ runs:
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v42
-      shell: bash
     - name: Get changed packages
       id: changed-packages
       env:
