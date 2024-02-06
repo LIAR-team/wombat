@@ -52,7 +52,7 @@ jobs:
           ALL_CHANGED_PACKAGES: ${{ steps.changed-ros2-pkgs.outputs.all-changed-ros2-packages }}
         run: |
           source /home/docker-dev/.bashrc \
-          && VERBOSE=1 colcon test --packages-above ${ALL_CHANGED_PACKAGES} --mixin clang --return-code-on-test-failure --event-handlers=console_cohesion+
+          && VERBOSE=1 colcon test --packages-select ${ALL_CHANGED_PACKAGES} --mixin clang --return-code-on-test-failure --event-handlers=console_cohesion+
 
   Documentation:
     needs: Setup-Wombat
