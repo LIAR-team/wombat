@@ -14,29 +14,14 @@ defaults:
     shell: bash
 
 jobs:
-  # Hack to inject VERSION into container. See:
-  # https://github.community/t/how-to-use-env-with-container-image/17252
-  # https://stackoverflow.com/questions/64721253
   Setup-Wombat:
-    runs-on: self-hosted
-    outputs:
-      DEV_ENV_IMAGE: ${{ steps.set_version.outputs.DEV_ENV_IMAGE }}
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - name: Read VERSION
-        run: |
-          VER=$(cat ${{ github.workspace }}/utils/dev-environment/VERSION) \
-          && echo "DEV_ENV_IMAGE=$VER" >> $GITHUB_ENV
-      - name: Set VERSION
-        id: set_version
-        run: echo "DEV_ENV_IMAGE=${{ env.DEV_ENV_IMAGE }}" >> $GITHUB_OUTPUT
+    uses: ./.github/workflows/setup-wombat.yaml
 
   Build-and-Test:
     needs: Setup-Wombat
     runs-on: self-hosted
     container:
-      image: ${{ needs.Setup-Wombat.outputs.DEV_ENV_IMAGE }}
+      image: ${{ needs.Setup-Wombat.outputs.base-image }}
     env:
       # This variable is correct (it's pointing to a valid path in the docker)
       # depsite the presence of https://github.com/actions/runner/issues/2058
@@ -73,7 +58,7 @@ jobs:
     needs: Setup-Wombat
     runs-on: self-hosted
     container:
-      image: ${{ needs.Setup-Wombat.outputs.DEV_ENV_IMAGE }}
+      image: ${{ needs.Setup-Wombat.outputs.base-image }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4

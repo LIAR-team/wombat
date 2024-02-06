@@ -1,0 +1,32 @@
+name: setup-wombat
+
+# Hack to inject VERSION into container. See:
+# https://github.community/t/how-to-use-env-with-container-image/17252
+# https://stackoverflow.com/questions/64721253
+
+on:
+  workflow_call:
+    outputs:
+      base-image:
+        value: ${{ jobs.setup-wombat.outputs.base-image }}
+
+jobs:
+    setup-wombat:
+    runs-on: self-hosted
+    # Map the job outputs to step outputs
+    outputs:
+      base-image: ${{ steps.set-env.outputs.base-image }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Read VERSION
+        run: |
+          VER=$(cat ${{ github.workspace }}/utils/dev-environment/VERSION)
+          echo "Read VERSION: ${VER}"
+          echo "base_image=$VER" >> $GITHUB_ENV
+
+      - name: Set VERSION
+        id: set-env
+        run: |
+          echo "base-image=${{ env.base_image }}" >> $GITHUB_OUTPUT
