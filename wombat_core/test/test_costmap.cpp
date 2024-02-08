@@ -9,7 +9,7 @@
 
 #include "geometry_msgs/msg/point.hpp"
 #include "nav2_costmap_2d/costmap_2d.hpp"
-#include "wombat_core/costmap/costmap.hpp"
+#include "wombat_core/costmap/costmap_utils.hpp"
 
 TEST(test_costmap, convert_index_word)
 {

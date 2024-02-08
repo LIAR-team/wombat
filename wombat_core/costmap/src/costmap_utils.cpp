@@ -1,4 +1,4 @@
-// Copyright 2021-2022 Soragna Alberto.
+// Copyright 2021-2024 Soragna Alberto.
 // All Rights Reserved.
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
@@ -7,7 +7,7 @@
 
 #include "geometry_msgs/msg/point.hpp"
 #include "nav2_costmap_2d/costmap_2d.hpp"
-#include "wombat_core/costmap/costmap.hpp"
+#include "wombat_core/costmap/costmap_utils.hpp"
 
 namespace wombat_core
 {

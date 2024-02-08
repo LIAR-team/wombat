@@ -11,7 +11,7 @@
 #include <limits>
 #include <queue>
 
-#include "wombat_core/costmap/costmap.hpp"
+#include "wombat_core/costmap/costmap_utils.hpp"
 #include "wombat_core/math/geometry_point.hpp"
 
 namespace wombat_strategy

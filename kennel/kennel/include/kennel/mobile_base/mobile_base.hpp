@@ -18,6 +18,8 @@
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "kennel/mobile_base/slam_manager.hpp"
 
+#include "kennel/mobile_base/static_collision_manager.hpp"
+
 namespace kennel
 {
 
@@ -63,6 +65,8 @@ private:
 
   std::mutex m_mutex;
   rclcpp::Logger m_logger;
+
+  std::shared_ptr<StaticCollisionManager> m_collision_manager;
 };
 
 }  // namespace kennel

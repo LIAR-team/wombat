@@ -187,6 +187,8 @@ bool MobileBase::setup_ground_truth()
         RCLCPP_INFO(m_logger, "Received ground truth map");
         std::lock_guard<std::mutex> lock(m_mutex);
         m_gt_map = msg;
+
+        m_collision_manager = std::make_shared<StaticCollisionManager>(*m_gt_map);
       });
   } else {
     m_gt_map = std::make_shared<nav_msgs::msg::OccupancyGrid>();

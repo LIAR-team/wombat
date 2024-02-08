@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(wombat_core)
 
 find_package(geometry_msgs REQUIRED)
+find_package(map_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -22,6 +23,7 @@ endif()
 wombat_package_install(
   EXPORT_DEPS
     geometry_msgs
+    map_msgs
     nav_msgs
     nav2_costmap_2d
     rclcpp
