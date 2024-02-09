@@ -10,14 +10,20 @@
 
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "kennel/mobile_base/mobile_base.hpp"
+#include "wombat_core/costmap/costmap_conversions.hpp"
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/math/transformations.hpp"
+
+// Macros to generate nested parameter names
+#include "wombat_core/cpp/macros/concat.hpp"
+#define BASE_PARAM(PARAM) WOMBAT_CORE_CONCAT_STR_LITERALS("mobile_base.", PARAM)
+#define BASE_GT_PARAM(PARAM) BASE_PARAM(WOMBAT_CORE_CONCAT_STR_LITERALS("ground_truth.", PARAM))
 
 namespace kennel
 {
 
 MobileBase::MobileBase(rclcpp::Node * parent_node)
-: m_parent_node(parent_node), m_logger(parent_node->get_logger())
+: m_parent_node(parent_node), m_logger(parent_node->get_logger()), m_clock(parent_node->get_clock())
 {
   const bool gt_setup_success = this->setup_ground_truth();
   if (!gt_setup_success) {
@@ -78,8 +84,9 @@ void MobileBase::mobile_base_update()
   if (m_ground_truth_map_sub && !m_gt_map) {
     return;
   }
-  auto gt_T_base = m_gt_manager->pose_update(m_last_cmd_vel, *m_gt_map);
-  auto maybe_slam_data = m_slam_manager->slam_update(gt_T_base, *m_gt_map);
+  auto gt_T_base = m_gt_manager->pose_update(m_last_cmd_vel);
+
+  auto maybe_slam_data = m_slam_manager->slam_update(gt_T_base, m_gt_map);
 
   std::vector<geometry_msgs::msg::TransformStamped> sorted_tfs;
   sorted_tfs.push_back(gt_T_base);
@@ -142,21 +149,30 @@ MobileBase::process_transforms(
 
 bool MobileBase::setup_ground_truth()
 {
-  const std::string ground_truth_frame_id = m_parent_node->declare_parameter(
-    "mobile_base.ground_truth_frame_id",
+
+  const auto ground_truth_frame_id = m_parent_node->declare_parameter(
+    BASE_GT_PARAM("frame_id"),
     rclcpp::ParameterValue{std::string("ground_truth")}).get<std::string>();
-  const std::string robot_base_frame_id = m_parent_node->declare_parameter(
-    "mobile_base.robot_base_frame_id",
-    rclcpp::ParameterValue{std::string("base_link")}).get<std::string>();
-  const std::string ground_truth_map_topic_name = m_parent_node->declare_parameter(
-    "mobile_base.ground_truth_map_topic_name",
+
+  const auto ground_truth_costmap_topic_name = m_parent_node->declare_parameter(
+    BASE_GT_PARAM("costmap_topic_name"),
+    rclcpp::ParameterValue{std::string("ground_truth_costmap")}).get<std::string>();
+
+  const auto ground_truth_map_topic_name = m_parent_node->declare_parameter(
+    BASE_GT_PARAM("map_topic_name"),
     rclcpp::ParameterValue{std::string("ground_truth_map")}).get<std::string>();
-  const std::vector<double> start_pose_2d = m_parent_node->declare_parameter(
-    "mobile_base.start_pose",
+
+  const auto robot_base_frame_id = m_parent_node->declare_parameter(
+    BASE_PARAM("frame_id"),
+    rclcpp::ParameterValue{std::string("base_link")}).get<std::string>();
+
+  const auto start_pose_2d = m_parent_node->declare_parameter(
+    BASE_PARAM("start_pose"),
     rclcpp::ParameterValue{std::vector<double>({0.0, 0.0, 0.0})}).get<std::vector<double>>();
+
   const auto control_msg_lifespan = std::chrono::milliseconds(
     m_parent_node->declare_parameter(
-      "mobile_base.control_msg_lifespan_ms",
+      BASE_PARAM("control_msg_lifespan_ms"),
       rclcpp::ParameterValue{100}).get<int>());
 
   if (start_pose_2d.size() != 3u) {
@@ -178,23 +194,50 @@ bool MobileBase::setup_ground_truth()
   start_pose.orientation = wombat_core::quaternion_from_rpy(0.0, 0.0, start_pose_2d[2]);
   m_gt_manager->reset_pose(start_pose);
 
+  auto map_qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
   if (!ground_truth_map_topic_name.empty()) {
     RCLCPP_INFO(m_logger, "Creating ground truth map subscription: %s", ground_truth_map_topic_name.c_str());
     m_ground_truth_map_sub = m_parent_node->create_subscription<nav_msgs::msg::OccupancyGrid>(
       ground_truth_map_topic_name,
-      rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
+      map_qos,
       [this](nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) {
-        RCLCPP_INFO(m_logger, "Received ground truth map");
-        std::lock_guard<std::mutex> lock(m_mutex);
-        m_gt_map = msg;
-
-        m_collision_manager = std::make_shared<StaticCollisionManager>(*m_gt_map);
+        this->on_gt_map_received(std::move(msg));
       });
-  } else {
-    m_gt_map = std::make_shared<nav_msgs::msg::OccupancyGrid>();
+  }
+
+  if (!ground_truth_costmap_topic_name.empty()) {
+    if (ground_truth_map_topic_name.empty()) {
+      RCLCPP_ERROR(
+        m_logger,
+        "Can't construct costmap publisher for %s without a ground_truth map subscrition",
+        ground_truth_costmap_topic_name.c_str());
+
+      return false;
+    }
+
+    RCLCPP_INFO(m_logger, "Creating ground truth costmap publisher");
+    m_gt_costmap_pub = m_parent_node->create_publisher<nav_msgs::msg::OccupancyGrid>(
+      ground_truth_costmap_topic_name,
+      map_qos);
   }
 
   return true;
+}
+
+void MobileBase::on_gt_map_received(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg)
+{
+  RCLCPP_INFO(m_logger, "Received ground truth map");
+  m_gt_manager->map_update(msg);
+  if (m_gt_costmap_pub) {
+    auto costmap = m_gt_manager->get_costmap();
+    auto grid = std::make_unique<nav_msgs::msg::OccupancyGrid>();
+    grid->header.frame_id = "ground_truth";
+    grid->header.stamp = m_clock->now();
+    wombat_core::costmap_to_occupancy_grid_values(*costmap, *grid);
+    m_gt_costmap_pub->publish(std::move(grid));
+  }
+  std::lock_guard<std::mutex> lock(m_mutex);
+  m_gt_map = msg;
 }
 
 bool MobileBase::setup_slam()

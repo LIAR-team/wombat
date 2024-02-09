@@ -35,4 +35,12 @@ unsigned int world_to_index(
   const geometry_msgs::msg::Point & world,
   const std::shared_ptr<nav2_costmap_2d::Costmap2D> & costmap);
 
+/**
+ * @brief Computes the size in cells of the costmap grid.
+ * @note This function is not thread-safe
+ * @param costmap the costmap for which we want to compute the size
+ * @return size_t the computed size
+ */
+size_t costmap_size(const nav2_costmap_2d::Costmap2D & costmap);
+
 }  // namespace wombat_core

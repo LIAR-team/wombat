@@ -5,6 +5,7 @@ add_library(wombat_core::costmap ALIAS costmap)
 target_sources(
   costmap
   PRIVATE
+    src/costmap_conversions.cpp
     src/costmap_utils.cpp
     src/inflatable_costmap.cpp
     src/inflation_layer.cpp

@@ -31,7 +31,7 @@ public:
 
   std::optional<localization_data_t> slam_update(
     const geometry_msgs::msg::TransformStamped & gt_T_base,
-    const nav_msgs::msg::OccupancyGrid & gt_map);
+    nav_msgs::msg::OccupancyGrid::ConstSharedPtr gt_map);
 
 private:
   rclcpp::Clock::SharedPtr m_clock;

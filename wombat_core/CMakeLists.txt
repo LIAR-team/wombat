@@ -13,6 +13,7 @@ find_package(wombat_cmake REQUIRED)
 wombat_package()
 
 add_subdirectory(costmap)
+add_subdirectory(cpp)
 add_subdirectory(math)
 add_subdirectory(ros2)
 

@@ -46,10 +46,10 @@ void InflatableCostmap::update_map(map_msgs::msg::OccupancyGridUpdate::ConstShar
   m_static_layer->update_map(update);
 }
 
-//const InflatableCostmap::nav2_costmap_2d::Costmap2D * get_base_costmap()
-//{
-//  return m_static_layer->get_costmap();
-//}
+const nav2_costmap_2d::Costmap2D * InflatableCostmap::get_base_costmap()
+{
+  return m_static_layer.get();
+}
 
 nav2_costmap_2d::Costmap2D * InflatableCostmap::get_inflated_costmap()
 {

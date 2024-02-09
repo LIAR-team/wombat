@@ -36,11 +36,23 @@ public:
    */
   void update_map(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
 
-  //const nav2_costmap_2d::Costmap2D * get_base_costmap();
-
-  nav2_costmap_2d::Costmap2D * get_inflated_costmap();
-
+  /**
+   * @brief Render the costmap using the latest available information
+   * @return true if the rendering was successful
+   */
   bool render_costmap();
+
+  /**
+   * @brief Get the latest non-inflated costmap.
+   * @return nav2_costmap_2d::Costmap2D* the inflated costmap
+   */
+  const nav2_costmap_2d::Costmap2D * get_base_costmap();
+
+  /**
+   * @brief Get the latest rendered inflated costmap.
+   * @return nav2_costmap_2d::Costmap2D* the inflated costmap
+   */
+  nav2_costmap_2d::Costmap2D * get_inflated_costmap();
 
 private:
   std::shared_ptr<wombat_core::StaticLayer> m_static_layer;

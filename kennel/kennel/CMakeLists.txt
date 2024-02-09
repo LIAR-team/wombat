@@ -6,7 +6,6 @@ target_sources(
     src/mobile_base/ground_truth_manager.cpp
     src/mobile_base/mobile_base.cpp
     src/mobile_base/slam_manager.cpp
-    src/mobile_base/static_collision_manager.cpp
     src/kennel.cpp
     src/sim_time_manager.cpp
     src/robot_sim.cpp
@@ -29,6 +28,7 @@ target_link_libraries(
     ${nav2_msgs_TARGETS}
     ${rosgraph_msgs_TARGETS}
   PRIVATE
+    wombat_core::cpp_utils
     wombat_control::models
     wombat_core::math
 )

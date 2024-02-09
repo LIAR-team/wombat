@@ -18,8 +18,6 @@
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "kennel/mobile_base/slam_manager.hpp"
 
-#include "kennel/mobile_base/static_collision_manager.hpp"
-
 namespace kennel
 {
 
@@ -40,6 +38,8 @@ private:
   std::optional<std::vector<geometry_msgs::msg::TransformStamped>>
   process_transforms(const std::vector<geometry_msgs::msg::TransformStamped> & tfs);
 
+  void on_gt_map_received(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg);
+
   bool setup_ground_truth();
 
   bool setup_slam();
@@ -54,6 +54,7 @@ private:
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr m_gt_map;
 
   rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr m_slam_map_pub;
+  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr m_gt_costmap_pub;
 
   std::shared_ptr<tf2_ros::TransformBroadcaster> m_tf_broadcaster;
   std::vector<geometry_msgs::msg::TransformStamped> m_last_transforms;
@@ -65,8 +66,7 @@ private:
 
   std::mutex m_mutex;
   rclcpp::Logger m_logger;
-
-  std::shared_ptr<StaticCollisionManager> m_collision_manager;
+  rclcpp::Clock::SharedPtr m_clock;
 };
 
 }  // namespace kennel

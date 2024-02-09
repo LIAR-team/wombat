@@ -34,4 +34,9 @@ unsigned int world_to_index(
   return costmap->getIndex(mx, my);
 }
 
+size_t costmap_size(const nav2_costmap_2d::Costmap2D & costmap)
+{
+  return costmap.getSizeInCellsX() * costmap.getSizeInCellsY();
+}
+
 }  // namespace wombat_core
