@@ -22,7 +22,7 @@ runs:
           FILE_PACKAGE_DIR=$(echo ${file} | cut -d "/" -f1)
           CHANGED_DIRS="${FILE_PACKAGE_DIR} ${CHANGED_DIRS}"
         done
-        UNIQUE_CHANGED_DIRS=$(echo "$b" | xargs -n1 | sort -u | xargs)
+        UNIQUE_CHANGED_DIRS=$(echo "${CHANGED_DIRS}" | xargs -n1 | sort -u | xargs)
         ALL_PKGS=$(colcon list --names-only | xargs)
         CHANGED_PKGS=$(comm -12 <(echo ${UNIQUE_CHANGED_DIRS} | tr " " "\n" | sort) <(echo ${ALL_PKGS} | tr " " "\n" | sort))
         echo "Changed files: ${ALL_CHANGED_FILES}"
