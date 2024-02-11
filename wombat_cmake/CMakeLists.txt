@@ -9,8 +9,8 @@ find_package(ament_cmake REQUIRED)
 set(wombat_cmake_DIR cmake)
 
 include(cmake/InstallHooks.cmake)
+include(cmake/WombatConfigExtras.cmake)
 include(cmake/WombatInstall.cmake)
-include(cmake/WombatLinters.cmake)
 include(cmake/WombatPackage.cmake)
 
 wombat_package()
@@ -20,6 +20,21 @@ run_install_githooks_script()
 install(DIRECTORY cmake DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY linters-config DESTINATION share/${PROJECT_NAME})
 
+set(CONFIG_EXTRA_NAME "${CMAKE_CURRENT_BINARY_DIR}/WombatCmakeConfigExtras.cmake")
+set(CMAKE_SCRIPTS_TO_INSTALL
+  WombatConfigExtras.cmake
+  WombatInstall.cmake
+  WombatLinters.cmake
+  WombatPackage.cmake
+  WombatTarget.cmake
+)
+wombat_write_config_extras(
+  OUTPUT_PATH
+    ${CONFIG_EXTRA_NAME}
+  SCRIPT_NAMES
+    ${CMAKE_SCRIPTS_TO_INSTALL}
+)
+
 wombat_package_install(
   NO_EXPORT_TARGETS
   EXPORT_DEPS
@@ -27,8 +42,5 @@ wombat_package_install(
     ament_cmake
   AMENT_PACKAGE
     CONFIG_EXTRAS
-      "WombatInstallExtras.cmake"
-      "WombatLintersExtras.cmake"
-      "WombatPackageExtras.cmake"
-      "WombatTargetExtras.cmake"
+      ${CONFIG_EXTRA_NAME}
 )
