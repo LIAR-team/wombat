@@ -23,20 +23,20 @@ TEST(test_costmap, convert_index_word)
     GRID_WIDTH, GRID_HEIGHT, RESOLUTION, ORIGIN_X, ORIGIN_Y, 0.0);
 
   {
-    auto cell_center = wombat_core::index_to_world(0, costmap);
+    auto cell_center = wombat_core::index_to_world(0, *costmap);
     EXPECT_EQ(cell_center.x, 0.25);
     EXPECT_EQ(cell_center.y, 0.25);
 
-    auto cell_index = wombat_core::world_to_index(cell_center, costmap);
+    auto cell_index = wombat_core::world_to_index(cell_center, *costmap);
     EXPECT_EQ(cell_index, 0u);
   }
 
   {
-    auto cell_center = wombat_core::index_to_world(9, costmap);
+    auto cell_center = wombat_core::index_to_world(9, *costmap);
     EXPECT_EQ(cell_center.x, 4.75);
     EXPECT_EQ(cell_center.y, 0.25);
 
-    auto cell_index = wombat_core::world_to_index(cell_center, costmap);
+    auto cell_index = wombat_core::world_to_index(cell_center, *costmap);
     EXPECT_EQ(cell_index, 9u);
   }
 
@@ -45,10 +45,10 @@ TEST(test_costmap, convert_index_word)
     cell_center.x = 2.75;
     cell_center.y = 2.75;
 
-    auto cell_index = wombat_core::world_to_index(cell_center, costmap);
+    auto cell_index = wombat_core::world_to_index(cell_center, *costmap);
     EXPECT_EQ(cell_index, 55u);
 
-    auto reconstructed_cell_center = wombat_core::index_to_world(cell_index, costmap);
+    auto reconstructed_cell_center = wombat_core::index_to_world(cell_index, *costmap);
     EXPECT_EQ(reconstructed_cell_center.x, cell_center.x);
     EXPECT_EQ(reconstructed_cell_center.y, cell_center.y);
   }

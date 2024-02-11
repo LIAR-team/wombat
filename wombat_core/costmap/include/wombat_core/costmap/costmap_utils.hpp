@@ -22,7 +22,7 @@ namespace wombat_core
  */
 geometry_msgs::msg::Point index_to_world(
   unsigned int index,
-  const std::shared_ptr<nav2_costmap_2d::Costmap2D> & costmap);
+  const nav2_costmap_2d::Costmap2D & costmap);
 
 /**
  * @brief Compute the index of the costmap cell that is closest to the world frame point
@@ -33,7 +33,7 @@ geometry_msgs::msg::Point index_to_world(
  */
 unsigned int world_to_index(
   const geometry_msgs::msg::Point & world,
-  const std::shared_ptr<nav2_costmap_2d::Costmap2D> & costmap);
+  const nav2_costmap_2d::Costmap2D & costmap);
 
 /**
  * @brief Computes the size in cells of the costmap grid.
