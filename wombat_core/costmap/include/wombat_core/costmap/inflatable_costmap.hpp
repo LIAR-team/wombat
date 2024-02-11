@@ -23,7 +23,7 @@ public:
   InflatableCostmap();
 
   /**
-   * @brief  Callback to update the costmap's map from the map_server
+   * @brief Update the occupancy representation of the costmap from a new whole map.
    * @param new_map The map to put into the costmap. The origin of the new
    * map along with its size will determine what parts of the costmap's
    * static map are overwritten.
@@ -31,8 +31,8 @@ public:
   void update_map(nav_msgs::msg::OccupancyGrid::ConstSharedPtr new_map);
 
   /**
-   * @brief Callback to update the costmap's map from the map_server (or SLAM)
-   * with an update in a particular area of the map
+   * @brief Update the occupancy representation of the costmap from a map update.
+   * @param update sub-map to update in the costmap.
    */
   void update_map(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
 

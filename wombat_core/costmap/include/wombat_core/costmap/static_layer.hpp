@@ -76,7 +76,7 @@ public:
   void setup(nav2_costmap_2d::LayeredCostmap * parent);
 
   /**
-   * @brief  Callback to update the costmap's map from the map_server
+   * @brief Update the occupancy representation of the costmap from a new whole map.
    * @param new_map The map to put into the costmap. The origin of the new
    * map along with its size will determine what parts of the costmap's
    * static map are overwritten.
@@ -84,8 +84,8 @@ public:
   void update_map(nav_msgs::msg::OccupancyGrid::ConstSharedPtr new_map);
 
   /**
-   * @brief Callback to update the costmap's map from the map_server (or SLAM)
-   * with an update in a particular area of the map
+   * @brief Update the occupancy representation of the costmap from a map update.
+   * @param update sub-map to update in the costmap.
    */
   void update_map(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update);
 
@@ -95,7 +95,8 @@ public:
   void reset() override;
 
   /**
-   * @brief If clearing operations should be processed on this layer or not
+   * @brief If clearing operations should be processed on this layer or not.
+   * @return true if the layer can be cleared.
    */
   bool isClearable() override {return false;}
 
@@ -116,10 +117,10 @@ public:
   /**
    * @brief Update the costs in the master costmap in the window
    * @param master_grid The master costmap grid to update
-   * @param min_x X min map coord of the window to update
-   * @param min_y Y min map coord of the window to update
-   * @param max_x X max map coord of the window to update
-   * @param max_y Y max map coord of the window to update
+   * @param min_i X min map coord of the window to update
+   * @param min_j Y min map coord of the window to update
+   * @param max_i X max map coord of the window to update
+   * @param max_j Y max map coord of the window to update
    */
   void updateCosts(
     nav2_costmap_2d::Costmap2D & master_grid,
@@ -133,12 +134,15 @@ public:
 private:
   /**
    * @brief Process a new map coming from a topic
+   * @param new_map new map to process
    */
   void processMap(const nav_msgs::msg::OccupancyGrid & new_map);
 
   /**
    * @brief Interpret the value in the static map given on the topic to
    * convert into costs for the costmap to utilize
+   * @param value occupancy grid value
+   * @return costmap value
    */
   unsigned char interpretValue(unsigned char value) const;
 
