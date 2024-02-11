@@ -1,6 +1,5 @@
 
-add_library(control STATIC)
-add_library(wombat_control::control ALIAS control)
+wombat_add_library(control STATIC)
 
 target_sources(
   control

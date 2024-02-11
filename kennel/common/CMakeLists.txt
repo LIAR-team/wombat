@@ -1,17 +1,16 @@
-add_library(kennel_common STATIC)
-add_library(kennel::common ALIAS kennel_common)
+wombat_add_library(common STATIC)
 target_sources(
-  kennel_common
+  common
   PRIVATE
     src/sensors/lidar.cpp
 )
 target_include_directories(
-  kennel_common
+  common
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 target_link_libraries(
-  kennel_common
+  common
   PUBLIC
     rclcpp::rclcpp
     wombat_core::math
@@ -21,4 +20,4 @@ target_link_libraries(
     ${rcl_interfaces_TARGETS}
 )
 
-wombat_install_target(kennel_common)
+wombat_install_target(common)

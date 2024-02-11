@@ -1,6 +1,5 @@
 
-add_library(cpp_utils INTERFACE)
-add_library(wombat_core::cpp_utils ALIAS cpp_utils)
+wombat_add_library(cpp_utils INTERFACE)
 
 target_include_directories(
   cpp_utils

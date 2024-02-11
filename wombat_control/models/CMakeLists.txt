@@ -1,6 +1,5 @@
 
-add_library(models STATIC)
-add_library(wombat_control::models ALIAS models)
+wombat_add_library(models STATIC)
 
 target_sources(
   models

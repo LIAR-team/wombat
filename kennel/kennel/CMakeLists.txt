@@ -1,5 +1,4 @@
-add_library(kennel_lib SHARED)
-add_library(kennel::kennel ALIAS kennel_lib)
+wombat_add_library(kennel_lib SHARED)
 target_sources(
   kennel_lib
   PRIVATE
@@ -34,7 +33,7 @@ target_link_libraries(
 )
 
 add_executable(kennel main.cpp)
-target_link_libraries(kennel PRIVATE kennel::kennel)
+target_link_libraries(kennel PRIVATE kennel::kennel_lib)
 
 wombat_install_target(kennel_lib)
 wombat_install_target(kennel)

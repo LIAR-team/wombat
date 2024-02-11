@@ -1,5 +1,5 @@
 
-add_library(kennel_sensor_plugins SHARED)
+wombat_add_library(kennel_sensor_plugins SHARED)
 target_sources(
   kennel_sensor_plugins
   PRIVATE

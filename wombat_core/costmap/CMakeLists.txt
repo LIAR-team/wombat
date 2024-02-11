@@ -1,6 +1,5 @@
 
-add_library(costmap STATIC)
-add_library(wombat_core::costmap ALIAS costmap)
+wombat_add_library(costmap STATIC)
 
 target_sources(
   costmap
