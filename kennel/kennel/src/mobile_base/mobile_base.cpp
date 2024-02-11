@@ -149,7 +149,6 @@ MobileBase::process_transforms(
 
 bool MobileBase::setup_ground_truth()
 {
-
   const auto ground_truth_frame_id = m_parent_node->declare_parameter(
     BASE_GT_PARAM("frame_id"),
     rclcpp::ParameterValue{std::string("ground_truth")}).get<std::string>();

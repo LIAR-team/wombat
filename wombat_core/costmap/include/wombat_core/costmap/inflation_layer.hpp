@@ -14,12 +14,17 @@ namespace wombat_core
 class InflationLayer : public nav2_costmap_2d::InflationLayer
 {
 public:
+  struct config_t
+  {
+    double inflation_radius {0.55};
+    double cost_scaling_factor {10.0};
+  };
+
   InflationLayer() = default;
 
   void setup(
     nav2_costmap_2d::LayeredCostmap * parent,
-    double inflation_radius = 0.55,
-    double cost_scaling_factor = 10.0);
+    const & config_t config = config_t());
 };
 
-}
+}  // namespace wombat_core

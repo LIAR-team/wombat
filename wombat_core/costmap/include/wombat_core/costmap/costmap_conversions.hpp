@@ -14,10 +14,12 @@ namespace wombat_core
 
 namespace occupancy
 {
-  constexpr char FREE = 0;
-  constexpr char INSCRIBED_OBS = 99;
-  constexpr char LETHAL_OBS = 100;
-  constexpr char UNKNOWN = -1;
+
+constexpr int8_t FREE = 0;
+constexpr int8_t INSCRIBED_OBS = 99;
+constexpr int8_t LETHAL_OBS = 100;
+constexpr int8_t UNKNOWN = -1;
+
 }  // namespace occupancy
 
 /**

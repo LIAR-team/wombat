@@ -12,14 +12,13 @@ namespace wombat_core
 
 void InflationLayer::setup(
   nav2_costmap_2d::LayeredCostmap * parent,
-  double inflation_radius,
-  double cost_scaling_factor)
+  const & config_t config)
 {
   name_ = "kennel_inflation";
   layered_costmap_ = parent;
 
-  inflation_radius_ = inflation_radius;
-  cost_scaling_factor_ = cost_scaling_factor;
+  inflation_radius_ = config.inflation_radius;
+  cost_scaling_factor_ = config.cost_scaling_factor;
 
   enabled_ = true;
   inflate_unknown_ = false;
@@ -34,4 +33,4 @@ void InflationLayer::setup(
   matchSize();
 }
 
-}
+}  // namespace wombat_core

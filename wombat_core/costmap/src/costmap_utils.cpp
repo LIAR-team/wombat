@@ -36,7 +36,7 @@ unsigned int world_to_index(
 
 size_t costmap_size(const nav2_costmap_2d::Costmap2D & costmap)
 {
-  return costmap.getSizeInCellsX() * costmap.getSizeInCellsY();
+  return static_cast<size_t>(costmap.getSizeInCellsX()) * static_cast<size_t>(costmap.getSizeInCellsY());
 }
 
 }  // namespace wombat_core

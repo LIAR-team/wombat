@@ -11,9 +11,9 @@
 namespace wombat_core
 {
 
-static std::array<char, 256> create_cost_translation_table()
+static std::array<int8_t, 256> create_cost_translation_table()
 {
-  std::array<char, 256> cost_translation_table;
+  std::array<int8_t, 256> cost_translation_table;
   cost_translation_table[0] = occupancy::FREE;
   cost_translation_table[253] = occupancy::INSCRIBED_OBS;
   cost_translation_table[254] = occupancy::LETHAL_OBS;
@@ -22,7 +22,7 @@ static std::array<char, 256> create_cost_translation_table()
   // regular cost values scale the range 1 to 252 (inclusive) to fit
   // into 1 to 98 (inclusive).
   for (int i = 1; i < 253; i++) {
-    cost_translation_table[i] = static_cast<char>(1 + (97 * (i - 1)) / 251);
+    cost_translation_table[i] = static_cast<int8_t>(1 + (97 * (i - 1)) / 251);
   }
 
   return cost_translation_table;
@@ -34,12 +34,12 @@ void costmap_to_occupancy_grid_values(
 {
   // static initialization of the cost translation table.
   // it's thread-safe: https://stackoverflow.com/q/1661529/7108533
-  static std::array<char, 256> s_cost_translation_table = create_cost_translation_table();
+  static std::array<int8_t, 256> s_cost_translation_table = create_cost_translation_table();
 
   std::unique_lock<nav2_costmap_2d::Costmap2D::mutex_t> lock(*costmap.getMutex());
 
   // Write grid info
-  float grid_resolution = costmap.getResolution();
+  auto grid_resolution = static_cast<float>(costmap.getResolution());
   grid.info.resolution = grid_resolution;
   grid.info.width = costmap.getSizeInCellsX();
   grid.info.height = costmap.getSizeInCellsY();

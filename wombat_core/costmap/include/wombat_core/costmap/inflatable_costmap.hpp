@@ -61,4 +61,4 @@ private:
   std::unique_ptr<nav2_costmap_2d::LayeredCostmap> m_layered_costmap;
 };
 
-}
+}  // namespace wombat_core

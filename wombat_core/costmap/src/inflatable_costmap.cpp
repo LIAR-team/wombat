@@ -56,4 +56,4 @@ nav2_costmap_2d::Costmap2D * InflatableCostmap::get_inflated_costmap()
   return m_layered_costmap->getCostmap();
 }
 
-}
+}  // namespace wombat_core

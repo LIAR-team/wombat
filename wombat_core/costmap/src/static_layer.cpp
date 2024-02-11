@@ -66,60 +66,60 @@ void StaticLayer::setup(nav2_costmap_2d::LayeredCostmap * parent)
   name_ = "kennel_static";
   layered_costmap_ = parent;
 
-  global_frame_ = "ground_truth";
+  m_global_frame = "ground_truth";
   enabled_ = true;
-  track_unknown_space_ = false;
-  use_maximum_ = false;
-  lethal_threshold_ = 100;
-  unknown_cost_value_ = static_cast<unsigned char>(0xff);
-  trinary_costmap_ = true;
-  transform_tolerance_ = tf2::durationFromSec(0.0);
+  m_track_unknown_space = false;
+  m_use_maximum = false;
+  m_lethal_threshold = 100;
+  m_unknown_cost_value = static_cast<unsigned char>(0xff);
+  m_trinary_costmap = true;
+  m_transform_tolerance = tf2::durationFromSec(0.0);
 }
 
 void
 StaticLayer::reset()
 {
-  has_updated_data_ = true;
+  m_has_updated_data = true;
   current_ = false;
 }
 
 void
 StaticLayer::update_map(nav_msgs::msg::OccupancyGrid::ConstSharedPtr new_map)
 {
-  if (!map_received_) {
+  if (!m_map_received) {
     processMap(*new_map);
-    map_received_ = true;
+    m_map_received = true;
     return;
   }
   std::lock_guard<nav2_costmap_2d::Costmap2D::mutex_t> guard(*getMutex());
-  map_buffer_ = new_map;
+  m_map_buffer = new_map;
 }
 
 void
 StaticLayer::update_map(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr update)
 {
   std::lock_guard<nav2_costmap_2d::Costmap2D::mutex_t> guard(*getMutex());
-  if (update->y < static_cast<int32_t>(y_) ||
-    y_ + height_ < update->y + update->height ||
-    update->x < static_cast<int32_t>(x_) ||
-    x_ + width_ < update->x + update->width)
+  if (update->y < static_cast<int32_t>(m_y) ||
+    m_y + m_height < update->y + update->height ||
+    update->x < static_cast<int32_t>(m_x) ||
+    m_x + m_width < update->x + update->width)
   {
     RCLCPP_WARN(
       logger_,
       "StaticLayer: Map update ignored. Exceeds bounds of static layer.\n"
       "Static layer origin: %d, %d   bounds: %d X %d\n"
       "Update origin: %d, %d   bounds: %d X %d",
-      x_, y_, width_, height_, update->x, update->y, update->width,
+      m_x, m_y, m_width, m_height, update->x, update->y, update->width,
       update->height);
     return;
   }
 
-  if (update->header.frame_id != map_frame_) {
+  if (update->header.frame_id != m_map_frame) {
     RCLCPP_WARN(
       logger_,
       "StaticLayer: Map update ignored. Current map is in frame %s "
       "but update was in frame %s",
-      map_frame_.c_str(), update->header.frame_id.c_str());
+      m_map_frame.c_str(), update->header.frame_id.c_str());
   }
 
   unsigned int di = 0;
@@ -131,7 +131,7 @@ StaticLayer::update_map(map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr updat
     }
   }
 
-  has_updated_data_ = true;
+  m_has_updated_data = true;
 }
 
 void
@@ -195,12 +195,12 @@ StaticLayer::processMap(const nav_msgs::msg::OccupancyGrid & new_map)
     }
   }
 
-  map_frame_ = new_map.header.frame_id;
+  m_map_frame = new_map.header.frame_id;
 
-  x_ = y_ = 0;
-  width_ = size_x_;
-  height_ = size_y_;
-  has_updated_data_ = true;
+  m_x = m_y = 0;
+  m_width = size_x_;
+  m_height = size_y_;
+  m_has_updated_data = true;
 
   current_ = true;
 }
@@ -219,21 +219,19 @@ StaticLayer::matchSize()
 }
 
 unsigned char
-StaticLayer::interpretValue(unsigned char value)
+StaticLayer::interpretValue(unsigned char value) const
 {
   // check if the static value is above the unknown or lethal thresholds
-  if (track_unknown_space_ && value == unknown_cost_value_) {
+  if (m_track_unknown_space && value == m_unknown_cost_value) {
     return NO_INFORMATION;
-  } else if (!track_unknown_space_ && value == unknown_cost_value_) {
+  } else if ((!m_track_unknown_space && value == m_unknown_cost_value) || m_trinary_costmap) {
     return FREE_SPACE;
-  } else if (value >= lethal_threshold_) {
+  } else if (value >= m_lethal_threshold) {
     return LETHAL_OBSTACLE;
-  } else if (trinary_costmap_) {
-    return FREE_SPACE;
   }
 
-  double scale = static_cast<double>(value) / lethal_threshold_;
-  return scale * LETHAL_OBSTACLE;
+  double scale = static_cast<double>(value) / m_lethal_threshold;
+  return static_cast<unsigned char>(scale * LETHAL_OBSTACLE);
 }
 
 void
@@ -243,39 +241,40 @@ StaticLayer::updateBounds(
   double * max_x,
   double * max_y)
 {
-  if (!map_received_) {
-    map_received_in_update_bounds_ = false;
+  if (!m_map_received) {
+    m_map_received_in_update_bounds = false;
     return;
   }
-  map_received_in_update_bounds_ = true;
+  m_map_received_in_update_bounds = true;
 
   std::lock_guard<nav2_costmap_2d::Costmap2D::mutex_t> guard(*getMutex());
 
   // If there is a new available map, load it.
-  if (map_buffer_) {
-    processMap(*map_buffer_);
-    map_buffer_ = nullptr;
+  if (m_map_buffer) {
+    processMap(*m_map_buffer);
+    m_map_buffer = nullptr;
   }
 
   if (!layered_costmap_->isRolling() ) {
-    if (!(has_updated_data_ || has_extra_bounds_)) {
+    if (!(m_has_updated_data || has_extra_bounds_)) {
       return;
     }
   }
 
   useExtraBounds(min_x, min_y, max_x, max_y);
 
-  double wx, wy;
+  double wx = 0.0;
+  double wy = 0.0;
 
-  mapToWorld(x_, y_, wx, wy);
+  mapToWorld(m_x, m_y, wx, wy);
   *min_x = std::min(wx, *min_x);
   *min_y = std::min(wy, *min_y);
 
-  mapToWorld(x_ + width_, y_ + height_, wx, wy);
+  mapToWorld(m_x + m_width, m_y + m_height, wx, wy);
   *max_x = std::max(wx, *max_x);
   *max_y = std::max(wy, *max_y);
 
-  has_updated_data_ = false;
+  m_has_updated_data = false;
 }
 
 void
@@ -287,33 +286,35 @@ StaticLayer::updateCosts(
   if (!enabled_) {
     return;
   }
-  if (!map_received_in_update_bounds_) {
-    static int count = 0;
+  if (!m_map_received_in_update_bounds) {
+    static int s_count = 0;
     // throttle warning down to only 1/10 message rate
-    if (++count == 10) {
+    if (++s_count == 10) {
       RCLCPP_WARN(logger_, "Can't update static costmap layer, no map received");
-      count = 0;
+      s_count = 0;
     }
     return;
   }
 
   if (!layered_costmap_->isRolling()) {
     // if not rolling, the layered costmap (master_grid) has same coordinates as this layer
-    if (!use_maximum_) {
+    if (!m_use_maximum) {
       updateWithTrueOverwrite(master_grid, min_i, min_j, max_i, max_j);
     } else {
       updateWithMax(master_grid, min_i, min_j, max_i, max_j);
     }
   } else {
     // If rolling window, the master_grid is unlikely to have same coordinates as this layer
-    unsigned int mx, my;
-    double wx, wy;
+    unsigned int mx = 0;
+    unsigned int my = 0;
+    double wx = 0.0;
+    double wy = 0.0;
     // Might even be in a different frame
     geometry_msgs::msg::TransformStamped transform;
     try {
       transform = tf_->lookupTransform(
-        map_frame_, global_frame_, tf2::TimePointZero,
-        transform_tolerance_);
+        m_map_frame, m_global_frame, tf2::TimePointZero,
+        m_transform_tolerance);
     } catch (tf2::TransformException & ex) {
       RCLCPP_ERROR(logger_, "StaticLayer: %s", ex.what());
       return;
@@ -324,14 +325,14 @@ StaticLayer::updateCosts(
 
     for (int i = min_i; i < max_i; ++i) {
       for (int j = min_j; j < max_j; ++j) {
-        // Convert master_grid coordinates (i,j) into global_frame_(wx,wy) coordinates
+        // Convert master_grid coordinates (i,j) into m_global_frame(wx,wy) coordinates
         layered_costmap_->getCostmap()->mapToWorld(i, j, wx, wy);
-        // Transform from global_frame_ to map_frame_
+        // Transform from m_global_frame to m_map_frame
         tf2::Vector3 p(wx, wy, 0);
         p = tf2_transform * p;
         // Set master_grid with cell from map
         if (worldToMap(p.x(), p.y(), mx, my)) {
-          if (!use_maximum_) {
+          if (!m_use_maximum) {
             master_grid.setCost(i, j, getCost(mx, my));
           } else {
             master_grid.setCost(i, j, std::max(getCost(mx, my), master_grid.getCost(i, j)));
@@ -343,4 +344,4 @@ StaticLayer::updateCosts(
   current_ = true;
 }
 
-}  // namespace nav2_costmap_2d
+}  // namespace wombat_core

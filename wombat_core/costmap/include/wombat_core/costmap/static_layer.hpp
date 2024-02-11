@@ -71,7 +71,7 @@ public:
   /**
     * @brief Static Layer destructor
     */
-  ~StaticLayer() = default;
+  ~StaticLayer() override = default;
 
   void setup(nav2_costmap_2d::LayeredCostmap * parent);
 
@@ -92,12 +92,12 @@ public:
   /**
    * @brief Reset this costmap
    */
-  virtual void reset();
+  void reset() override;
 
   /**
    * @brief If clearing operations should be processed on this layer or not
    */
-  virtual bool isClearable() {return false;}
+  bool isClearable() override {return false;}
 
   /**
    * @brief Update the bounds of the master costmap by this layer's update dimensions
@@ -109,9 +109,9 @@ public:
    * @param max_x X max map coord of the window to update
    * @param max_y Y max map coord of the window to update
    */
-  virtual void updateBounds(
+  void updateBounds(
     double robot_x, double robot_y, double robot_yaw, double * min_x,
-    double * min_y, double * max_x, double * max_y);
+    double * min_y, double * max_x, double * max_y) override;
 
   /**
    * @brief Update the costs in the master costmap in the window
@@ -121,14 +121,14 @@ public:
    * @param max_x X max map coord of the window to update
    * @param max_y Y max map coord of the window to update
    */
-  virtual void updateCosts(
+  void updateCosts(
     nav2_costmap_2d::Costmap2D & master_grid,
-    int min_i, int min_j, int max_i, int max_j);
+    int min_i, int min_j, int max_i, int max_j) override;
 
   /**
    * @brief Match the size of the master costmap
    */
-  virtual void matchSize();
+  void matchSize() override;
 
 private:
   /**
@@ -140,28 +140,28 @@ private:
    * @brief Interpret the value in the static map given on the topic to
    * convert into costs for the costmap to utilize
    */
-  unsigned char interpretValue(unsigned char value);
+  unsigned char interpretValue(unsigned char value) const;
 
-  std::string global_frame_;  ///< @brief The global frame for the costmap
-  std::string map_frame_;  /// @brief frame that map is located in
+  std::string m_global_frame;  ///< @brief The global frame for the costmap
+  std::string m_map_frame;  /// @brief frame that map is located in
 
-  bool has_updated_data_{false};
+  bool m_has_updated_data{false};
 
-  unsigned int x_{0};
-  unsigned int y_{0};
-  unsigned int width_{0};
-  unsigned int height_{0};
+  unsigned int m_x{0};
+  unsigned int m_y{0};
+  unsigned int m_width{0};
+  unsigned int m_height{0};
 
   // Parameters
-  bool track_unknown_space_;
-  bool use_maximum_;
-  unsigned char lethal_threshold_;
-  unsigned char unknown_cost_value_;
-  bool trinary_costmap_;
-  bool map_received_{false};
-  bool map_received_in_update_bounds_{false};
-  tf2::Duration transform_tolerance_;
-  nav_msgs::msg::OccupancyGrid::ConstSharedPtr map_buffer_;
+  bool m_track_unknown_space;
+  bool m_use_maximum;
+  unsigned char m_lethal_threshold;
+  unsigned char m_unknown_cost_value;
+  bool m_trinary_costmap;
+  bool m_map_received{false};
+  bool m_map_received_in_update_bounds{false};
+  tf2::Duration m_transform_tolerance;
+  nav_msgs::msg::OccupancyGrid::ConstSharedPtr m_map_buffer;
 };
 
-}
+}  // namespace wombat_core

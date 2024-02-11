@@ -54,15 +54,20 @@ std::optional<grid_index_t> world_pt_to_grid_index(
   return grid_coord_to_index(*maybe_map_coord, map_info);
 }
 
+// This is a private function so don't bother cleaning up the parameters.
+// Fix this before making it public.
+// NOLINTBEGIN(bugprone-easily-swappable-parameters)
 /**
   * @brief  A 2D implementation of Bresenham's raytracing algorithm...
   * applies an action at each step
   */
 static std::optional<grid_index_t> bresenham2D(
-  const std::function<bool(grid_index_t)> & predicate, unsigned int abs_da, unsigned int abs_db, int error_b,
-  int offset_a,
-  int offset_b, unsigned int offset,
+  const std::function<bool(grid_index_t)> & predicate,
+  unsigned int abs_da, unsigned int abs_db, int error_b,
+  int offset_a, int offset_b,
+  unsigned int offset,
   unsigned int max_length)
+// NOLINTEND(bugprone-easily-swappable-parameters)
 {
   unsigned int end = std::min(max_length, abs_da);
   bool should_stop = false;
@@ -72,10 +77,10 @@ static std::optional<grid_index_t> bresenham2D(
       return offset;
     }
     offset += offset_a;
-    error_b += abs_db;
-    if ((unsigned int)error_b >= abs_da) {
+    error_b += static_cast<int>(abs_db);
+    if (static_cast<unsigned int>(error_b) >= abs_da) {
       offset += offset_b;
-      error_b -= abs_da;
+      error_b -= static_cast<int>(abs_da);
     }
   }
   should_stop = predicate(offset);
@@ -91,8 +96,8 @@ std::optional<grid_index_t> find_if_raytrace(
   const nav_msgs::msg::MapMetaData & map_info,
   const std::function<bool(grid_index_t)> & predicate)
 {
-  static constexpr unsigned int max_length = UINT_MAX;
-  static constexpr unsigned int min_length = 0;
+  static constexpr unsigned int MAX_LENGTH = UINT_MAX;
+  static constexpr unsigned int MIN_LENGTH = 0;
 
   std::optional<grid_index_t> output_grid_pt;
 
@@ -100,21 +105,21 @@ std::optional<grid_index_t> find_if_raytrace(
     throw std::runtime_error("Invalid predicate function");
   }
 
-  int dx_full = to_grid.x - from_grid.x;
-  int dy_full = to_grid.y - from_grid.y;
+  int dx_full = static_cast<int>(to_grid.x - from_grid.x);
+  int dy_full = static_cast<int>(to_grid.y - from_grid.y);
 
   // we need to chose how much to scale our dominant dimension,
   // based on the maximum length of the line
   double dist = std::hypot(dx_full, dy_full);
-  if (dist < min_length) {
+  if (dist < MIN_LENGTH) {
     return output_grid_pt;
   }
 
   grid_coord_t min_from_grid;
   if (dist > 0.0) {
-    // Adjust starting point and offset to start from min_length distance
-    min_from_grid.x = static_cast<unsigned int>(from_grid.x + dx_full / dist * min_length);
-    min_from_grid.y = static_cast<unsigned int>(from_grid.y + dy_full / dist * min_length);
+    // Adjust starting point and offset to start from MIN_LENGTH distance
+    min_from_grid.x = static_cast<unsigned int>(from_grid.x + dx_full / dist * MIN_LENGTH);
+    min_from_grid.y = static_cast<unsigned int>(from_grid.y + dy_full / dist * MIN_LENGTH);
   } else {
     // dist can be 0 if [from_grid.x, from_grid.y]==[to_grid.x, to_grid.y].
     // In this case only this cell should be processed.
@@ -126,27 +131,29 @@ std::optional<grid_index_t> find_if_raytrace(
     throw std::runtime_error("Failed to compute from offset");
   }
 
-  int dx = to_grid.x - min_from_grid.x;
-  int dy = to_grid.y - min_from_grid.y;
+  int dx = static_cast<int>(to_grid.x - min_from_grid.x);
+  int dy = static_cast<int>(to_grid.y - min_from_grid.y);
 
   unsigned int abs_dx = std::abs(dx);
   unsigned int abs_dy = std::abs(dy);
 
   int offset_dx = wombat_core::sign(dx);
-  int offset_dy = wombat_core::sign(dy) * map_info.width;
+  int offset_dy = wombat_core::sign(dy) * static_cast<int>(map_info.width);
 
-  double scale = (dist == 0.0) ? 1.0 : std::min(1.0, max_length / dist);
+  double scale = (dist == 0.0) ? 1.0 : std::min(1.0, MAX_LENGTH / dist);
 
   if (abs_dx >= abs_dy) {
     // if x is dominant
-    int error_y = abs_dx / 2;
+    int error_y = static_cast<int>(abs_dx) / 2;
     output_grid_pt = bresenham2D(
-      predicate, abs_dx, abs_dy, error_y, offset_dx, offset_dy, *maybe_from_offset, static_cast<unsigned int>(scale * abs_dx));
+      predicate, abs_dx, abs_dy, error_y, offset_dx, offset_dy, *maybe_from_offset,
+      static_cast<unsigned int>(scale * abs_dx));
   } else {
-  // otherwise y is dominant
-  int error_x = abs_dy / 2;
-  output_grid_pt = bresenham2D(
-    predicate, abs_dy, abs_dx, error_x, offset_dy, offset_dx, *maybe_from_offset, static_cast<unsigned int>(scale * abs_dy));
+    // otherwise y is dominant
+    int error_x = static_cast<int>(abs_dy) / 2;
+    output_grid_pt = bresenham2D(
+      predicate, abs_dy, abs_dx, error_x, offset_dy, offset_dx, *maybe_from_offset,
+      static_cast<unsigned int>(scale * abs_dy));
   }
 
   return output_grid_pt;
