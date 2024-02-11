@@ -12,7 +12,7 @@ namespace wombat_core
 
 void InflationLayer::setup(
   nav2_costmap_2d::LayeredCostmap * parent,
-  const & config_t config)
+  const config_t & config)
 {
   name_ = "kennel_inflation";
   layered_costmap_ = parent;

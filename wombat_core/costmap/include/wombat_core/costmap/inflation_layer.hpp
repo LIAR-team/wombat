@@ -24,7 +24,7 @@ public:
 
   void setup(
     nav2_costmap_2d::LayeredCostmap * parent,
-    const & config_t config = config_t());
+    const config_t & config = config_t());
 };
 
 }  // namespace wombat_core
