@@ -11,6 +11,7 @@
   <buildtool_depend>wombat_cmake</buildtool_depend>
 
   <depend>geometry_msgs</depend>
+  <depend>map_msgs</depend>
   <depend>nav_msgs</depend>
   <depend>nav2_costmap_2d</depend>
   <depend>rclcpp</depend>

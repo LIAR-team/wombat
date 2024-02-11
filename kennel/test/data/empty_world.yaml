@@ -13,5 +13,7 @@ my_robot:
         update_period_ms: 5
         control_topic_name: /cmd_vel
         control_msg_lifespan_ms: 200
-        ground_truth_map_topic_name: ""
+        ground_truth:
+          map_topic_name: ""
+          costmap_topic_name: ""
         start_pose: [0.0, 0.0, 0.0]

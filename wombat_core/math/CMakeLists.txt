@@ -1,6 +1,5 @@
 
-add_library(math STATIC)
-add_library(wombat_core::math ALIAS math)
+wombat_add_library(math STATIC)
 
 target_sources(
   math

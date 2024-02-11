@@ -5,6 +5,7 @@ find_package(wombat_cmake REQUIRED)
 set(PKG_DEPENDENCIES
   geometry_msgs
   nav_msgs
+  nav2_costmap_2d
   nav2_map_server
   pluginlib
   rclcpp

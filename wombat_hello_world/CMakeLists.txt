@@ -7,8 +7,7 @@ find_package(wombat_cmake REQUIRED)
 
 wombat_package()
 
-add_library(hello_publisher SHARED)
-add_library(wombat_hello_world::hello_publisher ALIAS hello_publisher)
+wombat_add_library(hello_publisher SHARED)
 target_sources(hello_publisher PRIVATE src/hello_publisher.cpp)
 target_include_directories(
   hello_publisher

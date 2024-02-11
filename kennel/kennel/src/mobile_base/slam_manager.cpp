@@ -21,7 +21,7 @@ SlamManager::SlamManager(
 
 std::optional<localization_data_t> SlamManager::slam_update(
   const geometry_msgs::msg::TransformStamped & gt_T_base,
-  const nav_msgs::msg::OccupancyGrid & gt_map)
+  nav_msgs::msg::OccupancyGrid::ConstSharedPtr gt_map)
 {
   const auto now = m_clock->now();
   if (now - m_last_update_time < m_update_period) {
@@ -34,7 +34,9 @@ std::optional<localization_data_t> SlamManager::slam_update(
   localization_data_t data;
   data.robot_pose = gt_T_base;
   data.robot_pose.header.frame_id = m_slam_frame_id;
-  data.map = gt_map;
+  if (gt_map) {
+    data.map = *gt_map;
+  }
 
   return data;
 }

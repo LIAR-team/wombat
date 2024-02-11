@@ -22,10 +22,11 @@ runs:
           FILE_PACKAGE_DIR=$(echo ${file} | cut -d "/" -f1)
           CHANGED_DIRS="${FILE_PACKAGE_DIR} ${CHANGED_DIRS}"
         done
-        UNIQUE_CHANGED_DIRS=$(echo "$b" | xargs -n1 | sort -u | xargs)
+        UNIQUE_CHANGED_DIRS=$(echo "${CHANGED_DIRS}" | xargs -n1 | sort -u | xargs)
         ALL_PKGS=$(colcon list --names-only | xargs)
         CHANGED_PKGS=$(comm -12 <(echo ${UNIQUE_CHANGED_DIRS} | tr " " "\n" | sort) <(echo ${ALL_PKGS} | tr " " "\n" | sort))
+        CHANGED_PKGS_SINGLE_LINE=$(echo ${CHANGED_PKGS} | tr "\n" " ")
         echo "Changed files: ${ALL_CHANGED_FILES}"
-        echo "Changed ROS 2 packages: ${CHANGED_PKGS}"
-        echo "all-changed-ros2-packages=${CHANGED_PKGS}" >> $GITHUB_OUTPUT
+        echo "Changed ROS 2 packages: ${CHANGED_PKGS_SINGLE_LINE}"
+        echo "all-changed-ros2-packages=${CHANGED_PKGS_SINGLE_LINE}" >> $GITHUB_OUTPUT
       shell: bash

@@ -30,4 +30,5 @@ wombat_package_install(
       "WombatInstallExtras.cmake"
       "WombatLintersExtras.cmake"
       "WombatPackageExtras.cmake"
+      "WombatTargetExtras.cmake"
 )

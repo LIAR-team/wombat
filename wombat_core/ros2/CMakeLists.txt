@@ -1,6 +1,5 @@
 
-add_library(ros2 INTERFACE)
-add_library(wombat_core::ros2 ALIAS ros2)
+wombat_add_library(ros2 INTERFACE)
 
 target_include_directories(
   ros2

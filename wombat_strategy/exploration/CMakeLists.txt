@@ -1,6 +1,5 @@
 
-add_library(exploration SHARED)
-add_library(wombat_strategy::exploration ALIAS exploration)
+wombat_add_library(exploration SHARED)
 target_sources(exploration
   PRIVATE
     src/frontier_detector.cpp

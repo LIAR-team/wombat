@@ -11,7 +11,7 @@
 #include <limits>
 #include <queue>
 
-#include "wombat_core/costmap/costmap.hpp"
+#include "wombat_core/costmap/costmap_utils.hpp"
 #include "wombat_core/math/geometry_point.hpp"
 
 namespace wombat_strategy
@@ -38,7 +38,7 @@ std::vector<frontier_t> FrontierDetector::search_frontiers()
   std::vector<bool> touched_indices(map_size, false);
   std::vector<bool> already_included_frontier_indices(map_size, false);
 
-  unsigned int starting_idx = wombat_core::world_to_index(m_robot_position, m_costmap);
+  unsigned int starting_idx = wombat_core::world_to_index(m_robot_position, *m_costmap);
   // Create queue of indices to be visited, initialized with starting index
   std::queue<unsigned int> to_be_visited;
   to_be_visited.push(starting_idx);
@@ -81,7 +81,7 @@ frontier_t FrontierDetector::build_frontier(
   frontier_t f;
 
   // We consider the first frontier cell found as the closest to the robot
-  f.closest_point = wombat_core::index_to_world(starting_cell_idx, m_costmap);
+  f.closest_point = wombat_core::index_to_world(starting_cell_idx, *m_costmap);
 
   // Queue of contiguous frontier cells
   std::queue<unsigned int> to_be_visited;
@@ -93,7 +93,7 @@ frontier_t FrontierDetector::build_frontier(
     unsigned int cell_idx = to_be_visited.front();
     to_be_visited.pop();
 
-    const auto frontier_point = wombat_core::index_to_world(cell_idx, m_costmap);
+    const auto frontier_point = wombat_core::index_to_world(cell_idx, *m_costmap);
     f.points.push_back(frontier_point);
 
     for (const auto neighbor_cell_idx : get_neighbors4(cell_idx)) {
@@ -158,7 +158,7 @@ bool FrontierDetector::frontier_is_valid(const frontier_t & f, bool trusted)
     num_frontier_cells = f.points.size();
   } else {
     for (const auto & point : f.points) {
-      const auto cell_idx = wombat_core::world_to_index(point, m_costmap);
+      const auto cell_idx = wombat_core::world_to_index(point, *m_costmap);
       if (is_frontier_cell(cell_idx)) {
         num_frontier_cells++;
       }

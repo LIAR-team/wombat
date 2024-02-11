@@ -1,5 +1,4 @@
-add_library(kennel_lib SHARED)
-add_library(kennel::kennel ALIAS kennel_lib)
+wombat_add_library(kennel_lib SHARED)
 target_sources(
   kennel_lib
   PRIVATE
@@ -15,23 +14,26 @@ target_include_directories(
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-ament_target_dependencies(kennel_lib PUBLIC nav2_map_server pluginlib tf2 tf2_geometry_msgs tf2_ros)
+ament_target_dependencies(kennel_lib PUBLIC nav2_map_server nav2_costmap_2d pluginlib tf2 tf2_geometry_msgs tf2_ros)
 target_link_libraries(
   kennel_lib
   PUBLIC
     kennel::common
     rclcpp::rclcpp
+    wombat_core::costmap
     wombat_core::ros2
     ${geometry_msgs_TARGETS}
     ${nav_msgs_TARGETS}
+    ${nav2_msgs_TARGETS}
     ${rosgraph_msgs_TARGETS}
   PRIVATE
+    wombat_core::cpp_utils
     wombat_control::models
     wombat_core::math
 )
 
 add_executable(kennel main.cpp)
-target_link_libraries(kennel PRIVATE kennel::kennel)
+target_link_libraries(kennel PRIVATE kennel::kennel_lib)
 
 wombat_install_target(kennel_lib)
 wombat_install_target(kennel)
