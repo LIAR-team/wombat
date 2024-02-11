@@ -13,6 +13,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "kennel/common/sensors/sensor_ros2_base.hpp"
+#include "wombat_core/ros2/parameters.hpp"
 
 namespace kennel
 {
@@ -34,6 +35,7 @@ bool SensorRos2Base<MsgT>::initialize_sensor(
     return false;
   }
 
+  // TODO: we should allow differentiating the sensor name from the topic name
   m_sensor_publisher = parent_node->create_publisher<MsgT>(
     m_sensor_name,
     rclcpp::QoS(rclcpp::KeepLast(10)));
@@ -84,7 +86,8 @@ bool SensorRos2Base<MsgT>::declare_parameters(
     // Scope each parameter with the name of the sensor
     const std::string full_name = m_sensor_name + "." + default_info.name;
 
-    auto param_value = parent_node->declare_parameter(
+    auto param_value = wombat_core::declare_parameter_if_not_declared(
+      parent_node->get_node_parameters_interface(),
       default_info.name,
       default_info.value,
       default_info.descriptor);

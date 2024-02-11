@@ -11,6 +11,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "kennel/kennel.hpp"
+#include "wombat_core/ros2/parameters.hpp"
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
@@ -23,24 +24,30 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
   m_kennel_node = std::make_shared<rclcpp::Node>("kennel", m_node_options);
 
   // Declare parameters
-  m_kennel_node->declare_parameter(
+  wombat_core::declare_parameter_if_not_declared(
+    m_kennel_node->get_node_parameters_interface(),
     "real_time_factor",
     rclcpp::ParameterValue{1.0});
-  m_kennel_node->declare_parameter(
+  wombat_core::declare_parameter_if_not_declared(
+    m_kennel_node->get_node_parameters_interface(),
     "sim_time_update_period_ms",
     rclcpp::ParameterValue{5});
 
-  m_kennel_node->declare_parameter(
+  wombat_core::declare_parameter_if_not_declared(
+    m_kennel_node->get_node_parameters_interface(),
     "map_yaml_filename",
     rclcpp::ParameterValue{std::string("")});
-  m_kennel_node->declare_parameter(
+  wombat_core::declare_parameter_if_not_declared(
+    m_kennel_node->get_node_parameters_interface(),
     "map_frame_id",
     rclcpp::ParameterValue{std::string("map")});
-  m_kennel_node->declare_parameter(
+  wombat_core::declare_parameter_if_not_declared(
+    m_kennel_node->get_node_parameters_interface(),
     "map_topic_name",
     rclcpp::ParameterValue{std::string("map")});
 
-  m_kennel_node->declare_parameter(
+  wombat_core::declare_parameter_if_not_declared(
+    m_kennel_node->get_node_parameters_interface(),
     "robots",
     rclcpp::ParameterValue{std::vector<std::string>()});
 }

@@ -13,6 +13,7 @@
 #include "wombat_core/costmap/costmap_conversions.hpp"
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/math/transformations.hpp"
+#include "wombat_core/ros2/parameters.hpp"
 
 // Macros to generate nested parameter names
 #include "wombat_core/cpp/macros/concat.hpp"
@@ -35,7 +36,8 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
     throw std::runtime_error("Failed to setup SLAM manager");
   }
 
-  const std::string control_topic_name = m_parent_node->declare_parameter(
+  const std::string control_topic_name = wombat_core::declare_parameter_if_not_declared(
+    m_parent_node->get_node_parameters_interface(),
     "mobile_base.control_topic_name",
     rclcpp::ParameterValue{std::string("cmd_vel")}).get<std::string>();
 
@@ -51,7 +53,8 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
   m_tf_broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(m_parent_node);
 
   const auto mobile_base_update_period = std::chrono::milliseconds(
-    m_parent_node->declare_parameter(
+    wombat_core::declare_parameter_if_not_declared(
+      m_parent_node->get_node_parameters_interface(),
       "mobile_base.update_period_ms",
       rclcpp::ParameterValue{10}).get<int>());
 
@@ -149,28 +152,34 @@ MobileBase::process_transforms(
 
 bool MobileBase::setup_ground_truth()
 {
-  const auto ground_truth_frame_id = m_parent_node->declare_parameter(
+  const auto ground_truth_frame_id = wombat_core::declare_parameter_if_not_declared(
+    m_parent_node->get_node_parameters_interface(),
     BASE_GT_PARAM("frame_id"),
     rclcpp::ParameterValue{std::string("ground_truth")}).get<std::string>();
 
-  const auto ground_truth_costmap_topic_name = m_parent_node->declare_parameter(
+  const auto ground_truth_costmap_topic_name = wombat_core::declare_parameter_if_not_declared(
+    m_parent_node->get_node_parameters_interface(),
     BASE_GT_PARAM("costmap_topic_name"),
     rclcpp::ParameterValue{std::string("ground_truth_costmap")}).get<std::string>();
 
-  const auto ground_truth_map_topic_name = m_parent_node->declare_parameter(
+  const auto ground_truth_map_topic_name = wombat_core::declare_parameter_if_not_declared(
+    m_parent_node->get_node_parameters_interface(),
     BASE_GT_PARAM("map_topic_name"),
     rclcpp::ParameterValue{std::string("ground_truth_map")}).get<std::string>();
 
-  const auto robot_base_frame_id = m_parent_node->declare_parameter(
+  const auto robot_base_frame_id = wombat_core::declare_parameter_if_not_declared(
+    m_parent_node->get_node_parameters_interface(),
     BASE_PARAM("frame_id"),
     rclcpp::ParameterValue{std::string("base_link")}).get<std::string>();
 
-  const auto start_pose_2d = m_parent_node->declare_parameter(
+  const auto start_pose_2d = wombat_core::declare_parameter_if_not_declared(
+    m_parent_node->get_node_parameters_interface(),
     BASE_PARAM("start_pose"),
     rclcpp::ParameterValue{std::vector<double>({0.0, 0.0, 0.0})}).get<std::vector<double>>();
 
   const auto control_msg_lifespan = std::chrono::milliseconds(
-    m_parent_node->declare_parameter(
+    wombat_core::declare_parameter_if_not_declared(
+      m_parent_node->get_node_parameters_interface(),
       BASE_PARAM("control_msg_lifespan_ms"),
       rclcpp::ParameterValue{100}).get<int>());
 
@@ -241,15 +250,18 @@ void MobileBase::on_gt_map_received(nav_msgs::msg::OccupancyGrid::ConstSharedPtr
 
 bool MobileBase::setup_slam()
 {
-  const std::string slam_frame_id = m_parent_node->declare_parameter(
-    "mobile_base.slam_frame_id",
+  const std::string slam_frame_id = wombat_core::declare_parameter_if_not_declared(
+    m_parent_node->get_node_parameters_interface(),
+    BASE_PARAM("slam_frame_id"),
     rclcpp::ParameterValue{std::string("map")}).get<std::string>();
-  const std::string slam_map_topic_name = m_parent_node->declare_parameter(
-    "mobile_base.slam_map_topic_name",
+  const std::string slam_map_topic_name = wombat_core::declare_parameter_if_not_declared(
+    m_parent_node->get_node_parameters_interface(),
+    BASE_PARAM("slam_map_topic_name"),
     rclcpp::ParameterValue{std::string("map")}).get<std::string>();
   const auto slam_update_period = std::chrono::milliseconds(
-    m_parent_node->declare_parameter(
-      "mobile_base.slam_update_period_ms",
+    wombat_core::declare_parameter_if_not_declared(
+      m_parent_node->get_node_parameters_interface(),
+      BASE_PARAM("slam_update_period_ms"),
       rclcpp::ParameterValue{50}).get<int>());
 
   m_slam_manager = std::make_unique<SlamManager>(

@@ -14,6 +14,7 @@ target_link_libraries(
   PUBLIC
     rclcpp::rclcpp
     wombat_core::math
+    wombat_core::ros2
     ${geometry_msgs_TARGETS}
     ${nav_msgs_TARGETS}
     ${sensor_msgs_TARGETS}

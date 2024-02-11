@@ -14,3 +14,6 @@ target_link_libraries(test_math_online_stats wombat_core::math)
 
 ament_add_gtest(test_math_utils test_math_utils.cpp)
 target_link_libraries(test_math_utils wombat_core::math)
+
+ament_add_gtest(test_ros2_parameters test_ros2_parameters.cpp)
+target_link_libraries(test_ros2_parameters wombat_core::ros2)
