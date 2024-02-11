@@ -4,6 +4,8 @@
 # Proprietary and confidential.
 
 include(CMakeParseArguments)
+include(${wombat_cmake_DIR}/BuildTypes.cmake)
+include(${wombat_cmake_DIR}/WombatLinters.cmake)
 
 #
 # Standard Wombat project setup.
@@ -24,8 +26,6 @@ macro(wombat_package)
     "" # list of names of multi-valued arguments (output variables are lists)
     ${ARGN} # arguments of the function to parse, here we take the all original ones
   )
-
-  include(${wombat_cmake_DIR}/BuildTypes.cmake)
 
   option(WOMBAT_COVERAGE "Enable code coverage" FALSE)
 

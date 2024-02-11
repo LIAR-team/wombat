@@ -9,5 +9,4 @@ The `cmake` directory contains both the CMake scripts used and exposed by this p
 The files named with the `Wombat` prefix constitute the public functions of this package, while the others are only for internal use.
 Note that `Wombat` scripts can use access scripts.
 
-To add a new `Wombat` script, after creating it in the `cmake` directory, you need to also create a corresponding `Extras.cmake` script pointing at it.
-Then this just created `Extras.cmake` script needs to be installed as part of the `wombat_cmake` package installation step.
+To add a new `Wombat` script and make it accessible for the packages that depend on this one, after creating it in the `cmake` directory, you need to add it to the list of configured extras in the `CMakeLists.txt` call to `wombat_write_config_extras`.
