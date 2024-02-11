@@ -3,9 +3,12 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
+#include <climits>
+
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 #include "wombat_core/math/grid.hpp"
+#include "wombat_core/math/utils.hpp"
 
 namespace wombat_core
 {
@@ -51,46 +54,102 @@ std::optional<grid_index_t> world_pt_to_grid_index(
   return grid_coord_to_index(*maybe_map_coord, map_info);
 }
 
-std::optional<grid_index_t> find_grid_coord_on_line(
-  const geometry_msgs::msg::Point & from_world,
-  const geometry_msgs::msg::Point & to_world,
-  const nav_msgs::msg::MapMetaData & map_info,
-  const std::function<bool(grid_index_t)> & eval_func)
+/**
+  * @brief  A 2D implementation of Bresenham's raytracing algorithm...
+  * applies an action at each step
+  */
+static std::optional<grid_index_t> bresenham2D(
+  const std::function<bool(grid_index_t)> & predicate, unsigned int abs_da, unsigned int abs_db, int error_b,
+  int offset_a,
+  int offset_b, unsigned int offset,
+  unsigned int max_length)
 {
-  // TODO: use a better algorithm (e.g. Bresenham’s)
-  // This is not precise and very inefficient.
-
-  if (!eval_func) {
-    throw std::runtime_error("No eval func");
+  unsigned int end = std::min(max_length, abs_da);
+  bool should_stop = false;
+  for (unsigned int i = 0; i < end; ++i) {
+    should_stop = predicate(offset);
+    if (should_stop) {
+      return offset;
+    }
+    offset += offset_a;
+    error_b += abs_db;
+    if ((unsigned int)error_b >= abs_da) {
+      offset += offset_b;
+      error_b -= abs_da;
+    }
   }
-
-  const double dx = to_world.x - from_world.x;
-  const double dy = to_world.y - from_world.y;
-  const double dir_len_squared = dx * dx + dy * dy;
-  if (dir_len_squared == 0) {
-    return std::nullopt;
-  }
-  const double dir_len = std::sqrt(dir_len_squared);
-  const double step_x = dx / dir_len * map_info.resolution * 0.9;
-  const double step_y = dy / dir_len * map_info.resolution * 0.9;
-  geometry_msgs::msg::Point current_world_point = from_world;
-  while (true) {
-    const double dist_from_start_squared = (to_world.x - current_world_point.x) * (to_world.x - current_world_point.x) +
-      (to_world.y - current_world_point.y) * (to_world.y - current_world_point.y);
-    if (dist_from_start_squared > dir_len_squared) {
-      break;
-    }
-    auto maybe_map_index = world_pt_to_grid_index(current_world_point, map_info);
-    if (!maybe_map_index) {
-      throw std::runtime_error("Bad map index");
-    }
-    if (eval_func(*maybe_map_index)) {
-      return *maybe_map_index;
-    }
-    current_world_point.x += step_x;
-    current_world_point.y += step_y;
+  should_stop = predicate(offset);
+  if (should_stop) {
+    return offset;
   }
   return std::nullopt;
+}
+
+std::optional<grid_index_t> find_if_raytrace(
+  const grid_coord_t & from_grid,
+  const grid_coord_t & to_grid,
+  const nav_msgs::msg::MapMetaData & map_info,
+  const std::function<bool(grid_index_t)> & predicate)
+{
+  static constexpr unsigned int max_length = UINT_MAX;
+  static constexpr unsigned int min_length = 0;
+
+  std::optional<grid_index_t> output_grid_pt;
+
+  if (!predicate) {
+    throw std::runtime_error("Invalid predicate function");
+  }
+
+  int dx_full = to_grid.x - from_grid.x;
+  int dy_full = to_grid.y - from_grid.y;
+
+  // we need to chose how much to scale our dominant dimension,
+  // based on the maximum length of the line
+  double dist = std::hypot(dx_full, dy_full);
+  if (dist < min_length) {
+    return output_grid_pt;
+  }
+
+  grid_coord_t min_from_grid;
+  if (dist > 0.0) {
+    // Adjust starting point and offset to start from min_length distance
+    min_from_grid.x = static_cast<unsigned int>(from_grid.x + dx_full / dist * min_length);
+    min_from_grid.y = static_cast<unsigned int>(from_grid.y + dy_full / dist * min_length);
+  } else {
+    // dist can be 0 if [from_grid.x, from_grid.y]==[to_grid.x, to_grid.y].
+    // In this case only this cell should be processed.
+    min_from_grid.x = from_grid.x;
+    min_from_grid.y = from_grid.y;
+  }
+  auto maybe_from_offset = grid_coord_to_index(min_from_grid, map_info);
+  if (!maybe_from_offset) {
+    throw std::runtime_error("Failed to compute from offset");
+  }
+
+  int dx = to_grid.x - min_from_grid.x;
+  int dy = to_grid.y - min_from_grid.y;
+
+  unsigned int abs_dx = std::abs(dx);
+  unsigned int abs_dy = std::abs(dy);
+
+  int offset_dx = wombat_core::sign(dx);
+  int offset_dy = wombat_core::sign(dy) * map_info.width;
+
+  double scale = (dist == 0.0) ? 1.0 : std::min(1.0, max_length / dist);
+
+  if (abs_dx >= abs_dy) {
+    // if x is dominant
+    int error_y = abs_dx / 2;
+    output_grid_pt = bresenham2D(
+      predicate, abs_dx, abs_dy, error_y, offset_dx, offset_dy, *maybe_from_offset, static_cast<unsigned int>(scale * abs_dx));
+  } else {
+  // otherwise y is dominant
+  int error_x = abs_dy / 2;
+  output_grid_pt = bresenham2D(
+    predicate, abs_dy, abs_dx, error_x, offset_dy, offset_dx, *maybe_from_offset, static_cast<unsigned int>(scale * abs_dy));
+  }
+
+  return output_grid_pt;
 }
 
 }  // namespace wombat_core

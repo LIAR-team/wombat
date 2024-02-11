@@ -115,22 +115,21 @@ geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
     return new_pose;
   }
 
-  auto old_index = wombat_core::world_pt_to_grid_index(old_pose.position, map.info);
-  auto new_index = wombat_core::world_pt_to_grid_index(new_pose.position, map.info);
-  if (!old_index || !new_index) {
+  auto old_pose_coord = wombat_core::world_pt_to_grid_coord(old_pose.position, map.info);
+  auto new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map.info);
+  if (!old_pose_coord || !new_pose_coord) {
     return old_pose;
   }
 
-  // Naive approach to verify if the robot can travel between two poses.
-  auto obstacle_index = wombat_core::find_grid_coord_on_line(
-    old_pose.position,
-    new_pose.position,
+  auto maybe_obstacle_index = wombat_core::find_if_raytrace(
+    *old_pose_coord,
+    *new_pose_coord,
     map.info,
-    [&map](size_t index) {
+    [&map](wombat_core::grid_index_t index) {
       return map.data[index] > 0;
     });
 
-  if (obstacle_index) {
+  if (maybe_obstacle_index) {
     return old_pose;
   }
   return new_pose;

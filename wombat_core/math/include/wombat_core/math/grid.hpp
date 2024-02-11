@@ -5,11 +5,14 @@
 
 #pragma once
 
+#include <climits>
 #include <functional>
 #include <optional>
 
 #include "geometry_msgs/msg/point.hpp"
 #include "nav_msgs/msg/map_meta_data.hpp"
+
+#include "wombat_core/math/utils.hpp"
 
 namespace wombat_core
 {
@@ -59,21 +62,21 @@ std::optional<grid_index_t> world_pt_to_grid_index(
   const nav_msgs::msg::MapMetaData & map_info);
 
 /**
- * @brief Grid-line iterator. This function draws a line between two
- * world points, discretizes it to a grid, and runs an evaluation
+ * @brief Raytrace iterator. This function draws a line between two
+ * grid points and runs an evaluation
  * function on each grid cell that touches the line.
  * Returns the index of the first cell that satisfies the evaluation.
- * @param from_world world point where the line starts
- * @param to_world world point where the line ends
+ * @param from_grid grid point where to start raytracing
+ * @param to_grid grid point where to end raytracing
  * @param map_info information about the grid
- * @param eval_func function to run on every grid point on the line
+ * @param predicate function to run on every grid point on the line
  * @return std::optional<grid_index_t> index of a grid cell that satisfies the
  * evaluation function or std::nullopt if none is found
  */
-std::optional<grid_index_t> find_grid_coord_on_line(
-  const geometry_msgs::msg::Point & from_world,
-  const geometry_msgs::msg::Point & to_world,
+std::optional<grid_index_t> find_if_raytrace(
+  const grid_coord_t & from_grid,
+  const grid_coord_t & to_grid,
   const nav_msgs::msg::MapMetaData & map_info,
-  const std::function<bool(grid_index_t)> & eval_func);
+  const std::function<bool(grid_index_t)> & predicate);
 
 }  // namespace wombat_core
