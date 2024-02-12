@@ -13,6 +13,7 @@
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "wombat_control/models/diff_drive_model.hpp"
 #include "wombat_core/math/grid.hpp"
+#include "wombat_core/math/interpolation.hpp"
 #include "wombat_core/math/transformations.hpp"
 
 namespace kennel
@@ -103,36 +104,71 @@ void GroundTruthManager::reset_pose(const geometry_msgs::msg::Pose & new_pose)
 
 geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
   const nav_msgs::msg::OccupancyGrid & map,
-  const geometry_msgs::msg::Pose & old_pose,
-  const geometry_msgs::msg::Pose & new_pose)
+  const geometry_msgs::msg::Pose & start_pose,
+  const geometry_msgs::msg::Pose & end_pose)
 {
   // If the map is empty we just forward the updated pose
   if (map.data.empty()) {
-    return new_pose;
+    return end_pose;
   }
 
-  if (old_pose.position.x == new_pose.position.x && old_pose.position.y == new_pose.position.y) {
-    return new_pose;
+  if (start_pose.position.x == end_pose.position.x && start_pose.position.y == end_pose.position.y) {
+    return end_pose;
   }
 
-  auto old_pose_coord = wombat_core::world_pt_to_grid_coord(old_pose.position, map.info);
-  auto new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map.info);
-  if (!old_pose_coord || !new_pose_coord) {
-    return old_pose;
+  auto start_pose_coord = wombat_core::world_pt_to_grid_coord(start_pose.position, map.info);
+  auto end_pose_coord = wombat_core::world_pt_to_grid_coord(end_pose.position, map.info);
+  if (!start_pose_coord || !end_pose_coord) {
+    return start_pose;
   }
 
+  auto last_free_index = wombat_core::grid_coord_to_index(*start_pose_coord, map.info);
   auto maybe_obstacle_index = wombat_core::find_if_raytrace(
-    *old_pose_coord,
-    *new_pose_coord,
+    *start_pose_coord,
+    *end_pose_coord,
     map.info,
-    [&map](wombat_core::grid_index_t index) {
-      return map.data[index] > 0;
+    [&map, &last_free_index](wombat_core::grid_index_t index) {
+      bool is_obstacle = map.data[index] > 0;
+      if (!is_obstacle) {
+        last_free_index = index;
+      }
+      return is_obstacle;
     });
 
-  if (maybe_obstacle_index) {
-    return old_pose;
+  // If we didn't find any obstacle, just return the end pose
+  if (!maybe_obstacle_index) {
+    return end_pose;
   }
-  return new_pose;
+
+  // We found an obstacle between the start and the end poses.
+  // Select the last free cell as the new pose
+  // to simulate that the robot is now in contact with the obstacle.
+  auto maybe_last_free_coord = wombat_core::index_to_grid_coord(*last_free_index, map.info);
+  if (!maybe_last_free_coord) {
+    return start_pose;
+  }
+
+  // We can't directly select the position corresponding to the last free cell, because,
+  // due to the discrete values of the grid, it can cause instability in the robot pose.
+  // For example the position could snap back and forth between two neighbor grid cell centers.
+  // At the very least, we should ensure that we never move backward wrt the old pose.
+  // The current implementation uses an interpolation to translate the grid motion into
+  // world motion.
+  auto interpolated_pose = end_pose;
+  double x_scaling_factor =
+    static_cast<double>(maybe_last_free_coord->x - start_pose_coord->x) / static_cast<double>(end_pose_coord->x);
+  double y_scaling_factor =
+    static_cast<double>(maybe_last_free_coord->y - start_pose_coord->y) / static_cast<double>(end_pose_coord->y);
+  interpolated_pose.position.x = wombat_core::linear_interpolation(
+    start_pose.position.x,
+    end_pose.position.x,
+    x_scaling_factor);
+  interpolated_pose.position.y = wombat_core::linear_interpolation(
+    start_pose.position.y,
+    end_pose.position.y,
+    y_scaling_factor);
+
+  return interpolated_pose;
 }
 
 }  // namespace kennel
