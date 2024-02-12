@@ -32,6 +32,7 @@ bool SensorRos2Base<MsgT>::initialize_sensor(
     default_parameters_info,
     parent_node);
   if (!params_success) {
+    RCLCPP_WARN(this->get_logger(), "Failed to setup parameters");
     return false;
   }
 
@@ -40,7 +41,13 @@ bool SensorRos2Base<MsgT>::initialize_sensor(
     m_sensor_name,
     rclcpp::QoS(rclcpp::KeepLast(10)));
 
-  RCLCPP_INFO(this->get_logger(), "Sensor constructed");
+  const bool post_init_success = this->post_init();
+  if (!post_init_success) {
+    RCLCPP_WARN(this->get_logger(), "Failed to run post-init routine");
+    return false;
+  }
+
+  RCLCPP_INFO(this->get_logger(), "Sensor initialized");
   return true;
 }
 
@@ -58,10 +65,27 @@ rclcpp::Logger SensorRos2Base<MsgT>::get_logger()
 }
 
 template<typename MsgT>
+rclcpp::ParameterValue SensorRos2Base<MsgT>::get_parameter(const std::string & param_name)
+{
+  auto param_it = m_parameters.find(param_name);
+  if (param_it == m_parameters.end()) {
+    std::string exception_msg = "Parameter " + param_name + " not found";
+    throw std::out_of_range(exception_msg);
+  }
+  return param_it->second;
+}
+
+template<typename MsgT>
 std::vector<default_parameter_info_t>
 SensorRos2Base<MsgT>::setup_parameters()
 {
   return std::vector<default_parameter_info_t>();
+}
+
+template<typename MsgT>
+bool SensorRos2Base<MsgT>::post_init()
+{
+  return true;
 }
 
 template<typename MsgT>

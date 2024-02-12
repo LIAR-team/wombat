@@ -6,12 +6,27 @@
 #pragma once
 
 #include <string>
+#include <unordered_set>
 
 #include "rcl_interfaces/msg/parameter_descriptor.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace wombat_core
 {
+
+namespace detail
+{
+struct ParamsComparator
+{
+  bool operator()(const rclcpp::Parameter & lhs, const rclcpp::Parameter & rhs) const
+  {
+    return lhs.get_name() < rhs.get_name();
+  }
+};
+}  // namespace detail
+
+/// @brief Alias for a set of parameters indexed by their name
+using ParameterSet = std::unordered_set<rclcpp::Parameter, detail::ParamsComparator>;
 
 /**
  * @brief Declares a ROS 2 parameter if this is not already declared
