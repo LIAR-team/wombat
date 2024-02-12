@@ -13,13 +13,16 @@ my_robot:
     ros__parameters:
       mobile_base:
         update_period_ms: 5
-        ground_truth.map_topic_name: /ground_truth_map
+        ground_truth:
+          map_topic_name: /ground_truth_map
         slam_update_period_ms: 100
         control_topic_name: /cmd_vel
         control_msg_lifespan_ms: 200
         start_pose: [1.0, 1.0, 0.0]
       sensors:
         - "base_scan"
+        - "bumper"
       base_scan:
         plugin_type: "kennel::Lidar2D"
-        period_ms: 50
+      bumper:
+        plugin_type: "kennel::Bumper"
