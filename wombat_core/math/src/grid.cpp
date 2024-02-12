@@ -27,13 +27,14 @@ std::optional<grid_coord_t> index_to_grid_coord(
   const grid_index_t & grid_index,
   const nav_msgs::msg::MapMetaData & map_info)
 {
-  grid_index_t grid_flat_container_size = static_cast<grid_index_t>(map_info.width) * static_cast<grid_index_t>(map_info.height);
+  auto grid_flat_container_size =
+    static_cast<grid_index_t>(map_info.width) * static_cast<grid_index_t>(map_info.height);
   if (grid_index >= grid_flat_container_size) {
     return std::nullopt;
   }
   grid_coord_t grid_coord;
   grid_coord.y = grid_index / map_info.width;
-  grid_coord.x = grid_index - (grid_coord.y * map_info.width);
+  grid_coord.x = grid_index - static_cast<grid_index_t>(grid_coord.y * map_info.width);
 
   return grid_coord;
 }

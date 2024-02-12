@@ -16,7 +16,7 @@ namespace wombat_core
 
 namespace detail
 {
-struct ParamsComparator
+struct params_comparator_t
 {
   bool operator()(const rclcpp::Parameter & lhs, const rclcpp::Parameter & rhs) const
   {
@@ -26,7 +26,7 @@ struct ParamsComparator
 }  // namespace detail
 
 /// @brief Alias for a set of parameters indexed by their name
-using ParameterSet = std::unordered_set<rclcpp::Parameter, detail::ParamsComparator>;
+using ParameterSet = std::unordered_set<rclcpp::Parameter, detail::params_comparator_t>;
 
 /**
  * @brief Declares a ROS 2 parameter if this is not already declared
