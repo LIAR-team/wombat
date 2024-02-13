@@ -12,7 +12,8 @@
 
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "wombat_control/models/diff_drive_model.hpp"
-#include "wombat_core/math/grid.hpp"
+#include "wombat_core/math/grid/coordinates.hpp"
+#include "wombat_core/math/grid/raytrace.hpp"
 #include "wombat_core/math/interpolation.hpp"
 #include "wombat_core/math/transformations.hpp"
 

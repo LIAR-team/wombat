@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "wombat_core/math/grid.hpp"
+#include "wombat_core/math/grid/coordinates.hpp"
 
 using wombat_core::grid_coord_t;
 using wombat_core::grid_index_t;
