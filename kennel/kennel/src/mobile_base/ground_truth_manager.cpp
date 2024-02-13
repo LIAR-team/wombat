@@ -144,7 +144,7 @@ geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
   // We found an obstacle between the start and the end poses.
   // Select the last free cell as the new pose
   // to simulate that the robot is now in contact with the obstacle.
-  auto maybe_last_free_coord = wombat_core::index_to_grid_coord(*last_free_index, map.info);
+  auto maybe_last_free_coord = wombat_core::grid_index_to_coord(*last_free_index, map.info);
   if (!maybe_last_free_coord) {
     return start_pose;
   }

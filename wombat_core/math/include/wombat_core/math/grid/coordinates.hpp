@@ -42,7 +42,7 @@ std::optional<grid_index_t> grid_coord_to_index(
  * @param map_info information about the grid
  * @return std::optional<grid_coord_t> grid coordinate or nullopt if failed
  */
-std::optional<grid_coord_t> index_to_grid_coord(
+std::optional<grid_coord_t> grid_index_to_coord(
   const grid_index_t & grid_index,
   const nav_msgs::msg::MapMetaData & map_info);
 

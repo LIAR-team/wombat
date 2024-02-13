@@ -102,7 +102,7 @@ TEST(TestGridNeighbors, CheckNeighbors)
 
   std::vector<wombat_core::grid_coord_t> coords;
   auto store_func = [&coords, &map_info](wombat_core::grid_index_t i) {
-    auto this_coord = wombat_core::index_to_grid_coord(i, map_info);
+    auto this_coord = wombat_core::grid_index_to_coord(i, map_info);
     EXPECT_NE(std::nullopt, this_coord);
     if (this_coord) {
       coords.push_back(*this_coord);

@@ -18,7 +18,7 @@ std::optional<grid_index_t> grid_coord_to_index(
   return grid_coord.y * map_info.width + grid_coord.x;
 }
 
-std::optional<grid_coord_t> index_to_grid_coord(
+std::optional<grid_coord_t> grid_index_to_coord(
   const grid_index_t & grid_index,
   const nav_msgs::msg::MapMetaData & map_info)
 {
@@ -84,7 +84,7 @@ std::optional<geometry_msgs::msg::Point> grid_index_to_world_pt(
   const grid_index_t & grid_index,
   const nav_msgs::msg::MapMetaData & map_info)
 {
-  const auto maybe_grid_coord = index_to_grid_coord(grid_index, map_info);
+  const auto maybe_grid_coord = grid_index_to_coord(grid_index, map_info);
   if (!maybe_grid_coord) {
     return std::nullopt;
   }

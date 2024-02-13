@@ -42,8 +42,8 @@ TEST(TestGrid, ConversionsInGridTooSmall)
   EXPECT_NE(std::nullopt, wombat_core::grid_coord_to_index(grid_coord_t{1, 0}, map_info));
   EXPECT_EQ(std::nullopt, wombat_core::grid_coord_to_index(grid_coord_t{1, 4}, map_info));
 
-  EXPECT_NE(std::nullopt, wombat_core::index_to_grid_coord(3, map_info));
-  EXPECT_EQ(std::nullopt, wombat_core::index_to_grid_coord(4, map_info));
+  EXPECT_NE(std::nullopt, wombat_core::grid_index_to_coord(3, map_info));
+  EXPECT_EQ(std::nullopt, wombat_core::grid_index_to_coord(4, map_info));
 
   EXPECT_NE(std::nullopt, wombat_core::world_pt_to_grid_coord(make_pt(0.1, 0.1), map_info));
   EXPECT_EQ(std::nullopt, wombat_core::world_pt_to_grid_coord(make_pt(-13.1, 0.1), map_info));
@@ -96,7 +96,7 @@ TEST_P(TestConversionsWithParams, ValidConversionsAndBack)
   static constexpr double EPSILON = 0.001;
 
   // Index to grid coord
-  auto grid_coord = wombat_core::index_to_grid_coord(test_data.grid_index, test_data.map_info);
+  auto grid_coord = wombat_core::grid_index_to_coord(test_data.grid_index, test_data.map_info);
   ASSERT_NE(std::nullopt, grid_coord);
   EXPECT_EQ(grid_coord->x, test_data.grid_coord.x);
   EXPECT_EQ(grid_coord->y, test_data.grid_coord.y);
