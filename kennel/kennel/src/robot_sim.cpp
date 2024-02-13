@@ -44,7 +44,7 @@ bool RobotSim::load_plugins()
 
   for (const auto & plugin_name : sensor_plugins) {
     // Get type of this plugin
-    auto plugin_type =  wombat_core::declare_parameter_if_not_declared(
+    auto plugin_type = wombat_core::declare_parameter_if_not_declared(
       this->get_node_parameters_interface(),
       plugin_name + ".plugin_type",
       rclcpp::ParameterValue("")).get<std::string>();
