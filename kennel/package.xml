@@ -25,6 +25,7 @@
   <depend>tf2_ros</depend>
   <depend>wombat_control</depend>
   <depend>wombat_core</depend>
+  <depend>wombat_msgs</depend>
 
   <exec_depend>wombat_bringup_externals</exec_depend>
 

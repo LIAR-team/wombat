@@ -5,14 +5,10 @@
 
 #pragma once
 
-#include <climits>
-#include <functional>
 #include <optional>
 
 #include "geometry_msgs/msg/point.hpp"
 #include "nav_msgs/msg/map_meta_data.hpp"
-
-#include "wombat_core/math/utils.hpp"
 
 namespace wombat_core
 {
@@ -46,7 +42,7 @@ std::optional<grid_index_t> grid_coord_to_index(
  * @param map_info information about the grid
  * @return std::optional<grid_coord_t> grid coordinate or nullopt if failed
  */
-std::optional<grid_coord_t> index_to_grid_coord(
+std::optional<grid_coord_t> grid_index_to_coord(
   const grid_index_t & grid_index,
   const nav_msgs::msg::MapMetaData & map_info);
 
@@ -91,23 +87,5 @@ std::optional<grid_index_t> world_pt_to_grid_index(
 std::optional<geometry_msgs::msg::Point> grid_index_to_world_pt(
   const grid_index_t & grid_index,
   const nav_msgs::msg::MapMetaData & map_info);
-
-/**
- * @brief Raytrace iterator. This function draws a line between two
- * grid points and runs an evaluation
- * function on each grid cell that touches the line.
- * Returns the index of the first cell that satisfies the evaluation.
- * @param from_grid grid point where to start raytracing
- * @param to_grid grid point where to end raytracing
- * @param map_info information about the grid
- * @param predicate function to run on every grid point on the line
- * @return std::optional<grid_index_t> index of a grid cell that satisfies the
- * evaluation function or std::nullopt if none is found
- */
-std::optional<grid_index_t> find_if_raytrace(
-  const grid_coord_t & from_grid,
-  const grid_coord_t & to_grid,
-  const nav_msgs::msg::MapMetaData & map_info,
-  const std::function<bool(grid_index_t)> & predicate);
 
 }  // namespace wombat_core

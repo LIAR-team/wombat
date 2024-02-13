@@ -13,6 +13,7 @@
 
 #include "wombat_core/costmap/costmap_utils.hpp"
 #include "wombat_core/math/geometry_point.hpp"
+#include "wombat_core/math/grid/neighbors.hpp"
 
 namespace wombat_strategy
 {
@@ -57,16 +58,21 @@ std::vector<frontier_t> FrontierDetector::search_frontiers()
     }
 
     // Add neighbor cells to the queue
-    for (const auto neighbor_cell_idx : get_neighbors4(cell_idx)) {
-      // Skip already visited cells
-      if (touched_indices[neighbor_cell_idx] || already_included_frontier_indices[neighbor_cell_idx]) {
-        continue;
-      }
-      if (!m_params.search_only_free_space || m_costmap->getCharMap()[neighbor_cell_idx] == FREE_CELL) {
-        to_be_visited.push(neighbor_cell_idx);
-      }
-      touched_indices[neighbor_cell_idx] = true;
-    }
+    wombat_core::for_each_grid_neighbor(
+      cell_idx,
+      m_costmap->getSizeInCellsX(),
+      m_costmap->getSizeInCellsY(),
+      [this, &touched_indices, &already_included_frontier_indices, &to_be_visited](wombat_core::grid_index_t i)
+      {
+        // Skip already visited cells
+        if (!touched_indices[i] && !already_included_frontier_indices[i]) {
+          if (!m_params.search_only_free_space || m_costmap->getCharMap()[i] == FREE_CELL) {
+            to_be_visited.push(i);
+          }
+        }
+        return false;
+      },
+      false);
   }
 
   rank_frontiers(frontiers);
@@ -96,12 +102,19 @@ frontier_t FrontierDetector::build_frontier(
     const auto frontier_point = wombat_core::index_to_world(cell_idx, *m_costmap);
     f.points.push_back(frontier_point);
 
-    for (const auto neighbor_cell_idx : get_neighbors4(cell_idx)) {
-      if (!already_included_frontier_indices[neighbor_cell_idx] && is_frontier_cell(neighbor_cell_idx)) {
-        to_be_visited.push(neighbor_cell_idx);
-        already_included_frontier_indices[neighbor_cell_idx] = true;
-      }
-    }
+    wombat_core::for_each_grid_neighbor(
+      cell_idx,
+      m_costmap->getSizeInCellsX(),
+      m_costmap->getSizeInCellsY(),
+      [this, &already_included_frontier_indices, &to_be_visited](wombat_core::grid_index_t i)
+      {
+        if (!already_included_frontier_indices[i] && is_frontier_cell(i)) {
+          to_be_visited.push(i);
+          already_included_frontier_indices[i] = true;
+        }
+        return false;
+      },
+      false);
   }
 
   // Compute centroid of this frontier

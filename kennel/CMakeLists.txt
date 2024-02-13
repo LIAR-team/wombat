@@ -17,6 +17,7 @@ set(PKG_DEPENDENCIES
   tf2_ros
   wombat_control
   wombat_core
+  wombat_msgs
 )
 foreach(PKG ${PKG_DEPENDENCIES})
   find_package(${PKG} REQUIRED)

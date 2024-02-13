@@ -4,8 +4,10 @@ wombat_add_library(math STATIC)
 target_sources(
   math
   PRIVATE
+    src/grid/coordinates.cpp
+    src/grid/neighbors.cpp
+    src/grid/raytrace.cpp
     src/angles.cpp
-    src/grid.cpp
     src/online_statistics.cpp
     src/statistics.cpp
     src/transformations.cpp

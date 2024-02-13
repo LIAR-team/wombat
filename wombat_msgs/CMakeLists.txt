@@ -12,7 +12,8 @@ wombat_package(AUTO_GENERATED_CODE)
 
 # Generate ROS 2 interfaces and create wombat_msgs library
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "action/Explore.action"
+  action/Explore.action
+  msg/Bumper.msg
   DEPENDENCIES action_msgs builtin_interfaces std_msgs
 )
 
