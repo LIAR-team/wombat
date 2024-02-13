@@ -10,6 +10,7 @@
 #include "kennel/common/sensors/lidar.hpp"
 #include "kennel/mobile_base/mobile_base.hpp"
 #include "kennel/robot_sim.hpp"
+#include "wombat_core/ros2/parameters.hpp"
 
 namespace kennel
 {
@@ -36,15 +37,17 @@ RobotSim::RobotSim(const rclcpp::NodeOptions & options)
 bool RobotSim::load_plugins()
 {
   // Get name of plugins to load
-  auto sensor_plugins = this->declare_parameter(
+  auto sensor_plugins = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
     "sensors",
-    std::vector<std::string>());
+    rclcpp::ParameterValue(std::vector<std::string>())).get<std::vector<std::string>>();
 
   for (const auto & plugin_name : sensor_plugins) {
     // Get type of this plugin
-    auto plugin_type = this->declare_parameter(
+    auto plugin_type = wombat_core::declare_parameter_if_not_declared(
+      this->get_node_parameters_interface(),
       plugin_name + ".plugin_type",
-      "");
+      rclcpp::ParameterValue("")).get<std::string>();
     if (plugin_type.empty()) {
       RCLCPP_ERROR(this->get_logger(), "Plugin %s has no plugin type defined", plugin_name.c_str());
       return false;

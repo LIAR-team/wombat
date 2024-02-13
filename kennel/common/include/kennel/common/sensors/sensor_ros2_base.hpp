@@ -64,7 +64,14 @@ public:
 protected:
   rclcpp::Logger get_logger();
 
-  std::unordered_map<std::string, rclcpp::ParameterValue> m_parameters;
+  /**
+   * @brief Retrieve a parameter that was set during the setup_parameter method.
+   * @param param_name name of the parameter
+   * @throws std::out_of_range if the parameter is not found
+   * @return value of the parameter
+   */
+  rclcpp::ParameterValue get_parameter(const std::string & param_name);
+
   rclcpp::Clock::SharedPtr m_clock;
 
 private:
@@ -83,19 +90,27 @@ private:
    * Derived classes can override this function to define a set of parameters,
    * by providing their names, a default value and information.
    * After the initialization, true value of the parameters will be accessible via the
-   * m_parameters member variable.
+   * get_parameter method.
    * @return std::vector<default_parameter_info_t> information about the parameters
    * to define
    */
   virtual std::vector<default_parameter_info_t> setup_parameters();
+
+  /**
+   * @brief Optional definition of plugin-specific initialization logic.
+   * This will be run at the end of the standard initialization, so all other members
+   * (e.g. logger, publisher, parameters, etc) are guaranteed to be already available.
+   * @return true if the initialization is successful.
+   */
+  virtual bool post_init();
 
   /////////
 
   /**
    * @brief Private function used to declare a set of ROS 2 parameters given
    * their default information.
-   * In case of success, the parameters will then be accessible via the m_parameters
-   * member variable.
+   * In case of success, the parameters will then be accessible via the get_parameter
+   * method.
    * @param default_parameters_info information about the parameters
    * @param parent_node parent ROS 2 node which will own the parameters
    * @return true if parameters have been successfully declared
@@ -104,6 +119,7 @@ private:
     const std::vector<default_parameter_info_t> & default_parameters_info,
     rclcpp::Node * parent_node);
 
+  std::unordered_map<std::string, rclcpp::ParameterValue> m_parameters;
   std::shared_ptr<rclcpp::Publisher<MsgT>> m_sensor_publisher;
   std::shared_ptr<rclcpp::node_interfaces::NodeLoggingInterface> m_log_interface;
   std::string m_sensor_name;

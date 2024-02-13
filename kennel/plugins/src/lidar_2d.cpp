@@ -8,7 +8,6 @@
 #include "sensor_msgs/msg/laser_scan.hpp"
 
 #include "kennel/common/sensors/lidar.hpp"
-#include "kennel/common/sensors/sensor_interface.hpp"
 #include "kennel/common/sensors/sensor_ros2_base.hpp"
 #include "kennel/common/types.hpp"
 

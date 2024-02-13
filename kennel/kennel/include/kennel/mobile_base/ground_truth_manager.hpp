@@ -47,8 +47,8 @@ public:
 private:
   geometry_msgs::msg::Pose apply_map_constraints(
     const nav_msgs::msg::OccupancyGrid & map,
-    const geometry_msgs::msg::Pose & old_pose,
-    const geometry_msgs::msg::Pose & new_pose);
+    const geometry_msgs::msg::Pose & start_pose,
+    const geometry_msgs::msg::Pose & end_pose);
 
   rclcpp::Clock::SharedPtr m_clock;
   rclcpp::Logger m_logger;
