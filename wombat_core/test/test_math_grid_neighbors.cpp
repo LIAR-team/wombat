@@ -3,11 +3,11 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
+#include <gtest/gtest.h>
+
 #include <functional>
 #include <iostream>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include "wombat_core/math/grid/coordinates.hpp"
 #include "wombat_core/math/grid/neighbors.hpp"
@@ -16,9 +16,9 @@ TEST(TestGridNeighbors, ZeroDimGrid)
 {
   size_t count = 0;
   auto count_func = [&count](wombat_core::grid_index_t) {
-    count++;
-    return false;
-  };
+      count++;
+      return false;
+    };
 
   // Test grids where one or both dimensions are zero
   wombat_core::for_each_grid_neighbor(
@@ -50,9 +50,9 @@ TEST(TestGridNeighbors, TooSmallGrid)
 {
   size_t count = 0;
   auto count_func = [&count](wombat_core::grid_index_t) {
-    count++;
-    return false;
-  };
+      count++;
+      return false;
+    };
 
   // Test valid grids where the index point is invalid
   wombat_core::for_each_grid_neighbor(
@@ -102,13 +102,13 @@ TEST(TestGridNeighbors, CheckNeighbors)
 
   std::vector<wombat_core::grid_coord_t> coords;
   auto store_func = [&coords, &map_info](wombat_core::grid_index_t i) {
-    auto this_coord = wombat_core::grid_index_to_coord(i, map_info);
-    EXPECT_NE(std::nullopt, this_coord);
-    if (this_coord) {
-      coords.push_back(*this_coord);
-    }
-    return false;
-  };
+      auto this_coord = wombat_core::grid_index_to_coord(i, map_info);
+      EXPECT_NE(std::nullopt, this_coord);
+      if (this_coord) {
+        coords.push_back(*this_coord);
+      }
+      return false;
+    };
 
   coords.clear();
   wombat_core::for_each_grid_neighbor(
@@ -173,9 +173,9 @@ TEST(TestGridNeighbors, TerminateEarly)
   size_t count = 0;
   size_t limit = 0;
   auto count_func = [&count, &limit](wombat_core::grid_index_t) {
-    count++;
-    return count >= limit;
-  };
+      count++;
+      return count >= limit;
+    };
 
   for (size_t i = 1; i <= 8; i++) {
     count = 0;

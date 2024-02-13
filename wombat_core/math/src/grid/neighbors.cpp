@@ -6,8 +6,6 @@
 #include "wombat_core/math/grid/coordinates.hpp"
 #include "wombat_core/math/grid/neighbors.hpp"
 
-#include <iostream>
-
 namespace wombat_core
 {
 
@@ -20,7 +18,7 @@ void for_each_grid_neighbor(
 {
   // If the cell index is outside the map, no neighbors to process
   // Note: this check also ensures that the grid dimensions are both non-zero
-  if (index >= grid_width * grid_height) {
+  if (index >= (static_cast<grid_index_t>(grid_width) * grid_height)) {
     return;
   }
 
@@ -33,7 +31,7 @@ void for_each_grid_neighbor(
         return;
       }
     }
-    if (eight_connected && index < grid_width * (grid_height - 1)) {
+    if (eight_connected && index < (static_cast<grid_index_t>(grid_width) * (grid_height - 1))) {
       if (predicate(index - 1 + grid_width)) {
         return;
       }
@@ -49,7 +47,7 @@ void for_each_grid_neighbor(
         return;
       }
     }
-    if (eight_connected && index < grid_width * (grid_height - 1)) {
+    if (eight_connected && index < (static_cast<grid_index_t>(grid_width) * (grid_height - 1))) {
       if (predicate(index + 1 + grid_width)) {
         return;
       }
@@ -62,7 +60,7 @@ void for_each_grid_neighbor(
     }
   }
 
-  if (index < grid_width * (grid_height - 1)) {
+  if (index < (static_cast<grid_index_t>(grid_width) * (grid_height - 1))) {
     if (predicate(index + grid_width)) {
       return;
     }

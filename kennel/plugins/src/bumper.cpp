@@ -41,9 +41,9 @@ private:
 
     const auto & map = gt_data.map;
     auto is_bumped_func = [&map, &bumper_msg](wombat_core::grid_index_t index) {
-      bumper_msg->is_pressed = map.data[index] > 0;
-      return bumper_msg->is_pressed;
-    };
+        bumper_msg->is_pressed = map.data[index] > 0;
+        return bumper_msg->is_pressed;
+      };
 
     // The bumper should have a direction, but we consider it at 360 deg for simplicity purposes
     wombat_core::for_each_grid_neighbor(
