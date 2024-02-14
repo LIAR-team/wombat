@@ -51,12 +51,9 @@
 #include "tf2/time.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
+#include "wombat_core/costmap/costmap_conversions.hpp"
 #include "wombat_core/costmap/static_layer.hpp"
 
-using nav2_costmap_2d::NO_INFORMATION;
-using nav2_costmap_2d::LETHAL_OBSTACLE;
-using nav2_costmap_2d::FREE_SPACE;
-using rcl_interfaces::msg::ParameterType;
 
 namespace wombat_core
 {
@@ -221,20 +218,12 @@ StaticLayer::matchSize()
 unsigned char
 StaticLayer::interpretValue(unsigned char value) const
 {
-  // check if the static value is above the unknown or lethal thresholds
-  if (m_track_unknown_space && value == m_unknown_cost_value) {
-    return NO_INFORMATION;
-  } else if (!m_track_unknown_space && value == m_unknown_cost_value) {
-    return FREE_SPACE;
-  } else if (value >= m_lethal_threshold) {
-    return LETHAL_OBSTACLE;
-  }
-
-  if (m_trinary_costmap) {
-    return FREE_SPACE;
-  }
-  double scale = static_cast<double>(value) / m_lethal_threshold;
-  return static_cast<unsigned char>(scale * LETHAL_OBSTACLE);
+  return wombat_core::interpret_occupancy_to_costmap_value(
+    value,
+    m_trinary_costmap,
+    m_unknown_cost_value,
+    m_track_unknown_space,
+    m_lethal_threshold);
 }
 
 void

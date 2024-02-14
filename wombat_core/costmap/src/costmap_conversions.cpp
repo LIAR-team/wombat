@@ -59,4 +59,27 @@ void costmap_to_occupancy_grid_values(
   }
 }
 
+unsigned char interpret_occupancy_to_costmap_value(
+  unsigned char value,
+  bool trinary_costmap,
+  unsigned char unknown_cost_value,
+  bool track_unknown_space,
+  unsigned char lethal_threshold)
+{
+  // Check if the static value is above the unknown or lethal thresholds
+  if (track_unknown_space && value == unknown_cost_value) {
+    return costmap::NO_INFORMATION;
+  } else if (!track_unknown_space && value == unknown_cost_value) {
+    return costmap::FREE_SPACE;
+  } else if (value >= lethal_threshold) {
+    return costmap::LETHAL_OBSTACLE;
+  }
+
+  if (trinary_costmap) {
+    return costmap::FREE_SPACE;
+  }
+  double scale = static_cast<double>(value) / lethal_threshold;
+  return static_cast<unsigned char>(scale * costmap::LETHAL_OBSTACLE);
+}
+
 }  // namespace wombat_core
