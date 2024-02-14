@@ -224,12 +224,15 @@ StaticLayer::interpretValue(unsigned char value) const
   // check if the static value is above the unknown or lethal thresholds
   if (m_track_unknown_space && value == m_unknown_cost_value) {
     return NO_INFORMATION;
-  } else if ((!m_track_unknown_space && value == m_unknown_cost_value) || m_trinary_costmap) {
+  } else if (!m_track_unknown_space && value == m_unknown_cost_value) {
     return FREE_SPACE;
   } else if (value >= m_lethal_threshold) {
     return LETHAL_OBSTACLE;
   }
 
+  if (m_trinary_costmap) {
+    return FREE_SPACE;
+  }
   double scale = static_cast<double>(value) / m_lethal_threshold;
   return static_cast<unsigned char>(scale * LETHAL_OBSTACLE);
 }
