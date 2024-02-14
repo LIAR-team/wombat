@@ -42,6 +42,8 @@ public:
 
   geometry_msgs::msg::TransformStamped get_pose() const;
 
+  std::string get_ground_truth_frame_id() const;
+
   void reset_pose(const geometry_msgs::msg::Pose & new_pose);
 
 private:

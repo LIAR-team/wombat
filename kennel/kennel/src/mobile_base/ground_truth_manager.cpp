@@ -44,6 +44,11 @@ GroundTruthManager::map_update(nav_msgs::msg::OccupancyGrid::ConstSharedPtr map)
   m_costmap->render_costmap();
 }
 
+std::string GroundTruthManager::get_ground_truth_frame_id() const
+{
+  return m_ground_truth_frame_id;
+}
+
 nav2_costmap_2d::Costmap2D * GroundTruthManager::get_costmap()
 {
   return m_costmap->get_inflated_costmap();

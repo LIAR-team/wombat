@@ -239,9 +239,10 @@ void MobileBase::on_gt_map_received(nav_msgs::msg::OccupancyGrid::ConstSharedPtr
   if (m_gt_costmap_pub) {
     auto costmap = m_gt_manager->get_costmap();
     auto grid = std::make_unique<nav_msgs::msg::OccupancyGrid>();
-    grid->header.frame_id = "ground_truth";
+    grid->header.frame_id = m_gt_manager->get_ground_truth_frame_id();
     grid->header.stamp = m_clock->now();
     wombat_core::costmap_to_occupancy_grid_values(*costmap, *grid);
+    RCLCPP_INFO(m_logger, "Published costmap");
     m_gt_costmap_pub->publish(std::move(grid));
   }
   std::lock_guard<std::mutex> lock(m_mutex);
