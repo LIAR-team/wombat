@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include "std_msgs/msg/header.hpp"
+#include <cstdint>
+
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "nav2_costmap_2d/costmap_2d.hpp"
 
@@ -34,16 +35,12 @@ constexpr unsigned char FREE_SPACE = 0;
 }  // namespace costmap
 
 /**
- * @brief Writes an occupancy grid message from a costmap object.
- * The function will use thread-safe access to the costmap, locking it
- * while using it.
- * @note This function will not touch the header field of the grid msg
- * @param costmap costmap to read from
- * @param grid occupancy grid msgs to write into
+ * @brief Converts a single costmap value into the corresponding
+ * occupancy grid value.
+ * @param value The costmap value to interpret
+ * @return int8_t The interpreted occupancy grid value
  */
-void costmap_to_occupancy_grid_values(
-  nav2_costmap_2d::Costmap2D & costmap,
-  nav_msgs::msg::OccupancyGrid & grid);
+int8_t interpret_costmap_to_occupancy_value(unsigned char value);
 
 /**
  * @brief Converts a single occupancy grid value into the corresponding
@@ -65,5 +62,17 @@ unsigned char interpret_occupancy_to_costmap_value(
   unsigned char unknown_cost_value,
   bool track_unknown_space,
   unsigned char lethal_threshold);
+
+/**
+ * @brief Writes an occupancy grid message from a costmap object.
+ * The function will use thread-safe access to the costmap, locking it
+ * while using it.
+ * @note This function will not touch the header field of the grid msg
+ * @param costmap costmap to read from
+ * @param grid occupancy grid msgs to write into
+ */
+void costmap_to_occupancy_grid_values(
+  nav2_costmap_2d::Costmap2D & costmap,
+  nav_msgs::msg::OccupancyGrid & grid);
 
 }  // namespace wombat_core
