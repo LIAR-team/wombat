@@ -118,18 +118,20 @@ geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
     return end_pose;
   }
 
+  // No translation, there may be rotation.
+  // Nothing to check under the assumption that the robot is circular
   if (start_pose.position.x == end_pose.position.x && start_pose.position.y == end_pose.position.y) {
     return end_pose;
   }
 
-  auto start_pose_coord = wombat_core::world_pt_to_grid_coord(start_pose.position, map.info);
-  auto end_pose_coord = wombat_core::world_pt_to_grid_coord(end_pose.position, map.info);
+  const auto start_pose_coord = wombat_core::world_pt_to_grid_coord(start_pose.position, map.info);
+  const auto end_pose_coord = wombat_core::world_pt_to_grid_coord(end_pose.position, map.info);
   if (!start_pose_coord || !end_pose_coord) {
     return start_pose;
   }
 
   auto last_free_index = wombat_core::grid_coord_to_index(*start_pose_coord, map.info);
-  auto maybe_obstacle_index = wombat_core::find_if_raytrace(
+  const auto maybe_obstacle_index = wombat_core::find_if_raytrace(
     *start_pose_coord,
     *end_pose_coord,
     map.info,
@@ -149,8 +151,20 @@ geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
   // We found an obstacle between the start and the end poses.
   // Select the last free cell as the new pose
   // to simulate that the robot is now in contact with the obstacle.
-  auto maybe_last_free_coord = wombat_core::grid_index_to_coord(*last_free_index, map.info);
+
+  // If the last free index is invalid, return start pose
+  // (this shouldn't happen, maybe we should assert here.
+  const auto maybe_last_free_coord = wombat_core::grid_index_to_coord(*last_free_index, map.info);
   if (!maybe_last_free_coord) {
+    return start_pose;
+  }
+
+  const int fs_dx = static_cast<int>(maybe_last_free_coord->x) - static_cast<int>(start_pose_coord->x);
+  const int fs_dy = static_cast<int>(maybe_last_free_coord->y) - static_cast<int>(start_pose_coord->y);
+
+  // We couldn't move even a single cell due to the obstacle.
+  // We just assume that we didn't move at all.
+  if (fs_dx == 0 && fs_dy == 0) {
     return start_pose;
   }
 
@@ -160,20 +174,22 @@ geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
   // At the very least, we should ensure that we never move backward wrt the old pose.
   // The current implementation uses an interpolation to translate the grid motion into
   // world motion.
-  auto interpolated_pose = end_pose;
-  double x_scaling_factor =
-    static_cast<double>(maybe_last_free_coord->x - start_pose_coord->x) / static_cast<double>(end_pose_coord->x);
-  double y_scaling_factor =
-    static_cast<double>(maybe_last_free_coord->y - start_pose_coord->y) / static_cast<double>(end_pose_coord->y);
-  interpolated_pose.position.x = wombat_core::linear_interpolation(
-    start_pose.position.x,
-    end_pose.position.x,
-    x_scaling_factor);
-  interpolated_pose.position.y = wombat_core::linear_interpolation(
-    start_pose.position.y,
-    end_pose.position.y,
-    y_scaling_factor);
+  // Note: we use a single scaling factor rather than computing x, y and xy independently.
 
+  const double fs_dist =
+    std::sqrt(
+    static_cast<double>(fs_dx) * static_cast<double>(fs_dx) + static_cast<double>(fs_dy) * static_cast<double>(fs_dy));
+  const int es_dx = static_cast<int>(end_pose_coord->x) - static_cast<int>(start_pose_coord->x);
+  const int es_dy = static_cast<int>(end_pose_coord->y) - static_cast<int>(start_pose_coord->y);
+  const double es_dist =
+    std::sqrt(
+    static_cast<double>(es_dx) * static_cast<double>(es_dx) + static_cast<double>(es_dy) * static_cast<double>(es_dy));
+  const double scaling_factor = fs_dist / es_dist;
+
+  const auto interpolated_pose = wombat_core::pose_interpolation(
+    start_pose,
+    end_pose,
+    scaling_factor);
   return interpolated_pose;
 }
 

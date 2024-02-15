@@ -8,6 +8,7 @@ target_sources(
     src/grid/neighbors.cpp
     src/grid/raytrace.cpp
     src/angles.cpp
+    src/interpolation.cpp
     src/online_statistics.cpp
     src/statistics.cpp
     src/transformations.cpp
