@@ -1,6 +1,6 @@
 kennel:
   ros__parameters:
-    real_time_factor: 2.0
+    real_time_factor: 5.0
     sim_time_update_period_ms: 2
     map_yaml_filename: ""
     robots:

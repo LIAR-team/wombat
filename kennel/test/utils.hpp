@@ -5,11 +5,9 @@
 
 #pragma once
 
-#include <gtest/gtest.h>
-
 #include <cstdlib>
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 #include <string>
 
 static std::filesystem::path s_data_dir;
