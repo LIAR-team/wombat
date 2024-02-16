@@ -31,14 +31,14 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
     throw std::runtime_error("Failed to setup ground truth manager");
   }
 
-  const bool slam_setup_success = this->setup_slam();
-  if (!slam_setup_success) {
-    throw std::runtime_error("Failed to setup SLAM manager");
+  const bool plugins_success = this->load_positioner_plugins(parent_node);
+  if (!plugins_success) {
+    throw std::runtime_error("Failed to register positioner plugins");
   }
 
   const std::string control_topic_name = wombat_core::declare_parameter_if_not_declared(
     m_parent_node->get_node_parameters_interface(),
-    "mobile_base.control_topic_name",
+    BASE_PARAM("control_topic_name"),
     rclcpp::ParameterValue{std::string("cmd_vel")}).get<std::string>();
 
   m_last_cmd_vel.header.stamp = m_parent_node->now();
@@ -55,7 +55,7 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
   const auto mobile_base_update_period = std::chrono::milliseconds(
     wombat_core::declare_parameter_if_not_declared(
       m_parent_node->get_node_parameters_interface(),
-      "mobile_base.update_period_ms",
+      BASE_PARAM("update_period_ms"),
       rclcpp::ParameterValue{10}).get<int>());
 
   // TODO: is wall time ok here? Should we use simulated time?
@@ -66,6 +66,12 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
     });
 
   RCLCPP_INFO(m_logger, "Mobile Base constructed");
+}
+
+MobileBase::~MobileBase()
+{
+  // Clear plugins before doing anything else
+  m_positioners.clear();
 }
 
 localization_data_t MobileBase::get_ground_truth_data()
@@ -89,20 +95,22 @@ void MobileBase::mobile_base_update()
   gt_data.robot_pose = m_gt_manager->pose_update(m_last_cmd_vel);
   gt_data.map = m_gt_map;
 
-  auto maybe_slam_data = m_slam_manager->slam_update(gt_data);
-
   std::vector<geometry_msgs::msg::TransformStamped> sorted_tfs;
   sorted_tfs.push_back(gt_data.robot_pose);
 
-  // TODO: this is ugly, will need to rewrite.
-  // We always need a full tree of transforms even if they are computed with different periods
-  if (maybe_slam_data) {
-    sorted_tfs.push_back(maybe_slam_data->robot_pose);
-  } else {
-    if (m_last_transforms.size() >= sorted_tfs.size() + 1) {
-      sorted_tfs.push_back(m_last_transforms[1]);
+  for (size_t i = 0; i < m_positioners.size(); i++) {
+    auto maybe_tf = m_positioners[i]->positioner_update(gt_data);
+    // TODO: this is ugly, will need to rewrite.
+    // We always need a full tree of transforms even if they are computed with different periods
+    if (maybe_tf) {
+      sorted_tfs.push_back(*maybe_tf);
     } else {
-      return;
+      size_t sorted_positioner_id = i + 1;
+      if (m_last_transforms.size() >= sorted_positioner_id) {
+        sorted_tfs.push_back(m_last_transforms[sorted_positioner_id]);
+      } else {
+        return;
+      }
     }
   }
 
@@ -243,36 +251,42 @@ void MobileBase::on_gt_map_received(nav_msgs::msg::OccupancyGrid::ConstSharedPtr
   m_gt_map = msg;
 }
 
-bool MobileBase::setup_slam()
+bool MobileBase::load_positioner_plugins(rclcpp::Node * parent_node)
 {
-  const std::string slam_frame_id = wombat_core::declare_parameter_if_not_declared(
-    m_parent_node->get_node_parameters_interface(),
-    BASE_PARAM("slam_frame_id"),
-    rclcpp::ParameterValue{std::string("map")}).get<std::string>();
-  const std::string slam_map_topic_name = wombat_core::declare_parameter_if_not_declared(
-    m_parent_node->get_node_parameters_interface(),
-    BASE_PARAM("slam_map_topic_name"),
-    rclcpp::ParameterValue{std::string("map")}).get<std::string>();
-  const auto slam_update_period = std::chrono::milliseconds(
-    wombat_core::declare_parameter_if_not_declared(
-      m_parent_node->get_node_parameters_interface(),
-      BASE_PARAM("slam_update_period_ms"),
-      rclcpp::ParameterValue{50}).get<int>());
+  // Get name of plugins to load
+  auto positioner_plugins = wombat_core::declare_parameter_if_not_declared(
+    parent_node->get_node_parameters_interface(),
+    BASE_PARAM("positioners"),
+    rclcpp::ParameterValue(std::vector<std::string>())).get<std::vector<std::string>>();
 
-  m_slam_manager = std::make_unique<SlamManager>(
-    m_parent_node,
-    rclcpp::Duration(slam_update_period),
-    slam_frame_id);
+  std::vector<std::shared_ptr<PositionerInterface>> new_positioners;
+  for (const auto & plugin_name : positioner_plugins) {
+    // Get type of this plugin
+    auto plugin_type = wombat_core::declare_parameter_if_not_declared(
+      parent_node->get_node_parameters_interface(),
+      "mobile_base." + plugin_name + ".plugin_type",
+      rclcpp::ParameterValue("")).get<std::string>();
+    if (plugin_type.empty()) {
+      RCLCPP_ERROR(m_logger, "Plugin %s has no plugin type defined", plugin_name.c_str());
+      return false;
+    }
 
-  /*
-  if (!slam_map_topic_name.empty()) {
-    RCLCPP_INFO(m_logger, "Creating SLAM map publisher");
-    m_slam_map_pub = m_parent_node->create_publisher<nav_msgs::msg::OccupancyGrid>(
-      slam_map_topic_name,
-      rclcpp::QoS(rclcpp::KeepLast(10)));
+    // Load and initialize the plugin
+    auto loaded_plugin = m_plugin_loader.createSharedInstance(plugin_type);
+    const bool plugin_init_success = loaded_plugin->initialize_positioner(
+      parent_node,
+      plugin_name,
+      "mobile_base");
+    if (!plugin_init_success) {
+      RCLCPP_WARN(m_logger, "Failed to initialize plugin %s", plugin_name.c_str());
+      return false;
+    }
+
+    // Store the initialized plugin
+    new_positioners.push_back(std::move(loaded_plugin));
   }
-  */
 
+  m_positioners = new_positioners;
   return true;
 }
 

@@ -18,11 +18,15 @@ namespace kennel
 
 bool PluginBase::initialize_plugin(
   rclcpp::Node * parent_node,
-  const std::string & plugin_name)
+  const std::string & plugin_name,
+  const std::string & params_prefix)
 {
   m_clock = parent_node->get_clock();
   m_log_interface = parent_node->get_node_logging_interface();
   m_plugin_name = plugin_name;
+  if (!params_prefix.empty()) {
+    m_params_prefix = params_prefix + ".";
+  }
 
   const auto default_parameters_info = this->setup_parameters();
   const bool params_success = this->declare_parameters(
@@ -45,7 +49,7 @@ rclcpp::ParameterValue PluginBase::get_parameter(const std::string & param_name)
 {
   auto param_it = m_parameters.find(param_name);
   if (param_it == m_parameters.end()) {
-    std::string exception_msg = "Parameter " + param_name + " not found";
+    std::string exception_msg = "Plugin " + m_plugin_name + ": parameter '" + param_name + "' not found";
     throw std::out_of_range(exception_msg);
   }
   return param_it->second;
@@ -81,7 +85,8 @@ bool PluginBase::declare_parameters(
     }
 
     // Scope each parameter with the name of the plugin
-    const std::string full_parameter_name = m_plugin_name + "." + default_info.name;
+    const std::string full_parameter_name =
+      m_params_prefix + m_plugin_name + "." + default_info.name;
 
     // Parameters are declared using their fully scoped name to avoid collisions
     auto param_value = wombat_core::declare_parameter_if_not_declared(

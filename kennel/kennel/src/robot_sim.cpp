@@ -34,6 +34,12 @@ RobotSim::RobotSim(const rclcpp::NodeOptions & options)
   RCLCPP_INFO(this->get_logger(), "Robot simulation constructed");
 }
 
+RobotSim::~RobotSim()
+{
+  // Clear plugins before doing anything else
+  m_sensors.clear();
+}
+
 bool RobotSim::load_plugins()
 {
   // Get name of plugins to load
@@ -42,6 +48,7 @@ bool RobotSim::load_plugins()
     "sensors",
     rclcpp::ParameterValue(std::vector<std::string>())).get<std::vector<std::string>>();
 
+  std::vector<std::shared_ptr<SensorInterface>> new_sensors;
   for (const auto & plugin_name : sensor_plugins) {
     // Get type of this plugin
     auto plugin_type = wombat_core::declare_parameter_if_not_declared(
@@ -62,9 +69,10 @@ bool RobotSim::load_plugins()
     }
 
     // Store the initialized plugin
-    m_sensors.push_back(std::move(loaded_plugin));
+    new_sensors.push_back(std::move(loaded_plugin));
   }
 
+  m_sensors = new_sensors;
   return true;
 }
 

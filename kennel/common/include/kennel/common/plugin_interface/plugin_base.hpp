@@ -34,7 +34,8 @@ public:
 
   bool initialize_plugin(
     rclcpp::Node * parent_node,
-    const std::string & plugin_name);
+    const std::string & plugin_name,
+    const std::string & params_prefix = "");
 
 protected:
   /////////
@@ -94,6 +95,7 @@ private:
 
   /////////
 
+  std::string m_params_prefix {""};
   std::unordered_map<std::string, rclcpp::ParameterValue> m_parameters;
   std::shared_ptr<rclcpp::node_interfaces::NodeLoggingInterface> m_log_interface;
 };

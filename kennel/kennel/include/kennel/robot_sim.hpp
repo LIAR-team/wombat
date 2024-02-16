@@ -26,6 +26,8 @@ class RobotSim : public rclcpp::Node
 public:
   explicit RobotSim(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
+  ~RobotSim();
+
 private:
   void sensors_update();
 

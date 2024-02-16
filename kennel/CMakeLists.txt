@@ -34,6 +34,7 @@ if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
 
+pluginlib_export_plugin_description_file(kennel plugins/positioner_plugins.xml)
 pluginlib_export_plugin_description_file(kennel plugins/sensor_plugins.xml)
 wombat_package_install(
   EXPORT_DEPS

@@ -1,0 +1,5 @@
+<library path="kennel_positioner_plugins">
+  <class type="kennel::StubPositioner" base_class_type="kennel::PositionerInterface">
+    <description>Stub positioner that forwards ground truth data in a different frame.</description>
+  </class>
+</library>
