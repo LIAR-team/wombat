@@ -69,7 +69,7 @@ public:
   {
     // Setup Kennel
     kennel = std::make_unique<kennel::Kennel>();
-    kennel->set_parameter_map(parameter_map);
+    kennel->configure(parameter_map);
     bool start_success = kennel->start();
     ASSERT_TRUE(start_success);
   }
@@ -113,44 +113,6 @@ public:
       vel_cmd_publisher->publish(cmd);
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-  }
-
-  void write_parameter_map(
-    rclcpp::ParameterMap & parameter_map,
-    const std::string & fully_qualified_name,
-    const std::string & param_name,
-    const rclcpp::ParameterValue & param_value)
-  {
-    // Get (or create) parameter vector for fqn
-    auto node_params_it = parameter_map.find(fully_qualified_name);
-    if (node_params_it == parameter_map.end()) {
-      bool success = false;
-      std::tie(node_params_it, success) =
-        parameter_map.insert(std::make_pair(fully_qualified_name, std::vector<rclcpp::Parameter>()));
-      EXPECT_TRUE(success) << "Failed to create parameters vector for " << fully_qualified_name;
-    }
-
-    // Check if parameter is already present
-    auto & node_params = node_params_it->second;
-    auto param_it = std::find_if(
-      node_params.begin(),
-      node_params.end(),
-      [&param_name](const rclcpp::Parameter & p) {
-        return param_name == p.get_name();
-      });
-
-    // Log a warning if we overwrite a parameter.
-    if (param_it != node_params.end()) {
-      RCLCPP_INFO(
-        node->get_logger(),
-        "Overriding p %s value for %s from '%s' to '%s'",
-        param_name.c_str(),
-        fully_qualified_name.c_str(),
-        rclcpp::to_string(param_it->get_parameter_value()).c_str(),
-        rclcpp::to_string(param_value).c_str());
-    }
-    // Add the parameter
-    node_params.push_back(rclcpp::Parameter(param_name, param_value));
   }
 
   std::unique_ptr<kennel::Kennel> kennel;

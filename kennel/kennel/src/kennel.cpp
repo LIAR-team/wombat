@@ -52,23 +52,20 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
     rclcpp::ParameterValue{std::vector<std::string>()});
 }
 
-rclcpp::ParameterMap Kennel::get_parameter_map()
+bool Kennel::configure(const rclcpp::ParameterMap & parameter_map)
 {
-  return m_params_map;
-}
+  // Save the parameter map
+  m_params_map = parameter_map;
 
-void Kennel::set_parameter_map(const rclcpp::ParameterMap & params_map)
-{
-  m_params_map = params_map;
-}
-
-bool Kennel::configure()
-{
   // Setup kennel node parameters
-  this->load_parameters_from_map(
+  const bool set_params_success = wombat_core::set_parameters_from_map(
     m_params_map,
     m_kennel_node->get_node_base_interface(),
     m_kennel_node->get_node_parameters_interface());
+  if (!set_params_success) {
+    RCLCPP_WARN(this->get_logger(), "Failed to set kennel parameters from config");
+    return false;
+  }
 
   // Simulated time setup
   const auto rtf = m_kennel_node->get_parameter("real_time_factor")
@@ -118,31 +115,6 @@ bool Kennel::configure()
   return true;
 }
 
-bool Kennel::load_parameters_from_map(
-  const rclcpp::ParameterMap & parameter_map,
-  rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_ifc,
-  rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters_ifc)
-{
-  const auto node_parameters = rclcpp::parameters_from_map(
-    parameter_map,
-    node_base_ifc->get_fully_qualified_name());
-
-  const auto params_result = node_parameters_ifc->set_parameters(node_parameters);
-
-  // Check that all parameters have been successfully set
-  for (const auto & result : params_result) {
-    if (!result.successful) {
-      RCLCPP_WARN(
-        this->get_logger(), "Failed to set params for %s: %s",
-        node_base_ifc->get_fully_qualified_name(),
-        result.reason.c_str());
-      return false;
-    }
-  }
-
-  return true;
-}
-
 bool Kennel::start()
 {
   if (m_is_started) {
@@ -152,7 +124,7 @@ bool Kennel::start()
 
   if (!m_is_configured) {
     RCLCPP_INFO(this->get_logger(), "Kennel was not configured before running: doing it now");
-    bool configure_success = this->configure();
+    bool configure_success = this->configure(m_params_map);
     if (!configure_success) {
       RCLCPP_WARN(this->get_logger(), "Failed to configure");
       return false;
