@@ -12,7 +12,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/common/sensors/sensor_ros2_base.hpp"
+#include "kennel/common/plugin_interface/sensor_ros2_base.hpp"
 #include "wombat_core/ros2/parameters.hpp"
 
 namespace kennel

@@ -16,7 +16,7 @@ namespace kennel
 
 /**
  * @brief Base interface class used to define dynamically-loadable
- * plugins.
+ * sensor plugins.
  */
 class SensorInterface
 {

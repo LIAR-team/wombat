@@ -13,7 +13,7 @@
 #include "rcl_interfaces/msg/parameter_descriptor.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/common/sensors/sensor_interface.hpp"
+#include "kennel/common/plugin_interface/sensor_interface.hpp"
 #include "kennel/common/types.hpp"
 
 namespace kennel
@@ -127,4 +127,4 @@ private:
 
 }  // namespace kennel
 
-#include "kennel/common/sensors/sensor_ros2_base_impl.hpp"
+#include "kennel/common/plugin_interface/sensor_ros2_base_impl.hpp"

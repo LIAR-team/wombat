@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "kennel/common/sensors/sensor_ros2_base.hpp"
+#include "kennel/common/plugin_interface/sensor_ros2_base.hpp"
 #include "kennel/common/types.hpp"
 #include "wombat_core/math/grid/coordinates.hpp"
 #include "wombat_core/math/grid/neighbors.hpp"
