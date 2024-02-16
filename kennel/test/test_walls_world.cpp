@@ -19,10 +19,27 @@
 #include "single_robot_fixture.hpp"
 #include "utils.hpp"
 
-TEST_F(TestKennelSingleRobot, PingPongWalls)
+class WallsWorldTest : public TestKennelSingleRobot
 {
-  setup_kennel("walls_world.yaml");
+public:
+  void SetUp() override
+  {
+    TestKennelSingleRobot::SetUp();
+    rclcpp::ParameterMap parameter_map;
+    ASSERT_NO_THROW(parameter_map = rclcpp::parameter_map_from_yaml_file(get_data_path("single_robot.yaml")));
 
+    write_parameter_map(
+      parameter_map,
+      "/kennel",
+      "map_yaml_filename",
+      rclcpp::ParameterValue(get_data_path("walls_map.yaml")));
+
+    setup_kennel(parameter_map);
+  }
+};
+
+TEST_F(WallsWorldTest, PingPongWalls)
+{
   geometry_msgs::msg::TransformStamped start_pose;
   wait_for_base_tf(start_pose);
   ASSERT_FALSE(is_bumped);

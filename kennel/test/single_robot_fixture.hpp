@@ -7,11 +7,16 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <cassert>
 #include <chrono>
 #include <functional>
 #include <memory>
 #include <string>
 #include <thread>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_ros/transform_listener.h"
@@ -60,12 +65,11 @@ public:
     rclcpp::shutdown();
   }
 
-  void setup_kennel(const std::string & config_filename)
+  void setup_kennel(const rclcpp::ParameterMap & parameter_map)
   {
     // Setup Kennel
     kennel = std::make_unique<kennel::Kennel>();
-    bool load_success = kennel->configure(get_data_path(config_filename));
-    ASSERT_TRUE(load_success);
+    kennel->set_parameter_map(parameter_map);
     bool start_success = kennel->start();
     ASSERT_TRUE(start_success);
   }
@@ -79,7 +83,7 @@ public:
         std::chrono::seconds(20));
     } catch (const tf2::TransformException & ex) {
       RCLCPP_WARN(node->get_logger(), "Could not transform: %s", ex.what());
-      FAIL();
+      assert(0 && "Failed to wait for base tf");
     }
   }
 
@@ -91,7 +95,7 @@ public:
         tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
       RCLCPP_WARN(node->get_logger(), "Could not transform: %s", ex.what());
-      FAIL();
+      assert(0 && "Failed to get base tf");
     }
   }
 
@@ -109,6 +113,44 @@ public:
       vel_cmd_publisher->publish(cmd);
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+  }
+
+  void write_parameter_map(
+    rclcpp::ParameterMap & parameter_map,
+    const std::string & fully_qualified_name,
+    const std::string & param_name,
+    const rclcpp::ParameterValue & param_value)
+  {
+    // Get (or create) parameter vector for fqn
+    auto node_params_it = parameter_map.find(fully_qualified_name);
+    if (node_params_it == parameter_map.end()) {
+      bool success = false;
+      std::tie(node_params_it, success) =
+        parameter_map.insert(std::make_pair(fully_qualified_name, std::vector<rclcpp::Parameter>()));
+      EXPECT_TRUE(success) << "Failed to create parameters vector for " << fully_qualified_name;
+    }
+
+    // Check if parameter is already present
+    auto & node_params = node_params_it->second;
+    auto param_it = std::find_if(
+      node_params.begin(),
+      node_params.end(),
+      [&param_name](const rclcpp::Parameter & p) {
+        return param_name == p.get_name();
+      });
+
+    // Log a warning if we overwrite a parameter.
+    if (param_it != node_params.end()) {
+      RCLCPP_INFO(
+        node->get_logger(),
+        "Overriding p %s value for %s from '%s' to '%s'",
+        param_name.c_str(),
+        fully_qualified_name.c_str(),
+        rclcpp::to_string(param_it->get_parameter_value()).c_str(),
+        rclcpp::to_string(param_value).c_str());
+    }
+    // Add the parameter
+    node_params.push_back(rclcpp::Parameter(param_name, param_value));
   }
 
   std::unique_ptr<kennel::Kennel> kennel;

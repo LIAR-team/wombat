@@ -4,7 +4,7 @@ kennel:
     sim_time_update_period_ms: 2
     map_yaml_filename: /home/docker-dev/wombat/kennel/bringup/maps/hospital_section.yaml
     map_frame_id: ground_truth
-    map_topic_name: ground_truth_map
+    map_topic_name: /ground_truth_map
     robots:
       - "my_robot"
 

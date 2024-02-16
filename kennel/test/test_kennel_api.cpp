@@ -74,22 +74,11 @@ TEST_F(TestKennelRos, shutdown_before_stop)
   ASSERT_TRUE(stop_success);
 }
 
-TEST_F(TestKennelRos, configure_yaml)
+TEST_F(TestKennelRos, configure)
 {
   auto kennel = std::make_unique<kennel::Kennel>();
-  bool load_success = kennel->configure(get_data_path("empty_world.yaml"));
+  bool load_success = kennel->configure();
   ASSERT_TRUE(load_success);
-  bool start_success = kennel->start();
-  ASSERT_TRUE(start_success);
-  bool stop_success = kennel->stop();
-  ASSERT_TRUE(stop_success);
-}
-
-TEST_F(TestKennelRos, non_existant_parameters)
-{
-  auto kennel = std::make_unique<kennel::Kennel>();
-  bool load_success = kennel->configure(get_data_path("this_does_not_exist"));
-  ASSERT_FALSE(load_success);
   bool start_success = kennel->start();
   ASSERT_TRUE(start_success);
   bool stop_success = kennel->stop();

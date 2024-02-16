@@ -2,7 +2,6 @@ kennel:
   ros__parameters:
     real_time_factor: 5.0
     sim_time_update_period_ms: 2
-    map_yaml_filename: /home/docker-dev/wombat/kennel/test/data/walls_map.yaml
     map_frame_id: ground_truth
     map_topic_name: ground_truth_map
     robots:
