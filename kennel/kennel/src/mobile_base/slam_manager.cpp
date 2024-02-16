@@ -20,8 +20,7 @@ SlamManager::SlamManager(
 }
 
 std::optional<localization_data_t> SlamManager::slam_update(
-  const geometry_msgs::msg::TransformStamped & gt_T_base,
-  nav_msgs::msg::OccupancyGrid::ConstSharedPtr gt_map)
+  const localization_data_t & gt_data)
 {
   const auto now = m_clock->now();
   if (now - m_last_update_time < m_update_period) {
@@ -31,14 +30,14 @@ std::optional<localization_data_t> SlamManager::slam_update(
   m_last_update_time = now;
 
   // Naive implementation of SLAM: forward ground truth data
-  localization_data_t data;
-  data.robot_pose = gt_T_base;
-  data.robot_pose.header.frame_id = m_slam_frame_id;
-  if (gt_map) {
-    data.map = *gt_map;
-  }
+  localization_data_t slam_data;
+  slam_data.robot_pose = gt_data.robot_pose;
+  slam_data.robot_pose.header.frame_id = m_slam_frame_id;
+  auto slam_map = std::make_shared<nav_msgs::msg::OccupancyGrid>(*(gt_data.map));
+  slam_map->header.frame_id = m_slam_frame_id;
+  slam_data.map = slam_map;
 
-  return data;
+  return slam_data;
 }
 
 }  // namespace kennel

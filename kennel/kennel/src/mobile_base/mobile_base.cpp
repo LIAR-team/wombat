@@ -74,9 +74,7 @@ localization_data_t MobileBase::get_ground_truth_data()
 
   localization_data_t data;
   data.robot_pose = m_gt_manager->get_pose();
-  if (m_gt_map) {
-    data.map = *m_gt_map;
-  }
+  data.map = m_gt_map;
   return data;
 }
 
@@ -87,12 +85,14 @@ void MobileBase::mobile_base_update()
   if (m_ground_truth_map_sub && !m_gt_map) {
     return;
   }
-  auto gt_T_base = m_gt_manager->pose_update(m_last_cmd_vel);
+  kennel::localization_data_t gt_data;
+  gt_data.robot_pose = m_gt_manager->pose_update(m_last_cmd_vel);
+  gt_data.map = m_gt_map;
 
-  auto maybe_slam_data = m_slam_manager->slam_update(gt_T_base, m_gt_map);
+  auto maybe_slam_data = m_slam_manager->slam_update(gt_data);
 
   std::vector<geometry_msgs::msg::TransformStamped> sorted_tfs;
-  sorted_tfs.push_back(gt_T_base);
+  sorted_tfs.push_back(gt_data.robot_pose);
 
   // TODO: this is ugly, will need to rewrite.
   // We always need a full tree of transforms even if they are computed with different periods
@@ -114,7 +114,7 @@ void MobileBase::mobile_base_update()
   m_last_transforms = *maybe_tree_tfs;
 
   if (m_slam_map_pub && maybe_slam_data) {
-    m_slam_map_pub->publish(maybe_slam_data->map);
+    m_slam_map_pub->publish(*(maybe_slam_data->map));
   }
 }
 

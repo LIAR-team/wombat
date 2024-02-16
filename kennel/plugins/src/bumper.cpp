@@ -29,17 +29,22 @@ private:
     // This could also be done during startup, as this is a static transformation
     auto bumper_msg = std::make_unique<wombat_msgs::msg::Bumper>();
 
+    // We can't compute bumper data without a ground truth map
+    if (!gt_data.map) {
+      return bumper_msg;
+    }
+    const auto & map = *(gt_data.map);
+
     geometry_msgs::msg::Point current_pt;
     current_pt.x = gt_data.robot_pose.transform.translation.x;
     current_pt.y = gt_data.robot_pose.transform.translation.y;
 
-    auto current_pose_grid_index = wombat_core::world_pt_to_grid_index(current_pt, gt_data.map.info);
+    auto current_pose_grid_index = wombat_core::world_pt_to_grid_index(current_pt, map.info);
     if (!current_pose_grid_index) {
       RCLCPP_WARN(this->get_logger(), "Failed to compute grid index for (%f %f)", current_pt.x, current_pt.y);
       return bumper_msg;
     }
 
-    const auto & map = gt_data.map;
     auto is_bumped_func = [&map, &bumper_msg](wombat_core::grid_index_t index) {
         bumper_msg->is_pressed = map.data[index] > 0;
         return bumper_msg->is_pressed;

@@ -15,7 +15,7 @@ namespace kennel
 struct localization_data_t
 {
   geometry_msgs::msg::TransformStamped robot_pose;
-  nav_msgs::msg::OccupancyGrid map;
+  nav_msgs::msg::OccupancyGrid::ConstSharedPtr map;
 };
 
 }  // namespace kennel

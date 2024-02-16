@@ -30,8 +30,7 @@ public:
     std::string slam_frame_id);
 
   std::optional<localization_data_t> slam_update(
-    const geometry_msgs::msg::TransformStamped & gt_T_base,
-    nav_msgs::msg::OccupancyGrid::ConstSharedPtr gt_map);
+    const localization_data_t & gt_data);
 
 private:
   rclcpp::Clock::SharedPtr m_clock;
