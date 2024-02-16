@@ -26,7 +26,7 @@ RobotSim::RobotSim(const rclcpp::NodeOptions & options)
   }
 
   m_sensors_timer = this->create_wall_timer(
-    std::chrono::milliseconds(50),
+    std::chrono::milliseconds(10),
     [this]() {
       this->sensors_update();
     });

@@ -53,7 +53,6 @@ private:
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr m_ground_truth_map_sub;
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr m_gt_map;
 
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr m_slam_map_pub;
   rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr m_gt_costmap_pub;
 
   std::shared_ptr<tf2_ros::TransformBroadcaster> m_tf_broadcaster;

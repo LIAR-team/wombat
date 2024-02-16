@@ -3,8 +3,6 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#pragma once
-
 #include <memory>
 #include <string>
 #include <utility>
@@ -12,20 +10,19 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/common/plugin_interface/sensor_ros2_base.hpp"
+#include "kennel/common/plugin_interface/plugin_base.hpp"
 #include "wombat_core/ros2/parameters.hpp"
 
 namespace kennel
 {
 
-template<typename MsgT>
-bool SensorRos2Base<MsgT>::initialize_sensor(
+bool PluginBase::initialize_plugin(
   rclcpp::Node * parent_node,
-  const std::string & sensor_name)
+  const std::string & plugin_name)
 {
   m_clock = parent_node->get_clock();
   m_log_interface = parent_node->get_node_logging_interface();
-  m_sensor_name = sensor_name;
+  m_plugin_name = plugin_name;
 
   const auto default_parameters_info = this->setup_parameters();
   const bool params_success = this->declare_parameters(
@@ -36,36 +33,15 @@ bool SensorRos2Base<MsgT>::initialize_sensor(
     return false;
   }
 
-  // TODO: we should allow differentiating the sensor name from the topic name
-  m_sensor_publisher = parent_node->create_publisher<MsgT>(
-    m_sensor_name,
-    rclcpp::SensorDataQoS());
-
-  const bool post_init_success = this->post_init();
-  if (!post_init_success) {
-    RCLCPP_WARN(this->get_logger(), "Failed to run post-init routine");
-    return false;
-  }
-
-  RCLCPP_INFO(this->get_logger(), "Sensor initialized");
   return true;
 }
 
-template<typename MsgT>
-void SensorRos2Base<MsgT>::produce_sensor_data(const localization_data_t & gt_data)
+rclcpp::Logger PluginBase::get_logger()
 {
-  auto sensor_msg = make_sensor_ros2_msg(gt_data);
-  m_sensor_publisher->publish(std::move(sensor_msg));
+  return m_log_interface->get_logger().get_child(m_plugin_name);
 }
 
-template<typename MsgT>
-rclcpp::Logger SensorRos2Base<MsgT>::get_logger()
-{
-  return m_log_interface->get_logger().get_child(m_sensor_name);
-}
-
-template<typename MsgT>
-rclcpp::ParameterValue SensorRos2Base<MsgT>::get_parameter(const std::string & param_name)
+rclcpp::ParameterValue PluginBase::get_parameter(const std::string & param_name)
 {
   auto param_it = m_parameters.find(param_name);
   if (param_it == m_parameters.end()) {
@@ -75,21 +51,18 @@ rclcpp::ParameterValue SensorRos2Base<MsgT>::get_parameter(const std::string & p
   return param_it->second;
 }
 
-template<typename MsgT>
 std::vector<default_parameter_info_t>
-SensorRos2Base<MsgT>::setup_parameters()
+PluginBase::setup_parameters()
 {
   return std::vector<default_parameter_info_t>();
 }
 
-template<typename MsgT>
-bool SensorRos2Base<MsgT>::post_init()
+bool PluginBase::post_init()
 {
   return true;
 }
 
-template<typename MsgT>
-bool SensorRos2Base<MsgT>::declare_parameters(
+bool PluginBase::declare_parameters(
   const std::vector<default_parameter_info_t> & default_parameters_info,
   rclcpp::Node * parent_node)
 {
@@ -107,17 +80,19 @@ bool SensorRos2Base<MsgT>::declare_parameters(
       return false;
     }
 
-    // Scope each parameter with the name of the sensor
-    const std::string full_name = m_sensor_name + "." + default_info.name;
+    // Scope each parameter with the name of the plugin
+    const std::string full_parameter_name = m_plugin_name + "." + default_info.name;
 
+    // Parameters are declared using their fully scoped name to avoid collisions
     auto param_value = wombat_core::declare_parameter_if_not_declared(
       parent_node->get_node_parameters_interface(),
-      default_info.name,
+      full_parameter_name,
       default_info.value,
       default_info.descriptor);
 
     // Store parameter values (which can be overridden by the application) in a map
     // to make them accessible by the derived plugin class
+    // Parameters are stored with their relative name to make retrieval easier
     m_parameters.emplace(default_info.name, param_value);
   }
 

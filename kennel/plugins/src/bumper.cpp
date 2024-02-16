@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "kennel/common/plugin_interface/sensor_ros2_base.hpp"
+#include "kennel/common/plugin_interface/sensor_publisher.hpp"
 #include "kennel/common/types.hpp"
 #include "wombat_core/math/grid/coordinates.hpp"
 #include "wombat_core/math/grid/neighbors.hpp"
@@ -15,11 +15,8 @@ namespace kennel
 {
 
 /// Binary bumper sensor plugin
-class Bumper : public SensorRos2Base<wombat_msgs::msg::Bumper>
+class Bumper : public SensorPublisher<wombat_msgs::msg::Bumper>
 {
-public:
-  Bumper() = default;
-
 private:
   std::unique_ptr<wombat_msgs::msg::Bumper>
   make_sensor_ros2_msg(const localization_data_t & gt_data) override

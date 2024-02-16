@@ -33,9 +33,11 @@ std::optional<localization_data_t> SlamManager::slam_update(
   localization_data_t slam_data;
   slam_data.robot_pose = gt_data.robot_pose;
   slam_data.robot_pose.header.frame_id = m_slam_frame_id;
-  auto slam_map = std::make_shared<nav_msgs::msg::OccupancyGrid>(*(gt_data.map));
-  slam_map->header.frame_id = m_slam_frame_id;
-  slam_data.map = slam_map;
+  if (gt_data.map) {
+    auto slam_map = std::make_shared<nav_msgs::msg::OccupancyGrid>(*(gt_data.map));
+    slam_map->header.frame_id = m_slam_frame_id;
+    slam_data.map = slam_map;
+  }
 
   return slam_data;
 }

@@ -9,6 +9,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "kennel/common/plugin_interface/plugin_base.hpp"
 #include "kennel/common/types.hpp"
 
 namespace kennel
@@ -18,13 +19,9 @@ namespace kennel
  * @brief Base interface class used to define dynamically-loadable
  * sensor plugins.
  */
-class SensorInterface
+class SensorInterface : public PluginBase
 {
 public:
-  SensorInterface() = default;
-
-  virtual ~SensorInterface() = default;
-
   /**
    * @brief Initialization function for the plugins.
    * This will be called by the entity loading the plugins, right after their construction.

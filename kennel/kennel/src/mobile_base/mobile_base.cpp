@@ -112,10 +112,6 @@ void MobileBase::mobile_base_update()
   }
   m_tf_broadcaster->sendTransform(*maybe_tree_tfs);
   m_last_transforms = *maybe_tree_tfs;
-
-  if (m_slam_map_pub && maybe_slam_data) {
-    m_slam_map_pub->publish(*(maybe_slam_data->map));
-  }
 }
 
 std::optional<std::vector<geometry_msgs::msg::TransformStamped>>
@@ -268,12 +264,14 @@ bool MobileBase::setup_slam()
     rclcpp::Duration(slam_update_period),
     slam_frame_id);
 
+  /*
   if (!slam_map_topic_name.empty()) {
     RCLCPP_INFO(m_logger, "Creating SLAM map publisher");
     m_slam_map_pub = m_parent_node->create_publisher<nav_msgs::msg::OccupancyGrid>(
       slam_map_topic_name,
       rclcpp::QoS(rclcpp::KeepLast(10)));
   }
+  */
 
   return true;
 }
