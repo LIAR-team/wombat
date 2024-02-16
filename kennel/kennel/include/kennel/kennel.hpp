@@ -54,11 +54,15 @@ public:
   bool stop();
 
   /**
-   * @brief Configure the Kennel, preparing it for the next start
-   * @param yaml_file_path optional path to a yaml configuration file
+   * @brief Configure the Kennel, clearing its internal state
+   * and preparing it for the next start
    * @return true if configuration is successful
    */
-  bool configure(const std::string & yaml_file_path = "");
+  bool configure();
+
+  rclcpp::ParameterMap get_parameter_map();
+
+  void set_parameter_map(const rclcpp::ParameterMap & params_map);
 
 private:
   /**
@@ -73,10 +77,15 @@ private:
     rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_ifc,
     rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters_ifc);
 
+  bool load_parameters_from_map(
+    const rclcpp::ParameterMap & parameters_map,
+    rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_ifc,
+    rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters_ifc);
+
   bool setup_robot(
     const std::string & robot_name,
     const rclcpp::NodeOptions & node_options,
-    const std::string & yaml_file_path);
+    const rclcpp::ParameterMap & parameter_map);
 
   bool setup_map_manager(
     const std::string & map_yaml_filename,
@@ -93,6 +102,8 @@ private:
   rclcpp::NodeOptions m_node_options;
   bool m_is_configured {false};
   bool m_is_started {false};
+
+  rclcpp::ParameterMap m_params_map;
 
   std::unique_ptr<SimTimeManager> m_sim_time_manager;
   std::shared_ptr<rclcpp::Node> m_kennel_node;

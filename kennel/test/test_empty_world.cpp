@@ -8,119 +8,68 @@
 #include <chrono>
 #include <memory>
 
+#include "geometry_msgs/msg/twist.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2/utils.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
-#include "tf2_ros/transform_listener.h"
-#include "tf2_ros/buffer.h"
 
 #include "kennel/kennel.hpp"
+#include "wombat_core/math/angles.hpp"
+
+#include "single_robot_fixture.hpp"
 #include "utils.hpp"
 
-class TestKennelRos : public testing::Test
+class EmptyWorldTest : public TestKennelSingleRobot
 {
 public:
   void SetUp() override
   {
-    rclcpp::init(0, nullptr);
+    TestKennelSingleRobot::SetUp();
+    rclcpp::ParameterMap parameter_map;
+    ASSERT_NO_THROW(parameter_map = rclcpp::parameter_map_from_yaml_file(get_data_path("single_robot.yaml")));
 
-    // Setup node
-    node = std::make_shared<rclcpp::Node>("test_node");
-    vel_cmd_publisher = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
+    write_parameter_map(
+      parameter_map,
+      "/kennel",
+      "map_yaml_filename",
+      rclcpp::ParameterValue(""));
 
-    // Setup ROS 2 executor
-    executor = std::make_unique<rclcpp::experimental::executors::EventsExecutor>();
-    executor->add_node(node);
-    executor_thread = std::make_unique<std::thread>([this]() {executor->spin();});
+    write_parameter_map(
+      parameter_map,
+      "/my_robot/robot_sim",
+      "mobile_base.ground_truth.map_topic_name",
+      rclcpp::ParameterValue(""));
 
-    // Setup tf
-    tf_buffer = std::make_unique<tf2_ros::Buffer>(node->get_clock());
-    tf_buffer->setUsingDedicatedThread(true);
-    tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer, node, false);
-
-    // Setup Kennel
-    kennel = std::make_unique<kennel::Kennel>();
-    bool load_success = kennel->configure(get_data_path("empty_world.yaml"));
-    ASSERT_TRUE(load_success);
-    bool start_success = kennel->start();
-    ASSERT_TRUE(start_success);
+    setup_kennel(parameter_map);
   }
-
-  void TearDown() override
-  {
-    bool stop_success = kennel->stop();
-    ASSERT_TRUE(stop_success);
-
-    executor->cancel();
-    executor_thread->join();
-
-    rclcpp::shutdown();
-  }
-
-  void wait_for_base_tf(geometry_msgs::msg::TransformStamped & robot_pose)
-  {
-    try {
-      robot_pose = tf_buffer->lookupTransform(
-        "ground_truth", "base_link",
-        tf2::TimePointZero,
-        std::chrono::seconds(20));
-    } catch (const tf2::TransformException & ex) {
-      RCLCPP_WARN(node->get_logger(), "Could not transform: %s", ex.what());
-      FAIL();
-    }
-  }
-
-  void get_latest_base_tf(geometry_msgs::msg::TransformStamped & robot_pose)
-  {
-    try {
-      robot_pose = tf_buffer->lookupTransform(
-        "ground_truth", "base_link",
-        tf2::TimePointZero);
-    } catch (const tf2::TransformException & ex) {
-      RCLCPP_WARN(node->get_logger(), "Could not transform: %s", ex.what());
-      FAIL();
-    }
-  }
-
-  std::unique_ptr<kennel::Kennel> kennel;
-
-  std::shared_ptr<rclcpp::Node> node;
-  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr vel_cmd_publisher;
-  std::unique_ptr<tf2_ros::Buffer> tf_buffer;
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener;
-  std::unique_ptr<rclcpp::Executor> executor;
-  std::unique_ptr<std::thread> executor_thread;
 };
 
-TEST_F(TestKennelRos, zero_vel_cmd)
+static constexpr double START_X = 1.0;
+static constexpr double START_Y = 1.0;
+
+TEST_F(EmptyWorldTest, zero_vel_cmd)
 {
   geometry_msgs::msg::TransformStamped robot_pose;
   wait_for_base_tf(robot_pose);
 
-  // Ensure that the robot is at the origin
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.x, 0.0);
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.y, 0.0);
+  // Ensure that the robot is at the start pose
+  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.w, 1.0);
 
-  // publish vel_cmd
-  auto start_time = std::chrono::steady_clock::now();
-  while (
-    (std::chrono::steady_clock::now() - start_time < std::chrono::milliseconds(250)) &&
-    rclcpp::ok())
-  {
-    auto cmd_msg = std::make_unique<geometry_msgs::msg::Twist>();
-    vel_cmd_publisher->publish(std::move(cmd_msg));
-    std::this_thread::sleep_for(std::chrono::milliseconds(25));
-  }
+  geometry_msgs::msg::Twist zero_vel_cmd;
+  drive_until_condition(
+    zero_vel_cmd,
+    [this]() {return false;},
+    std::chrono::milliseconds(250));
 
   get_latest_base_tf(robot_pose);
-
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.x, 0.0);
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.y, 0.0);
+  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
@@ -128,40 +77,37 @@ TEST_F(TestKennelRos, zero_vel_cmd)
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.w, 1.0);
 }
 
-TEST_F(TestKennelRos, drive_straight)
+TEST_F(EmptyWorldTest, drive_straight)
 {
   geometry_msgs::msg::TransformStamped robot_pose;
   wait_for_base_tf(robot_pose);
 
-  // Ensure that the robot is at the origin
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.x, 0.0);
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.y, 0.0);
+  // Ensure that the robot is at the start pose
+  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.w, 1.0);
 
-  // publish vel_cmd
-  auto start_time = std::chrono::steady_clock::now();
+  // Drive distance
+  geometry_msgs::msg::Twist forward_cmd_vel;
+  forward_cmd_vel.linear.x = 5.0;
   const double x_threshold = 3.0;
-  while (
-    (std::chrono::steady_clock::now() - start_time < std::chrono::seconds(10)) &&
-    rclcpp::ok())
-  {
-    get_latest_base_tf(robot_pose);
-    if (robot_pose.transform.translation.x > x_threshold) {
-      break;
-    }
+  drive_until_condition(
+    forward_cmd_vel,
+    [this, &x_threshold]()
+    {
+      geometry_msgs::msg::TransformStamped pose;
+      get_latest_base_tf(pose);
+      return pose.transform.translation.x > x_threshold;
+    },
+    std::chrono::seconds(10));
 
-    auto cmd_msg = std::make_unique<geometry_msgs::msg::Twist>();
-    cmd_msg->linear.x = 5.0;
-    vel_cmd_publisher->publish(std::move(cmd_msg));
-    std::this_thread::sleep_for(std::chrono::milliseconds(25));
-  }
-
-  EXPECT_GE(robot_pose.transform.translation.x, x_threshold);
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.y, 0.0);
+  get_latest_base_tf(robot_pose);
+  EXPECT_GE(robot_pose.transform.translation.x, START_X);
+  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
@@ -169,42 +115,46 @@ TEST_F(TestKennelRos, drive_straight)
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.w, 1.0);
 }
 
-TEST_F(TestKennelRos, turn_in_place)
+TEST_F(EmptyWorldTest, turn_in_place)
 {
   geometry_msgs::msg::TransformStamped robot_pose;
   wait_for_base_tf(robot_pose);
 
-  // Ensure that the robot is at the origin
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.x, 0.0);
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.y, 0.0);
+  // Ensure that the robot is at the start pose
+  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.w, 1.0);
 
-  // publish vel_cmd
-  auto start_time = std::chrono::steady_clock::now();
-  const double theta_threshold = 3.0;
-  while (
-    (std::chrono::steady_clock::now() - start_time < std::chrono::seconds(10)) &&
-    rclcpp::ok())
-  {
-    get_latest_base_tf(robot_pose);
-    if (tf2::getYaw(robot_pose.transform.rotation) > theta_threshold) {
-      break;
-    }
-    auto cmd_msg = std::make_unique<geometry_msgs::msg::Twist>();
-    cmd_msg->angular.z = 1.0;
-    vel_cmd_publisher->publish(std::move(cmd_msg));
+  geometry_msgs::msg::Twist rotate_cmd_vel;
+  rotate_cmd_vel.angular.z = 2.0;
+  const double goal_rotation = wombat_core::PI;
+  double accumulated_rotation = 0.0;
+  geometry_msgs::msg::TransformStamped last_pose;
+  get_latest_base_tf(last_pose);
+  drive_until_condition(
+    rotate_cmd_vel,
+    [this, &goal_rotation, &last_pose, &accumulated_rotation]()
+    {
+      geometry_msgs::msg::TransformStamped pose;
+      get_latest_base_tf(pose);
+      const double delta_yaw = wombat_core::angles_difference(
+        tf2::getYaw(pose.transform.rotation),
+        tf2::getYaw(last_pose.transform.rotation));
+      last_pose = pose;
+      accumulated_rotation += delta_yaw;
+      return std::abs(accumulated_rotation) > goal_rotation;
+    },
+    std::chrono::seconds(10));
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(25));
-  }
-
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.x, 0.0);
-  EXPECT_DOUBLE_EQ(robot_pose.transform.translation.y, 0.0);
+  get_latest_base_tf(robot_pose);
+  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
-  EXPECT_GE(tf2::getYaw(robot_pose.transform.rotation), theta_threshold);
+  EXPECT_GE(std::abs(accumulated_rotation), goal_rotation);
 }
 
 int main(int argc, char ** argv)

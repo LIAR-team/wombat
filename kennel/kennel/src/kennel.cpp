@@ -52,19 +52,23 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
     rclcpp::ParameterValue{std::vector<std::string>()});
 }
 
-bool Kennel::configure(const std::string & yaml_file_path)
+rclcpp::ParameterMap Kennel::get_parameter_map()
 {
-  // Setup kennel parameters
-  if (!yaml_file_path.empty()) {
-    const bool load_success = this->load_parameters_from_yaml(
-      yaml_file_path,
-      m_kennel_node->get_node_base_interface(),
-      m_kennel_node->get_node_parameters_interface());
-    if (!load_success) {
-      RCLCPP_WARN(this->get_logger(), "Failed to load yaml parameters for kennel node: %s", yaml_file_path.c_str());
-      return false;
-    }
-  }
+  return m_params_map;
+}
+
+void Kennel::set_parameter_map(const rclcpp::ParameterMap & params_map)
+{
+  m_params_map = params_map;
+}
+
+bool Kennel::configure()
+{
+  // Setup kennel node parameters
+  this->load_parameters_from_map(
+    m_params_map,
+    m_kennel_node->get_node_base_interface(),
+    m_kennel_node->get_node_parameters_interface());
 
   // Simulated time setup
   const auto rtf = m_kennel_node->get_parameter("real_time_factor")
@@ -103,7 +107,7 @@ bool Kennel::configure(const std::string & yaml_file_path)
   const auto robot_names = m_kennel_node->get_parameter("robots")
     .get_value<std::vector<std::string>>();
   for (const auto & name : robot_names) {
-    const bool robot_setup_success = setup_robot(name, m_node_options, yaml_file_path);
+    const bool robot_setup_success = setup_robot(name, m_node_options, m_params_map);
     if (!robot_setup_success) {
       RCLCPP_WARN(this->get_logger(), "Failed to setup robot: %s", name.c_str());
       return false;
@@ -114,21 +118,13 @@ bool Kennel::configure(const std::string & yaml_file_path)
   return true;
 }
 
-bool Kennel::load_parameters_from_yaml(
-  const std::string & yaml_file_path,
+bool Kennel::load_parameters_from_map(
+  const rclcpp::ParameterMap & parameter_map,
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_ifc,
   rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters_ifc)
 {
-  rclcpp::ParameterMap parameters_map;
-  try {
-    parameters_map = rclcpp::parameter_map_from_yaml_file(yaml_file_path);
-  } catch (std::runtime_error & ex) {
-    RCLCPP_ERROR(this->get_logger(), "Exception while creating parameters map: %s", ex.what());
-    return false;
-  }
-
   const auto node_parameters = rclcpp::parameters_from_map(
-    parameters_map,
+    parameter_map,
     node_base_ifc->get_fully_qualified_name());
 
   const auto params_result = node_parameters_ifc->set_parameters(node_parameters);
@@ -228,11 +224,12 @@ bool Kennel::stop()
 bool Kennel::setup_robot(
   const std::string & robot_name,
   const rclcpp::NodeOptions & node_options,
-  const std::string & yaml_file_path)
+  const rclcpp::ParameterMap & parameter_map)
 {
   // A robot must have a name
   // TODO: enforce that names are unique
   if (robot_name.empty()) {
+    RCLCPP_ERROR(this->get_logger(), "Empty name passed to setup robot");
     return false;
   }
 
@@ -242,17 +239,34 @@ bool Kennel::setup_robot(
   robot_arguments.push_back("--ros-args");
   robot_arguments.push_back("-r");
   robot_arguments.push_back("__ns:=/" + robot_name);
-  if (!yaml_file_path.empty()) {
-    robot_arguments.push_back("--params-file");
-    robot_arguments.push_back(yaml_file_path);
+
+  // HACK! Infer the fully qualified name before creating the node
+  const std::string fully_qualified_name = "/" + robot_name + "/robot_sim";
+  // Copy parameters from the map to the parameters override options
+  const auto node_parameters = rclcpp::parameters_from_map(
+    parameter_map,
+    fully_qualified_name.c_str());
+  for (const auto & param : node_parameters) {
+    robot_node_options.append_parameter_override(
+      param.get_name(),
+      param.get_parameter_value());
   }
 
   robot_node_options.append_parameter_override("use_sim_time", true);
   robot_node_options.arguments(robot_arguments);
 
   auto robot_node = std::make_shared<RobotSim>(robot_node_options);
-  m_robots.push_back(robot_node);
 
+  // Validate that our hack was correctly applied
+  if (robot_node->get_fully_qualified_name() != fully_qualified_name) {
+    RCLCPP_ERROR(
+      this->get_logger(), "Expected fqn doesn't match: %s and %s",
+      robot_node->get_fully_qualified_name(),
+      fully_qualified_name.c_str());
+    return false;
+  }
+
+  m_robots.push_back(robot_node);
   return true;
 }
 

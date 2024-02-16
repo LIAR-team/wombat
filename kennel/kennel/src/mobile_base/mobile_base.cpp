@@ -215,18 +215,16 @@ bool MobileBase::setup_ground_truth()
 
   if (!ground_truth_costmap_topic_name.empty()) {
     if (ground_truth_map_topic_name.empty()) {
-      RCLCPP_ERROR(
+      RCLCPP_WARN(
         m_logger,
         "Can't construct costmap publisher for %s without a ground_truth map subscrition",
         ground_truth_costmap_topic_name.c_str());
-
-      return false;
+    } else {
+      RCLCPP_INFO(m_logger, "Creating ground truth costmap publisher");
+      m_gt_costmap_pub = m_parent_node->create_publisher<nav_msgs::msg::OccupancyGrid>(
+        ground_truth_costmap_topic_name,
+        map_qos);
     }
-
-    RCLCPP_INFO(m_logger, "Creating ground truth costmap publisher");
-    m_gt_costmap_pub = m_parent_node->create_publisher<nav_msgs::msg::OccupancyGrid>(
-      ground_truth_costmap_topic_name,
-      map_qos);
   }
 
   return true;

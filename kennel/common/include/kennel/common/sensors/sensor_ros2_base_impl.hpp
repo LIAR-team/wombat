@@ -39,7 +39,7 @@ bool SensorRos2Base<MsgT>::initialize_sensor(
   // TODO: we should allow differentiating the sensor name from the topic name
   m_sensor_publisher = parent_node->create_publisher<MsgT>(
     m_sensor_name,
-    rclcpp::QoS(rclcpp::KeepLast(10)));
+    rclcpp::SensorDataQoS());
 
   const bool post_init_success = this->post_init();
   if (!post_init_success) {
