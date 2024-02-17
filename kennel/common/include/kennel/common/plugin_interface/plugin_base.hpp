@@ -33,8 +33,8 @@ public:
   virtual ~PluginBase() = default;
 
   bool initialize_plugin(
-    rclcpp::Node * parent_node,
     const std::string & plugin_name,
+    rclcpp::Node * parent_node,
     const std::string & params_prefix = "");
 
 protected:

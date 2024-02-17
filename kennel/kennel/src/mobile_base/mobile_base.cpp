@@ -68,11 +68,6 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
   RCLCPP_INFO(m_logger, "Mobile Base constructed");
 }
 
-MobileBase::~MobileBase()
-{
-  // Clear plugins before doing anything else
-  m_positioners.clear();
-}
 
 localization_data_t MobileBase::get_ground_truth_data()
 {
@@ -274,8 +269,8 @@ bool MobileBase::load_positioner_plugins(rclcpp::Node * parent_node)
     // Load and initialize the plugin
     auto loaded_plugin = m_plugin_loader.createSharedInstance(plugin_type);
     const bool plugin_init_success = loaded_plugin->initialize_positioner(
-      parent_node,
       plugin_name,
+      parent_node,
       "mobile_base");
     if (!plugin_init_success) {
       RCLCPP_WARN(m_logger, "Failed to initialize plugin %s", plugin_name.c_str());

@@ -42,8 +42,9 @@ public:
     const std::string & sensor_name) override
   {
     const bool base_success = this->initialize_plugin(
+      sensor_name,
       parent_node,
-      sensor_name);
+      "");
     if (!base_success) {
       RCLCPP_WARN(this->get_logger(), "Failed to do basic setup");
       return false;

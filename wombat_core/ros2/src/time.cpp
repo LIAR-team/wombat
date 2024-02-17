@@ -7,8 +7,6 @@
 
 #include "wombat_core/ros2/time.hpp"
 
-using std::chrono::nanoseconds;
-
 namespace wombat_core
 {
 
@@ -17,16 +15,17 @@ RateController::RateController(
   rclcpp::Clock::SharedPtr clock,
   bool start_ready)
 : RateController(
-  std::chrono::duration_cast<nanoseconds>(std::chrono::duration<double>(1.0 / frequency_hz)),
-  clock,
-  start_ready)
+    std::chrono::duration_cast<std::chrono::nanoseconds>(
+      std::chrono::duration<double>(1.0 / frequency_hz)),
+    clock,
+    start_ready)
 {}
 
 RateController::RateController(
-  nanoseconds period,
+  std::chrono::nanoseconds period,
   rclcpp::Clock::SharedPtr clock,
   bool start_ready)
-  : m_period(period), m_clock(clock)
+: m_period(period), m_clock(std::move(clock))
 {
   if (start_ready) {
     // Subtract the period to the current time to make the controller

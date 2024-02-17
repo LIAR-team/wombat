@@ -18,7 +18,7 @@ namespace kennel
 RobotSim::RobotSim(const rclcpp::NodeOptions & options)
 : rclcpp::Node("robot_sim", options)
 {
-  m_mobile_base = std::make_unique<MobileBase>(this);
+  m_mobile_base = std::make_shared<MobileBase>(this);
 
   const bool plugins_success = this->load_plugins();
   if (!plugins_success) {
@@ -34,11 +34,6 @@ RobotSim::RobotSim(const rclcpp::NodeOptions & options)
   RCLCPP_INFO(this->get_logger(), "Robot simulation constructed");
 }
 
-RobotSim::~RobotSim()
-{
-  // Clear plugins before doing anything else
-  m_sensors.clear();
-}
 
 bool RobotSim::load_plugins()
 {

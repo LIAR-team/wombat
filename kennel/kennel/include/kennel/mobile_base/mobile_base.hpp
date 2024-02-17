@@ -31,8 +31,6 @@ class MobileBase
 public:
   explicit MobileBase(rclcpp::Node * parent_node);
 
-  ~MobileBase();
-
   localization_data_t get_ground_truth_data();
 
 private:
@@ -65,7 +63,7 @@ private:
   std::unique_ptr<GroundTruthManager> m_gt_manager;
   std::vector<std::shared_ptr<PositionerInterface>> m_positioners;
 
-  pluginlib::ClassLoader<PositionerInterface> m_plugin_loader{
+  pluginlib::ClassLoader<PositionerInterface> m_plugin_loader {
     "kennel",
     "kennel::PositionerInterface"};
 

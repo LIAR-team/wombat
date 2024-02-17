@@ -26,19 +26,23 @@ class RobotSim : public rclcpp::Node
 public:
   explicit RobotSim(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
-  ~RobotSim();
-
 private:
   void sensors_update();
 
   bool load_plugins();
 
-  std::unique_ptr<MobileBase> m_mobile_base;
+  // Making this a unique pointer causes a clang compilation warning:
+  // [clang-analyzer-optin.cplusplus.VirtualCall]
+  // https://github.com/ros/pluginlib/blob/30042370880c5a476d0a2817187aab11c1c886f6/
+  // pluginlib/include/pluginlib/class_loader_imp.hpp#L112
+  // I think clang is right, but the code is just logging a name so not really impactful.
+  // Moreover, no idea why it happens only with unique_ptr
+  std::shared_ptr<MobileBase> m_mobile_base;
 
   std::vector<std::shared_ptr<SensorInterface>> m_sensors;
   rclcpp::TimerBase::SharedPtr m_sensors_timer;
 
-  pluginlib::ClassLoader<SensorInterface> m_plugin_loader{
+  pluginlib::ClassLoader<SensorInterface> m_plugin_loader {
     "kennel",
     "kennel::SensorInterface"};
 };

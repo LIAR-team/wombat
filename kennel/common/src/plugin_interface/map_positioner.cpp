@@ -14,13 +14,13 @@ namespace kennel
 {
 
 bool MapPositioner::initialize_positioner(
-  rclcpp::Node * parent_node,
   const std::string & plugin_name,
+  rclcpp::Node * parent_node,
   const std::string & params_prefix)
 {
   bool base_success = this->initialize_plugin(
-    parent_node,
     plugin_name,
+    parent_node,
     params_prefix);
   if (!base_success) {
     RCLCPP_WARN(this->get_logger(), "Failed to do basic setup");

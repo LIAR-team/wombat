@@ -61,13 +61,13 @@ TEST(TestRos2Parameters, UpdateParameterMap)
   std::optional<rclcpp::Parameter> param;
 
   // Check that parameters are not set
-  param = wombat_core::get_parameter_for_node(parameter_map, node1_fqn, param1_name);
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node1_fqn);
   ASSERT_EQ(param, std::nullopt);
-  param = wombat_core::get_parameter_for_node(parameter_map, node1_fqn, param2_name);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node1_fqn);
   ASSERT_EQ(param, std::nullopt);
-  param = wombat_core::get_parameter_for_node(parameter_map, node2_fqn, param1_name);
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node2_fqn);
   ASSERT_EQ(param, std::nullopt);
-  param = wombat_core::get_parameter_for_node(parameter_map, node2_fqn, param2_name);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node2_fqn);
   ASSERT_EQ(param, std::nullopt);
 
   // Set param1 for node 1
@@ -78,7 +78,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
     rclcpp::ParameterValue(1),
     false);
   EXPECT_TRUE(result);
-  param = wombat_core::get_parameter_for_node(parameter_map, node1_fqn, param1_name);
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node1_fqn);
   EXPECT_NE(param, std::nullopt);
   EXPECT_EQ(param->as_int(), 1);
 
@@ -90,7 +90,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
     rclcpp::ParameterValue(2),
     true);
   EXPECT_TRUE(result);
-  param = wombat_core::get_parameter_for_node(parameter_map, node1_fqn, param1_name);
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node1_fqn);
   EXPECT_NE(param, std::nullopt);
   EXPECT_EQ(param->as_int(), 2);
 
@@ -102,7 +102,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
     rclcpp::ParameterValue(9999),
     false);
   EXPECT_FALSE(result);
-  param = wombat_core::get_parameter_for_node(parameter_map, node1_fqn, param1_name);
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node1_fqn);
   EXPECT_NE(param, std::nullopt);
   EXPECT_EQ(param->as_int(), 2);
 
@@ -114,7 +114,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
     rclcpp::ParameterValue(1),
     false);
   EXPECT_TRUE(result);
-  param = wombat_core::get_parameter_for_node(parameter_map, node2_fqn, param2_name);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node2_fqn);
   EXPECT_NE(param, std::nullopt);
   EXPECT_EQ(param->as_int(), 1);
 
@@ -126,7 +126,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
     rclcpp::ParameterValue(2),
     true);
   EXPECT_TRUE(result);
-  param = wombat_core::get_parameter_for_node(parameter_map, node2_fqn, param2_name);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node2_fqn);
   EXPECT_NE(param, std::nullopt);
   EXPECT_EQ(param->as_int(), 2);
 
@@ -138,11 +138,11 @@ TEST(TestRos2Parameters, UpdateParameterMap)
     rclcpp::ParameterValue(42),
     false);
   EXPECT_TRUE(result);
-  param = wombat_core::get_parameter_for_node(parameter_map, node1_fqn, param2_name);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node1_fqn);
   EXPECT_NE(param, std::nullopt);
   EXPECT_EQ(param->as_int(), 42);
 
-  param = wombat_core::get_parameter_for_node(parameter_map, node2_fqn, param2_name);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node2_fqn);
   EXPECT_NE(param, std::nullopt);
   EXPECT_EQ(param->as_int(), 2);
 }

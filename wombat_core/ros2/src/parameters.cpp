@@ -23,13 +23,13 @@ rclcpp::ParameterValue declare_parameter_if_not_declared(
 }
 
 std::optional<rclcpp::Parameter> get_parameter_for_node(
+  const std::string & param_name,
   const rclcpp::ParameterMap & parameter_map,
-  const std::string & fully_qualified_name,
-  const std::string & param_name)
+  const std::string & fully_qualified_node_name)
 {
   auto params_for_node = rclcpp::parameters_from_map(
     parameter_map,
-    fully_qualified_name.c_str());
+    fully_qualified_node_name.c_str());
 
   auto param_rit = std::find_if(
     std::reverse_iterator(params_for_node.end()),
@@ -46,7 +46,7 @@ std::optional<rclcpp::Parameter> get_parameter_for_node(
 
 bool update_parameter_map(
   rclcpp::ParameterMap & parameter_map,
-  const std::string & fully_qualified_name,
+  const std::string & fully_qualified_node_name,
   const std::string & param_name,
   const rclcpp::ParameterValue & param_value,
   bool allow_override)
@@ -54,20 +54,20 @@ bool update_parameter_map(
   // Check if parameter is already present
   if (!allow_override) {
     auto maybe_param = get_parameter_for_node(
+      param_name,
       parameter_map,
-      fully_qualified_name,
-      param_name);
+      fully_qualified_node_name);
     if (maybe_param) {
       return false;
     }
   }
 
   // Get (or create) parameter vector for fqn
-  auto node_params_it = parameter_map.find(fully_qualified_name);
+  auto node_params_it = parameter_map.find(fully_qualified_node_name);
   if (node_params_it == parameter_map.end()) {
     bool success = false;
     std::tie(node_params_it, success) =
-      parameter_map.insert(std::make_pair(fully_qualified_name, std::vector<rclcpp::Parameter>()));
+      parameter_map.insert(std::make_pair(fully_qualified_node_name, std::vector<rclcpp::Parameter>()));
     if (!success) {
       return false;
     }
