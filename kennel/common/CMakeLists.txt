@@ -2,6 +2,8 @@ wombat_add_library(common STATIC)
 target_sources(
   common
   PRIVATE
+    src/plugin_interface/map_positioner.cpp
+    src/plugin_interface/plugin_base.cpp
     src/sensors/lidar.cpp
 )
 target_include_directories(

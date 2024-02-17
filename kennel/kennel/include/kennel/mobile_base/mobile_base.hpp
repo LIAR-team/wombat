@@ -12,11 +12,12 @@
 
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
+#include "pluginlib/class_loader.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 
+#include "kennel/common/plugin_interface/positioner_interface.hpp"
 #include "kennel/mobile_base/ground_truth_manager.hpp"
-#include "kennel/mobile_base/slam_manager.hpp"
 
 namespace kennel
 {
@@ -42,7 +43,7 @@ private:
 
   bool setup_ground_truth();
 
-  bool setup_slam();
+  bool load_positioner_plugins(rclcpp::Node * parent_node);
 
   rclcpp::Node * m_parent_node;
 
@@ -52,8 +53,6 @@ private:
 
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr m_ground_truth_map_sub;
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr m_gt_map;
-
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr m_slam_map_pub;
   rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr m_gt_costmap_pub;
 
   std::shared_ptr<tf2_ros::TransformBroadcaster> m_tf_broadcaster;
@@ -62,7 +61,11 @@ private:
   rclcpp::TimerBase::SharedPtr m_update_timer;
 
   std::unique_ptr<GroundTruthManager> m_gt_manager;
-  std::unique_ptr<SlamManager> m_slam_manager;
+  std::vector<std::shared_ptr<PositionerInterface>> m_positioners;
+
+  pluginlib::ClassLoader<PositionerInterface> m_plugin_loader {
+    "kennel",
+    "kennel::PositionerInterface"};
 
   std::mutex m_mutex;
   rclcpp::Logger m_logger;

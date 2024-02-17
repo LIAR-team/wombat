@@ -18,7 +18,7 @@ namespace kennel
 RobotSim::RobotSim(const rclcpp::NodeOptions & options)
 : rclcpp::Node("robot_sim", options)
 {
-  m_mobile_base = std::make_unique<MobileBase>(this);
+  m_mobile_base = std::make_shared<MobileBase>(this);
 
   const bool plugins_success = this->load_plugins();
   if (!plugins_success) {
@@ -26,13 +26,14 @@ RobotSim::RobotSim(const rclcpp::NodeOptions & options)
   }
 
   m_sensors_timer = this->create_wall_timer(
-    std::chrono::milliseconds(50),
+    std::chrono::milliseconds(10),
     [this]() {
       this->sensors_update();
     });
 
   RCLCPP_INFO(this->get_logger(), "Robot simulation constructed");
 }
+
 
 bool RobotSim::load_plugins()
 {
@@ -42,6 +43,7 @@ bool RobotSim::load_plugins()
     "sensors",
     rclcpp::ParameterValue(std::vector<std::string>())).get<std::vector<std::string>>();
 
+  std::vector<std::shared_ptr<SensorInterface>> new_sensors;
   for (const auto & plugin_name : sensor_plugins) {
     // Get type of this plugin
     auto plugin_type = wombat_core::declare_parameter_if_not_declared(
@@ -62,9 +64,10 @@ bool RobotSim::load_plugins()
     }
 
     // Store the initialized plugin
-    m_sensors.push_back(std::move(loaded_plugin));
+    new_sensors.push_back(std::move(loaded_plugin));
   }
 
+  m_sensors = new_sensors;
   return true;
 }
 

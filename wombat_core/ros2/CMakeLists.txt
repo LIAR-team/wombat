@@ -5,6 +5,7 @@ target_sources(
   ros2
   PRIVATE
     src/parameters.cpp
+    src/time.cpp
 )
 
 target_include_directories(

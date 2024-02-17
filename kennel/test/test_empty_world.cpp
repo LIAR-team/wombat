@@ -15,6 +15,7 @@
 
 #include "kennel/kennel.hpp"
 #include "wombat_core/math/angles.hpp"
+#include "wombat_core/ros2/parameters.hpp"
 
 #include "single_robot_fixture.hpp"
 #include "utils.hpp"
@@ -28,17 +29,19 @@ public:
     rclcpp::ParameterMap parameter_map;
     ASSERT_NO_THROW(parameter_map = rclcpp::parameter_map_from_yaml_file(get_data_path("single_robot.yaml")));
 
-    write_parameter_map(
+    bool success = wombat_core::update_parameter_map(
       parameter_map,
       "/kennel",
       "map_yaml_filename",
       rclcpp::ParameterValue(""));
+    ASSERT_TRUE(success);
 
-    write_parameter_map(
+    success = wombat_core::update_parameter_map(
       parameter_map,
       "/my_robot/robot_sim",
       "mobile_base.ground_truth.map_topic_name",
       rclcpp::ParameterValue(""));
+    ASSERT_TRUE(success);
 
     setup_kennel(parameter_map);
   }

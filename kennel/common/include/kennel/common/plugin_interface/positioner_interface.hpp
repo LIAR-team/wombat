@@ -5,10 +5,12 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "kennel/common/plugin_interface/plugin_base.hpp"
 #include "kennel/common/types.hpp"
 
 namespace kennel
@@ -16,35 +18,33 @@ namespace kennel
 
 /**
  * @brief Base interface class used to define dynamically-loadable
- * plugins.
+ * positioner plugins.
  */
-class SensorInterface
+class PositionerInterface : public PluginBase
 {
 public:
-  SensorInterface() = default;
-
-  virtual ~SensorInterface() = default;
-
   /**
    * @brief Initialization function for the plugins.
    * This will be called by the entity loading the plugins, right after their construction.
    * It's meant to be used as a pseudo-constructor, to circumvent the need for plugin
    * classes to have a constructor with no arguments.
+   * @param plugin_name name for this plugin
    * @param parent_node ROS 2 node loading the plugin
-   * @param sensor_name name for this plugin
+   * @param params_prefix prefix to prepend to parameter declarations
    * @return true if initialization was successful
    */
-  virtual bool initialize_sensor(
+  virtual bool initialize_positioner(
+    const std::string & plugin_name,
     rclcpp::Node * parent_node,
-    const std::string & sensor_name) = 0;
+    const std::string & params_prefix) = 0;
 
   /**
-   * @brief This function will be periodically called to generate sensor data.
-   * Derived classes should use the ground truth information to build a simulated
-   * sensor data and produce it.
-   * @param gt_data current ground truth information
+   * @brief Update the pose estimate using the positioner
+   * @param gt_data ground truth data to base the update on
+   * @return updated pose or std::nullopt if couldn't compute it
    */
-  virtual void produce_sensor_data(const localization_data_t & gt_data) = 0;
+  virtual std::optional<geometry_msgs::msg::TransformStamped> positioner_update(
+    const localization_data_t & gt_data) = 0;
 };
 
 }  // namespace kennel

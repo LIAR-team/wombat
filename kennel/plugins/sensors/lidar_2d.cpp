@@ -8,18 +8,15 @@
 #include "sensor_msgs/msg/laser_scan.hpp"
 
 #include "kennel/common/sensors/lidar.hpp"
-#include "kennel/common/sensors/sensor_ros2_base.hpp"
+#include "kennel/common/plugin_interface/sensor_publisher.hpp"
 #include "kennel/common/types.hpp"
 
 namespace kennel
 {
 
 /// Lidar 2D sensor plugin
-class Lidar2D : public SensorRos2Base<sensor_msgs::msg::LaserScan>
+class Lidar2D : public SensorPublisher<sensor_msgs::msg::LaserScan>
 {
-public:
-  Lidar2D() = default;
-
 private:
   std::unique_ptr<sensor_msgs::msg::LaserScan>
   make_sensor_ros2_msg(const localization_data_t & gt_data) override

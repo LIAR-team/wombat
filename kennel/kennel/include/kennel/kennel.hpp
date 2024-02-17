@@ -55,33 +55,14 @@ public:
 
   /**
    * @brief Configure the Kennel, clearing its internal state
-   * and preparing it for the next start
+   * and preparing it for the next start. Configuration parameters
+   * are saved and reused across runs.
+   * @param parameter_map Kennel configuration parameters
    * @return true if configuration is successful
    */
-  bool configure();
-
-  rclcpp::ParameterMap get_parameter_map();
-
-  void set_parameter_map(const rclcpp::ParameterMap & params_map);
+  bool configure(const rclcpp::ParameterMap & parameter_map = rclcpp::ParameterMap());
 
 private:
-  /**
-   * @brief Loads a yaml file and sets parameters for the provided node
-   * @param yaml_file_path path to the yaml file to read
-   * @param node_base_ifc node base interface for the node where to load parameters
-   * @param node_parameters_ifc node parameters interface for the node where to load parameters
-   * @return true if file was loaded and parameters set successfully
-   */
-  bool load_parameters_from_yaml(
-    const std::string & yaml_file_path,
-    rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_ifc,
-    rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters_ifc);
-
-  bool load_parameters_from_map(
-    const rclcpp::ParameterMap & parameters_map,
-    rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_ifc,
-    rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters_ifc);
-
   bool setup_robot(
     const std::string & robot_name,
     const rclcpp::NodeOptions & node_options,

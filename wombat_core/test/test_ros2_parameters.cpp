@@ -48,6 +48,143 @@ TEST(TestRos2Parameters, ParametersDeclaration)
   rclcpp::shutdown();
 }
 
+TEST(TestRos2Parameters, UpdateParameterMap)
+{
+  static constexpr auto node1_fqn = "/my_node";
+  static constexpr auto node2_fqn = "/my_space/my_node";
+
+  static constexpr auto param1_name = "my_param1";
+  static constexpr auto param2_name = "my_param2";
+
+  rclcpp::ParameterMap parameter_map;
+  bool result = false;
+  std::optional<rclcpp::Parameter> param;
+
+  // Check that parameters are not set
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node1_fqn);
+  ASSERT_EQ(param, std::nullopt);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node1_fqn);
+  ASSERT_EQ(param, std::nullopt);
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node2_fqn);
+  ASSERT_EQ(param, std::nullopt);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node2_fqn);
+  ASSERT_EQ(param, std::nullopt);
+
+  // Set param1 for node 1
+  result = wombat_core::update_parameter_map(
+    parameter_map,
+    node1_fqn,
+    param1_name,
+    rclcpp::ParameterValue(1),
+    false);
+  EXPECT_TRUE(result);
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node1_fqn);
+  EXPECT_NE(param, std::nullopt);
+  EXPECT_EQ(param->as_int(), 1);
+
+  // Override param1 for node 1
+  result = wombat_core::update_parameter_map(
+    parameter_map,
+    node1_fqn,
+    param1_name,
+    rclcpp::ParameterValue(2),
+    true);
+  EXPECT_TRUE(result);
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node1_fqn);
+  EXPECT_NE(param, std::nullopt);
+  EXPECT_EQ(param->as_int(), 2);
+
+  // Try to set again param1 for node 1 but fail without override
+  result = wombat_core::update_parameter_map(
+    parameter_map,
+    node1_fqn,
+    param1_name,
+    rclcpp::ParameterValue(9999),
+    false);
+  EXPECT_FALSE(result);
+  param = wombat_core::get_parameter_for_node(param1_name, parameter_map, node1_fqn);
+  EXPECT_NE(param, std::nullopt);
+  EXPECT_EQ(param->as_int(), 2);
+
+  // Set param2 for node2
+  result = wombat_core::update_parameter_map(
+    parameter_map,
+    node2_fqn,
+    param2_name,
+    rclcpp::ParameterValue(1),
+    false);
+  EXPECT_TRUE(result);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node2_fqn);
+  EXPECT_NE(param, std::nullopt);
+  EXPECT_EQ(param->as_int(), 1);
+
+  // Override param2 for
+  result = wombat_core::update_parameter_map(
+    parameter_map,
+    node2_fqn,
+    param2_name,
+    rclcpp::ParameterValue(2),
+    true);
+  EXPECT_TRUE(result);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node2_fqn);
+  EXPECT_NE(param, std::nullopt);
+  EXPECT_EQ(param->as_int(), 2);
+
+  // Set param2 for node1
+  result = wombat_core::update_parameter_map(
+    parameter_map,
+    node1_fqn,
+    param2_name,
+    rclcpp::ParameterValue(42),
+    false);
+  EXPECT_TRUE(result);
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node1_fqn);
+  EXPECT_NE(param, std::nullopt);
+  EXPECT_EQ(param->as_int(), 42);
+
+  param = wombat_core::get_parameter_for_node(param2_name, parameter_map, node2_fqn);
+  EXPECT_NE(param, std::nullopt);
+  EXPECT_EQ(param->as_int(), 2);
+}
+
+TEST(TestRos2Parameters, SetParameterMap)
+{
+  rclcpp::init(0, nullptr);
+
+  rclcpp::NodeOptions node_options;
+  node_options.allow_undeclared_parameters(true);
+  auto node = std::make_shared<rclcpp::Node>("my_node", node_options);
+  static constexpr auto param1_name = "my_param1";
+
+  rclcpp::ParameterMap parameter_map;
+  bool result = false;
+  result = wombat_core::update_parameter_map(
+    parameter_map,
+    node->get_fully_qualified_name(),
+    param1_name,
+    rclcpp::ParameterValue(1),
+    true);
+  EXPECT_TRUE(result);
+  result = wombat_core::update_parameter_map(
+    parameter_map,
+    node->get_fully_qualified_name(),
+    param1_name,
+    rclcpp::ParameterValue(2),
+    true);
+  EXPECT_TRUE(result);
+
+  result = wombat_core::set_parameters_from_map(
+    parameter_map,
+    node->get_node_base_interface(),
+    node->get_node_parameters_interface());
+  EXPECT_TRUE(result);
+
+  auto param = node->get_parameter(param1_name);
+  EXPECT_EQ(param.as_int(), 2);
+
+  rclcpp::shutdown();
+}
+
 int main(int argc, char ** argv)
 {
   ::testing::InitGoogleTest(&argc, argv);

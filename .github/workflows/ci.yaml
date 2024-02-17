@@ -43,11 +43,13 @@ jobs:
         run: |
           source /home/docker-dev/.bashrc \
           && VERBOSE=1 colcon test --mixin no-lint --return-code-on-test-failure --event-handlers=console_cohesion+
-      - name: Run linters (no clang)
+      - name: Run linters on changed packages
+        env:
+          ALL_CHANGED_PACKAGES: ${{ steps.changed-ros2-pkgs.outputs.all-changed-ros2-packages }}
         run: |
           source /home/docker-dev/.bashrc \
-          && VERBOSE=1 colcon test --mixin lint --return-code-on-test-failure --event-handlers=console_cohesion+
-      - name: Run clang on modified packages
+          && VERBOSE=1 colcon test --packages-select ${ALL_CHANGED_PACKAGES} --mixin lint --return-code-on-test-failure --event-handlers=console_cohesion+
+      - name: Run clang on changed packages
         env:
           ALL_CHANGED_PACKAGES: ${{ steps.changed-ros2-pkgs.outputs.all-changed-ros2-packages }}
         run: |
