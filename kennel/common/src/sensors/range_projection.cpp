@@ -47,13 +47,13 @@ std::vector<float> compute_laser_ranges(
   if (!maybe_laser_index) {
     return std::vector<float>();
   }
-  std::vector<float> ranges(num_bins);
 
-  const float angle_increment = (angle_range.second - angle_range.first) / num_bins;
+  const double angle_increment = (angle_range.second - angle_range.first) / static_cast<double>(num_bins);
   const double laser_yaw = tf2::getYaw(laser_pose.orientation);
 
+  std::vector<float> ranges(num_bins);
   for (size_t i = 0; i < ranges.size(); i++) {
-    const double this_angle = laser_yaw + angle_range.first + angle_increment * i;
+    const double this_angle = laser_yaw + angle_range.first + angle_increment * static_cast<double>(i);
     // Compute laser end point
     // We can't just project the distance along the angle because the grid coordinate
     // is an unsigned number and it makes sense only within the grid.
@@ -92,8 +92,9 @@ std::vector<float> compute_laser_ranges(
       return std::vector<float>();
     }
 
-    ranges[i] = wombat_core::points_distance_2d(
-      laser_pose.position, *maybe_end_point);
+    ranges[i] = static_cast<float>(
+      wombat_core::points_distance_2d(
+        laser_pose.position, *maybe_end_point));
   }
 
   return ranges;
