@@ -3,6 +3,7 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
+#include <algorithm>
 #include <climits>
 #include <cmath>
 
@@ -50,7 +51,7 @@ static std::optional<grid_index_t> bresenham2D(
 }
 
 std::optional<grid_index_t> find_if_raytrace(
-  const grid_coord_t & start,
+  const grid_coord_t & from_grid,
   const grid_coord_t & to_grid,
   const nav_msgs::msg::MapMetaData & map_info,
   const std::function<bool(grid_index_t)> & predicate,
@@ -59,9 +60,15 @@ std::optional<grid_index_t> find_if_raytrace(
   if (!predicate) {
     throw std::runtime_error("Invalid predicate function");
   }
+  if (from_grid.x > map_info.width || from_grid.y > map_info.height) {
+    return std::nullopt;
+  }
+  if (to_grid.x > map_info.width || to_grid.y > map_info.height) {
+    return std::nullopt;
+  }
 
-  const int dx_full = static_cast<int>(to_grid.x - start.x);
-  const int dy_full = static_cast<int>(to_grid.y - start.y);
+  const int dx_full = static_cast<int>(to_grid.x - from_grid.x);
+  const int dy_full = static_cast<int>(to_grid.y - from_grid.y);
 
   // we need to chose how much to scale our dominant dimension,
   // based on the maximum length of the line
@@ -73,13 +80,13 @@ std::optional<grid_index_t> find_if_raytrace(
   grid_coord_t min_from_grid;
   if (dist > 0.0) {
     // Adjust starting point and offset to start from length_range.min distance
-    min_from_grid.x = static_cast<unsigned int>(start.x + dx_full / dist * length_range.min);
-    min_from_grid.y = static_cast<unsigned int>(start.y + dy_full / dist * length_range.min);
+    min_from_grid.x = static_cast<unsigned int>(from_grid.x + dx_full / dist * length_range.min);
+    min_from_grid.y = static_cast<unsigned int>(from_grid.y + dy_full / dist * length_range.min);
   } else {
-    // dist can be 0 if [start.x, start.y]==[to_grid.x, to_grid.y].
+    // dist can be 0 if [from_grid.x, from_grid.y]==[to_grid.x, to_grid.y].
     // In this case only this cell should be processed.
-    min_from_grid.x = start.x;
-    min_from_grid.y = start.y;
+    min_from_grid.x = from_grid.x;
+    min_from_grid.y = from_grid.y;
   }
   const auto maybe_from_offset = wombat_core::grid_coord_to_index(min_from_grid, map_info);
   if (!maybe_from_offset) {
@@ -169,8 +176,8 @@ std::optional<grid_coord_t> project_to_grid_boundary(
   // Ensure correctness of intersection coordinate
   // is this necessary?
   grid_coord_t intersection_coord;
-  intersection_coord.x = std::min(map_info.width, static_cast<uint32_t>(std::max(0.0, intersection_x)));
-  intersection_coord.y = std::min(map_info.height, static_cast<uint32_t>(std::max(0.0, intersection_y)));
+  intersection_coord.x = std::clamp(static_cast<uint32_t>(intersection_x), 0u, map_info.width);
+  intersection_coord.y = std::clamp(static_cast<uint32_t>(intersection_y), 0u, map_info.height);
 
   return intersection_coord;
 }
