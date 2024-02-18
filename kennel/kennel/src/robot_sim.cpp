@@ -7,7 +7,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/common/sensors/lidar.hpp"
+#include "kennel/common/sensors/range_projection.hpp"
 #include "kennel/mobile_base/mobile_base.hpp"
 #include "kennel/robot_sim.hpp"
 #include "wombat_core/ros2/parameters.hpp"

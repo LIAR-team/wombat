@@ -62,7 +62,7 @@ public:
 
     m_sensor_publisher = parent_node->create_publisher<MsgT>(
       get_parameter("topic_name").get<std::string>(),
-      rclcpp::SensorDataQoS());
+      rclcpp::SensorDataQoS().durability(rclcpp::DurabilityPolicy::TransientLocal));
 
     const bool post_init_success = this->post_init();
     if (!post_init_success) {
@@ -85,6 +85,9 @@ public:
       return;
     }
     auto sensor_msg = make_sensor_ros2_msg(gt_data);
+    if (!sensor_msg) {
+      return;
+    }
     m_sensor_publisher->publish(std::move(sensor_msg));
   }
 

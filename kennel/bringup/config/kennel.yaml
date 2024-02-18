@@ -29,5 +29,10 @@ my_robot:
         - "bumper"
       base_scan:
         plugin_type: "kennel::Lidar2D"
+        period_ms: 500
+        angle_min: -1.570796
+        angle_max: 1.570796
+        range_max: 5.0
+        num_bins: 100
       bumper:
         plugin_type: "kennel::Bumper"
