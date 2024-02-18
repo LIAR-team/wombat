@@ -4,7 +4,7 @@ target_sources(
   PRIVATE
     src/plugin_interface/map_positioner.cpp
     src/plugin_interface/plugin_base.cpp
-    src/sensors/lidar.cpp
+    src/sensors/range_projection.cpp
 )
 target_include_directories(
   common
@@ -15,6 +15,8 @@ target_link_libraries(
   common
   PUBLIC
     rclcpp::rclcpp
+    tf2::tf2
+    tf2_geometry_msgs::tf2_geometry_msgs
     wombat_core::math
     wombat_core::ros2
     ${geometry_msgs_TARGETS}

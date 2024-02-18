@@ -38,7 +38,7 @@ constexpr double points_distance_2d(
   const geometry_msgs::msg::Point & p1,
   const geometry_msgs::msg::Point & p2)
 {
-  return sqrt(points_squared_distance_2d(p1, p2));
+  return std::sqrt(points_squared_distance_2d(p1, p2));
 }
 
 /**
@@ -68,7 +68,7 @@ constexpr double points_distance(
   const geometry_msgs::msg::Point & p1,
   const geometry_msgs::msg::Point & p2)
 {
-  return sqrt(points_squared_distance(p1, p2));
+  return std::sqrt(points_squared_distance(p1, p2));
 }
 
 }  // namespace wombat_core
