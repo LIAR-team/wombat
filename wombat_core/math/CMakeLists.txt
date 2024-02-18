@@ -22,6 +22,7 @@ target_include_directories(
 target_link_libraries(
   math
   PUBLIC
+    wombat_core::cpp_utils
     ${geometry_msgs_TARGETS}
     ${nav_msgs_TARGETS}
   PRIVATE

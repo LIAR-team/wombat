@@ -54,8 +54,7 @@ std::optional<grid_index_t> find_if_raytrace(
   const grid_coord_t & to_grid,
   const nav_msgs::msg::MapMetaData & map_info,
   const std::function<bool(grid_index_t)> & predicate,
-  double min_length,
-  double max_length)
+  const double_range_t & length_range)
 {
   if (!predicate) {
     throw std::runtime_error("Invalid predicate function");
@@ -67,15 +66,15 @@ std::optional<grid_index_t> find_if_raytrace(
   // we need to chose how much to scale our dominant dimension,
   // based on the maximum length of the line
   const double dist = std::hypot(dx_full, dy_full);
-  if (dist < min_length) {
+  if (dist < length_range.min) {
     return std::nullopt;
   }
 
   grid_coord_t min_from_grid;
   if (dist > 0.0) {
-    // Adjust starting point and offset to start from min_length distance
-    min_from_grid.x = static_cast<unsigned int>(start.x + dx_full / dist * min_length);
-    min_from_grid.y = static_cast<unsigned int>(start.y + dy_full / dist * min_length);
+    // Adjust starting point and offset to start from length_range.min distance
+    min_from_grid.x = static_cast<unsigned int>(start.x + dx_full / dist * length_range.min);
+    min_from_grid.y = static_cast<unsigned int>(start.y + dy_full / dist * length_range.min);
   } else {
     // dist can be 0 if [start.x, start.y]==[to_grid.x, to_grid.y].
     // In this case only this cell should be processed.
@@ -96,7 +95,7 @@ std::optional<grid_index_t> find_if_raytrace(
   const int offset_dx = wombat_core::sign(dx);
   const int offset_dy = wombat_core::sign(dy) * static_cast<int>(map_info.width);
 
-  const double scale = (dist == 0.0) ? 1.0 : std::min(1.0, max_length / dist);
+  const double scale = (dist == 0.0) ? 1.0 : std::min(1.0, length_range.max / dist);
 
   if (abs_dx >= abs_dy) {
     // if x is dominant

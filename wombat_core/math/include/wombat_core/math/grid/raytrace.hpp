@@ -11,6 +11,7 @@
 
 #include "nav_msgs/msg/map_meta_data.hpp"
 
+#include "wombat_core/cpp/types.hpp"
 #include "wombat_core/math/grid/coordinates.hpp"
 
 namespace wombat_core
@@ -26,10 +27,9 @@ namespace wombat_core
  * @param map_info information about the grid
  * @param predicate function to run on every grid point on the line.
  * It should return true if we want to stop early.
- * @param min_length start raytracing from this distance. If 0.0, then
- * it will start from the provided "from" point.
- * @param max_length stop raytracing after this distance or when the "to" point
- * is reached, whatever occurs first.
+ * @param length_range start raytracing from this min distance. If 0.0, then
+ * it will start from the provided "from" point and stop raytracing after the max
+ * distance or when the "to" point is reached, whatever occurs first.
  * @return std::optional<grid_index_t> index of a grid cell that satisfies the
  * evaluation function or std::nullopt if none is found
  */
@@ -38,8 +38,7 @@ std::optional<grid_index_t> find_if_raytrace(
   const grid_coord_t & to_grid,
   const nav_msgs::msg::MapMetaData & map_info,
   const std::function<bool(grid_index_t)> & predicate,
-  double min_length = 0.0,
-  double max_length = std::numeric_limits<double>::max());
+  const double_range_t & length_range = {0.0, std::numeric_limits<double>::max()});
 
 /**
  * @brief Project a grid coordinate along a direction until
