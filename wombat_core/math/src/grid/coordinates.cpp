@@ -51,6 +51,10 @@ std::optional<grid_coord_t> world_pt_to_grid_coord(
   grid_coord.y =
     static_cast<unsigned int>((world_pt.y - map_origin_y) / map_resolution);
 
+  if (grid_coord.x >= map_info.width || grid_coord.y >= map_info.height) {
+    return std::nullopt;
+  }
+
   return grid_coord;
 }
 

@@ -124,10 +124,10 @@ TEST(TestRaytrace, FoundItem)
   size_t count = 0;
 
   auto predicate = [&count, &stop_count](wombat_core::grid_index_t idx) {
-    (void)idx;
-    count++;
-    return count == stop_count;
-  };
+      (void)idx;
+      count++;
+      return count == stop_count;
+    };
 
   auto maybe_found_index = wombat_core::find_if_raytrace(
     wombat_core::grid_coord_t{0, 0},
@@ -179,9 +179,9 @@ TEST(TestRaytrace, OutOfBounds)
 
   size_t count = 0;
   auto predicate = [&count](wombat_core::grid_index_t idx) {
-    (void)idx;
-    return false;
-  };
+      (void)idx;
+      return false;
+    };
 
   // End point exceeds width
   auto maybe_found_index = wombat_core::find_if_raytrace(
@@ -220,9 +220,9 @@ TEST(TestRaytrace, StartPastEnd)
 
   size_t count = 0;
   auto predicate = [&count](wombat_core::grid_index_t idx) {
-    (void)idx;
-    return false;
-  };
+      (void)idx;
+      return false;
+    };
 
   // Start point is past end
   auto maybe_found_index = wombat_core::find_if_raytrace(
