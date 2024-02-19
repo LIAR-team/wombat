@@ -2,4 +2,7 @@
   <class type="kennel::StubPositioner" base_class_type="kennel::PositionerInterface">
     <description>Stub positioner that forwards ground truth data in a different frame.</description>
   </class>
+  <class type="kennel::LocalSLAMPositioner" base_class_type="kennel::PositionerInterface">
+    <description>LocalSLAMPositioner.</description>
+  </class>
 </library>

@@ -49,4 +49,16 @@ geometry_msgs::msg::Transform pose_to_transform(const geometry_msgs::msg::Pose &
   return transform;
 }
 
+geometry_msgs::msg::Pose transform_to_pose(const geometry_msgs::msg::Transform & transform)
+{
+  geometry_msgs::msg::Pose pose;
+  pose.position.x = transform.translation.x;
+  pose.position.y = transform.translation.y;
+  pose.position.z = transform.translation.z;
+  pose.orientation = transform.rotation;
+
+  return pose;
+}
+
+
 }  // namespace wombat_core

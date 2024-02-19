@@ -21,7 +21,7 @@ my_robot:
         positioners:
           - "slam"
         slam:
-          plugin_type: "kennel::StubPositioner"
+          plugin_type: "kennel::LocalSLAMPositioner"
           frame_id: "map"
           map_topic_name: "map"
       sensors:

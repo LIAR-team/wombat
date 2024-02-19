@@ -5,8 +5,11 @@ target_sources(
   math
   PRIVATE
     src/grid/coordinates.cpp
+    src/grid/LineIterator.cpp
+    src/grid/LineIteratorRaycast.cpp
     src/grid/neighbors.cpp
     src/grid/raytrace.cpp
+    src/grid/SubmapIterator.cpp
     src/angles.cpp
     src/interpolation.cpp
     src/online_statistics.cpp
@@ -22,6 +25,7 @@ target_include_directories(
 target_link_libraries(
   math
   PUBLIC
+    Eigen3::Eigen
     wombat_core::cpp_utils
     ${geometry_msgs_TARGETS}
     ${nav_msgs_TARGETS}
