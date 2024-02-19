@@ -1,7 +1,11 @@
 find_package(ament_cmake_gtest REQUIRED)
 
+### COSTMAP
+
 ament_add_gtest(test_costmap test_costmap.cpp)
 target_link_libraries(test_costmap wombat_core::costmap)
+
+### MATH
 
 ament_add_gtest(test_math_angles test_math_angles.cpp)
 target_link_libraries(test_math_angles wombat_core::math)
@@ -15,11 +19,16 @@ target_link_libraries(test_math_grid_coordinates wombat_core::math)
 ament_add_gtest(test_math_grid_neighbors test_math_grid_neighbors.cpp)
 target_link_libraries(test_math_grid_neighbors wombat_core::math)
 
+ament_add_gtest(test_math_grid_raytrace test_math_grid_raytrace.cpp)
+target_link_libraries(test_math_grid_raytrace wombat_core::math)
+
 ament_add_gtest(test_math_online_stats test_math_online_stats.cpp)
 target_link_libraries(test_math_online_stats wombat_core::math)
 
 ament_add_gtest(test_math_utils test_math_utils.cpp)
 target_link_libraries(test_math_utils wombat_core::math)
+
+### ROS 2
 
 ament_add_gtest(test_ros2_parameters test_ros2_parameters.cpp)
 target_link_libraries(test_ros2_parameters wombat_core::ros2)

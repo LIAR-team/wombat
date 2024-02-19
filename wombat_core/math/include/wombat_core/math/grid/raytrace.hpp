@@ -21,6 +21,7 @@ namespace wombat_core
  * @brief Raytrace iterator. This function draws a line between two
  * grid points and runs an evaluation
  * function on each grid cell that touches the line.
+ * It requires that both grid points are within the map.
  * Returns the index of the first cell that satisfies the evaluation.
  * @param from_grid grid point where to start raytracing
  * @param to_grid grid point where to end raytracing
@@ -31,7 +32,7 @@ namespace wombat_core
  * it will start from the provided "from" point and stop raytracing after the max
  * distance or when the "to" point is reached, whatever occurs first.
  * @return std::optional<grid_index_t> index of a grid cell that satisfies the
- * evaluation function or std::nullopt if none is found
+ * evaluation function or std::nullopt if none is found or an error occurs.
  */
 std::optional<grid_index_t> find_if_raytrace(
   const grid_coord_t & from_grid,

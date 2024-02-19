@@ -47,6 +47,8 @@ TEST(TestGrid, ConversionsInGridTooSmall)
 
   EXPECT_NE(std::nullopt, wombat_core::world_pt_to_grid_coord(make_pt(0.1, 0.1), map_info));
   EXPECT_EQ(std::nullopt, wombat_core::world_pt_to_grid_coord(make_pt(-13.1, 0.1), map_info));
+  EXPECT_EQ(std::nullopt, wombat_core::world_pt_to_grid_coord(make_pt(2.4, 0.1), map_info));
+  EXPECT_EQ(std::nullopt, wombat_core::world_pt_to_grid_coord(make_pt(0.1, 0.25), map_info));
 
   EXPECT_NE(std::nullopt, wombat_core::grid_coord_to_world_pt(grid_coord_t{0, 1}, map_info));
   EXPECT_EQ(std::nullopt, wombat_core::grid_coord_to_world_pt(grid_coord_t{55, 112}, map_info));
