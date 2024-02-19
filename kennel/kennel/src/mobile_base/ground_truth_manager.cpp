@@ -3,18 +3,16 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#include <cmath>
 #include <memory>
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+#include "kennel/common/collisions.hpp"
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "wombat_control/models/diff_drive_model.hpp"
 #include "wombat_core/math/grid/coordinates.hpp"
-#include "wombat_core/math/grid/raytrace.hpp"
-#include "wombat_core/math/interpolation.hpp"
 #include "wombat_core/math/transformations.hpp"
 
 namespace kennel
@@ -85,7 +83,7 @@ GroundTruthManager::pose_update(const geometry_msgs::msg::TwistStamped & cmd_vel
 
     // Validate the new pose before updating the ground truth member variable
     if (m_map) {
-      m_gt_pose = this->apply_map_constraints(*m_map, m_gt_pose, new_pose);
+      m_gt_pose = kennel::apply_map_collisions(*m_map, m_gt_pose, new_pose);
     } else {
       m_gt_pose = new_pose;
     }
@@ -106,91 +104,6 @@ void GroundTruthManager::reset_pose(const geometry_msgs::msg::Pose & new_pose)
 {
   m_last_pose_update_time = m_clock->now();
   m_gt_pose = new_pose;
-}
-
-geometry_msgs::msg::Pose GroundTruthManager::apply_map_constraints(
-  const nav_msgs::msg::OccupancyGrid & map,
-  const geometry_msgs::msg::Pose & start_pose,
-  const geometry_msgs::msg::Pose & end_pose)
-{
-  // If the map is empty we just forward the updated pose
-  if (map.data.empty()) {
-    return end_pose;
-  }
-
-  // No translation, there may be rotation.
-  // Nothing to check under the assumption that the robot is circular
-  if (start_pose.position.x == end_pose.position.x && start_pose.position.y == end_pose.position.y) {
-    return end_pose;
-  }
-
-  const auto start_pose_coord = wombat_core::world_pt_to_grid_coord(start_pose.position, map.info);
-  const auto end_pose_coord = wombat_core::world_pt_to_grid_coord(end_pose.position, map.info);
-  if (!start_pose_coord || !end_pose_coord) {
-    return start_pose;
-  }
-
-  auto last_free_index = wombat_core::grid_coord_to_index(*start_pose_coord, map.info);
-  const auto maybe_obstacle_index = wombat_core::find_if_raytrace(
-    *start_pose_coord,
-    *end_pose_coord,
-    map.info,
-    [&map, &last_free_index](wombat_core::grid_index_t index) {
-      bool is_obstacle = map.data[index] > 0;
-      if (!is_obstacle) {
-        last_free_index = index;
-      }
-      return is_obstacle;
-    });
-
-  // If we didn't find any obstacle, just return the end pose
-  if (!maybe_obstacle_index) {
-    return end_pose;
-  }
-
-  // We found an obstacle between the start and the end poses.
-  // Select the last free cell as the new pose
-  // to simulate that the robot is now in contact with the obstacle.
-
-  // If the last free index is invalid, return start pose
-  // (this shouldn't happen, maybe we should assert here.
-  const auto maybe_last_free_coord = wombat_core::grid_index_to_coord(*last_free_index, map.info);
-  if (!maybe_last_free_coord) {
-    return start_pose;
-  }
-
-  const int fs_dx = static_cast<int>(maybe_last_free_coord->x) - static_cast<int>(start_pose_coord->x);
-  const int fs_dy = static_cast<int>(maybe_last_free_coord->y) - static_cast<int>(start_pose_coord->y);
-
-  // We couldn't move even a single cell due to the obstacle.
-  // We just assume that we didn't move at all.
-  if (fs_dx == 0 && fs_dy == 0) {
-    return start_pose;
-  }
-
-  // We can't directly select the position corresponding to the last free cell, because,
-  // due to the discrete values of the grid, it can cause instability in the robot pose.
-  // For example the position could snap back and forth between two neighbor grid cell centers.
-  // At the very least, we should ensure that we never move backward wrt the old pose.
-  // The current implementation uses an interpolation to translate the grid motion into
-  // world motion.
-  // Note: we use a single scaling factor rather than computing x, y and xy independently.
-
-  const double fs_dist =
-    std::sqrt(
-    static_cast<double>(fs_dx) * static_cast<double>(fs_dx) + static_cast<double>(fs_dy) * static_cast<double>(fs_dy));
-  const int es_dx = static_cast<int>(end_pose_coord->x) - static_cast<int>(start_pose_coord->x);
-  const int es_dy = static_cast<int>(end_pose_coord->y) - static_cast<int>(start_pose_coord->y);
-  const double es_dist =
-    std::sqrt(
-    static_cast<double>(es_dx) * static_cast<double>(es_dx) + static_cast<double>(es_dy) * static_cast<double>(es_dy));
-  const double scaling_factor = fs_dist / es_dist;
-
-  const auto interpolated_pose = wombat_core::pose_interpolation(
-    start_pose,
-    end_pose,
-    scaling_factor);
-  return interpolated_pose;
 }
 
 }  // namespace kennel

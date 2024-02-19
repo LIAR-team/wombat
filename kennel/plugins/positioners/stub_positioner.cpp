@@ -11,6 +11,11 @@
 namespace kennel
 {
 
+/**
+ * @brief Stub positioner plugin.
+ * It takes as input ground truth map and pose and republishes them
+ * with a different frame id.
+ */
 class StubPositioner : public MapPositioner
 {
 private:
