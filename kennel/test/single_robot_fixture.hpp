@@ -7,16 +7,13 @@
 
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <functional>
 #include <memory>
 #include <string>
 #include <thread>
-#include <tuple>
 #include <utility>
-#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_ros/transform_listener.h"
@@ -113,6 +110,27 @@ public:
       vel_cmd_publisher->publish(cmd);
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+  }
+
+  nav_msgs::msg::OccupancyGrid::ConstSharedPtr
+  get_occupancy_grid(
+    const std::string topic = "/ground_truth_map",
+    std::chrono::seconds timeout = std::chrono::seconds(5))
+  {
+    nav_msgs::msg::OccupancyGrid::ConstSharedPtr map;
+    auto map_sub = node->create_subscription<nav_msgs::msg::OccupancyGrid>(
+      topic,
+      rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
+      [&map](nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) {
+        map = msg;
+      });
+
+    auto start_time = std::chrono::steady_clock::now();
+    while ((std::chrono::steady_clock::now() - start_time < timeout) && rclcpp::ok()) {
+      if (map) {return map;}
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+    assert(0 && "Failed to get occupancy grid");
   }
 
   std::unique_ptr<kennel::Kennel> kennel;
