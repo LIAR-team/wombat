@@ -1,3 +1,8 @@
+// Copyright 2024 Soragna Alberto.
+// All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
+
 /*
  * LineIterator.hpp
  *
@@ -8,12 +13,14 @@
 
 #pragma once
 
-#include <Eigen/Core>
+#include "Eigen/Core"
+
 #include "nav_msgs/msg/map_meta_data.hpp"
 
 #include "wombat_core/grid/coordinates.hpp"
 
-namespace wombat_core {
+namespace wombat_core
+{
 
 /*!
  * Iterator class to iterate over a line in the map.
@@ -37,49 +44,51 @@ public:
    * Compare to another iterator.
    * @return whether the current iterator points to a different address than the other one.
    */
-  bool operator !=(const LineIterator& other) const;
+  bool operator!=(const LineIterator & other) const;
 
   /*!
    * Dereference the iterator with const.
    * @return the value to which the iterator is pointing.
    */
-  const wombat_core::grid_coord_t & operator *() const;
+  const wombat_core::grid_coord_t & operator*() const;
 
   /*!
    * Increase the iterator to the next element.
    * @return a reference to the updated iterator.
    */
-  LineIterator& operator ++();
+  LineIterator & operator++();
 
   /*!
    * Indicates if iterator is past end.
    * @return true if iterator is out of scope, false if end has not been reached.
    */
-  bool isPastEnd() const;
+  bool is_past_end() const;
 
 private:
   //! Current index.
   wombat_core::grid_coord_t m_current_coord;
 
   //! Starting index of the line.
-  wombat_core::grid_coord_t start_;
+  wombat_core::grid_coord_t m_start_coord;
 
   //! Ending index of the line.
-  wombat_core::grid_coord_t end_;
+  wombat_core::grid_coord_t m_end_coord;
 
   //! Current cell number.
-  size_t iCell_ = 0;
+  size_t m_current_cell_count {0};
 
   //! Number of cells in the line.
-  size_t nCells_ = 0;
+  size_t m_total_cells_num {0};
 
   //! Helper variables for Bresenham Line Drawing algorithm.
-  grid_size_t increment1_;
-  grid_size_t increment2_;
-  int denominator_{0}, numerator_{0}, numeratorAdd_{0};
+  grid_size_t m_increment1;
+  grid_size_t m_increment2;
+  int m_denominator{0};
+  int m_numerator{0};
+  int m_numerator_add{0};
 
- public:
+public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-}  // namespace grid_map
+}  // namespace wombat_core

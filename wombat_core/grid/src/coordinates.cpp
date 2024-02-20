@@ -41,30 +41,11 @@ std::optional<grid_coord_t> grid_index_to_coord(
   const grid_index_t & grid_index,
   const MapMetaDataAdapter & map_info)
 {
-  std::cout << "------ START grid_index_to_coord --> "<<grid_index<<std::endl;
-
-
   if (!grid_index_is_valid(grid_index, map_info)) {
     return std::nullopt;
   }
-  //grid_coord_t grid_coord;
-  //grid_coord.y = grid_index / map_info.width;
-  //grid_coord.x = grid_index - static_cast<grid_index_t>(grid_coord.y * map_info.width);
-
-  grid_coord_t::Scalar y_coord = static_cast<grid_coord_t::Scalar>(static_cast<grid_coord_t::Scalar>(grid_index) / map_info.grid_size.x());
-    /*
-  grid_coord_t grid_coord {
-    static_cast<grid_coord_t::Scalar>(static_cast<grid_coord_t::Scalar>(grid_index) - y_coord * map_info.grid_size.x()),
-    static_cast<grid_coord_t::Scalar>(static_cast<grid_coord_t::Scalar>(grid_index) / map_info.grid_size.x()),
-  };
-
-  std::cout << "------ grid_index_to_coord --> idx "<<grid_index<< " computed coord "<<
-  (static_cast<grid_coord_t::Scalar>(grid_index) - y_coord * map_info.grid_size.x()) << " " <<
-  (static_cast<grid_coord_t::Scalar>(grid_index) / map_info.grid_size.x())
-  << " vals " << grid_coord.x() << " " << y_coord<< std::endl;
-  std::cout << "------ grid_index_to_coord --> finish idx "<<grid_index<< " First term "<<
-  (y_coord * map_info.grid_size.x())<<std::endl;
-  */
+  auto y_coord =
+    static_cast<grid_coord_t::Scalar>(static_cast<grid_coord_t::Scalar>(grid_index) / map_info.grid_size.x());
   return grid_coord_t{
     static_cast<grid_coord_t::Scalar>(static_cast<grid_coord_t::Scalar>(grid_index) - y_coord * map_info.grid_size.x()),
     y_coord
@@ -98,18 +79,13 @@ std::optional<geometry_msgs::msg::Point> grid_coord_to_world_pt(
   const grid_coord_t & grid_coord,
   const MapMetaDataAdapter & map_info)
 {
-  std::cout << "------ START grid_coord_to_world_pt --> "<<grid_coord.x() << " " << grid_coord.y()<<std::endl;
-
   if (!grid_coord_is_valid(grid_coord, map_info)) {
-    std::cout<<"grid_coord_to_world_pt Value is invalid: "<< map_info.grid_size.x() << " " << map_info.grid_size.y() << std::endl;
-    //throw std::runtime_error("Failed to compute");
     return std::nullopt;
   }
 
   geometry_msgs::msg::Point world_pt;
   world_pt.x = map_info.origin.position.x + (grid_coord.x() + 0.5) * map_info.resolution;
   world_pt.y = map_info.origin.position.y + (grid_coord.y() + 0.5) * map_info.resolution;
-  std::cout << "------ grid_coord_to_world_pt got --> "<<world_pt.x << " " << world_pt.y<<std::endl;
 
   return world_pt;
 }
@@ -129,13 +105,10 @@ std::optional<geometry_msgs::msg::Point> grid_index_to_world_pt(
   const grid_index_t & grid_index,
   const MapMetaDataAdapter & map_info)
 {
-  std::cout << "--- START grid_index_to_world_pt --> "<<grid_index<<std::endl;
   const auto maybe_grid_coord = grid_index_to_coord(grid_index, map_info);
-  std::cout << "grid_index_to_world_pt got coord? --> "<< static_cast<int>(maybe_grid_coord != std::nullopt)<<std::endl;
   if (!maybe_grid_coord) {
     return std::nullopt;
   }
-  std::cout << "grid_index_to_world_pt got coord --> "<< maybe_grid_coord->x() << " " << maybe_grid_coord->y() << std::endl;
   return grid_coord_to_world_pt(*maybe_grid_coord, map_info);
 }
 
@@ -182,7 +155,7 @@ grid_coord_t enfouce_bounds_on_grid_coord(
   };
 }
 
-grid_size_t get_subgrid_size_from_corners(
+grid_size_t get_grid_size_from_corners(
   const grid_coord_t & top_left_grid_coord,
   const grid_coord_t & bottom_right_grid_coord)
 {
@@ -190,37 +163,6 @@ grid_size_t get_subgrid_size_from_corners(
     bottom_right_grid_coord.x() - top_left_grid_coord.x() + 1,
     bottom_right_grid_coord.y() - top_left_grid_coord.y() + 1
   };
-}
-
-bool increment_index_for_submap(
-  grid_coord_t & submapIndex,
-  grid_coord_t & index,
-  const grid_coord_t & submapTopLeftIndex,
-  const MapMetaDataAdapter & submap_info)
-{
-  // Copy the data first, only copy it back if everything is within range.
-  grid_coord_t tempSubmapIndex = submapIndex;
-
-  // Increment submap index.
-  if (tempSubmapIndex.x() < submap_info.grid_size.x() - 1) {
-    // Same row.
-    tempSubmapIndex.x()++;
-  } else {
-    // Next row.
-    tempSubmapIndex.y()++;
-    tempSubmapIndex.x() = 0;
-  }
-
-  // End of iterations reached.
-  if (!grid_coord_is_valid(tempSubmapIndex, submap_info)) {
-    //std::cout<<"Reached invalid coord from "<< submapIndex.x << " "<< submapIndex.y<< " to " << tempSubmapIndex.x << " " << tempSubmapIndex.y << " inside " << submap_info.width << " " << submap_info.height << std::endl;
-    return false;
-  }
-
-  // Copy data back.
-  index = submapTopLeftIndex + tempSubmapIndex;
-  submapIndex = tempSubmapIndex;
-  return true;
 }
 
 }  // namespace wombat_core

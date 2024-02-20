@@ -50,7 +50,6 @@ def generate_launch_description():
         ],
         package='kennel',
         executable='kennel',
-        #prefix=['xterm -e gdb -ex run --args'],
         output='screen')
 
     # Create the launch description and populate

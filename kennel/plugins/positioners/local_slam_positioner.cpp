@@ -31,7 +31,6 @@ private:
     m_data.robot_pose.header.frame_id = frame_id;
 
     if (!gt_data.map) {
-      RCLCPP_INFO(get_logger(), "returning without map");
       return m_data;
     }
 
@@ -39,7 +38,7 @@ private:
       m_map = std::make_shared<nav_msgs::msg::OccupancyGrid>();
       m_map->header.frame_id = frame_id;
       m_map->info = gt_data.map->info;
-      m_map->data = std::vector<int8_t>(m_map->info.height * m_map->info.width, -1);
+      m_map->data = std::vector<int8_t>(static_cast<size_t>(m_map->info.height) * m_map->info.width, -1);
       m_local_radius_grid =
         static_cast<wombat_core::grid_index_t>(this->get_parameter("radius").get<double>() / m_map->info.resolution);
       RCLCPP_INFO(
@@ -50,11 +49,12 @@ private:
         m_map->info.resolution,
         static_cast<int>(m_local_radius_grid));
     }
+    auto map_info = wombat_core::MapMetaDataAdapter(m_map->info);
 
     auto cur_pose = wombat_core::transform_to_pose(gt_data.robot_pose.transform);
-    auto maybe_cur_grid_coord = wombat_core::world_pt_to_grid_coord(cur_pose.position, m_map->info);
+    auto maybe_cur_grid_coord = wombat_core::world_pt_to_grid_coord(cur_pose.position, map_info);
     if (!maybe_cur_grid_coord) {
-      assert(0 && "bar cur pos");
+      throw std::runtime_error("Failed to convert world pose to grid coord");
     }
 
     auto top_left_corner = wombat_core::grid_coord_bounded_diff(
@@ -63,31 +63,20 @@ private:
     auto bottom_right_corner = wombat_core::grid_coord_bounded_sum(
       *maybe_cur_grid_coord,
       wombat_core::grid_coord_t{m_local_radius_grid, m_local_radius_grid},
-      m_map->info);
+      map_info);
 
-    auto submap_size = wombat_core::get_subgrid_size_from_corners(
+    auto submap_size = wombat_core::get_grid_size_from_corners(
       top_left_corner,
       bottom_right_corner);
 
-    /*
-    RCLCPP_INFO(this->get_logger(), "ROBOT_POSE: %d %d TL: %d %d BR %d %d size %d %d",
-      static_cast<int>(maybe_cur_grid_coord->x), static_cast<int>(maybe_cur_grid_coord->y),
-      static_cast<int>(top_left_corner.x), static_cast<int>(top_left_corner.y),
-      static_cast<int>(bottom_right_corner.x), static_cast<int>(bottom_right_corner.y),
-      static_cast<int>(submap_size.x), static_cast<int>(submap_size.y));
-    */
-
     auto submap_iterator = wombat_core::SubmapIterator(
-      m_map->info,
+      map_info,
       top_left_corner,
       submap_size);
-    for (;!submap_iterator.isPastEnd(); ++submap_iterator)
-    {
-      //RCLCPP_INFO(this->get_logger(), "Got coord: %d %d", static_cast<int>(submap_iterator->x), static_cast<int>(submap_iterator->y));
-
-      auto maybe_idx = wombat_core::grid_coord_to_index(*submap_iterator, m_map->info);
+    for (; !submap_iterator.is_past_end(); ++submap_iterator) {
+      auto maybe_idx = wombat_core::grid_coord_to_index(*submap_iterator, map_info);
       if (!maybe_idx) {
-        assert(0 && "bad submap idx");
+        throw std::runtime_error("Failed to convert subgrid coord to index");
       }
 
       m_map->data[*maybe_idx] = gt_data.map->data[*maybe_idx];

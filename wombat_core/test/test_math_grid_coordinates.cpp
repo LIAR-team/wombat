@@ -60,7 +60,6 @@ TEST(TestGrid, ConversionsInGridTooSmall)
   EXPECT_NE(std::nullopt, wombat_core::world_pt_to_grid_index(make_pt(0.1, 0.1), map_info));
   EXPECT_EQ(std::nullopt, wombat_core::world_pt_to_grid_index(make_pt(-13.1, 0.1), map_info));
 
-  std::cout<<"LINE 63 "<<std::endl;
   EXPECT_NE(std::nullopt, wombat_core::grid_index_to_world_pt(3, map_info));
   EXPECT_EQ(std::nullopt, wombat_core::grid_index_to_world_pt(4, map_info));
 }

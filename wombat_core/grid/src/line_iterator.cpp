@@ -1,3 +1,8 @@
+// Copyright 2024 Soragna Alberto.
+// All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
+
 /*
  * LineIterator.hpp
  *
@@ -8,7 +13,8 @@
 
 #include "wombat_core/grid/line_iterator.hpp"
 
-namespace wombat_core {
+namespace wombat_core
+{
 
 LineIterator::LineIterator(
   const MapMetaDataAdapter & map_info,
@@ -17,83 +23,83 @@ LineIterator::LineIterator(
 {
   (void)map_info;
 
-  start_ = start;
-  end_ = end;
+  m_start_coord = start;
+  m_end_coord = end;
 
-  iCell_ = 0;
+  m_current_cell_count = 0;
   m_current_coord = start;
 
-  if (end_.x() >= start_.x()) {
+  if (m_end_coord.x() >= m_start_coord.x()) {
     // x-values increasing.
-    increment1_.x() = 1;
-    increment2_.x() = 1;
+    m_increment1.x() = 1;
+    m_increment2.x() = 1;
   } else {
     // x-values decreasing.
-    increment1_.x() = -1;
-    increment2_.x() = -1;
+    m_increment1.x() = -1;
+    m_increment2.x() = -1;
   }
 
-  if (end_.y() >= start_.y()) {
+  if (m_end_coord.y() >= m_start_coord.y()) {
     // y-values increasing.
-    increment1_.y() = 1;
-    increment2_.y() = 1;
+    m_increment1.y() = 1;
+    m_increment2.y() = 1;
   } else {
     // y-values decreasing.
-    increment1_.y() = -1;
-    increment2_.y() = -1;
+    m_increment1.y() = -1;
+    m_increment2.y() = -1;
   }
 
-  const int dx = static_cast<int>(end_.x() - start_.x());
-  const int dy = static_cast<int>(end_.y() - start_.y());
-  const unsigned int abs_dx = std::abs(dx);
-  const unsigned int abs_dy = std::abs(dy);
+  const int dx = static_cast<int>(m_end_coord.x() - m_start_coord.x());
+  const int dy = static_cast<int>(m_end_coord.y() - m_start_coord.y());
+  const int abs_dx = std::abs(dx);
+  const int abs_dy = std::abs(dy);
 
   if (abs_dx >= abs_dy) {
     // There is at least one x-value for every y-value.
-    increment1_.x() = 0; // Do not change the x when numerator >= denominator.
-    increment2_.y() = 0; // Do not change the y for every iteration.
-    denominator_ = abs_dx;
-    numerator_ = abs_dx / 2;
-    numeratorAdd_ = abs_dy;
-    nCells_ = abs_dx + 1; // There are more x-values than y-values.
+    m_increment1.x() = 0;  // Do not change the x when numerator >= denominator.
+    m_increment2.y() = 0;  // Do not change the y for every iteration.
+    m_denominator = abs_dx;
+    m_numerator = abs_dx / 2;
+    m_numerator_add = abs_dy;
+    m_total_cells_num = abs_dx + 1;  // There are more x-values than y-values.
   } else {
     // There is at least one y-value for every x-value
-    increment2_.x() = 0; // Do not change the x for every iteration.
-    increment1_.y() = 0; // Do not change the y when numerator >= denominator.
-    denominator_ = abs_dy;
-    numerator_ = abs_dy / 2;
-    numeratorAdd_ = abs_dx;
-    nCells_ = abs_dy + 1; // There are more y-values than x-values.
+    m_increment2.x() = 0;  // Do not change the x for every iteration.
+    m_increment1.y() = 0;  // Do not change the y when numerator >= denominator.
+    m_denominator = abs_dy;
+    m_numerator = abs_dy / 2;
+    m_numerator_add = abs_dx;
+    m_total_cells_num = abs_dy + 1;  // There are more y-values than x-values.
   }
 }
 
-bool LineIterator::operator !=(const LineIterator& other) const
+bool LineIterator::operator!=(const LineIterator & other) const
 {
   return m_current_coord.x() != other.m_current_coord.x() && m_current_coord.y() != other.m_current_coord.y();
 }
 
-const wombat_core::grid_coord_t & LineIterator::operator *() const
+const wombat_core::grid_coord_t & LineIterator::operator*() const
 {
   return m_current_coord;
 }
 
-LineIterator& LineIterator::operator ++()
+LineIterator & LineIterator::operator++()
 {
-  numerator_ += numeratorAdd_;  // Increase the numerator by the top of the fraction.
-  if (numerator_ >= denominator_) {
-    numerator_ -= denominator_;
-    m_current_coord.x() += increment1_.x();
-    m_current_coord.y() += increment1_.y();
+  m_numerator += m_numerator_add;  // Increase the numerator by the top of the fraction.
+  if (m_numerator >= m_denominator) {
+    m_numerator -= m_denominator;
+    m_current_coord.x() += m_increment1.x();
+    m_current_coord.y() += m_increment1.y();
   }
-  m_current_coord.x() += increment2_.x();
-  m_current_coord.y() += increment2_.y();
-  ++iCell_;
+  m_current_coord.x() += m_increment2.x();
+  m_current_coord.y() += m_increment2.y();
+  ++m_current_cell_count;
   return *this;
 }
 
-bool LineIterator::isPastEnd() const
+bool LineIterator::is_past_end() const
 {
-  return iCell_ >= nCells_;
+  return m_current_cell_count >= m_total_cells_num;
 }
 
 }  // namespace wombat_core

@@ -5,7 +5,9 @@
 
 #pragma once
 
-#include <Eigen/Core>
+#include <limits>
+
+#include "Eigen/Core"
 
 namespace wombat_core
 {
@@ -23,14 +25,14 @@ class MapMetaDataAdapter
 public:
   MapMetaDataAdapter() = default;
   ~MapMetaDataAdapter() = default;
-  MapMetaDataAdapter(const MapMetaDataAdapter& other) = default;
-  MapMetaDataAdapter& operator=(const MapMetaDataAdapter& other) = default;
-  MapMetaDataAdapter& operator=(MapMetaDataAdapter&& other) = default;
+  MapMetaDataAdapter(const MapMetaDataAdapter & other) = default;
+  MapMetaDataAdapter & operator=(const MapMetaDataAdapter & other) = default;
+  MapMetaDataAdapter & operator=(MapMetaDataAdapter && other) = default;
 
-  MapMetaDataAdapter(const nav_msgs::msg::MapMetaData & map_info)
+  explicit MapMetaDataAdapter(const nav_msgs::msg::MapMetaData & map_info)
   {
-    static constexpr grid_size_t::Scalar max_scalar = std::numeric_limits<grid_size_t::Scalar>::max();
-    if (map_info.width >= max_scalar || map_info.height >= max_scalar) {
+    static constexpr auto MAX_SCALAR = static_cast<uint32_t>(std::numeric_limits<grid_size_t::Scalar>::max());
+    if (map_info.width >= MAX_SCALAR || map_info.height >= MAX_SCALAR) {
       throw std::runtime_error("Input grid is too big for grid adapter");
     }
     grid_size = {

@@ -92,7 +92,7 @@ wombat_core::grid_coord_t enfouce_bounds_on_grid_coord(
   const wombat_core::grid_coord_t & grid_coord,
   const MapMetaDataAdapter & map_info);
 
-wombat_core::grid_size_t get_subgrid_size_from_corners(
+wombat_core::grid_size_t get_grid_size_from_corners(
   const wombat_core::grid_coord_t & top_left_grid_coord,
   const wombat_core::grid_coord_t & bottom_right_grid_coord);
 
@@ -104,26 +104,5 @@ wombat_core::grid_coord_t grid_coord_bounded_sum(
   const wombat_core::grid_coord_t & minuend,
   const wombat_core::grid_coord_t & subtrahend,
   const MapMetaDataAdapter & map_info);
-
-/*!
- * Increases the index by one to iterate through the cells of a submap.
- * Increments either to the neighboring index to the right or to
- * the start of the lower row. Returns false if end of iterations are reached.
- *
- * Note: This function does not check if submap actually fits to the map. This needs
- * to be checked before separately.
- *
- * @param[in/out] submapIndex the index in the submap that is incremented.
- * @param[out] index the index in the map that is incremented (corrected for the circular buffer).
- * @param[in] submapTopLefIndex the top left index of the submap.
- * @param[in] submapBufferSize the submap buffer size.
- * @param[in] bufferStartIndex the map buffer start index.
- * @return true if successfully incremented indices, false if end of iteration limits are reached.
- */
-bool increment_index_for_submap(
-  grid_coord_t & submapIndex,
-  grid_coord_t & index,
-  const grid_coord_t & submapTopLeftIndex,
-  const MapMetaDataAdapter & submap_info);
 
 }  // namespace wombat_core

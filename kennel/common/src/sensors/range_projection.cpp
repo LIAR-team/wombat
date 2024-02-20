@@ -35,23 +35,23 @@ std::vector<float> compute_laser_ranges(
     return std::vector<float>();
   }
 
+  auto map_info = wombat_core::MapMetaDataAdapter(map.info);
+
   const auto maybe_laser_coord = wombat_core::world_pt_to_grid_coord(
     laser_pose.position,
-    map.info);
+    map_info);
   if (!maybe_laser_coord) {
     return std::vector<float>();
   }
   const auto maybe_laser_index = wombat_core::grid_coord_to_index(
     *maybe_laser_coord,
-    map.info);
+    map_info);
   if (!maybe_laser_index) {
     return std::vector<float>();
   }
 
   const double angle_increment = (angle_range.second - angle_range.first) / static_cast<double>(num_bins);
   const double laser_yaw = tf2::getYaw(laser_pose.orientation);
-
-  std::cout<<"---> LASER RANGES from " << maybe_laser_coord->x() << " " << maybe_laser_coord->y() << std::endl;
 
   std::vector<float> ranges(num_bins);
   for (size_t i = 0; i < ranges.size(); i++) {
@@ -62,18 +62,17 @@ std::vector<float> compute_laser_ranges(
     // We need to compute the intersection between this line and the grid boundaries
     auto maybe_boundary_coord = wombat_core::project_to_grid_boundary(
       *maybe_laser_coord,
-      map.info,
+      map_info,
       this_angle);
     if (!maybe_boundary_coord) {
       return std::vector<float>();
     }
-    std::cout<<"Projected along "<<this_angle << " and got " << maybe_boundary_coord->x() << " " << maybe_boundary_coord->y() << std::endl;
 
     // Raytrace between laser coord and boundary coord
     const auto maybe_obstacle_index = wombat_core::find_if_raytrace(
       *maybe_laser_coord,
       *maybe_boundary_coord,
-      map.info,
+      map_info,
       [&map](wombat_core::grid_index_t index) {
         const bool is_obstacle = map.data[index] > 0;
         return is_obstacle;
@@ -82,16 +81,15 @@ std::vector<float> compute_laser_ranges(
     // Select a range end coordinate: either the end point or the obstacle (if any)
     wombat_core::grid_coord_t range_end_coord = *maybe_boundary_coord;
     if (maybe_obstacle_index) {
-      auto maybe_obstacle_coord = wombat_core::grid_index_to_coord(*maybe_obstacle_index, map.info);
+      auto maybe_obstacle_coord = wombat_core::grid_index_to_coord(*maybe_obstacle_index, map_info);
       if (!maybe_obstacle_coord) {
         return std::vector<float>();
       }
-      std::cout<<"Found obstacle coord " << maybe_obstacle_coord->x() << " " << maybe_obstacle_coord->y() << std::endl;
       range_end_coord = *maybe_obstacle_coord;
     }
 
     // Convert end coordinate to world point
-    auto maybe_end_point = wombat_core::grid_coord_to_world_pt(range_end_coord, map.info);
+    auto maybe_end_point = wombat_core::grid_coord_to_world_pt(range_end_coord, map_info);
     if (!maybe_end_point) {
       return std::vector<float>();
     }
