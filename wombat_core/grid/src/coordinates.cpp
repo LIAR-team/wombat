@@ -101,7 +101,8 @@ std::optional<geometry_msgs::msg::Point> grid_coord_to_world_pt(
   std::cout << "------ START grid_coord_to_world_pt --> "<<grid_coord.x() << " " << grid_coord.y()<<std::endl;
 
   if (!grid_coord_is_valid(grid_coord, map_info)) {
-    std::cout<<"grid_coord_to_world_pt Value is invalid" << std::endl;
+    std::cout<<"grid_coord_to_world_pt Value is invalid: "<< map_info.grid_size.x() << " " << map_info.grid_size.y() << std::endl;
+    //throw std::runtime_error("Failed to compute");
     return std::nullopt;
   }
 

@@ -11,6 +11,8 @@
 #include "wombat_core/grid/raytrace.hpp"
 #include "wombat_core/math/utils.hpp"
 
+#include <iostream>
+
 namespace wombat_core
 {
 
@@ -120,7 +122,7 @@ std::optional<grid_coord_t> project_to_grid_boundary(
   const MapMetaDataAdapter & map_info,
   double angle)
 {
-  if (start.x() >= map_info.grid_size.x() || start.y() >= map_info.grid_size.y()) {
+  if (!grid_coord_is_valid(start, map_info)) {
     return std::nullopt;
   }
 
@@ -169,11 +171,14 @@ std::optional<grid_coord_t> project_to_grid_boundary(
   const double intersection_x = start.x() + t * dir_x;
   const double intersection_y = start.y() + t * dir_y;
 
+  std::cout<<"t " << t << " products " << t * dir_x << " " << t * dir_y << std::endl;
+  std::cout<<"intersection " << intersection_x << " " << intersection_y << std::endl;
+
   // Ensure correctness of intersection coordinate
   // is this necessary?
   grid_coord_t intersection_coord {
-    std::clamp(static_cast<grid_coord_t::Scalar>(intersection_x), 0, map_info.grid_size.x()),
-    std::clamp(static_cast<grid_coord_t::Scalar>(intersection_y), 0, map_info.grid_size.y())
+    std::clamp(static_cast<grid_coord_t::Scalar>(intersection_x), 0, map_info.grid_size.x() - 1),
+    std::clamp(static_cast<grid_coord_t::Scalar>(intersection_y), 0, map_info.grid_size.y() - 1)
   };
   return intersection_coord;
 }

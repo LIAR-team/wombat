@@ -5,13 +5,10 @@ find_package(ament_cmake_gtest REQUIRED)
 ament_add_gtest(test_costmap test_costmap.cpp)
 target_link_libraries(test_costmap wombat_core::costmap)
 
-### MATH
+### GRID
 
-ament_add_gtest(test_math_angles test_math_angles.cpp)
-target_link_libraries(test_math_angles wombat_core::math)
-
-ament_add_gtest(test_math_geometry_point test_math_geometry_point.cpp)
-target_link_libraries(test_math_geometry_point wombat_core::math)
+ament_add_gtest(test_math_grid_boundary_projection test_math_grid_boundary_projection.cpp)
+target_link_libraries(test_math_grid_boundary_projection wombat_core::grid)
 
 ament_add_gtest(test_math_grid_coordinates test_math_grid_coordinates.cpp)
 target_link_libraries(test_math_grid_coordinates wombat_core::grid)
@@ -21,6 +18,14 @@ target_link_libraries(test_math_grid_neighbors wombat_core::grid)
 
 ament_add_gtest(test_math_grid_raytrace test_math_grid_raytrace.cpp)
 target_link_libraries(test_math_grid_raytrace wombat_core::grid)
+
+### MATH
+
+ament_add_gtest(test_math_angles test_math_angles.cpp)
+target_link_libraries(test_math_angles wombat_core::math)
+
+ament_add_gtest(test_math_geometry_point test_math_geometry_point.cpp)
+target_link_libraries(test_math_geometry_point wombat_core::math)
 
 ament_add_gtest(test_math_online_stats test_math_online_stats.cpp)
 target_link_libraries(test_math_online_stats wombat_core::math)

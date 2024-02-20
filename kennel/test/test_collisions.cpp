@@ -37,6 +37,7 @@ public:
 TEST_F(WallsWorldTest, WallCollision)
 {
   auto map = this->get_occupancy_grid();
+  auto map_info = wombat_core::MapMetaDataAdapter(map->info);
   ASSERT_NE(map, nullptr);
 
   geometry_msgs::msg::Pose start_pose;
@@ -49,11 +50,11 @@ TEST_F(WallsWorldTest, WallCollision)
     *map,
     start_pose,
     end_pose);
-  auto maybe_new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map->info);
+  auto maybe_new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map_info);
   EXPECT_NE(maybe_new_pose_coord, std::nullopt);
-  EXPECT_EQ(maybe_new_pose_coord->x, 5);
-  EXPECT_EQ(maybe_new_pose_coord->y, 50);
-  auto maybe_new_pose_index = wombat_core::grid_coord_to_index(*maybe_new_pose_coord, map->info);
+  EXPECT_EQ(maybe_new_pose_coord->x(), 5);
+  EXPECT_EQ(maybe_new_pose_coord->y(), 50);
+  auto maybe_new_pose_index = wombat_core::grid_coord_to_index(*maybe_new_pose_coord, map_info);
   EXPECT_NE(maybe_new_pose_index, std::nullopt);
   auto map_value = map->data[*maybe_new_pose_index];
   EXPECT_EQ(map_value, 0);

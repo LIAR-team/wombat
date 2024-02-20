@@ -51,6 +51,8 @@ std::vector<float> compute_laser_ranges(
   const double angle_increment = (angle_range.second - angle_range.first) / static_cast<double>(num_bins);
   const double laser_yaw = tf2::getYaw(laser_pose.orientation);
 
+  std::cout<<"---> LASER RANGES from " << maybe_laser_coord->x() << " " << maybe_laser_coord->y() << std::endl;
+
   std::vector<float> ranges(num_bins);
   for (size_t i = 0; i < ranges.size(); i++) {
     const double this_angle = laser_yaw + angle_range.first + angle_increment * static_cast<double>(i);
@@ -65,6 +67,7 @@ std::vector<float> compute_laser_ranges(
     if (!maybe_boundary_coord) {
       return std::vector<float>();
     }
+    std::cout<<"Projected along "<<this_angle << " and got " << maybe_boundary_coord->x() << " " << maybe_boundary_coord->y() << std::endl;
 
     // Raytrace between laser coord and boundary coord
     const auto maybe_obstacle_index = wombat_core::find_if_raytrace(
@@ -83,6 +86,7 @@ std::vector<float> compute_laser_ranges(
       if (!maybe_obstacle_coord) {
         return std::vector<float>();
       }
+      std::cout<<"Found obstacle coord " << maybe_obstacle_coord->x() << " " << maybe_obstacle_coord->y() << std::endl;
       range_end_coord = *maybe_obstacle_coord;
     }
 
