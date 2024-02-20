@@ -6,8 +6,8 @@
 #include <cmath>
 
 #include "kennel/common/collisions.hpp"
-#include "wombat_core/math/grid/coordinates.hpp"
-#include "wombat_core/math/grid/raytrace.hpp"
+#include "wombat_core/grid/coordinates.hpp"
+#include "wombat_core/grid/raytrace.hpp"
 #include "wombat_core/math/interpolation.hpp"
 
 namespace kennel

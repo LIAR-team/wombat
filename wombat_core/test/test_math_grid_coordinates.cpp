@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "wombat_core/math/grid/coordinates.hpp"
+#include "wombat_core/grid/coordinates.hpp"
 
 using wombat_core::grid_coord_t;
 using wombat_core::grid_index_t;
@@ -97,7 +97,7 @@ TEST_P(TestConversionsWithParams, ValidConversionsAndBack)
 
   static constexpr double EPSILON = 0.001;
 
-  // Index to grid coord
+  // Coord2D to grid coord
   auto grid_coord = wombat_core::grid_index_to_coord(test_data.grid_index, test_data.map_info);
   ASSERT_NE(std::nullopt, grid_coord);
   EXPECT_EQ(grid_coord->x, test_data.grid_coord.x);
@@ -107,7 +107,7 @@ TEST_P(TestConversionsWithParams, ValidConversionsAndBack)
   ASSERT_NE(std::nullopt, grid_index);
   EXPECT_EQ(*grid_index, test_data.grid_index);
 
-  // Index to world pt
+  // Coord2D to world pt
   auto world_pt = wombat_core::grid_index_to_world_pt(test_data.grid_index, test_data.map_info);
   ASSERT_NE(std::nullopt, world_pt);
   EXPECT_NEAR(world_pt->x, test_data.world_pt.x, EPSILON);

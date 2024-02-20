@@ -7,8 +7,8 @@
 
 #include "kennel/common/plugin_interface/sensor_publisher.hpp"
 #include "kennel/common/types.hpp"
-#include "wombat_core/math/grid/coordinates.hpp"
-#include "wombat_core/math/grid/neighbors.hpp"
+#include "wombat_core/grid/coordinates.hpp"
+#include "wombat_core/grid/neighbors.hpp"
 #include "wombat_msgs/msg/bumper.hpp"
 
 namespace kennel

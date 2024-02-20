@@ -14,13 +14,13 @@ ament_add_gtest(test_math_geometry_point test_math_geometry_point.cpp)
 target_link_libraries(test_math_geometry_point wombat_core::math)
 
 ament_add_gtest(test_math_grid_coordinates test_math_grid_coordinates.cpp)
-target_link_libraries(test_math_grid_coordinates wombat_core::math)
+target_link_libraries(test_math_grid_coordinates wombat_core::grid)
 
 ament_add_gtest(test_math_grid_neighbors test_math_grid_neighbors.cpp)
-target_link_libraries(test_math_grid_neighbors wombat_core::math)
+target_link_libraries(test_math_grid_neighbors wombat_core::grid)
 
 ament_add_gtest(test_math_grid_raytrace test_math_grid_raytrace.cpp)
-target_link_libraries(test_math_grid_raytrace wombat_core::math)
+target_link_libraries(test_math_grid_raytrace wombat_core::grid)
 
 ament_add_gtest(test_math_online_stats test_math_online_stats.cpp)
 target_link_libraries(test_math_online_stats wombat_core::math)

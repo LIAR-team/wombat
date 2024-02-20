@@ -10,8 +10,7 @@
 
 #include "nav_msgs/msg/map_meta_data.hpp"
 
-#include "wombat_core/math/grid/LineIterator.hpp"
-#include "wombat_core/math/grid/coordinates.hpp"
+#include "wombat_core/grid/coordinates.hpp"
 
 #include <Eigen/Core>
 
@@ -47,13 +46,13 @@ public:
    * Dereference the iterator with const.
    * @return the value to which the iterator is pointing.
    */
-  const Index& operator *() const;
+  const Coord2D& operator *() const;
 
   /*!
    * Get the current index in the submap.
    * @return the current index in the submap.
    */
-  const Index& getSubmapIndex() const;
+  const Coord2D& getSubmapIndex() const;
 
   /*!
    * Increase the iterator to the next element.
@@ -72,19 +71,19 @@ private:
   Size size_;
 
   //! Start index of the circular buffer.
-  Index startIndex_;
+  Coord2D startIndex_;
 
   //! Current index.
-  Index index_;
+  Coord2D index_;
 
   //! Submap buffer size.
   Size submapSize_;
 
   //! Top left index of the submap.
-  Index submapStartIndex_;
+  Coord2D submapStartIndex_;
 
   //! Current index in the submap.
-  Index submapIndex_;
+  Coord2D submapIndex_;
 
   //! Is iterator out of scope.
   bool isPastEnd_;

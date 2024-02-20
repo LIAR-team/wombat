@@ -9,8 +9,8 @@
 #include <iostream>
 #include <vector>
 
-#include "wombat_core/math/grid/coordinates.hpp"
-#include "wombat_core/math/grid/raytrace.hpp"
+#include "wombat_core/grid/coordinates.hpp"
+#include "wombat_core/grid/raytrace.hpp"
 
 TEST(TestRaytrace, StraightLines)
 {

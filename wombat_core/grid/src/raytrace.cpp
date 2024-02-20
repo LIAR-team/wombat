@@ -7,8 +7,8 @@
 #include <climits>
 #include <cmath>
 
-#include "wombat_core/math/grid/coordinates.hpp"
-#include "wombat_core/math/grid/raytrace.hpp"
+#include "wombat_core/grid/coordinates.hpp"
+#include "wombat_core/grid/raytrace.hpp"
 #include "wombat_core/math/utils.hpp"
 
 namespace wombat_core

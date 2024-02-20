@@ -18,6 +18,7 @@ target_link_libraries(
     rclcpp::rclcpp
     tf2::tf2
     tf2_geometry_msgs::tf2_geometry_msgs
+    wombat_core::grid
     wombat_core::math
     wombat_core::ros2
     ${geometry_msgs_TARGETS}

@@ -12,7 +12,7 @@
 #include "kennel/common/collisions.hpp"
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "wombat_control/models/diff_drive_model.hpp"
-#include "wombat_core/math/grid/coordinates.hpp"
+#include "wombat_core/grid/coordinates.hpp"
 #include "wombat_core/math/transformations.hpp"
 
 namespace kennel

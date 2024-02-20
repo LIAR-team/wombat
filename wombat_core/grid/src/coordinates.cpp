@@ -3,7 +3,7 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#include "wombat_core/math/grid/coordinates.hpp"
+#include "wombat_core/grid/coordinates.hpp"
 
 namespace wombat_core
 {

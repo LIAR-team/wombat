@@ -6,7 +6,7 @@
  *   Institute: ETH Zurich, ANYbotics
  */
 
-#include "wombat_core/math/grid/LineIterator.hpp"
+#include "wombat_core/grid/line_iterator.hpp"
 
 namespace wombat_core {
 

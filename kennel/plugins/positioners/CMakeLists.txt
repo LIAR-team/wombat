@@ -10,6 +10,7 @@ target_link_libraries(
   kennel_positioner_plugins
   PRIVATE
     kennel::common
+    wombat_core::grid
     wombat_core::math
 )
 ament_target_dependencies(kennel_positioner_plugins PUBLIC pluginlib)

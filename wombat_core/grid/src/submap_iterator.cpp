@@ -6,11 +6,11 @@
  *   Institute: ETH Zurich, ANYbotics
  */
 
-#include "wombat_core/math/grid/SubmapIterator.hpp"
+#include "wombat_core/grid/submap_iterator.hpp"
 
 namespace wombat_core {
 
-static bool checkIfIndexInRange(const Index& index, const Size& bufferSize)
+static bool checkIfIndexInRange(const Coord2D& index, const Size& bufferSize)
 {
   return index[0] >= 0 && index[1] >= 0 && index[0] < bufferSize[0] && index[1] < bufferSize[1];
 }
@@ -31,12 +31,12 @@ static bool checkIfIndexInRange(const Index& index, const Size& bufferSize)
  * @return true if successfully incremented indices, false if end of iteration limits are reached.
  */
 static bool incrementIndexForSubmap(
-  Index& submapIndex, Index& index, const Index& submapTopLeftIndex,
+  Coord2D& submapIndex, Coord2D& index, const Coord2D& submapTopLeftIndex,
   const Size& submapBufferSize)
 {
   // Copy the data first, only copy it back if everything is within range.
-  Index tempIndex = index;
-  Index tempSubmapIndex = submapIndex;
+  Coord2D tempIndex = index;
+  Coord2D tempSubmapIndex = submapIndex;
 
   // Increment submap index.
   if (tempSubmapIndex[1] + 1 < submapBufferSize[1]) {
@@ -82,7 +82,7 @@ bool SubmapIterator::operator !=(const SubmapIterator& other) const
   return (index_ != other.index_).any();
 }
 
-const Index& SubmapIterator::operator *() const
+const Coord2D& SubmapIterator::operator *() const
 {
   return index_;
 }

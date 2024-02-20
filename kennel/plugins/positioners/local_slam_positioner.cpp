@@ -7,8 +7,8 @@
 
 #include "kennel/common/plugin_interface/map_positioner.hpp"
 #include "kennel/common/types.hpp"
-#include "wombat_core/math/grid/coordinates.hpp"
-#include "wombat_core/math/grid/SubmapIterator.hpp"
+#include "wombat_core/grid/coordinates.hpp"
+#include "wombat_core/grid/submap_iterator.hpp"
 #include "wombat_core/math/transformations.hpp"
 
 #include <iostream>
@@ -16,29 +16,32 @@
 namespace kennel
 {
 
-static void boundIndexToRange(int & index, const int & bufferSize)
+static wombat_core::grid_index_t enfouce_bounds_on_grid_coord_dimension(wombat_core::grid_index_t coord_dim, uint32_t size)
 {
-  if (index < 0) {
-    index = 0;
-  } else if (index >= bufferSize) {
-    index = bufferSize - 1;
+  if (coord_dim >= size) {
+    return size - 1u;
   }
+  return coord_dim;
 }
 
-static void boundIndexToRange(
-  wombat_core::Index & index,
-  const wombat_core::Size & bufferSize)
+static wombat_core::grid_coord_t enfouce_bounds_on_grid_coord(
+  const wombat_core::grid_coord_t & grid_coord,
+  const nav_msgs::msg::MapMetaData & map_info)
 {
-  for (int i = 0; i < index.size(); i++) {
-    boundIndexToRange(index[i], bufferSize[i]);
-  }
+  return wombat_core::grid_coord_t{
+    enfouce_bounds_on_grid_coord_dimension(grid_coord.x, map_info.width),
+    enfouce_bounds_on_grid_coord_dimension(grid_coord.y, map_info.height),
+  };
 }
 
 static wombat_core::Size getSubmapSizeFromCornerIndices(
-  const wombat_core::Index & topLeftIndex,
-  const wombat_core::Index & bottomRightIndex)
+  const wombat_core::grid_coord_t & topLeftIndex,
+  const wombat_core::grid_coord_t & bottomRightIndex)
 {
-  return wombat_core::Size(bottomRightIndex - topLeftIndex + wombat_core::Size::Ones());
+  return wombat_core::Size{
+    bottomRightIndex.x - topLeftIndex.x + 1,
+    bottomRightIndex.y - topLeftIndex.y + 1
+  };
 }
 
 /**
@@ -78,19 +81,16 @@ private:
     }
     RCLCPP_INFO(get_logger(), "Cur pose computed");
 
-    size_t width = 100;
-    size_t height = 100;
+    size_t radius = 100;
 
-    wombat_core::Index this_index = {maybe_cur_grid_coord->x, maybe_cur_grid_coord->y};
-    RCLCPP_INFO(get_logger(), "This index %d %d", this_index.x(), this_index.y());
-    wombat_core::Index other_index = {this_index.x() + width, this_index.y() + height};
-    RCLCPP_INFO(get_logger(), "Other index %d %d", other_index.x(), other_index.y());
-    wombat_core::Size map_size = {m_map->info.width, m_map->info.height};
-    boundIndexToRange(other_index, map_size);
-    RCLCPP_INFO(get_logger(), "Bounded other index %d %d", other_index.x(), other_index.y());
+    RCLCPP_INFO(get_logger(), "This index %d %d", static_cast<int>(maybe_cur_grid_coord->x), static_cast<int>(maybe_cur_grid_coord->y));
+    wombat_core::grid_coord_t other_index = {maybe_cur_grid_coord->x + radius, maybe_cur_grid_coord->y + radius};
+    RCLCPP_INFO(get_logger(), "Other index %d %d", static_cast<int>(other_index.x), static_cast<int>(other_index.y));
+    other_index = enfouce_bounds_on_grid_coord(other_index, m_map->info);
+    RCLCPP_INFO(get_logger(), "Bounded Other index %d %d", static_cast<int>(other_index.x), static_cast<int>(other_index.y));
 
     auto submap_size = getSubmapSizeFromCornerIndices(
-      this_index,
+      *maybe_cur_grid_coord,
       other_index);
 
     RCLCPP_INFO(get_logger(), "Found new size %d %d", submap_size.x(), submap_size.y());
@@ -98,7 +98,7 @@ private:
     //size_t count = 0;
     auto submap_iterator = wombat_core::SubmapIterator(
       m_map->info,
-      wombat_core::grid_coord_t{static_cast<unsigned int>(this_index.x()), static_cast<unsigned int>(this_index.y())},
+      *maybe_cur_grid_coord,
       submap_size.x(),
       submap_size.y());
     for (;!submap_iterator.isPastEnd(); ++submap_iterator)

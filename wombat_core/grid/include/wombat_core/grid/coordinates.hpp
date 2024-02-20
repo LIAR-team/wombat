@@ -10,18 +10,10 @@
 #include "geometry_msgs/msg/point.hpp"
 #include "nav_msgs/msg/map_meta_data.hpp"
 
+#include "wombat_core/grid/types.hpp"
+
 namespace wombat_core
 {
-
-/** @brief The coordinates of a cell on a grid */
-struct grid_coord_t
-{
-  unsigned int x;
-  unsigned int y;
-};
-
-/** @brief The index to access elements on a grid */
-using grid_index_t = size_t;
 
 /**
  * @brief Converts grid coordinates into an index

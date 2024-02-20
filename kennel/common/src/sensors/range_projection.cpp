@@ -11,8 +11,8 @@
 
 #include "kennel/common/sensors/range_projection.hpp"
 #include "wombat_core/math/geometry_point.hpp"
-#include "wombat_core/math/grid/coordinates.hpp"
-#include "wombat_core/math/grid/raytrace.hpp"
+#include "wombat_core/grid/coordinates.hpp"
+#include "wombat_core/grid/raytrace.hpp"
 
 namespace kennel
 {

@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "kennel/common/collisions.hpp"
-#include "wombat_core/math/grid/coordinates.hpp"
+#include "wombat_core/grid/coordinates.hpp"
 #include "wombat_core/ros2/parameters.hpp"
 
 #include "single_robot_fixture.hpp"

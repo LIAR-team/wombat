@@ -12,7 +12,7 @@
 #include "nav_msgs/msg/map_meta_data.hpp"
 
 #include "wombat_core/cpp/types.hpp"
-#include "wombat_core/math/grid/coordinates.hpp"
+#include "wombat_core/grid/coordinates.hpp"
 
 namespace wombat_core
 {

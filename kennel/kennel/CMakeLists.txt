@@ -28,6 +28,7 @@ target_link_libraries(
   PRIVATE
     wombat_core::cpp_utils
     wombat_control::models
+    wombat_core::grid
     wombat_core::math
 )
 

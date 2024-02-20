@@ -9,8 +9,8 @@
 #include <iostream>
 #include <vector>
 
-#include "wombat_core/math/grid/coordinates.hpp"
-#include "wombat_core/math/grid/neighbors.hpp"
+#include "wombat_core/grid/coordinates.hpp"
+#include "wombat_core/grid/neighbors.hpp"
 
 TEST(TestGridNeighbors, ZeroDimGrid)
 {

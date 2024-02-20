@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "nav2_costmap_2d/costmap_2d.hpp"
-#include "wombat_core/math/grid/neighbors.hpp"
+#include "wombat_core/grid/neighbors.hpp"
 #include "wombat_strategy/exploration/frontier.hpp"
 
 namespace wombat_strategy
