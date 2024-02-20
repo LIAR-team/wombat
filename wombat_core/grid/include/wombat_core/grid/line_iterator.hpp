@@ -29,7 +29,7 @@ public:
    * @param end the ending index of the line.
    */
   LineIterator(
-    const nav_msgs::msg::MapMetaData & map_info,
+    const MapMetaDataAdapter & map_info,
     const wombat_core::grid_coord_t & start,
     const wombat_core::grid_coord_t & end);
 
@@ -68,13 +68,14 @@ private:
   wombat_core::grid_coord_t end_;
 
   //! Current cell number.
-  unsigned int iCell_ = 0;
+  size_t iCell_ = 0;
 
   //! Number of cells in the line.
-  unsigned int nCells_ = 0;
+  size_t nCells_ = 0;
 
   //! Helper variables for Bresenham Line Drawing algorithm.
-  Size increment1_, increment2_;
+  grid_size_t increment1_;
+  grid_size_t increment2_;
   int denominator_{0}, numerator_{0}, numeratorAdd_{0};
 
  public:

@@ -11,7 +11,7 @@
 namespace wombat_core {
 
 LineIterator::LineIterator(
-  const nav_msgs::msg::MapMetaData & map_info,
+  const MapMetaDataAdapter & map_info,
   const wombat_core::grid_coord_t & start,
   const wombat_core::grid_coord_t & end)
 {
@@ -23,7 +23,7 @@ LineIterator::LineIterator(
   iCell_ = 0;
   m_current_coord = start;
 
-  if (end_.x >= start_.x) {
+  if (end_.x() >= start_.x()) {
     // x-values increasing.
     increment1_.x() = 1;
     increment2_.x() = 1;
@@ -33,7 +33,7 @@ LineIterator::LineIterator(
     increment2_.x() = -1;
   }
 
-  if (end_.y >= start_.y) {
+  if (end_.y() >= start_.y()) {
     // y-values increasing.
     increment1_.y() = 1;
     increment2_.y() = 1;
@@ -43,8 +43,8 @@ LineIterator::LineIterator(
     increment2_.y() = -1;
   }
 
-  const int dx = static_cast<int>(end_.x - start_.x);
-  const int dy = static_cast<int>(end_.y - start_.y);
+  const int dx = static_cast<int>(end_.x() - start_.x());
+  const int dy = static_cast<int>(end_.y() - start_.y());
   const unsigned int abs_dx = std::abs(dx);
   const unsigned int abs_dy = std::abs(dy);
 
@@ -69,7 +69,7 @@ LineIterator::LineIterator(
 
 bool LineIterator::operator !=(const LineIterator& other) const
 {
-  return m_current_coord.x != other.m_current_coord.x && m_current_coord.y != other.m_current_coord.y;
+  return m_current_coord.x() != other.m_current_coord.x() && m_current_coord.y() != other.m_current_coord.y();
 }
 
 const wombat_core::grid_coord_t & LineIterator::operator *() const
@@ -82,11 +82,11 @@ LineIterator& LineIterator::operator ++()
   numerator_ += numeratorAdd_;  // Increase the numerator by the top of the fraction.
   if (numerator_ >= denominator_) {
     numerator_ -= denominator_;
-    m_current_coord.x += static_cast<unsigned int>(increment1_.x());
-    m_current_coord.y += static_cast<unsigned int>(increment1_.y());
+    m_current_coord.x() += increment1_.x();
+    m_current_coord.y() += increment1_.y();
   }
-  m_current_coord.x += static_cast<unsigned int>(increment2_.x());
-  m_current_coord.y += static_cast<unsigned int>(increment2_.y());
+  m_current_coord.x() += increment2_.x();
+  m_current_coord.y() += increment2_.y();
   ++iCell_;
   return *this;
 }

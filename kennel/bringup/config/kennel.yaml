@@ -24,6 +24,7 @@ my_robot:
           plugin_type: "kennel::LocalSLAMPositioner"
           frame_id: "map"
           map_topic_name: "map"
+          radius: 2.0
       sensors:
         - "base_scan"
         - "bumper"

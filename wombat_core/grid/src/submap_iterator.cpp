@@ -8,89 +8,41 @@
 
 #include "wombat_core/grid/submap_iterator.hpp"
 
-namespace wombat_core {
-
-static bool checkIfIndexInRange(const Coord2D& index, const Size& bufferSize)
+namespace wombat_core
 {
-  return index[0] >= 0 && index[1] >= 0 && index[0] < bufferSize[0] && index[1] < bufferSize[1];
-}
-
-/*!
- * Increases the index by one to iterate through the cells of a submap.
- * Increments either to the neighboring index to the right or to
- * the start of the lower row. Returns false if end of iterations are reached.
- *
- * Note: This function does not check if submap actually fits to the map. This needs
- * to be checked before separately.
- *
- * @param[in/out] submapIndex the index in the submap that is incremented.
- * @param[out] index the index in the map that is incremented (corrected for the circular buffer).
- * @param[in] submapTopLefIndex the top left index of the submap.
- * @param[in] submapBufferSize the submap buffer size.
- * @param[in] bufferStartIndex the map buffer start index.
- * @return true if successfully incremented indices, false if end of iteration limits are reached.
- */
-static bool incrementIndexForSubmap(
-  Coord2D& submapIndex, Coord2D& index, const Coord2D& submapTopLeftIndex,
-  const Size& submapBufferSize)
-{
-  // Copy the data first, only copy it back if everything is within range.
-  Coord2D tempIndex = index;
-  Coord2D tempSubmapIndex = submapIndex;
-
-  // Increment submap index.
-  if (tempSubmapIndex[1] + 1 < submapBufferSize[1]) {
-    // Same row.
-    tempSubmapIndex[1]++;
-  } else {
-    // Next row.
-    tempSubmapIndex[0]++;
-    tempSubmapIndex[1] = 0;
-  }
-
-  // End of iterations reached.
-  if (!checkIfIndexInRange(tempSubmapIndex, submapBufferSize)) {
-    return false;
-  }
-
-  // Get corresponding index in map.
-  tempIndex = submapTopLeftIndex + tempSubmapIndex;
-
-  // Copy data back.
-  index = tempIndex;
-  submapIndex = tempSubmapIndex;
-  return true;
-}
 
 SubmapIterator::SubmapIterator(
-  const nav_msgs::msg::MapMetaData & map_info,
+  MapMetaDataAdapter map_info,
   const wombat_core::grid_coord_t & start,
-  size_t submap_width,
-  size_t submap_height)
+  const wombat_core::grid_size_t & submap_size)
+: m_map_info(std::move(map_info))
 {
-  size_ = {map_info.width, map_info.height};
-  startIndex_ = {0, 0};
-  index_ = {static_cast<int>(start.x), static_cast<int>(start.y)};
-  submapSize_ = {submap_width, submap_height};
-  submapStartIndex_ = index_;
-  submapIndex_.setZero();
+  m_current_coord = start;
+  m_submap_info = m_map_info;
+  m_submap_info.grid_size = submap_size;
+  m_submap_top_left_coord = m_current_coord;
+  m_current_submap_coord = {0, 0};
   isPastEnd_ = false;
 }
 
 bool SubmapIterator::operator !=(const SubmapIterator& other) const
 {
-  return (index_ != other.index_).any();
+  return m_current_coord.x() != other.m_current_coord.x() && m_current_coord.y() != other.m_current_coord.y();
 }
 
-const Coord2D& SubmapIterator::operator *() const
+const grid_coord_t & SubmapIterator::operator *() const
 {
-  return index_;
+  return m_current_coord;
 }
 
-SubmapIterator& SubmapIterator::operator ++()
+SubmapIterator & SubmapIterator::operator ++()
 {
-  isPastEnd_ = !incrementIndexForSubmap(submapIndex_, index_, submapStartIndex_,
-                                        submapSize_);
+  isPastEnd_ = !increment_index_for_submap(
+    m_current_submap_coord,
+    m_current_coord,
+    m_submap_top_left_coord,
+    m_submap_info);
+
   return *this;
 }
 

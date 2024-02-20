@@ -25,7 +25,7 @@ namespace wombat_core
  */
 std::optional<grid_index_t> grid_coord_to_index(
   const grid_coord_t & grid_coord,
-  const nav_msgs::msg::MapMetaData & map_info);
+  const MapMetaDataAdapter & map_info);
 
 /**
  * @brief Converts grid vector index (used to reference values when a grid
@@ -36,7 +36,7 @@ std::optional<grid_index_t> grid_coord_to_index(
  */
 std::optional<grid_coord_t> grid_index_to_coord(
   const grid_index_t & grid_index,
-  const nav_msgs::msg::MapMetaData & map_info);
+  const MapMetaDataAdapter & map_info);
 
 /**
  * @brief Converts a world point into its corresponding grid
@@ -47,7 +47,7 @@ std::optional<grid_coord_t> grid_index_to_coord(
  */
 std::optional<grid_coord_t> world_pt_to_grid_coord(
   const geometry_msgs::msg::Point & world_pt,
-  const nav_msgs::msg::MapMetaData & map_info);
+  const MapMetaDataAdapter & map_info);
 
 /**
  * @brief Converts a grid coordinate into the corresponding world point.
@@ -57,7 +57,7 @@ std::optional<grid_coord_t> world_pt_to_grid_coord(
  */
 std::optional<geometry_msgs::msg::Point> grid_coord_to_world_pt(
   const grid_coord_t & grid_coord,
-  const nav_msgs::msg::MapMetaData & map_info);
+  const MapMetaDataAdapter & map_info);
 
 /**
  * @brief Converts a world point into the index used to access
@@ -68,7 +68,7 @@ std::optional<geometry_msgs::msg::Point> grid_coord_to_world_pt(
  */
 std::optional<grid_index_t> world_pt_to_grid_index(
   const geometry_msgs::msg::Point & world_pt,
-  const nav_msgs::msg::MapMetaData & map_info);
+  const MapMetaDataAdapter & map_info);
 
 /**
  * @brief Converts a grid index into the corresponding world point
@@ -78,6 +78,52 @@ std::optional<grid_index_t> world_pt_to_grid_index(
  */
 std::optional<geometry_msgs::msg::Point> grid_index_to_world_pt(
   const grid_index_t & grid_index,
-  const nav_msgs::msg::MapMetaData & map_info);
+  const MapMetaDataAdapter & map_info);
+
+bool grid_coord_is_valid(
+  const wombat_core::grid_coord_t & grid_coord,
+  const MapMetaDataAdapter & map_info);
+
+bool grid_index_is_valid(
+  const wombat_core::grid_index_t & grid_index,
+  const MapMetaDataAdapter & map_info);
+
+wombat_core::grid_coord_t enfouce_bounds_on_grid_coord(
+  const wombat_core::grid_coord_t & grid_coord,
+  const MapMetaDataAdapter & map_info);
+
+wombat_core::grid_size_t get_subgrid_size_from_corners(
+  const wombat_core::grid_coord_t & top_left_grid_coord,
+  const wombat_core::grid_coord_t & bottom_right_grid_coord);
+
+wombat_core::grid_coord_t grid_coord_bounded_diff(
+  const wombat_core::grid_coord_t & minuend,
+  const wombat_core::grid_coord_t & subtrahend);
+
+wombat_core::grid_coord_t grid_coord_bounded_sum(
+  const wombat_core::grid_coord_t & minuend,
+  const wombat_core::grid_coord_t & subtrahend,
+  const MapMetaDataAdapter & map_info);
+
+/*!
+ * Increases the index by one to iterate through the cells of a submap.
+ * Increments either to the neighboring index to the right or to
+ * the start of the lower row. Returns false if end of iterations are reached.
+ *
+ * Note: This function does not check if submap actually fits to the map. This needs
+ * to be checked before separately.
+ *
+ * @param[in/out] submapIndex the index in the submap that is incremented.
+ * @param[out] index the index in the map that is incremented (corrected for the circular buffer).
+ * @param[in] submapTopLefIndex the top left index of the submap.
+ * @param[in] submapBufferSize the submap buffer size.
+ * @param[in] bufferStartIndex the map buffer start index.
+ * @return true if successfully incremented indices, false if end of iteration limits are reached.
+ */
+bool increment_index_for_submap(
+  grid_coord_t & submapIndex,
+  grid_coord_t & index,
+  const grid_coord_t & submapTopLeftIndex,
+  const MapMetaDataAdapter & submap_info);
 
 }  // namespace wombat_core

@@ -14,13 +14,38 @@ namespace wombat_core
 using grid_index_t = size_t;
 
 /** @brief The coordinates of a cell on a grid */
-struct grid_coord_t
-{
-  grid_index_t x;
-  grid_index_t y;
-};
+using grid_coord_t = Eigen::Array2i;
 
-using Coord2D = Eigen::Array2i;
-using Size = Eigen::Array2i;
+using grid_size_t = grid_coord_t;
+
+class MapMetaDataAdapter
+{
+public:
+  MapMetaDataAdapter() = default;
+  ~MapMetaDataAdapter() = default;
+  MapMetaDataAdapter(const MapMetaDataAdapter& other) = default;
+  MapMetaDataAdapter& operator=(const MapMetaDataAdapter& other) = default;
+  MapMetaDataAdapter& operator=(MapMetaDataAdapter&& other) = default;
+
+  MapMetaDataAdapter(const nav_msgs::msg::MapMetaData & map_info)
+  {
+    static constexpr grid_size_t::Scalar max_scalar = std::numeric_limits<grid_size_t::Scalar>::max();
+    if (map_info.width >= max_scalar || map_info.height >= max_scalar) {
+      throw std::runtime_error("Input grid is too big for grid adapter");
+    }
+    grid_size = {
+      static_cast<grid_size_t::Scalar>(map_info.width),
+      static_cast<grid_size_t::Scalar>(map_info.height),
+    };
+    resolution = map_info.resolution;
+    origin = map_info.origin;
+  }
+
+  grid_size_t grid_size {0, 0};
+  float resolution {0.0};
+  geometry_msgs::msg::Pose origin;
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+};
 
 }  // namespace wombat_core

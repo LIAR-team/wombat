@@ -37,7 +37,7 @@ namespace wombat_core
 std::optional<grid_index_t> find_if_raytrace(
   const grid_coord_t & from_grid,
   const grid_coord_t & to_grid,
-  const nav_msgs::msg::MapMetaData & map_info,
+  const MapMetaDataAdapter & map_info,
   const std::function<bool(grid_index_t)> & predicate,
   const double_range_t & length_range = {0.0, std::numeric_limits<double>::max()});
 
@@ -52,7 +52,7 @@ std::optional<grid_index_t> find_if_raytrace(
  */
 std::optional<grid_coord_t> project_to_grid_boundary(
   const grid_coord_t & from_grid,
-  const nav_msgs::msg::MapMetaData & map_info,
+  const MapMetaDataAdapter & map_info,
   double angle);
 
 }  // namespace wombat_core

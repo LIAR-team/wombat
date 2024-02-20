@@ -31,10 +31,9 @@ public:
    * @param submapSize the size of the submap to iterate on.
    */
   SubmapIterator(
-    const nav_msgs::msg::MapMetaData & map_info,
+    MapMetaDataAdapter map_info,
     const wombat_core::grid_coord_t & start,
-    size_t submap_width,
-    size_t submap_height);
+    const wombat_core::grid_size_t & submap_size);
 
   /*!
    * Compare to another iterator.
@@ -46,13 +45,13 @@ public:
    * Dereference the iterator with const.
    * @return the value to which the iterator is pointing.
    */
-  const Coord2D& operator *() const;
+  const grid_coord_t & operator *() const;
 
-  /*!
-   * Get the current index in the submap.
-   * @return the current index in the submap.
-   */
-  const Coord2D& getSubmapIndex() const;
+  // Overloading the arrow operator (->)
+  grid_coord_t* operator->()
+  {
+    return &m_current_coord;
+  }
 
   /*!
    * Increase the iterator to the next element.
@@ -67,23 +66,20 @@ public:
   bool isPastEnd() const;
 private:
 
-  //! Size of the buffer.
-  Size size_;
+  MapMetaDataAdapter m_map_info;
+  MapMetaDataAdapter m_submap_info;
 
-  //! Start index of the circular buffer.
-  Coord2D startIndex_;
-
-  //! Current index.
-  Coord2D index_;
+  //! Current coord.
+  grid_coord_t m_current_coord;
 
   //! Submap buffer size.
-  Size submapSize_;
+  grid_size_t submapSize_;
 
-  //! Top left index of the submap.
-  Coord2D submapStartIndex_;
+  //! Top left coord of the submap.
+  grid_coord_t m_submap_top_left_coord;
 
   //! Current index in the submap.
-  Coord2D submapIndex_;
+  grid_coord_t m_current_submap_coord;
 
   //! Is iterator out of scope.
   bool isPastEnd_;
