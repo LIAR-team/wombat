@@ -21,12 +21,12 @@ my_robot:
         positioners:
           - "slam"
         slam:
-          plugin_type: "kennel::LocalSLAMPositioner"
+          plugin_type: "kennel::LidarSLAMPositioner"
           frame_id: "map"
           map_topic_name: "map"
-          radius: 1.0
+          range_max: 0.5
       sensors:
-        - "base_scan"
+        #- "base_scan"
         - "bumper"
       base_scan:
         plugin_type: "kennel::Lidar2D"

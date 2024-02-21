@@ -31,11 +31,11 @@ namespace wombat_core
  * @param[in] bufferStartIndex the map buffer start index.
  * @return true if successfully incremented indices, false if end of iteration limits are reached.
  */
-static bool increment_index_for_submap(
+static bool increment_submap_coord(
   grid_coord_t & submap_coord,
-  grid_coord_t & map_coord,
   const grid_coord_t & submap_top_left_coord,
-  const MapMetaDataAdapter & submap_info)
+  const MapMetaDataAdapter & submap_info,
+  grid_coord_t & map_coord)
 {
   // Copy the data first, only copy it back if everything is within range.
   auto tmp_submap_coord = submap_coord;
@@ -67,6 +67,13 @@ SubmapIterator::SubmapIterator(
   const wombat_core::grid_size_t & submap_size)
 : m_map_info(map_info)
 {
+  if (!grid_coord_is_valid(start, map_info)) {
+    throw std::runtime_error("Invalid submap iterator start coord");
+  }
+  if (submap_size.x() > map_info.grid_size.x() || submap_size.y() > map_info.grid_size.y()) {
+    throw std::runtime_error("Invalid submap iterator submap size");
+  }
+
   m_current_coord = start;
   m_submap_info = m_map_info;
   m_submap_info.grid_size = submap_size;
@@ -87,11 +94,11 @@ const grid_coord_t & SubmapIterator::operator*() const
 
 SubmapIterator & SubmapIterator::operator++()
 {
-  m_is_past_end = !increment_index_for_submap(
+  m_is_past_end = !increment_submap_coord(
     m_current_submap_coord,
-    m_current_coord,
     m_submap_top_left_coord,
-    m_submap_info);
+    m_submap_info,
+    m_current_coord);
 
   return *this;
 }

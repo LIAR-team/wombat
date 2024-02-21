@@ -17,9 +17,9 @@ my_robot:
         control_topic_name: /cmd_vel
         control_msg_lifespan_ms: 200
         start_pose: [1.0, 1.0, 0.0]
-      sensors:
-        - "base_scan"
-        - "bumper"
+      #sensors:
+      #  - "base_scan"
+      #  - "bumper"
       base_scan:
         plugin_type: "kennel::Lidar2D"
       bumper:

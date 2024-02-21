@@ -7,6 +7,7 @@ target_sources(
     src/coordinates.cpp
     src/line_iterator.cpp
     src/neighbors.cpp
+    src/polygon_iterator.cpp
     src/raytrace.cpp
     src/submap_iterator.cpp
 )

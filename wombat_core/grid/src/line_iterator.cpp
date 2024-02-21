@@ -21,7 +21,12 @@ LineIterator::LineIterator(
   const wombat_core::grid_coord_t & start,
   const wombat_core::grid_coord_t & end)
 {
-  (void)map_info;
+  if (!grid_coord_is_valid(start, map_info)) {
+    throw std::runtime_error("Invalid line iterator start coord");
+  }
+  if (!grid_coord_is_valid(end, map_info)) {
+    throw std::runtime_error("Invalid line iterator end coord");
+  }
 
   m_start_coord = start;
   m_end_coord = end;
