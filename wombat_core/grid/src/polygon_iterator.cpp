@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "wombat_core/grid/polygon_iterator.hpp"
+#include "wombat_core/math/polygon.hpp"
 
 namespace wombat_core
 {
@@ -48,22 +49,8 @@ PolygonIterator::PolygonIterator(
   auto bbox_size = get_grid_size_from_corners(bbox.first, bbox.second);
 
   internalIterator_ = std::make_unique<SubmapIterator>(map_info, bbox.first, bbox_size);
+  assert(!internalIterator_->is_past_end());
   if (!isInside()) {++(*this);}
-}
-
-PolygonIterator & PolygonIterator::operator=(const PolygonIterator & other)
-{
-  (void)other;
-  /*
-  polygon_ = other.polygon_;
-  internalIterator_ = other.internalIterator_;
-  mapLength_ = other.mapLength_;
-  mapPosition_ = other.mapPosition_;
-  resolution_ = other.resolution_;
-  bufferSize_ = other.bufferSize_;
-  bufferStartIndex_ = other.bufferStartIndex_;
-  */
-  return *this;
 }
 
 bool PolygonIterator::operator!=(const PolygonIterator & other) const
@@ -99,14 +86,7 @@ bool PolygonIterator::is_past_end() const
 
 bool PolygonIterator::isInside() const
 {
-  return true;
-  /*
-  Position position;
-  getPositionFromIndex(
-    position, *(*internalIterator_), mapLength_, mapPosition_, resolution_,
-    bufferSize_, bufferStartIndex_);
-  return polygon_.isInside(position);
-  */
+  return point_in_polygon(*(*internalIterator_), polygon_);
 }
 
 }  // namespace grid_map
