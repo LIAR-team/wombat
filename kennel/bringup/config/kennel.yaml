@@ -18,22 +18,22 @@ my_robot:
         control_topic_name: /cmd_vel
         control_msg_lifespan_ms: 200
         start_pose: [1.0, 1.0, 0.0]
-        positioners:
-          - "slam"
+        #positioners:
+        #  - "slam"
         slam:
           plugin_type: "kennel::LidarSLAMPositioner"
           frame_id: "map"
           map_topic_name: "map"
           range_max: 0.5
       sensors:
-        #- "base_scan"
+        - "base_scan"
         - "bumper"
       base_scan:
         plugin_type: "kennel::Lidar2D"
         period_ms: 500
         angle_min: -1.570796
         angle_max: 1.570796
-        range_max: 5.0
+        range_max: 4.0
         num_bins: 100
       bumper:
         plugin_type: "kennel::Bumper"

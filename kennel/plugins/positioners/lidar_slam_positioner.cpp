@@ -65,7 +65,7 @@ private:
     size_t num_bins = 100;
     double min_dist = 0.0;
     double max_dist = this->get_parameter("range_max").get<double>();
-    std::cout<<"ANGLES: "<< angle_min << " -> " << angle_max << " DIST " << min_dist << " -> " << max_dist << std::endl;
+    //std::cout<<"ANGLES: "<< angle_min << " -> " << angle_max << " DIST " << min_dist << " -> " << max_dist << std::endl;
     auto ranges = compute_laser_ranges(
       *gt_data.map,
       cur_pose,
@@ -77,26 +77,27 @@ private:
     const double angle_increment = (angle_max - angle_min) / static_cast<double>(num_bins);
     using xy = boost::geometry::model::d2::point_xy<double>;
     boost::geometry::model::linestring<xy> line;
-    std::cout<<"Current pose " << cur_pose.position.x << " " << cur_pose.position.y << " " << laser_yaw << std::endl;
+    //std::cout<<"Current pose " << cur_pose.position.x << " " << cur_pose.position.y << " " << laser_yaw << std::endl;
     for (size_t i = 0; i < ranges.size(); i ++) {
         const double this_angle = laser_yaw + angle_min + angle_increment * static_cast<double>(i);
         geometry_msgs::msg::Point world_pt;
         double x = cur_pose.position.x + std::cos(this_angle) * ranges[i];
         double y = cur_pose.position.y + std::sin(this_angle) * ranges[i];
-        std::cout<<"Adding point " << x << " " << y << ": from angle " << this_angle << " range " << ranges[i] << std::endl;
+        //std::cout<<"Adding point " << x << " " << y << ": from angle " << this_angle << " range " << ranges[i] << std::endl;
         boost::geometry::append(line, xy{x, y});
     }
 
     // Simplify it, using distance of 0.5 units
-    double distance_m = 0.5;
+    //double distance_m = 0.5;
     boost::geometry::model::linestring<xy> simplified;
-    boost::geometry::simplify(line, simplified, distance_m);
+    simplified = line;
+    //boost::geometry::simplify(line, simplified, distance_m);
     //RCLCPP_INFO(this->get_logger(), )
-    std::cout<<"RANGES: " << ranges.size() << std::endl;
-    std::cout<<"SIMPLIFIED: " << simplified.size() << std::endl;
-    std::cout
-        << "  original: " << boost::geometry::dsv(line) << std::endl
-       << "simplified: " << boost::geometry::dsv(simplified) << std::endl;
+    //std::cout<<"RANGES: " << ranges.size() << std::endl;
+    //std::cout<<"SIMPLIFIED: " << simplified.size() << std::endl;
+    //std::cout
+    //    << "  original: " << boost::geometry::dsv(line) << std::endl
+    //   << "simplified: " << boost::geometry::dsv(simplified) << std::endl;
     std::vector<wombat_core::grid_coord_t> grid_polygon;
     for (const auto & world_pt : simplified) {
       geometry_msgs::msg::Point pt;
@@ -104,7 +105,7 @@ private:
       pt.y = world_pt.y();
       auto maybe_grid_coord = wombat_core::world_pt_to_grid_coord(pt, map_info);
       assert(maybe_grid_coord != std::nullopt);
-      std::cout<<"GRID POLYGON: " << maybe_grid_coord->x() << " " << maybe_grid_coord->y() << std::endl;
+      //std::cout<<"GRID POLYGON: " << maybe_grid_coord->x() << " " << maybe_grid_coord->y() << std::endl;
       grid_polygon.push_back(*maybe_grid_coord);
     }
 

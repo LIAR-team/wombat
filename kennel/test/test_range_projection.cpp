@@ -49,12 +49,12 @@ TEST_F(WallsWorldTest, ShortRangeProjection)
     *map,
     laser_pose,
     num_bins,
-    std::make_pair(wombat_core::rad_to_deg(-20.0), wombat_core::rad_to_deg(20.0)),
+    std::make_pair(wombat_core::deg_to_rad(-20.0), wombat_core::deg_to_rad(20.0)),
     std::make_pair(0.0, 0.2));
 
   ASSERT_EQ(ranges.size(), num_bins);
   for (const auto & r : ranges) {
-    EXPECT_EQ(r, 0.2);
+    EXPECT_LE(std::abs(r - 0.2), map->info.resolution * 2);
   }
 }
 

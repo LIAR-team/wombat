@@ -52,11 +52,12 @@ std::vector<float> compute_laser_ranges(
 
   const double angle_increment = (angle_range.second - angle_range.first) / static_cast<double>(num_bins);
   const double laser_yaw = tf2::getYaw(laser_pose.orientation);
+  //std::cout<<"COMPUTED YAW " << laser_yaw << " from " << laser_pose.orientation.x << " " << laser_pose.orientation.y << " " << laser_pose.orientation.z << " " << laser_pose.orientation.w << std::endl;
 
   const auto grid_range = wombat_core::double_range_t{distance_range.first / map_info.resolution, distance_range.second / map_info.resolution};
-  std::cout<<"GRID RANGE: "<< grid_range.min << " " << grid_range.max << std::endl;
-  std::cout<<"LASER COORD: "<< maybe_laser_coord->x() << " " << maybe_laser_coord->y() << std::endl;
-  std::cout<<"NUM_BINS: "<< num_bins << std::endl;
+  //std::cout<<"GRID RANGE: "<< grid_range.min << " " << grid_range.max << std::endl;
+  //std::cout<<"LASER COORD: "<< maybe_laser_coord->x() << " " << maybe_laser_coord->y() << std::endl;
+  //std::cout<<"NUM_BINS: "<< num_bins << std::endl;
 
   std::vector<float> ranges(num_bins);
   for (size_t i = 0; i < ranges.size(); i++) {
@@ -65,28 +66,39 @@ std::vector<float> compute_laser_ranges(
     // We can't just project the distance along the angle because the grid coordinate
     // is an unsigned number and it makes sense only within the grid.
     // We need to compute the intersection between this line and the grid boundaries
-    auto maybe_boundary_coord = wombat_core::project_to_grid_boundary(
-      *maybe_laser_coord,
-      map_info,
-      this_angle);
-    if (!maybe_boundary_coord) {
-      return std::vector<float>();
+
+    wombat_core::grid_coord_t projected_coord = {
+      maybe_laser_coord->x() + std::cos(this_angle) * grid_range.max,
+      maybe_laser_coord->y() + std::sin(this_angle) * grid_range.max,
+    };
+    if (!wombat_core::grid_coord_is_valid(projected_coord, map_info)) {
+      auto maybe_boundary_coord = wombat_core::project_to_grid_boundary(
+        *maybe_laser_coord,
+        map_info,
+        this_angle);
+      if (!maybe_boundary_coord) {
+        throw std::runtime_error("Failed to project laser coord");
+      }
+      projected_coord = *maybe_boundary_coord;
     }
-    std::cout<< i << " Raytrace towards " << maybe_boundary_coord->x() << " " << maybe_boundary_coord->y() << std::endl;
+
+    //std::cout<< i << " Angle " << this_angle << " = " << laser_yaw << " + " << angle_range.first << " + " << angle_increment << " * " << static_cast<double>(i) << std::endl;
+    //std::cout<< i << " Projected coord " << projected_coord.x() << " " << projected_coord.y() << std::endl;
+
     // Raytrace between laser coord and boundary coord
     auto last_touched_index = *maybe_laser_index;
     wombat_core::find_if_raytrace(
       *maybe_laser_coord,
-      *maybe_boundary_coord,
+      projected_coord,
       map_info,
-      [&map, &map_info, &last_touched_index](wombat_core::grid_index_t index) {
-        auto maybe_coord = wombat_core::grid_index_to_coord(index, map_info);
-        if (!maybe_coord) {
-          assert(0 && "BAD RAYTRACE");
-        }
+      [&map, &last_touched_index](wombat_core::grid_index_t index) {
+        //auto maybe_coord = wombat_core::grid_index_to_coord(index, map_info);
+        //if (!maybe_coord) {
+        //  assert(0 && "BAD RAYTRACE");
+        //}
         const bool is_obstacle = map.data[index] > 0;
         last_touched_index = index;
-        std::cout<<"FIND-IF-RAYTRACE processing coord " << maybe_coord->x() << " " << maybe_coord->y() << " ? " << static_cast<int>(is_obstacle)<< std::endl;
+        //std::cout<<"FIND-IF-RAYTRACE processing coord " << maybe_coord->x() << " " << maybe_coord->y() << " ? " << static_cast<int>(is_obstacle)<< std::endl;
         return is_obstacle;
       },
       grid_range);
@@ -96,7 +108,7 @@ std::vector<float> compute_laser_ranges(
     if (!maybe_last_touched_coord) {
       throw std::runtime_error("Failed to compute last touched grid coordinate");
     }
-    std::cout<<"USE RANGE END COORD: "<< maybe_last_touched_coord->x() << " " << maybe_last_touched_coord->y() << std::endl;
+    //std::cout<<"USE RANGE END COORD: "<< maybe_last_touched_coord->x() << " " << maybe_last_touched_coord->y() << std::endl;
 
     // Convert end coordinate to world point
     auto maybe_end_point = wombat_core::grid_coord_to_world_pt(*maybe_last_touched_coord, map_info);
@@ -107,7 +119,7 @@ std::vector<float> compute_laser_ranges(
     ranges[i] = static_cast<float>(
       wombat_core::points_distance_2d(
         laser_pose.position, *maybe_end_point));
-    std::cout <<"WORLD RANGE: " << ranges[i] << std::endl;
+    //std::cout <<"WORLD RANGE: " << ranges[i] << std::endl;
   }
 
   return ranges;

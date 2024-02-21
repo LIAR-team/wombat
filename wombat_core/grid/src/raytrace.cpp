@@ -101,7 +101,7 @@ std::optional<grid_index_t> find_if_raytrace(
   const int offset_dy = wombat_core::sign(dy) * map_info.grid_size.x();
 
   const double scale = (dist == 0.0) ? 1.0 : std::min(1.0, length_range.max / dist);
-  std::cout<<"FIND-IF-RAYTRACE dist " << dist << " scale " << scale << std::endl;
+
   if (abs_dx >= abs_dy) {
     // if x is dominant
     const int error_y = static_cast<int>(abs_dx) / 2;
