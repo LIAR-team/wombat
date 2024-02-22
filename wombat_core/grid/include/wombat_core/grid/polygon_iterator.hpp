@@ -1,3 +1,8 @@
+// Copyright 2024 Soragna Alberto.
+// All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
+
 /*
  * PolygonIterator.hpp
  *
@@ -62,10 +67,10 @@ private:
   bool isInside() const;
 
   //! Polygon to iterate on.
-  std::vector<grid_coord_t> polygon_;
+  std::vector<grid_coord_t> m_polygon;
 
   //! Grid submap iterator.
-  std::unique_ptr<SubmapIterator> internalIterator_;
+  std::unique_ptr<SubmapIterator> m_internal_iterator;
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -52,7 +52,9 @@ std::vector<float> compute_laser_ranges(
 
   const double angle_increment = (angle_range.second - angle_range.first) / static_cast<double>(num_bins);
   const double laser_yaw = tf2::getYaw(laser_pose.orientation);
-  const auto grid_range = wombat_core::double_range_t{distance_range.first / map_info.resolution, distance_range.second / map_info.resolution};
+  const auto grid_range = wombat_core::double_range_t{
+    distance_range.first / map_info.resolution,
+    distance_range.second / map_info.resolution};
 
   std::vector<float> ranges(num_bins);
   for (size_t i = 0; i < ranges.size(); i++) {

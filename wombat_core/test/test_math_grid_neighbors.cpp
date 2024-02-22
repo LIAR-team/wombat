@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 
 #include <functional>
-#include <iostream>
 #include <vector>
 
 #include "wombat_core/grid/coordinates.hpp"

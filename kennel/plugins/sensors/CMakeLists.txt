@@ -7,7 +7,6 @@ target_sources(
   PRIVATE
     bumper.cpp
     lidar_2d.cpp
-    lidar_2dsimplified.cpp
 )
 target_link_libraries(
   kennel_sensor_plugins

@@ -6,7 +6,9 @@
 #include <memory>
 
 #include "boost/geometry.hpp"
-#include "boost/geometry/geometries/linestring.hpp"
+#include "boost/geometry/algorithms/append.hpp"
+#include "boost/geometry/algorithms/simplify.hpp"
+#include "boost/geometry/geometries/polygon.hpp"
 #include "boost/geometry/geometries/point_xy.hpp"
 
 #include "tf2/utils.h"
@@ -20,41 +22,8 @@
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/math/transformations.hpp"
 
-#include <iostream>
-
 namespace kennel
 {
-
-static wombat_core::grid_coord_t world_pt_to_grid_coord_enforce_bounds(
-  const geometry_msgs::msg::Point & world_pt,
-  const wombat_core::MapMetaDataAdapter & map_info)
-{
-  // Here we avoid doing any math to wx,wy before comparing them to
-  // the bounds, so their values can go out to the max and min values
-  // of double floating point.
-  wombat_core::grid_coord_t::Scalar mx = 0;
-  wombat_core::grid_coord_t::Scalar my = 0;
-
-  if (world_pt.x < map_info.origin.position.x) {
-    mx = 0;
-  } else if (world_pt.x > map_info.resolution * map_info.grid_size.x() + map_info.origin.position.x) {
-    mx = map_info.grid_size.x() - 1;
-  } else {
-    mx = static_cast<int>((world_pt.x - map_info.origin.position.x) / map_info.resolution);
-  }
-
-  if (world_pt.y < map_info.origin.position.y) {
-    my = 0;
-  } else if (world_pt.y > map_info.resolution * map_info.grid_size.y() + map_info.origin.position.y) {
-    my = map_info.grid_size.y() - 1;
-  } else {
-    my = static_cast<int>((world_pt.y - map_info.origin.position.y) / map_info.resolution);
-  }
-
-  return wombat_core::grid_coord_t{
-    mx, my
-  };
-}
 
 /**
  * @brief Positioner plugin that maps the local area surrounding
@@ -109,12 +78,12 @@ private:
     using xy = boost::geometry::model::d2::point_xy<double>;
     boost::geometry::model::polygon<xy> poly;
     boost::geometry::append(poly, xy{cur_pose.position.x, cur_pose.position.y});
-    for (size_t i = 0; i < ranges.size(); i ++) {
-        const double this_angle = laser_yaw + angle_min + angle_increment * static_cast<double>(i);
-        geometry_msgs::msg::Point world_pt;
-        double x = cur_pose.position.x + std::cos(this_angle) * ranges[i];
-        double y = cur_pose.position.y + std::sin(this_angle) * ranges[i];
-        boost::geometry::append(poly, xy{x, y});
+    for (size_t i = 0; i < ranges.size(); i++) {
+      const double this_angle = laser_yaw + angle_min + angle_increment * static_cast<double>(i);
+      geometry_msgs::msg::Point world_pt;
+      double x = cur_pose.position.x + std::cos(this_angle) * ranges[i];
+      double y = cur_pose.position.y + std::sin(this_angle) * ranges[i];
+      boost::geometry::append(poly, xy{x, y});
     }
     boost::geometry::append(poly, xy{cur_pose.position.x, cur_pose.position.y});
 
@@ -126,7 +95,7 @@ private:
       geometry_msgs::msg::Point pt;
       pt.x = world_pt.x();
       pt.y = world_pt.y();
-      auto grid_coord = world_pt_to_grid_coord_enforce_bounds(pt, map_info);
+      auto grid_coord = wombat_core::world_pt_to_grid_coord_enforce_bounds(pt, map_info);
       grid_polygon.push_back(grid_coord);
     }
 
@@ -171,7 +140,6 @@ private:
     return params_info;
   }
 
-  wombat_core::grid_index_t m_local_radius_grid {0};
   nav_msgs::msg::OccupancyGrid::SharedPtr m_map;
   localization_data_t m_data;
 };

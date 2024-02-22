@@ -4,6 +4,7 @@
 // Proprietary and confidential.
 
 #include <condition_variable>
+#include <iostream>
 #include <mutex>
 
 #include "rclcpp/rclcpp.hpp"

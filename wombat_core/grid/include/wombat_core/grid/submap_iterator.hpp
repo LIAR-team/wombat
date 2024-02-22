@@ -22,52 +22,58 @@
 namespace wombat_core
 {
 
-/*!
- * Iterator class to iterate through a rectangular part of the map (submap).
+/**
+ * @brief Iterator class to iterate through a rectangular part of the map (submap).
  * Before using this iterator, make sure that the requested submap is
  * actually contained in the grid map.
  */
 class SubmapIterator
 {
 public:
-  /*!
-   * Constructor.
-   * @param gridMap the grid map to iterate on.
-   * @param submapStartIndex the start index of the submap, typically top-left index.
-   * @param submapSize the size of the submap to iterate on.
+  /**
+   * @brief Constructor.
+   * @param map_info information about the grid on which to iterate
+   * @param start the start grid coord of the submap, i.e. its minimum corner
+   * @param submap_size the size of the submap to iterate on.
    */
   SubmapIterator(
     const MapMetaDataAdapter & map_info,
-    const wombat_core::grid_coord_t & start,
-    const wombat_core::grid_size_t & submap_size);
+    const grid_coord_t & start,
+    const grid_size_t & submap_size);
 
-  /*!
-   * Compare to another iterator.
-   * @return whether the current iterator points to a different address than the other one.
+  /**
+   * @brief Compare to another iterator.
+   * @param other the other iterator
+   * @return true if this iterator points to a different grid coordinate than the other one.
    */
   bool operator!=(const SubmapIterator & other) const;
 
-  /*!
-   * Dereference the iterator with const.
-   * @return the value to which the iterator is pointing.
+  /**
+   * @brief Dereference the iterator with const.
+   * @return the grid coordinate to which the iterator is pointing.
    */
   const grid_coord_t & operator*() const;
 
   // Overloading the arrow operator (->)
+
+  /**
+   * @brief Overloaded arrow operator
+   * @return the grid coordinate to which the iterator is pointing.
+   */
   grid_coord_t * operator->()
   {
     return &m_current_coord;
   }
 
-  /*!
-   * Increase the iterator to the next element.
+  /**
+   * @brief Increase the iterator to the next element.
    * @return a reference to the updated iterator.
    */
   SubmapIterator & operator++();
 
-  /*!
-   * Indicates if iterator is past end.
-   * @return true if iterator is out of scope, false if end has not been reached.
+  /**
+   * @brief Indicates if iterator is past end.
+   * @return true if iterator is out of scope
    */
   bool is_past_end() const;
 
@@ -78,8 +84,8 @@ private:
   //! Current coord.
   grid_coord_t m_current_coord;
 
-  //! Top left coord of the submap.
-  grid_coord_t m_submap_top_left_coord;
+  //! Minimum coord of the submap.
+  grid_coord_t m_submap_min_coord;
 
   //! Current index in the submap.
   grid_coord_t m_current_submap_coord;

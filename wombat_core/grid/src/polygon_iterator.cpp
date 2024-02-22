@@ -1,3 +1,8 @@
+// Copyright 2024 Soragna Alberto.
+// All Rights Reserved.
+// Unauthorized copying via any medium is strictly prohibited.
+// Proprietary and confidential.
+
 /*
  * PolygonIterator.hpp
  *
@@ -40,7 +45,7 @@ static std::pair<grid_coord_t, grid_coord_t> get_bounding_box(
 PolygonIterator::PolygonIterator(
   const MapMetaDataAdapter & map_info,
   const std::vector<grid_coord_t> & polygon)
-: polygon_(polygon)
+: m_polygon(polygon)
 {
   auto bbox = get_bounding_box(polygon);
   assert(grid_coord_is_valid(bbox.first, map_info));
@@ -48,29 +53,29 @@ PolygonIterator::PolygonIterator(
 
   auto bbox_size = get_grid_size_from_corners(bbox.first, bbox.second);
 
-  internalIterator_ = std::make_unique<SubmapIterator>(map_info, bbox.first, bbox_size);
-  assert(!internalIterator_->is_past_end());
+  m_internal_iterator = std::make_unique<SubmapIterator>(map_info, bbox.first, bbox_size);
+  assert(!m_internal_iterator->is_past_end());
   if (!isInside()) {++(*this);}
 }
 
 bool PolygonIterator::operator!=(const PolygonIterator & other) const
 {
-  return internalIterator_ != other.internalIterator_;
+  return m_internal_iterator != other.m_internal_iterator;
 }
 
 const grid_coord_t & PolygonIterator::operator*() const
 {
-  return *(*internalIterator_);
+  return *(*m_internal_iterator);
 }
 
 PolygonIterator & PolygonIterator::operator++()
 {
-  ++(*internalIterator_);
-  if (internalIterator_->is_past_end()) {
+  ++(*m_internal_iterator);
+  if (m_internal_iterator->is_past_end()) {
     return *this;
   }
 
-  for (; !internalIterator_->is_past_end(); ++(*internalIterator_)) {
+  for (; !m_internal_iterator->is_past_end(); ++(*m_internal_iterator)) {
     if (isInside()) {
       break;
     }
@@ -81,12 +86,12 @@ PolygonIterator & PolygonIterator::operator++()
 
 bool PolygonIterator::is_past_end() const
 {
-  return internalIterator_->is_past_end();
+  return m_internal_iterator->is_past_end();
 }
 
 bool PolygonIterator::isInside() const
 {
-  return point_in_polygon(*(*internalIterator_), polygon_);
+  return point_in_polygon(*(*m_internal_iterator), m_polygon);
 }
 
-}  // namespace grid_map
+}  // namespace wombat_core

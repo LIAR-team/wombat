@@ -25,4 +25,4 @@ bool point_in_polygon(const PointT & point, const std::vector<PointT> & polygon)
   return static_cast<bool>(cross % 2);
 }
 
-}
+}  // namespace wombat_core

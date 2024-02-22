@@ -11,8 +11,6 @@
 #include "wombat_core/grid/raytrace.hpp"
 #include "wombat_core/math/utils.hpp"
 
-#include <iostream>
-
 namespace wombat_core
 {
 

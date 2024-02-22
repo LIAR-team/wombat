@@ -56,22 +56,20 @@ private:
     if (!maybe_cur_grid_coord) {
       throw std::runtime_error("Failed to convert world pose to grid coord");
     }
+    auto radius_coord = wombat_core::grid_coord_t{m_local_radius_grid, m_local_radius_grid};
 
-    auto top_left_corner = wombat_core::grid_coord_bounded_diff(
-      *maybe_cur_grid_coord,
-      wombat_core::grid_coord_t{m_local_radius_grid, m_local_radius_grid});
-    auto bottom_right_corner = wombat_core::grid_coord_bounded_sum(
-      *maybe_cur_grid_coord,
-      wombat_core::grid_coord_t{m_local_radius_grid, m_local_radius_grid},
-      map_info);
+    wombat_core::grid_coord_t min_corner = *maybe_cur_grid_coord - radius_coord;
+    min_corner = wombat_core::enfouce_bounds_on_grid_coord(min_corner, map_info);
+    wombat_core::grid_coord_t max_corner = *maybe_cur_grid_coord + radius_coord;
+    max_corner = wombat_core::enfouce_bounds_on_grid_coord(max_corner, map_info);
 
     auto submap_size = wombat_core::get_grid_size_from_corners(
-      top_left_corner,
-      bottom_right_corner);
+      min_corner,
+      max_corner);
 
     auto submap_iterator = wombat_core::SubmapIterator(
       map_info,
-      top_left_corner,
+      min_corner,
       submap_size);
     for (; !submap_iterator.is_past_end(); ++submap_iterator) {
       auto maybe_idx = wombat_core::grid_coord_to_index(*submap_iterator, map_info);

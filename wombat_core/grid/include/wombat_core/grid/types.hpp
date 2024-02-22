@@ -12,12 +12,13 @@
 namespace wombat_core
 {
 
-/** @brief The index to access elements on a grid */
+/** @brief The index to access elements on a grid when represented as a linear vector */
 using grid_index_t = size_t;
 
-/** @brief The coordinates of a cell on a grid */
+/** @brief The coordinates of a cell on a 2D grid */
 using grid_coord_t = Eigen::Array2i;
 
+/** @brief size of each dimension of a 2D grid */
 using grid_size_t = grid_coord_t;
 
 class MapMetaDataAdapter

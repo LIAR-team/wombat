@@ -5,7 +5,4 @@
   <class type="kennel::Bumper" base_class_type="kennel::SensorInterface">
     <description>Single-point bumper sensor plugin.</description>
   </class>
-  <class type="kennel::Lidar2DSimplified" base_class_type="kennel::SensorInterface">
-    <description>Single-point bumper sensor plugin.</description>
-  </class>
 </library>
