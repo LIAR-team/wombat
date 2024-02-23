@@ -19,6 +19,7 @@
 
 #include "kennel/kennel_gtest/single_robot_fixture.hpp"
 #include "kennel/kennel_gtest/utils.hpp"
+#include "wombat_core/math/angles.hpp"
 
 
 void TestKennelSingleRobot::SetUp()
@@ -27,12 +28,6 @@ void TestKennelSingleRobot::SetUp()
 
   // Setup node
   node = std::make_shared<rclcpp::Node>("test_node");
-  bumper_subscription = node->create_subscription<wombat_msgs::msg::Bumper>(
-    "/my_robot/bumper",
-    rclcpp::SensorDataQoS(),
-    [this](wombat_msgs::msg::Bumper::ConstSharedPtr msg) {
-      is_bumped = msg->is_pressed;
-    });
 
   m_logger_timer = node->create_wall_timer(
     std::chrono::milliseconds(250),
@@ -75,6 +70,13 @@ void TestKennelSingleRobot::TearDown()
 
 void TestKennelSingleRobot::setup_kennel(const rclcpp::ParameterMap & parameter_map)
 {
+  for (const auto & node_map : parameter_map) {
+    std::cout << "Node: " << node_map.first << ":" << std::endl;
+    for (const auto & param : node_map.second) {
+      std::cout << "  - " << param.get_name() << " " << param.value_to_string() << std::endl;
+    }
+  }
+
   // Setup Kennel
   kennel = std::make_unique<kennel::Kennel>();
   kennel->configure(parameter_map);
@@ -117,22 +119,9 @@ void TestKennelSingleRobot::drive_until_condition(
   const geometry_msgs::msg::Twist & cmd,
   std::function<bool()> predicate,
   std::chrono::milliseconds timeout,
-  const std::string topic_name)
+  const std::string & topic_name)
 {
-  auto pub_it = publishers.find(topic_name);
-  if (pub_it == publishers.end()) {
-    auto new_pub = node->create_publisher<geometry_msgs::msg::Twist>(topic_name, 10);
-    auto insert_result = publishers.insert(std::make_pair(topic_name, new_pub));
-    if (!insert_result.second) {
-      assert(0 && "Failed to insert vel cmd publisher");
-    }
-    pub_it = insert_result.first;
-  }
-  auto pub = pub_it->second;
-  auto vel_pub = std::dynamic_pointer_cast<rclcpp::Publisher<geometry_msgs::msg::Twist>>(pub);
-  if (!vel_pub) {
-    assert(0 && "Failed to dynamic cast publisher");
-  }
+  auto vel_pub = this->get_publisher<geometry_msgs::msg::Twist>(topic_name);
 
   auto start_time = std::chrono::steady_clock::now();
   while (
@@ -143,6 +132,33 @@ void TestKennelSingleRobot::drive_until_condition(
     vel_pub->publish(cmd);
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
+}
+
+double TestKennelSingleRobot::rotate_angle(
+  double target_angle,
+  const geometry_msgs::msg::Twist & rotate_cmd_vel,
+  std::chrono::milliseconds timeout,
+  const std::string & topic_name)
+{
+  double accumulated_rotation = 0.0;
+  geometry_msgs::msg::TransformStamped last_pose;
+  get_latest_base_tf(last_pose);
+  drive_until_condition(
+    rotate_cmd_vel,
+    [this, &target_angle, &last_pose, &accumulated_rotation]() {
+      geometry_msgs::msg::TransformStamped robot_pose;
+      get_latest_base_tf(robot_pose);
+      const double delta_yaw = wombat_core::angles_difference(
+        tf2::getYaw(robot_pose.transform.rotation),
+        tf2::getYaw(last_pose.transform.rotation));
+      last_pose = robot_pose;
+      accumulated_rotation += delta_yaw;
+      return std::abs(accumulated_rotation) > target_angle;
+    },
+    timeout,
+    topic_name);
+
+  return accumulated_rotation;
 }
 
 nav_msgs::msg::OccupancyGrid::ConstSharedPtr

@@ -6,21 +6,45 @@
 #pragma once
 
 #include <string>
+#include <utility>
 
 #include "rclcpp/rclcpp.hpp"
 
 namespace kennel
 {
-namespace config
+
+static constexpr auto DEFAULT_ROBOT_NAME = "/my_robot/robot_sim";
+
+class KennelParamsConfig
 {
+public:
+  KennelParamsConfig() = default;
 
-bool add_bumper_to_robot_params(
-  rclcpp::ParameterMap & parameter_map,
-  const std::string & fully_qualified_node_name = "/my_robot/robot_sim");
+  explicit KennelParamsConfig(const std::string & yaml_file_path)
+  {
+    m_parameter_map = rclcpp::parameter_map_from_yaml_file(yaml_file_path);
+  }
 
-bool add_lidar2d_to_robot_params(
-  rclcpp::ParameterMap & parameter_map,
-  const std::string & fully_qualified_node_name = "/my_robot/robot_sim");
+  explicit KennelParamsConfig(rclcpp::ParameterMap parameter_map)
+  : m_parameter_map(std::move(parameter_map))
+  {}
 
-}  // namespace config
+  KennelParamsConfig &
+  set_map_yaml_filename(const std::string & yaml_file);
+
+  KennelParamsConfig &
+  add_robot(const std::string & robot_name);
+
+  KennelParamsConfig &
+  add_bumper_to_robot(const std::string & robot_name = DEFAULT_ROBOT_NAME);
+
+  KennelParamsConfig &
+  add_lidar2d_to_robot(const std::string & robot_name = DEFAULT_ROBOT_NAME);
+
+  rclcpp::ParameterMap get() const;
+
+private:
+  rclcpp::ParameterMap m_parameter_map;
+};
+
 }  // namespace kennel

@@ -132,32 +132,16 @@ TEST_F(EmptyWorldTest, turn_in_place)
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.w, 1.0);
 
+  const double goal_rotation = wombat_core::PI;
   geometry_msgs::msg::Twist rotate_cmd_vel;
   rotate_cmd_vel.angular.z = 2.0;
-  const double goal_rotation = wombat_core::PI;
-  double accumulated_rotation = 0.0;
-  geometry_msgs::msg::TransformStamped last_pose;
-  get_latest_base_tf(last_pose);
-  drive_until_condition(
-    rotate_cmd_vel,
-    [this, &goal_rotation, &last_pose, &accumulated_rotation]()
-    {
-      geometry_msgs::msg::TransformStamped pose;
-      get_latest_base_tf(pose);
-      const double delta_yaw = wombat_core::angles_difference(
-        tf2::getYaw(pose.transform.rotation),
-        tf2::getYaw(last_pose.transform.rotation));
-      last_pose = pose;
-      accumulated_rotation += delta_yaw;
-      return std::abs(accumulated_rotation) > goal_rotation;
-    },
-    std::chrono::seconds(10));
+  double rotation = rotate_angle(goal_rotation, rotate_cmd_vel, std::chrono::seconds(10));
 
   get_latest_base_tf(robot_pose);
   EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
   EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
-  EXPECT_GE(std::abs(accumulated_rotation), goal_rotation);
+  EXPECT_GE(std::abs(rotation), goal_rotation);
 }
 
 int main(int argc, char ** argv)

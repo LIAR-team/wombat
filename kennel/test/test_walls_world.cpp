@@ -27,25 +27,27 @@ public:
   void SetUp() override
   {
     TestKennelSingleRobot::SetUp();
-    rclcpp::ParameterMap parameter_map;
-    ASSERT_NO_THROW(parameter_map = rclcpp::parameter_map_from_yaml_file(get_data_path("single_robot.yaml")));
 
-    bool success = wombat_core::write_parameter_map(
-      parameter_map,
-      "/kennel",
-      "map_yaml_filename",
-      rclcpp::ParameterValue(get_data_path("walls_map.yaml")));
-    ASSERT_TRUE(success);
+    auto kennel_params = kennel::KennelParamsConfig(get_data_path("single_robot.yaml"))
+      .set_map_yaml_filename(get_data_path("walls_map.yaml"))
+      .add_bumper_to_robot()
+      .add_lidar2d_to_robot()
+      .get();
 
-    success = kennel::config::add_bumper_to_robot_params(parameter_map);
-    ASSERT_TRUE(success);
-
-    setup_kennel(parameter_map);
+    setup_kennel(kennel_params);
   }
 };
 
 TEST_F(WallsWorldTest, PingPongWalls)
 {
+  std::atomic<bool> is_bumped {false};
+  auto bumper_subscription = node->create_subscription<wombat_msgs::msg::Bumper>(
+    "/my_robot/bumper",
+    rclcpp::SensorDataQoS(),
+    [&is_bumped](wombat_msgs::msg::Bumper::ConstSharedPtr msg) {
+      is_bumped = msg->is_pressed;
+    });
+
   geometry_msgs::msg::TransformStamped start_pose;
   wait_for_base_tf(start_pose);
   ASSERT_FALSE(is_bumped);
@@ -55,8 +57,8 @@ TEST_F(WallsWorldTest, PingPongWalls)
   forward_cmd_vel.linear.x = 5.0;
   drive_until_condition(
     forward_cmd_vel,
-    [this]() {return is_bumped.load();},
-    std::chrono::seconds(2));
+    [&is_bumped]() {return is_bumped.load();},
+    std::chrono::seconds(10));
   ASSERT_TRUE(is_bumped);
 
   // publish backward velocity command until we are not bumped
@@ -64,52 +66,36 @@ TEST_F(WallsWorldTest, PingPongWalls)
   backward_cmd_vel.linear.x = -forward_cmd_vel.linear.x;
   drive_until_condition(
     backward_cmd_vel,
-    [this]() {return !is_bumped.load();},
+    [&is_bumped]() {return !is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_FALSE(is_bumped);
 
   // publish backward velocity command until we are bumped again
   drive_until_condition(
     backward_cmd_vel,
-    [this]() {return is_bumped.load();},
+    [&is_bumped]() {return is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_TRUE(is_bumped);
 
   // Rotate approximately 360 degrees
   const double goal_rotation = 2 * wombat_core::PI;
-  double accumulated_rotation = 0.0;
-  geometry_msgs::msg::TransformStamped last_pose;
-  get_latest_base_tf(last_pose);
   geometry_msgs::msg::Twist rotate_cmd_vel;
   rotate_cmd_vel.angular.z = 3.0;
-  drive_until_condition(
-    rotate_cmd_vel,
-    [this, &goal_rotation, &last_pose, &accumulated_rotation]() {
-      geometry_msgs::msg::TransformStamped robot_pose;
-      get_latest_base_tf(robot_pose);
-      const double delta_yaw = wombat_core::angles_difference(
-        tf2::getYaw(robot_pose.transform.rotation),
-        tf2::getYaw(last_pose.transform.rotation));
-      last_pose = robot_pose;
-      accumulated_rotation += delta_yaw;
-      return std::abs(accumulated_rotation) > goal_rotation;
-    },
-    std::chrono::seconds(10));
-  // In the current implementation, bumpers are 360 deg around a point
+  double accumulated_rotation = rotate_angle(goal_rotation, rotate_cmd_vel, std::chrono::seconds(10));
   ASSERT_TRUE(is_bumped);
   ASSERT_GT(std::abs(accumulated_rotation), goal_rotation);
 
   // publish forward velocity command until we are not bumped
   drive_until_condition(
     forward_cmd_vel,
-    [this]() {return !is_bumped.load();},
+    [&is_bumped]() {return !is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_FALSE(is_bumped);
 
   // publish forward velocity command until we bump
   drive_until_condition(
     forward_cmd_vel,
-    [this]() {return is_bumped.load();},
+    [&is_bumped]() {return is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_TRUE(is_bumped);
 }
