@@ -89,24 +89,22 @@ grid_coord_t world_pt_to_grid_coord_enforce_bounds(
   // of double floating point.
   grid_coord_t grid_coord;
 
-  if (world_pt.x < map_info.origin.position.x) {
+  const auto & origin = map_info.origin.position;
+
+  if (world_pt.x < origin.x) {
     grid_coord.x() = 0;
-  } else if (world_pt.x >
-    map_info.resolution * static_cast<double>(map_info.grid_size.x()) + map_info.origin.position.x)
-  {
+  } else if (world_pt.x > map_info.resolution * static_cast<double>(map_info.grid_size.x()) + origin.x) {
     grid_coord.x() = map_info.grid_size.x() - 1;
   } else {
-    grid_coord.x() = static_cast<int>((world_pt.x - map_info.origin.position.x) / map_info.resolution);
+    grid_coord.x() = static_cast<int>((world_pt.x - origin.x) / map_info.resolution);
   }
 
-  if (world_pt.y < map_info.origin.position.y) {
+  if (world_pt.y < origin.y) {
     grid_coord.y() = 0;
-  } else if (world_pt.y >
-    map_info.resolution * static_cast<double>(map_info.grid_size.y()) + map_info.origin.position.y)
-  {
+  } else if (world_pt.y > map_info.resolution * static_cast<double>(map_info.grid_size.y()) + origin.y) {
     grid_coord.y() = map_info.grid_size.y() - 1;
   } else {
-    grid_coord.y() = static_cast<int>((world_pt.y - map_info.origin.position.y) / map_info.resolution);
+    grid_coord.y() = static_cast<int>((world_pt.y - origin.y) / map_info.resolution);
   }
 
   return grid_coord;

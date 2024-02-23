@@ -4,8 +4,8 @@ target_sources(
   PRIVATE
     src/plugin_interface/map_positioner.cpp
     src/plugin_interface/plugin_base.cpp
-    src/sensors/range_projection.cpp
     src/collisions.cpp
+    src/range_projection.cpp
 )
 target_include_directories(
   common

@@ -16,7 +16,7 @@
 
 #include "kennel/common/plugin_interface/map_positioner.hpp"
 #include "kennel/common/types.hpp"
-#include "kennel/common/sensors/range_projection.hpp"
+#include "kennel/common/range_projection.hpp"
 #include "wombat_core/grid/coordinates.hpp"
 #include "wombat_core/grid/polygon_iterator.hpp"
 #include "wombat_core/math/angles.hpp"

@@ -7,7 +7,6 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "kennel/common/sensors/range_projection.hpp"
 #include "kennel/mobile_base/mobile_base.hpp"
 #include "kennel/robot_sim.hpp"
 #include "wombat_core/ros2/parameters.hpp"
@@ -33,7 +32,6 @@ RobotSim::RobotSim(const rclcpp::NodeOptions & options)
 
   RCLCPP_INFO(this->get_logger(), "Robot simulation constructed");
 }
-
 
 bool RobotSim::load_plugins()
 {

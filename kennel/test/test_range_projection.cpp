@@ -7,13 +7,13 @@
 
 #include <memory>
 
-#include "kennel/common/sensors/range_projection.hpp"
+#include "kennel/common/range_projection.hpp"
 #include "wombat_core/grid/coordinates.hpp"
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/ros2/parameters.hpp"
 
-#include "single_robot_fixture.hpp"
-#include "utils.hpp"
+#include "kennel/kennel_gtest/single_robot_fixture.hpp"
+#include "kennel/kennel_gtest/utils.hpp"
 
 class WallsWorldTest : public TestKennelSingleRobot
 {
@@ -24,7 +24,7 @@ public:
     rclcpp::ParameterMap parameter_map;
     ASSERT_NO_THROW(parameter_map = rclcpp::parameter_map_from_yaml_file(get_data_path("single_robot.yaml")));
 
-    bool success = wombat_core::update_parameter_map(
+    bool success = wombat_core::write_parameter_map(
       parameter_map,
       "/kennel",
       "map_yaml_filename",

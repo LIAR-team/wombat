@@ -17,8 +17,9 @@
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/ros2/parameters.hpp"
 
-#include "single_robot_fixture.hpp"
-#include "utils.hpp"
+#include "kennel/kennel_gtest/robot_config.hpp"
+#include "kennel/kennel_gtest/single_robot_fixture.hpp"
+#include "kennel/kennel_gtest/utils.hpp"
 
 class WallsWorldTest : public TestKennelSingleRobot
 {
@@ -29,11 +30,14 @@ public:
     rclcpp::ParameterMap parameter_map;
     ASSERT_NO_THROW(parameter_map = rclcpp::parameter_map_from_yaml_file(get_data_path("single_robot.yaml")));
 
-    bool success = wombat_core::update_parameter_map(
+    bool success = wombat_core::write_parameter_map(
       parameter_map,
       "/kennel",
       "map_yaml_filename",
       rclcpp::ParameterValue(get_data_path("walls_map.yaml")));
+    ASSERT_TRUE(success);
+
+    success = kennel::config::add_bumper_to_robot_params(parameter_map);
     ASSERT_TRUE(success);
 
     setup_kennel(parameter_map);
@@ -52,7 +56,7 @@ TEST_F(WallsWorldTest, PingPongWalls)
   drive_until_condition(
     forward_cmd_vel,
     [this]() {return is_bumped.load();},
-    std::chrono::seconds(10));
+    std::chrono::seconds(2));
   ASSERT_TRUE(is_bumped);
 
   // publish backward velocity command until we are not bumped

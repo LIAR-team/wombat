@@ -7,17 +7,17 @@ target_link_libraries(test_costmap wombat_core::costmap)
 
 ### GRID
 
-ament_add_gtest(test_math_grid_boundary_projection test_math_grid_boundary_projection.cpp)
-target_link_libraries(test_math_grid_boundary_projection wombat_core::grid)
+ament_add_gtest(test_grid_boundary_projection test_grid_boundary_projection.cpp)
+target_link_libraries(test_grid_boundary_projection wombat_core::grid)
 
-ament_add_gtest(test_math_grid_coordinates test_math_grid_coordinates.cpp)
-target_link_libraries(test_math_grid_coordinates wombat_core::grid)
+ament_add_gtest(test_grid_coordinates test_grid_coordinates.cpp)
+target_link_libraries(test_grid_coordinates wombat_core::grid)
 
-ament_add_gtest(test_math_grid_neighbors test_math_grid_neighbors.cpp)
-target_link_libraries(test_math_grid_neighbors wombat_core::grid)
+ament_add_gtest(test_grid_neighbors test_grid_neighbors.cpp)
+target_link_libraries(test_grid_neighbors wombat_core::grid)
 
-ament_add_gtest(test_math_grid_raytrace test_math_grid_raytrace.cpp)
-target_link_libraries(test_math_grid_raytrace wombat_core::grid)
+ament_add_gtest(test_grid_raytrace test_grid_raytrace.cpp)
+target_link_libraries(test_grid_raytrace wombat_core::grid)
 
 ### MATH
 

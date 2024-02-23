@@ -9,7 +9,7 @@
 #include "tf2/utils.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
-#include "kennel/common/sensors/range_projection.hpp"
+#include "kennel/common/range_projection.hpp"
 #include "kennel/common/plugin_interface/sensor_publisher.hpp"
 #include "kennel/common/types.hpp"
 #include "wombat_core/math/angles.hpp"

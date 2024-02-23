@@ -28,6 +28,7 @@ wombat_package()
 add_subdirectory(bringup)
 add_subdirectory(common)
 add_subdirectory(kennel)
+add_subdirectory(kennel_gtest)
 add_subdirectory(plugins)
 
 if(BUILD_TESTING)

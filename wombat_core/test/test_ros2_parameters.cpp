@@ -71,7 +71,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
   ASSERT_EQ(param, std::nullopt);
 
   // Set param1 for node 1
-  result = wombat_core::update_parameter_map(
+  result = wombat_core::write_parameter_map(
     parameter_map,
     node1_fqn,
     param1_name,
@@ -83,7 +83,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
   EXPECT_EQ(param->as_int(), 1);
 
   // Override param1 for node 1
-  result = wombat_core::update_parameter_map(
+  result = wombat_core::write_parameter_map(
     parameter_map,
     node1_fqn,
     param1_name,
@@ -95,7 +95,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
   EXPECT_EQ(param->as_int(), 2);
 
   // Try to set again param1 for node 1 but fail without override
-  result = wombat_core::update_parameter_map(
+  result = wombat_core::write_parameter_map(
     parameter_map,
     node1_fqn,
     param1_name,
@@ -107,7 +107,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
   EXPECT_EQ(param->as_int(), 2);
 
   // Set param2 for node2
-  result = wombat_core::update_parameter_map(
+  result = wombat_core::write_parameter_map(
     parameter_map,
     node2_fqn,
     param2_name,
@@ -119,7 +119,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
   EXPECT_EQ(param->as_int(), 1);
 
   // Override param2 for
-  result = wombat_core::update_parameter_map(
+  result = wombat_core::write_parameter_map(
     parameter_map,
     node2_fqn,
     param2_name,
@@ -131,7 +131,7 @@ TEST(TestRos2Parameters, UpdateParameterMap)
   EXPECT_EQ(param->as_int(), 2);
 
   // Set param2 for node1
-  result = wombat_core::update_parameter_map(
+  result = wombat_core::write_parameter_map(
     parameter_map,
     node1_fqn,
     param2_name,
@@ -158,14 +158,14 @@ TEST(TestRos2Parameters, SetParameterMap)
 
   rclcpp::ParameterMap parameter_map;
   bool result = false;
-  result = wombat_core::update_parameter_map(
+  result = wombat_core::write_parameter_map(
     parameter_map,
     node->get_fully_qualified_name(),
     param1_name,
     rclcpp::ParameterValue(1),
     true);
   EXPECT_TRUE(result);
-  result = wombat_core::update_parameter_map(
+  result = wombat_core::write_parameter_map(
     parameter_map,
     node->get_fully_qualified_name(),
     param1_name,

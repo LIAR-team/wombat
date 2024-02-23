@@ -8,7 +8,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "kennel/kennel.hpp"
-#include "utils.hpp"
+#include "kennel/kennel_gtest/utils.hpp"
 
 class TestKennelRos : public testing::Test
 {

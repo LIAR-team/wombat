@@ -9,13 +9,36 @@
 #include "tf2/utils.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
-#include "kennel/common/sensors/range_projection.hpp"
+#include "kennel/common/range_projection.hpp"
 #include "wombat_core/math/geometry_point.hpp"
 #include "wombat_core/grid/coordinates.hpp"
 #include "wombat_core/grid/raytrace.hpp"
 
 namespace kennel
 {
+
+static wombat_core::grid_coord_t bound_coord_with_projection(
+  const wombat_core::grid_coord_t & grid_coord,
+  double angle,
+  const wombat_core::grid_coord_t & origin_coord,
+  const wombat_core::MapMetaDataAdapter & map_info)
+{
+  if (wombat_core::grid_coord_is_valid(grid_coord, map_info)) {
+    return grid_coord;
+  }
+
+  if (!wombat_core::grid_coord_is_valid(origin_coord, map_info)) {
+    throw std::runtime_error("Origin coord must be valid for projection");
+  }
+  auto maybe_boundary_coord = wombat_core::project_to_grid_boundary(
+    origin_coord,
+    map_info,
+    angle);
+  if (!maybe_boundary_coord) {
+    throw std::runtime_error("Failed to project grid coord");
+  }
+  return *maybe_boundary_coord;
+}
 
 std::vector<float> compute_laser_ranges(
   const nav_msgs::msg::OccupancyGrid & map,
@@ -68,16 +91,7 @@ std::vector<float> compute_laser_ranges(
       maybe_laser_coord->x() + std::cos(this_angle) * grid_range.max,
       maybe_laser_coord->y() + std::sin(this_angle) * grid_range.max,
     };
-    if (!wombat_core::grid_coord_is_valid(projected_coord, map_info)) {
-      auto maybe_boundary_coord = wombat_core::project_to_grid_boundary(
-        *maybe_laser_coord,
-        map_info,
-        this_angle);
-      if (!maybe_boundary_coord) {
-        throw std::runtime_error("Failed to project laser coord");
-      }
-      projected_coord = *maybe_boundary_coord;
-    }
+    projected_coord = bound_coord_with_projection(projected_coord, this_angle, *maybe_laser_coord, map_info);
 
     // Raytrace between laser coord and boundary coord
     auto last_touched_index = *maybe_laser_index;
@@ -92,7 +106,8 @@ std::vector<float> compute_laser_ranges(
       },
       grid_range);
 
-    // Select a range end coordinate: either the end point or the obstacle (if any)
+    // The last touched index represents the last visitable cell, being it an obstacle,
+    // the end of the grid or the end of the range.
     const auto maybe_last_touched_coord = wombat_core::grid_index_to_coord(last_touched_index, map_info);
     if (!maybe_last_touched_coord) {
       throw std::runtime_error("Failed to compute last touched grid coordinate");
