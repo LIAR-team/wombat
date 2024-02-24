@@ -31,7 +31,7 @@ class LineIterator
 public:
   /*!
    * Constructor.
-   * @param gridMap the grid map to iterate on.
+   * @param map_info information about the grid to iterate on.
    * @param start the starting index of the line.
    * @param end the ending index of the line.
    */
@@ -40,9 +40,10 @@ public:
     const wombat_core::grid_coord_t & start,
     const wombat_core::grid_coord_t & end);
 
-  /*!
-   * Compare to another iterator.
-   * @return whether the current iterator points to a different address than the other one.
+  /**
+   * @brief Compare to another iterator.
+   * @param other the other iterator
+   * @return true if this iterator points to a different grid coordinate than the other one.
    */
   bool operator!=(const LineIterator & other) const;
 

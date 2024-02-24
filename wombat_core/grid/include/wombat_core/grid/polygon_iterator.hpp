@@ -30,14 +30,15 @@ class PolygonIterator
 public:
   /*!
    * Constructor.
-   * @param gridMap the grid map to iterate on.
+   * @param map_info information about the grid to iterate on.
    * @param polygon the polygonal area to iterate on.
    */
   PolygonIterator(const MapMetaDataAdapter & map_info, const std::vector<grid_coord_t> & polygon);
 
-  /*!
-   * Compare to another iterator.
-   * @return whether the current iterator points to a different address than the other one.
+  /**
+   * @brief Compare to another iterator.
+   * @param other the other iterator
+   * @return true if this iterator points to a different grid coordinate than the other one.
    */
   bool operator!=(const PolygonIterator & other) const;
 
