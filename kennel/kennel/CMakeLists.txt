@@ -5,6 +5,7 @@ target_sources(
     src/mobile_base/ground_truth_manager.cpp
     src/mobile_base/mobile_base.cpp
     src/kennel.cpp
+    src/sensors_manager.cpp
     src/sim_time_manager.cpp
     src/robot_sim.cpp
 )

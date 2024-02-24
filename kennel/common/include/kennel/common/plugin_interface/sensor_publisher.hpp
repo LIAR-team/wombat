@@ -35,16 +35,18 @@ public:
    * @brief @sa SensorInterface::initialize_sensor
    * @param parent_node ROS 2 node loading the plugin
    * @param sensor_name name for this plugin
+   * @param params_prefix prefix to prepend to parameter declarations
    * @return true if success
    */
   bool initialize_sensor(
     rclcpp::Node * parent_node,
-    const std::string & sensor_name) override
+    const std::string & sensor_name,
+    const std::string & params_prefix) override
   {
     const bool base_success = this->initialize_plugin(
       sensor_name,
       parent_node,
-      "");
+      params_prefix);
     if (!base_success) {
       RCLCPP_WARN(this->get_logger(), "Failed to do basic setup");
       return false;

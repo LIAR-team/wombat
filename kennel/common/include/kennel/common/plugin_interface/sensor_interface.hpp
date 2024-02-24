@@ -29,11 +29,13 @@ public:
    * classes to have a constructor with no arguments.
    * @param parent_node ROS 2 node loading the plugin
    * @param sensor_name name for this plugin
+   * @param params_prefix prefix to prepend to parameter declarations
    * @return true if initialization was successful
    */
   virtual bool initialize_sensor(
     rclcpp::Node * parent_node,
-    const std::string & sensor_name) = 0;
+    const std::string & sensor_name,
+    const std::string & params_prefix) = 0;
 
   /**
    * @brief This function will be periodically called to generate sensor data.
