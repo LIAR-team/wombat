@@ -47,7 +47,7 @@ void TestKennelSingleRobot::SetUp()
     });
 
   // Setup ROS 2 executor
-  executor = std::make_unique<rclcpp::experimental::executors::EventsExecutor>();
+  executor = std::make_unique<rclcpp::executors::SingleThreadedExecutor>();
   executor->add_node(node);
   executor_thread = std::make_unique<std::thread>([this]() {executor->spin();});
 

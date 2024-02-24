@@ -121,7 +121,7 @@ TEST_P(TestSimTimeManagerRTFWithParams, MeasuredRTF)
     }
   );
 
-  rclcpp::experimental::executors::EventsExecutor executor;
+  rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
 
   bool spin_exited = false;
