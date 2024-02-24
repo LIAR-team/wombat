@@ -30,11 +30,21 @@ compose_tfs(
   const geometry_msgs::msg::TransformStamped & b_T_x_msg);
 
 /**
- * @brief Converts a pose data-structure into a transformation data structure
+ * @brief Converts a pose message data-structure into a transformation message
+ * data structure
  * @param pose the pose to convert
  * @return geometry_msgs::msg::Transform the corresponding transformation
  */
 geometry_msgs::msg::Transform pose_to_transform(
   const geometry_msgs::msg::Pose & pose);
+
+/**
+ * @brief Converts a transformation message data-structure into a pose message
+ * data-structure.
+ * @param transform the transform to convert
+ * @return geometry_msgs::msg::Pose the corresponding pose
+ */
+geometry_msgs::msg::Pose transform_to_pose(
+  const geometry_msgs::msg::Transform & transform);
 
 }  // namespace wombat_core

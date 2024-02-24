@@ -4,9 +4,6 @@ wombat_add_library(math STATIC)
 target_sources(
   math
   PRIVATE
-    src/grid/coordinates.cpp
-    src/grid/neighbors.cpp
-    src/grid/raytrace.cpp
     src/angles.cpp
     src/interpolation.cpp
     src/online_statistics.cpp
@@ -24,7 +21,6 @@ target_link_libraries(
   PUBLIC
     wombat_core::cpp_utils
     ${geometry_msgs_TARGETS}
-    ${nav_msgs_TARGETS}
   PRIVATE
     tf2::tf2
     tf2_geometry_msgs::tf2_geometry_msgs)

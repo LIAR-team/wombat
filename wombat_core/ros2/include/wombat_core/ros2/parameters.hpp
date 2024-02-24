@@ -49,6 +49,23 @@ rclcpp::ParameterValue declare_parameter_if_not_declared(
   rcl_interfaces::msg::ParameterDescriptor());
 
 /**
+ * @brief Updates a parameter map appending a new value for a list parameter
+ * This function will throw an exce
+ * @param parameter_map the map to update
+ * @param fully_qualified_node_name the fully qualified name of the node where to
+ * write the parameter
+ * @param param_name the name of the parameter
+ * @param param_value the value of the parameter
+
+ * @return true if the parameter has been written
+ */
+bool append_parameter_map(
+  rclcpp::ParameterMap & parameter_map,
+  const std::string & fully_qualified_node_name,
+  const std::string & param_name,
+  const rclcpp::ParameterValue & param_value);
+
+/**
  * @brief Updates a parameter map setting a new value for a parameter
  * @param parameter_map the map to update
  * @param fully_qualified_node_name the fully qualified name of the node where to
@@ -59,7 +76,7 @@ rclcpp::ParameterValue declare_parameter_if_not_declared(
  * set
  * @return true if the parameter has been written
  */
-bool update_parameter_map(
+bool write_parameter_map(
   rclcpp::ParameterMap & parameter_map,
   const std::string & fully_qualified_node_name,
   const std::string & param_name,

@@ -12,7 +12,7 @@
 #include "kennel/common/collisions.hpp"
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "wombat_control/models/diff_drive_model.hpp"
-#include "wombat_core/math/grid/coordinates.hpp"
+#include "wombat_core/grid/coordinates.hpp"
 #include "wombat_core/math/transformations.hpp"
 
 namespace kennel
@@ -29,7 +29,7 @@ GroundTruthManager::GroundTruthManager(
 {
   m_costmap = std::make_unique<wombat_core::InflatableCostmap>();
 
-  RCLCPP_INFO(m_logger, "Ground truth manager constructed");
+  RCLCPP_INFO(m_logger, "Ground truth manager constructed %s", m_ground_truth_frame_id.c_str());
 }
 
 void

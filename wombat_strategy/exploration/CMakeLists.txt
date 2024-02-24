@@ -10,7 +10,13 @@ target_include_directories(
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-target_link_libraries(exploration PUBLIC wombat_core::costmap wombat_core::math)
+target_link_libraries(
+  exploration
+  PUBLIC
+  wombat_core::costmap
+  wombat_core::grid
+  wombat_core::math
+)
 ament_target_dependencies(exploration
   PUBLIC
     geometry_msgs

@@ -1,4 +1,6 @@
 
+find_package(Boost REQUIRED)
+
 wombat_add_library(kennel_sensor_plugins SHARED)
 target_sources(
   kennel_sensor_plugins

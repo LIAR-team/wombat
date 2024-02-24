@@ -9,10 +9,11 @@
 #include "tf2/utils.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
-#include "kennel/common/sensors/range_projection.hpp"
+#include "kennel/common/range_projection.hpp"
 #include "kennel/common/plugin_interface/sensor_publisher.hpp"
 #include "kennel/common/types.hpp"
 #include "wombat_core/math/angles.hpp"
+#include "wombat_core/math/transformations.hpp"
 
 namespace kennel
 {
@@ -44,11 +45,7 @@ private:
       return nullptr;
     }
 
-    geometry_msgs::msg::Pose laser_pose;
-    laser_pose.position.x = gt_data.robot_pose.transform.translation.x;
-    laser_pose.position.y = gt_data.robot_pose.transform.translation.y;
-    laser_pose.position.z = gt_data.robot_pose.transform.translation.z;
-    laser_pose.orientation = gt_data.robot_pose.transform.rotation;
+    auto laser_pose = wombat_core::transform_to_pose(gt_data.robot_pose.transform);
 
     m_scan_msg.header.stamp = gt_data.robot_pose.header.stamp;
 

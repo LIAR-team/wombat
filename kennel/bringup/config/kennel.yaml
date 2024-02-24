@@ -21,9 +21,10 @@ my_robot:
         positioners:
           - "slam"
         slam:
-          plugin_type: "kennel::StubPositioner"
+          plugin_type: "kennel::LidarSLAMPositioner"
           frame_id: "map"
           map_topic_name: "map"
+          range_max: 2.0
       sensors:
         - "base_scan"
         - "bumper"
@@ -32,7 +33,7 @@ my_robot:
         period_ms: 500
         angle_min: -1.570796
         angle_max: 1.570796
-        range_max: 5.0
+        range_max: 4.0
         num_bins: 100
       bumper:
         plugin_type: "kennel::Bumper"

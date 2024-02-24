@@ -19,6 +19,7 @@ target_link_libraries(
   PRIVATE
     tf2::tf2
     tf2_geometry_msgs::tf2_geometry_msgs
+    wombat_core::grid
     wombat_core::math
 )
 ament_target_dependencies(control PUBLIC geometry_msgs)

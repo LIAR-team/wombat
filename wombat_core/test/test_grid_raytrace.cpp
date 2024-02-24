@@ -6,18 +6,18 @@
 #include <gtest/gtest.h>
 
 #include <functional>
-#include <iostream>
 #include <vector>
 
-#include "wombat_core/math/grid/coordinates.hpp"
-#include "wombat_core/math/grid/raytrace.hpp"
+#include "wombat_core/grid/coordinates.hpp"
+#include "wombat_core/grid/raytrace.hpp"
+
+using wombat_core::MapMetaDataAdapter;
 
 TEST(TestRaytrace, StraightLines)
 {
-  nav_msgs::msg::MapMetaData map_info;
+  MapMetaDataAdapter map_info;
   map_info.resolution = 1.0;
-  map_info.width = 10;
-  map_info.height = 10;
+  map_info.grid_size = {10, 10};
 
   // Horizontal line to the right
   size_t count = 0;
@@ -28,8 +28,8 @@ TEST(TestRaytrace, StraightLines)
     [&count, &map_info](wombat_core::grid_index_t idx) {
       auto maybe_coord = wombat_core::grid_index_to_coord(idx, map_info);
       EXPECT_NE(maybe_coord, std::nullopt);
-      EXPECT_EQ(maybe_coord->x, count);
-      EXPECT_EQ(maybe_coord->y, 4);
+      EXPECT_EQ(maybe_coord->x(), count);
+      EXPECT_EQ(maybe_coord->y(), 4);
       count++;
       return false;
     });
@@ -45,8 +45,8 @@ TEST(TestRaytrace, StraightLines)
     [&count, &map_info](wombat_core::grid_index_t idx) {
       auto maybe_coord = wombat_core::grid_index_to_coord(idx, map_info);
       EXPECT_NE(maybe_coord, std::nullopt);
-      EXPECT_EQ(maybe_coord->x, 7 - count);
-      EXPECT_EQ(maybe_coord->y, 9);
+      EXPECT_EQ(maybe_coord->x(), 7 - count);
+      EXPECT_EQ(maybe_coord->y(), 9);
       count++;
       return false;
     });
@@ -62,8 +62,8 @@ TEST(TestRaytrace, StraightLines)
     [&count, &map_info](wombat_core::grid_index_t idx) {
       auto maybe_coord = wombat_core::grid_index_to_coord(idx, map_info);
       EXPECT_NE(maybe_coord, std::nullopt);
-      EXPECT_EQ(maybe_coord->x, 0);
-      EXPECT_EQ(maybe_coord->y, count);
+      EXPECT_EQ(maybe_coord->x(), 0);
+      EXPECT_EQ(maybe_coord->y(), count);
       count++;
       return false;
     });
@@ -79,8 +79,8 @@ TEST(TestRaytrace, StraightLines)
     [&count, &map_info](wombat_core::grid_index_t idx) {
       auto maybe_coord = wombat_core::grid_index_to_coord(idx, map_info);
       EXPECT_NE(maybe_coord, std::nullopt);
-      EXPECT_EQ(maybe_coord->x, 9);
-      EXPECT_EQ(maybe_coord->y, 5 - count);
+      EXPECT_EQ(maybe_coord->x(), 9);
+      EXPECT_EQ(maybe_coord->y(), 5 - count);
       count++;
       return false;
     });
@@ -90,10 +90,9 @@ TEST(TestRaytrace, StraightLines)
 
 TEST(TestRaytrace, DiagonalLines)
 {
-  nav_msgs::msg::MapMetaData map_info;
+  MapMetaDataAdapter map_info;
   map_info.resolution = 1.0;
-  map_info.width = 10;
-  map_info.height = 10;
+  map_info.grid_size = {10, 10};
 
   // Diagonal line at 45 degrees
   size_t count = 0;
@@ -104,8 +103,8 @@ TEST(TestRaytrace, DiagonalLines)
     [&count, &map_info](wombat_core::grid_index_t idx) {
       auto maybe_coord = wombat_core::grid_index_to_coord(idx, map_info);
       EXPECT_NE(maybe_coord, std::nullopt);
-      EXPECT_EQ(maybe_coord->x, count);
-      EXPECT_EQ(maybe_coord->y, count);
+      EXPECT_EQ(maybe_coord->x(), count);
+      EXPECT_EQ(maybe_coord->y(), count);
       count++;
       return false;
     });
@@ -115,10 +114,9 @@ TEST(TestRaytrace, DiagonalLines)
 
 TEST(TestRaytrace, FoundItem)
 {
-  nav_msgs::msg::MapMetaData map_info;
+  MapMetaDataAdapter map_info;
   map_info.resolution = 1.0;
-  map_info.width = 10;
-  map_info.height = 10;
+  map_info.grid_size = {10, 10};
 
   size_t stop_count = 1;
   size_t count = 0;
@@ -138,8 +136,8 @@ TEST(TestRaytrace, FoundItem)
   EXPECT_NE(maybe_found_index, std::nullopt);
   auto maybe_found_coord = wombat_core::grid_index_to_coord(*maybe_found_index, map_info);
   EXPECT_NE(maybe_found_coord, std::nullopt);
-  EXPECT_EQ(maybe_found_coord->x, 0);
-  EXPECT_EQ(maybe_found_coord->y, 0);
+  EXPECT_EQ(maybe_found_coord->x(), 0);
+  EXPECT_EQ(maybe_found_coord->y(), 0);
 
   stop_count = 2;
   count = 0;
@@ -152,8 +150,8 @@ TEST(TestRaytrace, FoundItem)
   EXPECT_NE(maybe_found_index, std::nullopt);
   maybe_found_coord = wombat_core::grid_index_to_coord(*maybe_found_index, map_info);
   EXPECT_NE(maybe_found_coord, std::nullopt);
-  EXPECT_EQ(maybe_found_coord->x, 1);
-  EXPECT_EQ(maybe_found_coord->y, 0);
+  EXPECT_EQ(maybe_found_coord->x(), 1);
+  EXPECT_EQ(maybe_found_coord->y(), 0);
 
   stop_count = 6;
   count = 0;
@@ -166,16 +164,15 @@ TEST(TestRaytrace, FoundItem)
   EXPECT_NE(maybe_found_index, std::nullopt);
   maybe_found_coord = wombat_core::grid_index_to_coord(*maybe_found_index, map_info);
   EXPECT_NE(maybe_found_coord, std::nullopt);
-  EXPECT_EQ(maybe_found_coord->x, 5);
-  EXPECT_EQ(maybe_found_coord->y, 0);
+  EXPECT_EQ(maybe_found_coord->x(), 5);
+  EXPECT_EQ(maybe_found_coord->y(), 0);
 }
 
 TEST(TestRaytrace, OutOfBounds)
 {
-  nav_msgs::msg::MapMetaData map_info;
+  MapMetaDataAdapter map_info;
   map_info.resolution = 1.0;
-  map_info.width = 10;
-  map_info.height = 10;
+  map_info.grid_size = {10, 10};
 
   size_t count = 0;
   auto predicate = [&count](wombat_core::grid_index_t idx) {
@@ -213,10 +210,9 @@ TEST(TestRaytrace, OutOfBounds)
 
 TEST(TestRaytrace, StartPastEnd)
 {
-  nav_msgs::msg::MapMetaData map_info;
+  MapMetaDataAdapter map_info;
   map_info.resolution = 1.0;
-  map_info.width = 10;
-  map_info.height = 10;
+  map_info.grid_size = {10, 10};
 
   size_t count = 0;
   auto predicate = [&count](wombat_core::grid_index_t idx) {

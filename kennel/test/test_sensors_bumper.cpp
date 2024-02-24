@@ -17,33 +17,48 @@
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/ros2/parameters.hpp"
 
-#include "single_robot_fixture.hpp"
-#include "utils.hpp"
+#include "kennel/kennel_gtest/kennel_config.hpp"
+#include "kennel/kennel_gtest/single_robot_fixture.hpp"
+#include "kennel/kennel_gtest/utils.hpp"
 
-class WallsWorldTest : public TestKennelSingleRobot
+class BumperTest : public TestKennelSingleRobot
 {
 public:
   void SetUp() override
   {
     TestKennelSingleRobot::SetUp();
-    rclcpp::ParameterMap parameter_map;
-    ASSERT_NO_THROW(parameter_map = rclcpp::parameter_map_from_yaml_file(get_data_path("single_robot.yaml")));
 
-    bool success = wombat_core::update_parameter_map(
-      parameter_map,
-      "/kennel",
-      "map_yaml_filename",
-      rclcpp::ParameterValue(get_data_path("walls_map.yaml")));
-    ASSERT_TRUE(success);
+    bumper_subscription = node->create_subscription<wombat_msgs::msg::Bumper>(
+      "/my_robot/bumper",
+      rclcpp::SensorDataQoS(),
+      [this](wombat_msgs::msg::Bumper::ConstSharedPtr msg) {
+        if (is_bumped != msg->is_pressed) {
+          RCLCPP_INFO(
+            node->get_logger(),
+            "Bumper is now %s",
+            (msg->is_pressed ? "pressed" : "not pressed"));
+        }
+        is_bumped = msg->is_pressed;
+      });
 
-    setup_kennel(parameter_map);
+    auto kennel_params = kennel::KennelParamsConfig()
+      .set_map_yaml_filename(get_data_path("walls_map.yaml"))
+      .add_robot()
+      .set_robot_pose({1.0, 1.0, 0.0})
+      .add_bumper_to_robot()
+      .get();
+
+    setup_kennel(kennel_params);
   }
+
+  rclcpp::SubscriptionBase::SharedPtr bumper_subscription;
+  std::atomic<bool> is_bumped {false};
 };
 
-TEST_F(WallsWorldTest, PingPongWalls)
+TEST_F(BumperTest, PingPongWalls)
 {
-  geometry_msgs::msg::TransformStamped start_pose;
-  wait_for_base_tf(start_pose);
+  auto start_pose = get_latest_base_tf(std::chrono::seconds(10));
+  ASSERT_NE(start_pose, std::nullopt);
   ASSERT_FALSE(is_bumped);
 
   // publish forward velocity command until we bump
@@ -73,25 +88,9 @@ TEST_F(WallsWorldTest, PingPongWalls)
 
   // Rotate approximately 360 degrees
   const double goal_rotation = 2 * wombat_core::PI;
-  double accumulated_rotation = 0.0;
-  geometry_msgs::msg::TransformStamped last_pose;
-  get_latest_base_tf(last_pose);
   geometry_msgs::msg::Twist rotate_cmd_vel;
   rotate_cmd_vel.angular.z = 3.0;
-  drive_until_condition(
-    rotate_cmd_vel,
-    [this, &goal_rotation, &last_pose, &accumulated_rotation]() {
-      geometry_msgs::msg::TransformStamped robot_pose;
-      get_latest_base_tf(robot_pose);
-      const double delta_yaw = wombat_core::angles_difference(
-        tf2::getYaw(robot_pose.transform.rotation),
-        tf2::getYaw(last_pose.transform.rotation));
-      last_pose = robot_pose;
-      accumulated_rotation += delta_yaw;
-      return std::abs(accumulated_rotation) > goal_rotation;
-    },
-    std::chrono::seconds(10));
-  // In the current implementation, bumpers are 360 deg around a point
+  double accumulated_rotation = rotate_angle(goal_rotation, rotate_cmd_vel, std::chrono::seconds(10));
   ASSERT_TRUE(is_bumped);
   ASSERT_GT(std::abs(accumulated_rotation), goal_rotation);
 

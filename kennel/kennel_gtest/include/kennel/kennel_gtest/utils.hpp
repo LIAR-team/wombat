@@ -10,13 +10,15 @@
 #include <iostream>
 #include <string>
 
+// This variable is static in a header file on purpose
+// so that all tests including it can have their own.
 static std::filesystem::path s_data_dir;
 
 inline void setup_data_dir_path()
 {
   const auto env_var = "KENNEL_TEST_DATADIR";
   char * value = std::getenv(env_var);
-  if (value == NULL) {
+  if (value == nullptr) {
     std::cout << "The " << env_var << " environment variable is not set." << std::endl;
     assert(0);
   }

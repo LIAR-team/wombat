@@ -5,10 +5,11 @@
 
 #include <gtest/gtest.h>
 
-#include "wombat_core/math/grid/coordinates.hpp"
+#include "wombat_core/grid/coordinates.hpp"
 
 using wombat_core::grid_coord_t;
 using wombat_core::grid_index_t;
+using wombat_core::MapMetaDataAdapter;
 
 static geometry_msgs::msg::Point make_pt(double x = 0.0, double y = 0.0)
 {
@@ -18,29 +19,30 @@ static geometry_msgs::msg::Point make_pt(double x = 0.0, double y = 0.0)
   return pt;
 }
 
-static nav_msgs::msg::MapMetaData make_map_info(
+static MapMetaDataAdapter make_map_info(
   double resolution = 0.0,
-  size_t width = 0,
-  size_t height = 0,
+  int width = 0,
+  int height = 0,
   const geometry_msgs::msg::Point & origin = geometry_msgs::msg::Point())
 {
-  nav_msgs::msg::MapMetaData map_info;
+  MapMetaDataAdapter map_info;
   map_info.resolution = resolution;
-  map_info.width = width;
-  map_info.height = height;
+  map_info.grid_size = wombat_core::grid_size_t{
+    width,
+    height
+  };
   map_info.origin.position = origin;
   return map_info;
 }
 
 TEST(TestGrid, ConversionsInGridTooSmall)
 {
-  nav_msgs::msg::MapMetaData map_info;
-  map_info.resolution = 0.1;
-  map_info.width = 2;
-  map_info.height = 2;
+  auto map_info = make_map_info(0.1, 2, 2);
 
   EXPECT_NE(std::nullopt, wombat_core::grid_coord_to_index(grid_coord_t{1, 0}, map_info));
   EXPECT_EQ(std::nullopt, wombat_core::grid_coord_to_index(grid_coord_t{1, 4}, map_info));
+  EXPECT_EQ(std::nullopt, wombat_core::grid_coord_to_index(grid_coord_t{-1, 0}, map_info));
+  EXPECT_EQ(std::nullopt, wombat_core::grid_coord_to_index(grid_coord_t{1, -4}, map_info));
 
   EXPECT_NE(std::nullopt, wombat_core::grid_index_to_coord(3, map_info));
   EXPECT_EQ(std::nullopt, wombat_core::grid_index_to_coord(4, map_info));
@@ -52,6 +54,8 @@ TEST(TestGrid, ConversionsInGridTooSmall)
 
   EXPECT_NE(std::nullopt, wombat_core::grid_coord_to_world_pt(grid_coord_t{0, 1}, map_info));
   EXPECT_EQ(std::nullopt, wombat_core::grid_coord_to_world_pt(grid_coord_t{55, 112}, map_info));
+  EXPECT_EQ(std::nullopt, wombat_core::grid_coord_to_world_pt(grid_coord_t{-55, 112}, map_info));
+  EXPECT_EQ(std::nullopt, wombat_core::grid_coord_to_world_pt(grid_coord_t{55, -112}, map_info));
 
   EXPECT_NE(std::nullopt, wombat_core::world_pt_to_grid_index(make_pt(0.1, 0.1), map_info));
   EXPECT_EQ(std::nullopt, wombat_core::world_pt_to_grid_index(make_pt(-13.1, 0.1), map_info));
@@ -62,15 +66,15 @@ TEST(TestGrid, ConversionsInGridTooSmall)
 
 struct grid_conversion_data_t
 {
-  nav_msgs::msg::MapMetaData map_info;
+  MapMetaDataAdapter map_info;
   grid_index_t grid_index;
   grid_coord_t grid_coord;
   geometry_msgs::msg::Point world_pt;
 };
 
-static nav_msgs::msg::MapMetaData s_map_10x10 = make_map_info(0.1, 10, 10);
-static nav_msgs::msg::MapMetaData s_map_10x10_offset_gt0 = make_map_info(0.1, 10, 10, make_pt(1.0, 1.0));
-static nav_msgs::msg::MapMetaData s_map_10x10_offset_lt0 = make_map_info(0.1, 10, 10, make_pt(-0.5, -0.25));
+static MapMetaDataAdapter s_map_10x10 = make_map_info(0.1, 10, 10);
+static MapMetaDataAdapter s_map_10x10_offset_gt0 = make_map_info(0.1, 10, 10, make_pt(1.0, 1.0));
+static MapMetaDataAdapter s_map_10x10_offset_lt0 = make_map_info(0.1, 10, 10, make_pt(-0.5, -0.25));
 
 class TestConversionsWithParams
   : public testing::TestWithParam<grid_conversion_data_t>
@@ -97,17 +101,17 @@ TEST_P(TestConversionsWithParams, ValidConversionsAndBack)
 
   static constexpr double EPSILON = 0.001;
 
-  // Index to grid coord
+  // Coord2D to grid coord
   auto grid_coord = wombat_core::grid_index_to_coord(test_data.grid_index, test_data.map_info);
   ASSERT_NE(std::nullopt, grid_coord);
-  EXPECT_EQ(grid_coord->x, test_data.grid_coord.x);
-  EXPECT_EQ(grid_coord->y, test_data.grid_coord.y);
+  EXPECT_EQ(grid_coord->x(), test_data.grid_coord.x());
+  EXPECT_EQ(grid_coord->y(), test_data.grid_coord.y());
   // Grid coord back to index
   auto grid_index = wombat_core::grid_coord_to_index(*grid_coord, test_data.map_info);
   ASSERT_NE(std::nullopt, grid_index);
   EXPECT_EQ(*grid_index, test_data.grid_index);
 
-  // Index to world pt
+  // Coord2D to world pt
   auto world_pt = wombat_core::grid_index_to_world_pt(test_data.grid_index, test_data.map_info);
   ASSERT_NE(std::nullopt, world_pt);
   EXPECT_NEAR(world_pt->x, test_data.world_pt.x, EPSILON);
@@ -121,8 +125,8 @@ TEST_P(TestConversionsWithParams, ValidConversionsAndBack)
   // World pt to grid coord
   grid_coord = wombat_core::world_pt_to_grid_coord(test_data.world_pt, test_data.map_info);
   ASSERT_NE(std::nullopt, grid_coord);
-  EXPECT_EQ(grid_coord->x, test_data.grid_coord.x);
-  EXPECT_EQ(grid_coord->y, test_data.grid_coord.y);
+  EXPECT_EQ(grid_coord->x(), test_data.grid_coord.x());
+  EXPECT_EQ(grid_coord->y(), test_data.grid_coord.y());
   // Grid coord back to world pt
   world_pt = wombat_core::grid_coord_to_world_pt(*grid_coord, test_data.map_info);
   ASSERT_NE(std::nullopt, world_pt);

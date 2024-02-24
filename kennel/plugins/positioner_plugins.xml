@@ -1,4 +1,10 @@
 <library path="kennel_positioner_plugins">
+  <class type="kennel::LidarSLAMPositioner" base_class_type="kennel::PositionerInterface">
+    <description>LidarSLAMPositioner.</description>
+  </class>
+  <class type="kennel::LocalSLAMPositioner" base_class_type="kennel::PositionerInterface">
+    <description>LocalSLAMPositioner.</description>
+  </class>
   <class type="kennel::StubPositioner" base_class_type="kennel::PositionerInterface">
     <description>Stub positioner that forwards ground truth data in a different frame.</description>
   </class>

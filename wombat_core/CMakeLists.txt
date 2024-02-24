@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(wombat_core)
 
+find_package(Eigen3 REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -14,6 +15,7 @@ wombat_package()
 
 add_subdirectory(costmap)
 add_subdirectory(cpp)
+add_subdirectory(grid)
 add_subdirectory(math)
 add_subdirectory(ros2)
 
@@ -23,6 +25,7 @@ endif()
 
 wombat_package_install(
   EXPORT_DEPS
+    Eigen3
     geometry_msgs
     map_msgs
     nav_msgs

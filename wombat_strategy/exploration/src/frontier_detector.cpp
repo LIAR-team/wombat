@@ -7,13 +7,12 @@
 
 #include <assert.h>
 #include <algorithm>
-#include <iostream>
 #include <limits>
 #include <queue>
 
 #include "wombat_core/costmap/costmap_utils.hpp"
 #include "wombat_core/math/geometry_point.hpp"
-#include "wombat_core/math/grid/neighbors.hpp"
+#include "wombat_core/grid/neighbors.hpp"
 
 namespace wombat_strategy
 {

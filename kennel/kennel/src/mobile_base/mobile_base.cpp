@@ -39,7 +39,7 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
   const std::string control_topic_name = wombat_core::declare_parameter_if_not_declared(
     m_parent_node->get_node_parameters_interface(),
     BASE_PARAM("control_topic_name"),
-    rclcpp::ParameterValue{std::string("cmd_vel")}).get<std::string>();
+    rclcpp::ParameterValue{std::string("/cmd_vel")}).get<std::string>();
 
   m_last_cmd_vel.header.stamp = m_parent_node->now();
   m_cmd_vel_sub = m_parent_node->create_subscription<geometry_msgs::msg::Twist>(
@@ -84,6 +84,10 @@ void MobileBase::mobile_base_update()
   std::lock_guard<std::mutex> lock(m_mutex);
 
   if (m_ground_truth_map_sub && !m_gt_map) {
+    RCLCPP_WARN_THROTTLE(
+      m_logger, *m_clock, 1000,
+      "Waiting for gt map %s",
+      m_ground_truth_map_sub->get_topic_name());
     return;
   }
   kennel::localization_data_t gt_data;
@@ -104,6 +108,10 @@ void MobileBase::mobile_base_update()
       if (m_last_transforms.size() >= sorted_positioner_id) {
         sorted_tfs.push_back(m_last_transforms[sorted_positioner_id]);
       } else {
+        RCLCPP_WARN_THROTTLE(
+          m_logger, *m_clock, 1000,
+          "Failed to sort tf %d",
+          static_cast<int>(i));
         return;
       }
     }
@@ -161,10 +169,10 @@ bool MobileBase::setup_ground_truth()
     BASE_GT_PARAM("costmap_topic_name"),
     rclcpp::ParameterValue{std::string("ground_truth_costmap")}).get<std::string>();
 
-  const auto ground_truth_map_topic_name = wombat_core::declare_parameter_if_not_declared(
+  const auto input_ground_truth_map_topic_name = wombat_core::declare_parameter_if_not_declared(
     m_parent_node->get_node_parameters_interface(),
     BASE_GT_PARAM("map_topic_name"),
-    rclcpp::ParameterValue{std::string("ground_truth_map")}).get<std::string>();
+    rclcpp::ParameterValue{std::string("/ground_truth_map")}).get<std::string>();
 
   const auto robot_base_frame_id = wombat_core::declare_parameter_if_not_declared(
     m_parent_node->get_node_parameters_interface(),
@@ -189,12 +197,12 @@ bool MobileBase::setup_ground_truth()
       static_cast<int>(start_pose_2d.size()));
     return false;
   }
+  RCLCPP_INFO(m_logger, "Start pose: %f %f %f", start_pose_2d[0], start_pose_2d[1], start_pose_2d[2]);
   m_gt_manager = std::make_unique<GroundTruthManager>(
     m_parent_node,
     ground_truth_frame_id,
     control_msg_lifespan,
     robot_base_frame_id);
-
   geometry_msgs::msg::Pose start_pose;
   start_pose.position.x = start_pose_2d[0];
   start_pose.position.y = start_pose_2d[1];
@@ -202,27 +210,33 @@ bool MobileBase::setup_ground_truth()
   m_gt_manager->reset_pose(start_pose);
 
   auto map_qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
-  if (!ground_truth_map_topic_name.empty()) {
-    RCLCPP_INFO(m_logger, "Creating ground truth map subscription: %s", ground_truth_map_topic_name.c_str());
+  if (!input_ground_truth_map_topic_name.empty()) {
+    RCLCPP_INFO(m_logger, "Creating ground truth map subscription: %s", input_ground_truth_map_topic_name.c_str());
+    rclcpp::SubscriptionOptions sub_options;
+    sub_options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
     m_ground_truth_map_sub = m_parent_node->create_subscription<nav_msgs::msg::OccupancyGrid>(
-      ground_truth_map_topic_name,
+      input_ground_truth_map_topic_name,
       map_qos,
       [this](nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) {
         this->on_gt_map_received(std::move(msg));
-      });
+      },
+      sub_options);
   }
 
   if (!ground_truth_costmap_topic_name.empty()) {
-    if (ground_truth_map_topic_name.empty()) {
+    if (input_ground_truth_map_topic_name.empty()) {
       RCLCPP_WARN(
         m_logger,
         "Can't construct costmap publisher for %s without a ground_truth map subscrition",
         ground_truth_costmap_topic_name.c_str());
     } else {
-      RCLCPP_INFO(m_logger, "Creating ground truth costmap publisher");
+      rclcpp::PublisherOptions pub_options;
+      pub_options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
       m_gt_costmap_pub = m_parent_node->create_publisher<nav_msgs::msg::OccupancyGrid>(
         ground_truth_costmap_topic_name,
-        map_qos);
+        map_qos,
+        pub_options);
+      RCLCPP_INFO(m_logger, "Created ground truth costmap publisher %s", m_gt_costmap_pub->get_topic_name());
     }
   }
 

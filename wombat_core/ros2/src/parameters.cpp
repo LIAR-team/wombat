@@ -44,7 +44,95 @@ std::optional<rclcpp::Parameter> get_parameter_for_node(
   return *param_rit;
 }
 
-bool update_parameter_map(
+bool append_parameter_map(
+  rclcpp::ParameterMap & parameter_map,
+  const std::string & fully_qualified_node_name,
+  const std::string & param_name,
+  const rclcpp::ParameterValue & param_value)
+{
+  // Validate input param type
+  auto input_type = param_value.get_type();
+  if (
+    input_type != rclcpp::ParameterType::PARAMETER_BYTE_ARRAY &&
+    input_type != rclcpp::ParameterType::PARAMETER_BOOL_ARRAY &&
+    input_type != rclcpp::ParameterType::PARAMETER_INTEGER_ARRAY &&
+    input_type != rclcpp::ParameterType::PARAMETER_DOUBLE_ARRAY &&
+    input_type != rclcpp::ParameterType::PARAMETER_STRING_ARRAY)
+  {
+    throw std::runtime_error("Append parameter map input param is not a list");
+  }
+
+  // Check if parameter is already present
+  auto maybe_existing_param = get_parameter_for_node(
+    param_name,
+    parameter_map,
+    fully_qualified_node_name);
+
+  // Parameter doesn't exist, just go ahead and set it
+  if (!maybe_existing_param) {
+    return write_parameter_map(
+      parameter_map,
+      fully_qualified_node_name,
+      param_name,
+      param_value);
+  }
+
+  // Parameter exists, we need to concatenate and update
+  rclcpp::ParameterValue concat_param_value;
+  switch (input_type) {
+    case rclcpp::ParameterType::PARAMETER_BYTE_ARRAY:
+      {
+        auto existing_vector = maybe_existing_param->as_byte_array();
+        auto & input_vector = param_value.get<std::vector<uint8_t>>();
+        existing_vector.insert(existing_vector.end(), input_vector.begin(), input_vector.end());
+        concat_param_value = rclcpp::ParameterValue(existing_vector);
+        break;
+      }
+    case rclcpp::ParameterType::PARAMETER_BOOL_ARRAY:
+      {
+        auto existing_vector = maybe_existing_param->as_bool_array();
+        auto & input_vector = param_value.get<std::vector<bool>>();
+        existing_vector.insert(existing_vector.end(), input_vector.begin(), input_vector.end());
+        concat_param_value = rclcpp::ParameterValue(existing_vector);
+        break;
+      }
+    case rclcpp::ParameterType::PARAMETER_INTEGER_ARRAY:
+      {
+        auto existing_vector = maybe_existing_param->as_integer_array();
+        auto & input_vector = param_value.get<std::vector<int64_t>>();
+        existing_vector.insert(existing_vector.end(), input_vector.begin(), input_vector.end());
+        concat_param_value = rclcpp::ParameterValue(existing_vector);
+        break;
+      }
+    case rclcpp::ParameterType::PARAMETER_DOUBLE_ARRAY:
+      {
+        auto existing_vector = maybe_existing_param->as_double_array();
+        auto & input_vector = param_value.get<std::vector<double>>();
+        existing_vector.insert(existing_vector.end(), input_vector.begin(), input_vector.end());
+        concat_param_value = rclcpp::ParameterValue(existing_vector);
+        break;
+      }
+    case rclcpp::ParameterType::PARAMETER_STRING_ARRAY:
+      {
+        auto existing_vector = maybe_existing_param->as_string_array();
+        auto & input_vector = param_value.get<std::vector<std::string>>();
+        existing_vector.insert(existing_vector.end(), input_vector.begin(), input_vector.end());
+        concat_param_value = rclcpp::ParameterValue(existing_vector);
+        break;
+      }
+    default:
+      assert(0 && "Invalid input type detected too late");
+      break;
+  }
+
+  return write_parameter_map(
+    parameter_map,
+    fully_qualified_node_name,
+    param_name,
+    concat_param_value);
+}
+
+bool write_parameter_map(
   rclcpp::ParameterMap & parameter_map,
   const std::string & fully_qualified_node_name,
   const std::string & param_name,
@@ -53,11 +141,11 @@ bool update_parameter_map(
 {
   // Check if parameter is already present
   if (!allow_override) {
-    auto maybe_param = get_parameter_for_node(
+    auto maybe_existing_param = get_parameter_for_node(
       param_name,
       parameter_map,
       fully_qualified_node_name);
-    if (maybe_param) {
+    if (maybe_existing_param) {
       return false;
     }
   }
