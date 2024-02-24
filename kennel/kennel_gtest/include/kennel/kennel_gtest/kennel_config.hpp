@@ -49,6 +49,11 @@ public:
     const std::string & plugin_name = "map");
 
   KennelParamsConfig &
+  add_local_slam_positioner_to_robot(
+    const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
+    const std::string & plugin_name = "map");
+
+  KennelParamsConfig &
   add_bumper_to_robot(const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME);
 
   KennelParamsConfig &
@@ -59,6 +64,16 @@ public:
   rclcpp::ParameterMap get() const;
 
 private:
+  void add_positioner_to_robot(
+    const std::string & robot_name,
+    const std::string & plugin_name,
+    const std::string & positioner_type);
+
+  void add_sensor_to_robot(
+    const std::string & robot_name,
+    const std::string & plugin_name,
+    const std::string & sensor_type);
+
   std::vector<std::string> get_robot_names() const;
 
   bool has_robot(const std::string & robot_name) const;

@@ -39,9 +39,12 @@ bool MapPositioner::initialize_positioner(
 
   auto map_topic_name = get_parameter("map_topic_name").get<std::string>();
   if (!map_topic_name.empty()) {
+    rclcpp::PublisherOptions pub_options;
+    pub_options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
     m_map_pub = parent_node->create_publisher<nav_msgs::msg::OccupancyGrid>(
       map_topic_name,
-      rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable());
+      rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
+      pub_options);
   }
 
   const bool post_init_success = this->post_init();
@@ -50,7 +53,11 @@ bool MapPositioner::initialize_positioner(
     return false;
   }
 
-  RCLCPP_INFO(this->get_logger(), "Positioner initialized");
+  RCLCPP_INFO(
+    this->get_logger(), "Positioner %s initialized: map %s frame %s",
+    plugin_name.c_str(),
+    (m_map_pub ? m_map_pub->get_topic_name() : "[N/A]"),
+    this->get_parameter("frame_id").get<std::string>().c_str());
   return true;
 }
 

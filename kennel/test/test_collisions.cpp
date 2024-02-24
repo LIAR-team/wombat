@@ -33,8 +33,8 @@ public:
 TEST_F(WallsWorldTest, WallCollision)
 {
   auto map = this->get_occupancy_grid();
+  ASSERT_NE(map, nullptr) << "Failed to get gt occupancy grid";
   auto map_info = wombat_core::MapMetaDataAdapter(map->info);
-  ASSERT_NE(map, nullptr);
 
   geometry_msgs::msg::Pose start_pose;
   start_pose.position.x = 0.124311;

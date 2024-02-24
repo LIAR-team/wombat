@@ -27,22 +27,23 @@ void TestKennelSingleRobot::SetUp()
   rclcpp::init(0, nullptr);
 
   // Setup node
-  node = std::make_shared<rclcpp::Node>("test_node");
+  rclcpp::NodeOptions node_options;
+  node_options.use_intra_process_comms(true);
+  node = std::make_shared<rclcpp::Node>("test_node", node_options);
 
   m_logger_timer = node->create_wall_timer(
     std::chrono::milliseconds(250),
     [this]() {
-      geometry_msgs::msg::TransformStamped robot_pose;
-      if (m_first_logger_timer_run) {
-        this->wait_for_base_tf(robot_pose);
-        m_first_logger_timer_run = false;
+      auto robot_pose = get_latest_base_tf();
+      if (!robot_pose) {
+        RCLCPP_INFO(node->get_logger(), "Robot gt pose not available");
+        return;
       }
-      get_latest_base_tf(robot_pose);
       RCLCPP_INFO(
         node->get_logger(),
-        "Robot pose: %f %f %f",
-        robot_pose.transform.translation.x, robot_pose.transform.translation.y,
-        tf2::getYaw(robot_pose.transform.rotation));
+        "Robot gt pose: %f %f %f",
+        robot_pose->transform.translation.x, robot_pose->transform.translation.y,
+        tf2::getYaw(robot_pose->transform.rotation));
     });
 
   // Setup ROS 2 executor
@@ -70,18 +71,21 @@ void TestKennelSingleRobot::TearDown()
 void TestKennelSingleRobot::setup_kennel(const rclcpp::ParameterMap & parameter_map)
 {
   // Setup Kennel
-  kennel = std::make_unique<kennel::Kennel>();
+  rclcpp::NodeOptions node_options;
+  node_options.use_intra_process_comms(true);
+  kennel = std::make_unique<kennel::Kennel>(node_options);
   kennel->configure(parameter_map);
   bool start_success = kennel->start();
   ASSERT_TRUE(start_success);
 }
 
-void TestKennelSingleRobot::wait_for_base_tf(
-  geometry_msgs::msg::TransformStamped & robot_pose,
+std::optional<geometry_msgs::msg::TransformStamped>
+TestKennelSingleRobot::get_latest_base_tf(
+  std::chrono::milliseconds timeout,
   const std::string & from_frame_id,
-  const std::string & to_frame_id,
-  std::chrono::milliseconds timeout)
+  const std::string & to_frame_id)
 {
+  geometry_msgs::msg::TransformStamped robot_pose;
   try {
     robot_pose = tf_buffer->lookupTransform(
       from_frame_id, to_frame_id,
@@ -89,23 +93,10 @@ void TestKennelSingleRobot::wait_for_base_tf(
       timeout);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_WARN(node->get_logger(), "Could not transform: %s", ex.what());
-    assert(0 && "Failed to wait for base tf");
+    return std::nullopt;
   }
-}
 
-void TestKennelSingleRobot::get_latest_base_tf(
-  geometry_msgs::msg::TransformStamped & robot_pose,
-  const std::string & from_frame_id,
-  const std::string & to_frame_id)
-{
-  try {
-    robot_pose = tf_buffer->lookupTransform(
-      from_frame_id, to_frame_id,
-      tf2::TimePointZero);
-  } catch (const tf2::TransformException & ex) {
-    RCLCPP_WARN(node->get_logger(), "Could not transform: %s", ex.what());
-    assert(0 && "Failed to get base tf");
-  }
+  return robot_pose;
 }
 
 void TestKennelSingleRobot::drive_until_condition(
@@ -134,16 +125,21 @@ double TestKennelSingleRobot::rotate_angle(
   const std::string & topic_name)
 {
   double accumulated_rotation = 0.0;
-  geometry_msgs::msg::TransformStamped last_pose;
-  get_latest_base_tf(last_pose);
+  auto last_pose = get_latest_base_tf(std::chrono::seconds(10));
+  if (!last_pose) {
+    return 0.0;
+  }
   drive_until_condition(
     rotate_cmd_vel,
     [this, &target_angle, &last_pose, &accumulated_rotation]() {
-      geometry_msgs::msg::TransformStamped robot_pose;
-      get_latest_base_tf(robot_pose);
+      auto robot_pose = get_latest_base_tf();
+      if (!robot_pose) {
+        RCLCPP_ERROR(node->get_logger(), "Failed to query base tf while rotating");
+        return true;
+      }
       const double delta_yaw = wombat_core::angles_difference(
-        tf2::getYaw(robot_pose.transform.rotation),
-        tf2::getYaw(last_pose.transform.rotation));
+        tf2::getYaw(robot_pose->transform.rotation),
+        tf2::getYaw(last_pose->transform.rotation));
       last_pose = robot_pose;
       accumulated_rotation += delta_yaw;
       return std::abs(accumulated_rotation) > target_angle;
@@ -160,17 +156,20 @@ TestKennelSingleRobot::get_occupancy_grid(
   std::chrono::seconds timeout)
 {
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr map;
+  rclcpp::SubscriptionOptions sub_options;
+  sub_options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
   auto map_sub = node->create_subscription<nav_msgs::msg::OccupancyGrid>(
     topic,
     rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
     [&map](nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) {
       map = msg;
-    });
+    },
+    sub_options);
 
   auto start_time = std::chrono::steady_clock::now();
   while ((std::chrono::steady_clock::now() - start_time < timeout) && rclcpp::ok()) {
-    if (map) {return map;}
+    if (map) {break;}
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
-  assert(0 && "Failed to get occupancy grid");
+  return map;
 }

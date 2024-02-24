@@ -22,13 +22,13 @@ namespace kennel
  * @note This function currently assumes a circular robot.
  * @param map map where to check for collisions
  * @param start_pose collision-free pose where the robot starts from
- * @param end_pose desired end pose, potentially in collision
+ * @param input_end_pose desired end pose, potentially in collision
  * @return geometry_msgs::msg::Pose new pose of the robot after
  * trying to move from start to end and stopping when "bumping" into an obstacle.
  */
 geometry_msgs::msg::Pose apply_map_collisions(
   const nav_msgs::msg::OccupancyGrid & map,
   const geometry_msgs::msg::Pose & start_pose,
-  geometry_msgs::msg::Pose end_pose);
+  const geometry_msgs::msg::Pose & input_end_pose);
 
 }  // namespace kennel

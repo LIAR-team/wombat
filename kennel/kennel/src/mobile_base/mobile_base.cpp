@@ -212,12 +212,15 @@ bool MobileBase::setup_ground_truth()
   auto map_qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
   if (!input_ground_truth_map_topic_name.empty()) {
     RCLCPP_INFO(m_logger, "Creating ground truth map subscription: %s", input_ground_truth_map_topic_name.c_str());
+    rclcpp::SubscriptionOptions sub_options;
+    sub_options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
     m_ground_truth_map_sub = m_parent_node->create_subscription<nav_msgs::msg::OccupancyGrid>(
       input_ground_truth_map_topic_name,
       map_qos,
       [this](nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) {
         this->on_gt_map_received(std::move(msg));
-      });
+      },
+      sub_options);
   }
 
   if (!ground_truth_costmap_topic_name.empty()) {
@@ -227,10 +230,13 @@ bool MobileBase::setup_ground_truth()
         "Can't construct costmap publisher for %s without a ground_truth map subscrition",
         ground_truth_costmap_topic_name.c_str());
     } else {
-      RCLCPP_INFO(m_logger, "Creating ground truth costmap publisher");
+      rclcpp::PublisherOptions pub_options;
+      pub_options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
       m_gt_costmap_pub = m_parent_node->create_publisher<nav_msgs::msg::OccupancyGrid>(
         ground_truth_costmap_topic_name,
-        map_qos);
+        map_qos,
+        pub_options);
+      RCLCPP_INFO(m_logger, "Created ground truth costmap publisher %s", m_gt_costmap_pub->get_topic_name());
     }
   }
 

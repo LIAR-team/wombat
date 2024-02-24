@@ -30,14 +30,8 @@ public:
 
   void setup_kennel(const rclcpp::ParameterMap & parameter_map);
 
-  void wait_for_base_tf(
-    geometry_msgs::msg::TransformStamped & robot_pose,
-    const std::string & from_frame_id = "ground_truth",
-    const std::string & to_frame_id = "base_link",
-    std::chrono::milliseconds timeout = std::chrono::seconds(10));
-
-  void get_latest_base_tf(
-    geometry_msgs::msg::TransformStamped & robot_pose,
+  std::optional<geometry_msgs::msg::TransformStamped> get_latest_base_tf(
+    std::chrono::milliseconds timeout = std::chrono::seconds(0),
     const std::string & from_frame_id = "ground_truth",
     const std::string & to_frame_id = "base_link");
 
@@ -56,7 +50,7 @@ public:
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr
   get_occupancy_grid(
     const std::string & topic = "/ground_truth_map",
-    std::chrono::seconds timeout = std::chrono::seconds(5));
+    std::chrono::seconds timeout = std::chrono::seconds(10));
 
   std::unique_ptr<kennel::Kennel> kennel;
 
@@ -90,6 +84,5 @@ private:
     return pub;
   }
 
-  bool m_first_logger_timer_run {true};
   rclcpp::TimerBase::SharedPtr m_logger_timer;
 };

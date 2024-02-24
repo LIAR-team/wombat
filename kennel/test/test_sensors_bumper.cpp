@@ -57,9 +57,8 @@ public:
 
 TEST_F(BumperTest, PingPongWalls)
 {
-  std::this_thread::sleep_for(std::chrono::seconds(1));
-  geometry_msgs::msg::TransformStamped start_pose;
-  wait_for_base_tf(start_pose);
+  auto start_pose = get_latest_base_tf(std::chrono::seconds(10));
+  ASSERT_NE(start_pose, std::nullopt);
   ASSERT_FALSE(is_bumped);
 
   // publish forward velocity command until we bump

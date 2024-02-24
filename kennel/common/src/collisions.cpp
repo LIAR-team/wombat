@@ -4,6 +4,7 @@
 // Proprietary and confidential.
 
 #include <cmath>
+#include <sstream>
 
 #include "kennel/common/collisions.hpp"
 #include "wombat_core/grid/coordinates.hpp"
@@ -16,20 +17,20 @@ namespace kennel
 geometry_msgs::msg::Pose apply_map_collisions(
   const nav_msgs::msg::OccupancyGrid & map,
   const geometry_msgs::msg::Pose & start_pose,
-  geometry_msgs::msg::Pose end_pose)
+  const geometry_msgs::msg::Pose & input_end_pose)
 {
   // If the map is empty we just forward the updated pose
   if (map.data.empty()) {
-    return end_pose;
+    return input_end_pose;
   }
 
   // No translation, there may be rotation.
   // Nothing to check under the assumption that the robot is circular
   static constexpr double EPSILON = 1e-6;
-  const double start_end_dx = end_pose.position.x - start_pose.position.x;
-  const double start_end_dy = end_pose.position.y - start_pose.position.y;
+  const double start_end_dx = input_end_pose.position.x - start_pose.position.x;
+  const double start_end_dy = input_end_pose.position.y - start_pose.position.y;
   if (std::abs(start_end_dx) < EPSILON && std::abs(start_end_dy) < EPSILON) {
-    return end_pose;
+    return input_end_pose;
   }
 
   wombat_core::MapMetaDataAdapter map_info(map.info);
@@ -46,6 +47,7 @@ geometry_msgs::msg::Pose apply_map_collisions(
     throw std::runtime_error("Start pose is not a free cell");
   }
 
+  geometry_msgs::msg::Pose end_pose = input_end_pose;
   auto end_pose_coord = wombat_core::world_pt_to_grid_coord(end_pose.position, map_info);
   if (!end_pose_coord) {
     // The end pose may not have a valid corresponding grid coordinate as it was
@@ -124,6 +126,21 @@ geometry_msgs::msg::Pose apply_map_collisions(
     start_pose,
     end_pose,
     scaling_factor);
+
+  const auto interpolated_pose_idx = wombat_core::world_pt_to_grid_index(interpolated_pose.position, map_info);
+  if (!interpolated_pose_idx) {
+    std::stringstream motion_text;
+    motion_text << start_pose.position.x << " " << start_pose.position.y << " -> ";
+    motion_text << input_end_pose.position.x << " " << input_end_pose.position.y;
+    throw std::runtime_error("Failed to compute interpolated index for " + motion_text.str());
+  }
+  if (map.data[*interpolated_pose_idx] != 0) {
+    std::stringstream motion_text;
+    motion_text << start_pose.position.x << " " << start_pose.position.y << " -> ";
+    motion_text << input_end_pose.position.x << " " << input_end_pose.position.y;
+    throw std::runtime_error("Interpolated pose is not a free cell for " + motion_text.str());
+  }
+
   return interpolated_pose;
 }
 

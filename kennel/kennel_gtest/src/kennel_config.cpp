@@ -4,6 +4,7 @@
 // Proprietary and confidential.
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
@@ -44,7 +45,7 @@ KennelParamsConfig::set_map_yaml_filename(const std::string & yaml_file)
       m_parameter_map,
       full_name,
       "mobile_base.ground_truth.map_topic_name",
-      rclcpp::ParameterValue(""));
+      rclcpp::ParameterValue(map_topic_name));
     if (!success) {
       throw std::runtime_error("Failed to write robot map topic name");
     }
@@ -93,13 +94,13 @@ KennelParamsConfig::set_robot_pose(
   return *this;
 }
 
-KennelParamsConfig &
-KennelParamsConfig::add_lidar_slam_positioner_to_robot(
+void KennelParamsConfig::add_positioner_to_robot(
   const std::string & robot_name,
-  const std::string & plugin_name)
+  const std::string & plugin_name,
+  const std::string & positioner_type)
 {
   if (!this->has_robot(robot_name)) {
-    throw std::runtime_error("Can't set posefor not existing robot");
+    throw std::runtime_error("Can't add positioner for not existing " + robot_name);
   }
 
   bool success = wombat_core::append_parameter_map(
@@ -108,48 +109,70 @@ KennelParamsConfig::add_lidar_slam_positioner_to_robot(
     "mobile_base.positioners",
     rclcpp::ParameterValue(std::vector<std::string>({plugin_name})));
   if (!success) {
-    throw std::runtime_error("Failed to append lidar slam positioner");
+    throw std::runtime_error("Failed to append positioner");
   }
   success = wombat_core::write_parameter_map(
     m_parameter_map,
     robot_name,
-    plugin_name + ".plugin_type",
-    rclcpp::ParameterValue("kennel::LidarSLAMPositioner"),
+    "mobile_base." + plugin_name + ".plugin_type",
+    rclcpp::ParameterValue(positioner_type),
     true);
   if (!success) {
-    throw std::runtime_error("Failed to write lidar slam plugin type");
+    throw std::runtime_error("Failed to write positioner plugin type");
   }
+}
 
+KennelParamsConfig &
+KennelParamsConfig::add_lidar_slam_positioner_to_robot(
+  const std::string & robot_name,
+  const std::string & plugin_name)
+{
+  this->add_positioner_to_robot(robot_name, plugin_name, "kennel::LidarSLAMPositioner");
   return *this;
 }
 
 KennelParamsConfig &
-KennelParamsConfig::add_bumper_to_robot(
-  const std::string & robot_name)
+KennelParamsConfig::add_local_slam_positioner_to_robot(
+  const std::string & robot_name,
+  const std::string & plugin_name)
+{
+  this->add_positioner_to_robot(robot_name, plugin_name, "kennel::LocalSLAMPositioner");
+  return *this;
+}
+
+void KennelParamsConfig::add_sensor_to_robot(
+  const std::string & robot_name,
+  const std::string & plugin_name,
+  const std::string & sensor_type)
 {
   if (!this->has_robot(robot_name)) {
-    throw std::runtime_error("Can't add bumper for not existing robot");
+    throw std::runtime_error("Can't add sensor for not existing " + robot_name);
   }
 
   bool success = wombat_core::append_parameter_map(
     m_parameter_map,
     robot_name,
     "sensors",
-    rclcpp::ParameterValue(std::vector<std::string>({"bumper"})));
+    rclcpp::ParameterValue(std::vector<std::string>({plugin_name})));
   if (!success) {
-    throw std::runtime_error("Failed to append bumper sensor");
+    throw std::runtime_error("Failed to append sensor");
   }
-
   success = wombat_core::write_parameter_map(
     m_parameter_map,
     robot_name,
-    "bumper.plugin_type",
-    rclcpp::ParameterValue("kennel::Bumper"),
+    plugin_name + ".plugin_type",
+    rclcpp::ParameterValue(sensor_type),
     true);
   if (!success) {
-    throw std::runtime_error("Failed to write bumper plugin type");
+    throw std::runtime_error("Failed to write sensor plugin type");
   }
+}
 
+KennelParamsConfig &
+KennelParamsConfig::add_bumper_to_robot(
+  const std::string & robot_name)
+{
+  this->add_sensor_to_robot(robot_name, "bumper", "kennel::Bumper");
   return *this;
 }
 
@@ -158,32 +181,10 @@ KennelParamsConfig::add_lidar2d_to_robot(
   const std::string & robot_name,
   const std::optional<double> & range_max)
 {
-  if (!this->has_robot(robot_name)) {
-    throw std::runtime_error("Can't add lidar2d for not existing robot");
-  }
-
-  bool success = false;
-  success = wombat_core::append_parameter_map(
-    m_parameter_map,
-    robot_name,
-    "sensors",
-    rclcpp::ParameterValue(std::vector<std::string>({"base_scan"})));
-  if (!success) {
-    throw std::runtime_error("Failed to append lidar sensor");
-  }
-
-  success = wombat_core::write_parameter_map(
-    m_parameter_map,
-    robot_name,
-    "base_scan.plugin_type",
-    rclcpp::ParameterValue("kennel::Lidar2D"),
-    true);
-  if (!success) {
-    throw std::runtime_error("Failed to write lidar plugin type");
-  }
+  this->add_sensor_to_robot(robot_name, "base_scan", "kennel::Lidar2D");
 
   if (range_max) {
-    success = wombat_core::write_parameter_map(
+    bool success = wombat_core::write_parameter_map(
       m_parameter_map,
       robot_name,
       "base_scan.range_max",
@@ -213,16 +214,16 @@ std::vector<std::string> KennelParamsConfig::get_robot_names() const
 bool KennelParamsConfig::has_robot(const std::string & robot_name) const
 {
   std::string robot_namespace = robot_name;
-  static const std::string full_name_prefix = "/";
-  static const std::string full_name_suffix = "/robot_sim";
-  const auto & this_prefix = robot_namespace.substr(0, full_name_prefix.length());
-  if (this_prefix == full_name_prefix) {
-    robot_namespace = robot_namespace.substr(full_name_prefix.length());
+  static const std::string FULL_NAME_PREFIX = "/";
+  static const std::string FULL_NAME_SUFFIX = "/robot_sim";
+  const auto & this_prefix = robot_namespace.substr(0, FULL_NAME_PREFIX.length());
+  if (this_prefix == FULL_NAME_PREFIX) {
+    robot_namespace = robot_namespace.substr(FULL_NAME_PREFIX.length());
   }
   const auto & this_suffix =
-    robot_namespace.substr(robot_namespace.length() - full_name_suffix.length(), robot_namespace.length());
-  if (this_suffix == full_name_suffix) {
-    robot_namespace = robot_namespace.substr(0, robot_namespace.length() - full_name_suffix.length());
+    robot_namespace.substr(robot_namespace.length() - FULL_NAME_SUFFIX.length(), robot_namespace.length());
+  if (this_suffix == FULL_NAME_SUFFIX) {
+    robot_namespace = robot_namespace.substr(0, robot_namespace.length() - FULL_NAME_SUFFIX.length());
   }
 
   const auto & robot_names = this->get_robot_names();

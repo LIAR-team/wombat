@@ -34,7 +34,7 @@ public:
 TEST_F(WallsWorldTest, ShortRangeProjection)
 {
   auto map = this->get_occupancy_grid();
-  ASSERT_NE(map, nullptr);
+  ASSERT_NE(map, nullptr) << "Failed to get gt occupancy grid";
 
   geometry_msgs::msg::Pose laser_pose;
   laser_pose.position.x = 2.0;

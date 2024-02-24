@@ -27,7 +27,7 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
   wombat_core::declare_parameter_if_not_declared(
     m_kennel_node->get_node_parameters_interface(),
     "real_time_factor",
-    rclcpp::ParameterValue{3.0});
+    rclcpp::ParameterValue{5.0});
   wombat_core::declare_parameter_if_not_declared(
     m_kennel_node->get_node_parameters_interface(),
     "sim_time_update_period_ms",
@@ -264,6 +264,7 @@ bool Kennel::setup_map_manager(
   if (!map_topic_name.empty()) {
     map_options.append_parameter_override("topic_name", map_topic_name);
   }
+  map_options.use_intra_process_comms(false);
 
   m_map_server = std::make_shared<nav2_map_server::MapServer>(map_options);
   CallbackReturn ret {CallbackReturn::FAILURE};

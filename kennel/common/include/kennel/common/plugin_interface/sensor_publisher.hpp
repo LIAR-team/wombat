@@ -62,7 +62,7 @@ public:
 
     m_sensor_publisher = parent_node->create_publisher<MsgT>(
       get_parameter("topic_name").get<std::string>(),
-      rclcpp::SensorDataQoS().durability(rclcpp::DurabilityPolicy::TransientLocal));
+      rclcpp::SensorDataQoS());
 
     const bool post_init_success = this->post_init();
     if (!post_init_success) {
