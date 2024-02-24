@@ -122,11 +122,12 @@ geometry_msgs::msg::Pose apply_map_collisions(
     static_cast<double>(es_dx) * static_cast<double>(es_dx) + static_cast<double>(es_dy) * static_cast<double>(es_dy));
   const double scaling_factor = fs_dist / es_dist;
 
-  const auto interpolated_pose = wombat_core::pose_interpolation(
+  auto interpolated_pose = wombat_core::pose_interpolation(
     start_pose,
     end_pose,
     scaling_factor);
 
+  // If the interpolated grid index is not free, fallback to use the ray-traced last free coordinate.
   const auto interpolated_pose_idx = wombat_core::world_pt_to_grid_index(interpolated_pose.position, map_info);
   if (!interpolated_pose_idx) {
     std::stringstream motion_text;
@@ -135,10 +136,11 @@ geometry_msgs::msg::Pose apply_map_collisions(
     throw std::runtime_error("Failed to compute interpolated index for " + motion_text.str());
   }
   if (map.data[*interpolated_pose_idx] != 0) {
-    std::stringstream motion_text;
-    motion_text << start_pose.position.x << " " << start_pose.position.y << " -> ";
-    motion_text << input_end_pose.position.x << " " << input_end_pose.position.y;
-    throw std::runtime_error("Interpolated pose is not a free cell for " + motion_text.str());
+    auto maybe_last_free_world_pt = wombat_core::grid_coord_to_world_pt(*maybe_last_free_coord, map_info);
+    if (!maybe_last_free_world_pt) {
+      throw std::runtime_error("Failed to compute last free world point");
+    }
+    interpolated_pose.position = *maybe_last_free_world_pt;
   }
 
   return interpolated_pose;
