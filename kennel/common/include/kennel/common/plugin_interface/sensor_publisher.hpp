@@ -70,7 +70,7 @@ public:
       return false;
     }
 
-    RCLCPP_INFO(this->get_logger(), "Sensor initialized");
+    RCLCPP_INFO(this->get_logger(), "Sensor publisher %s initialized", m_sensor_publisher->get_topic_name());
     return true;
   }
 

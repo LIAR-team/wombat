@@ -27,11 +27,11 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
   wombat_core::declare_parameter_if_not_declared(
     m_kennel_node->get_node_parameters_interface(),
     "real_time_factor",
-    rclcpp::ParameterValue{1.0});
+    rclcpp::ParameterValue{3.0});
   wombat_core::declare_parameter_if_not_declared(
     m_kennel_node->get_node_parameters_interface(),
     "sim_time_update_period_ms",
-    rclcpp::ParameterValue{5});
+    rclcpp::ParameterValue{2});
 
   wombat_core::declare_parameter_if_not_declared(
     m_kennel_node->get_node_parameters_interface(),
@@ -40,11 +40,11 @@ Kennel::Kennel(const rclcpp::NodeOptions & options)
   wombat_core::declare_parameter_if_not_declared(
     m_kennel_node->get_node_parameters_interface(),
     "map_frame_id",
-    rclcpp::ParameterValue{std::string("map")});
+    rclcpp::ParameterValue{std::string("ground_truth")});
   wombat_core::declare_parameter_if_not_declared(
     m_kennel_node->get_node_parameters_interface(),
     "map_topic_name",
-    rclcpp::ParameterValue{std::string("map")});
+    rclcpp::ParameterValue{std::string("ground_truth_map")});
 
   wombat_core::declare_parameter_if_not_declared(
     m_kennel_node->get_node_parameters_interface(),

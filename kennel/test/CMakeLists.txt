@@ -19,6 +19,6 @@ ament_add_gtest(test_range_projection test_range_projection.cpp
   ENV KENNEL_TEST_DATADIR=${CMAKE_CURRENT_SOURCE_DIR}/data)
 target_link_libraries(test_range_projection kennel::kennel_gtest)
 
-ament_add_gtest(test_walls_world test_walls_world.cpp
+ament_add_gtest(test_sensors_bumper test_sensors_bumper.cpp
   ENV KENNEL_TEST_DATADIR=${CMAKE_CURRENT_SOURCE_DIR}/data)
-target_link_libraries(test_walls_world kennel::kennel_gtest)
+target_link_libraries(test_sensors_bumper kennel::kennel_gtest)

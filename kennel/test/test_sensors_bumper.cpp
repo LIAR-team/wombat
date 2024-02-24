@@ -17,37 +17,47 @@
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/ros2/parameters.hpp"
 
-#include "kennel/kennel_gtest/robot_config.hpp"
+#include "kennel/kennel_gtest/kennel_config.hpp"
 #include "kennel/kennel_gtest/single_robot_fixture.hpp"
 #include "kennel/kennel_gtest/utils.hpp"
 
-class WallsWorldTest : public TestKennelSingleRobot
+class BumperTest : public TestKennelSingleRobot
 {
 public:
   void SetUp() override
   {
     TestKennelSingleRobot::SetUp();
 
-    auto kennel_params = kennel::KennelParamsConfig(get_data_path("single_robot.yaml"))
+    bumper_subscription = node->create_subscription<wombat_msgs::msg::Bumper>(
+      "/my_robot/bumper",
+      rclcpp::SensorDataQoS(),
+      [this](wombat_msgs::msg::Bumper::ConstSharedPtr msg) {
+        if (is_bumped != msg->is_pressed) {
+          RCLCPP_INFO(
+            node->get_logger(),
+            "Bumper is now %s",
+            (msg->is_pressed ? "pressed" : "not pressed"));
+        }
+        is_bumped = msg->is_pressed;
+      });
+
+    auto kennel_params = kennel::KennelParamsConfig()
       .set_map_yaml_filename(get_data_path("walls_map.yaml"))
+      .add_robot()
+      .set_robot_pose({1.0, 1.0, 0.0})
       .add_bumper_to_robot()
-      .add_lidar2d_to_robot()
       .get();
 
     setup_kennel(kennel_params);
   }
+
+  rclcpp::SubscriptionBase::SharedPtr bumper_subscription;
+  std::atomic<bool> is_bumped {false};
 };
 
-TEST_F(WallsWorldTest, PingPongWalls)
+TEST_F(BumperTest, PingPongWalls)
 {
-  std::atomic<bool> is_bumped {false};
-  auto bumper_subscription = node->create_subscription<wombat_msgs::msg::Bumper>(
-    "/my_robot/bumper",
-    rclcpp::SensorDataQoS(),
-    [&is_bumped](wombat_msgs::msg::Bumper::ConstSharedPtr msg) {
-      is_bumped = msg->is_pressed;
-    });
-
+  std::this_thread::sleep_for(std::chrono::seconds(1));
   geometry_msgs::msg::TransformStamped start_pose;
   wait_for_base_tf(start_pose);
   ASSERT_FALSE(is_bumped);
@@ -57,7 +67,7 @@ TEST_F(WallsWorldTest, PingPongWalls)
   forward_cmd_vel.linear.x = 5.0;
   drive_until_condition(
     forward_cmd_vel,
-    [&is_bumped]() {return is_bumped.load();},
+    [this]() {return is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_TRUE(is_bumped);
 
@@ -66,14 +76,14 @@ TEST_F(WallsWorldTest, PingPongWalls)
   backward_cmd_vel.linear.x = -forward_cmd_vel.linear.x;
   drive_until_condition(
     backward_cmd_vel,
-    [&is_bumped]() {return !is_bumped.load();},
+    [this]() {return !is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_FALSE(is_bumped);
 
   // publish backward velocity command until we are bumped again
   drive_until_condition(
     backward_cmd_vel,
-    [&is_bumped]() {return is_bumped.load();},
+    [this]() {return is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_TRUE(is_bumped);
 
@@ -88,14 +98,14 @@ TEST_F(WallsWorldTest, PingPongWalls)
   // publish forward velocity command until we are not bumped
   drive_until_condition(
     forward_cmd_vel,
-    [&is_bumped]() {return !is_bumped.load();},
+    [this]() {return !is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_FALSE(is_bumped);
 
   // publish forward velocity command until we bump
   drive_until_condition(
     forward_cmd_vel,
-    [&is_bumped]() {return is_bumped.load();},
+    [this]() {return is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_TRUE(is_bumped);
 }

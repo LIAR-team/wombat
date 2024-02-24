@@ -75,7 +75,7 @@ bool MapPositioner::declare_map_positioner_params(rclcpp::Node * parent_node)
   info.descriptor = rcl_interfaces::msg::ParameterDescriptor();
 
   info.name = "frame_id";
-  info.value = rclcpp::ParameterValue("map");
+  info.value = rclcpp::ParameterValue(m_plugin_name);
   params_info.push_back(info);
 
   info.name = "map_topic_name";

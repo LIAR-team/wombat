@@ -12,6 +12,7 @@
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/ros2/parameters.hpp"
 
+#include "kennel/kennel_gtest/kennel_config.hpp"
 #include "kennel/kennel_gtest/single_robot_fixture.hpp"
 #include "kennel/kennel_gtest/utils.hpp"
 
@@ -21,17 +22,12 @@ public:
   void SetUp() override
   {
     TestKennelSingleRobot::SetUp();
-    rclcpp::ParameterMap parameter_map;
-    ASSERT_NO_THROW(parameter_map = rclcpp::parameter_map_from_yaml_file(get_data_path("single_robot.yaml")));
 
-    bool success = wombat_core::write_parameter_map(
-      parameter_map,
-      "/kennel",
-      "map_yaml_filename",
-      rclcpp::ParameterValue(get_data_path("walls_map.yaml")));
-    ASSERT_TRUE(success);
+    auto kennel_params = kennel::KennelParamsConfig()
+      .set_map_yaml_filename(get_data_path("walls_map.yaml"))
+      .get();
 
-    setup_kennel(parameter_map);
+    setup_kennel(kennel_params);
   }
 };
 

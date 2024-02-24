@@ -33,7 +33,8 @@ public:
   void wait_for_base_tf(
     geometry_msgs::msg::TransformStamped & robot_pose,
     const std::string & from_frame_id = "ground_truth",
-    const std::string & to_frame_id = "base_link");
+    const std::string & to_frame_id = "base_link",
+    std::chrono::milliseconds timeout = std::chrono::seconds(10));
 
   void get_latest_base_tf(
     geometry_msgs::msg::TransformStamped & robot_pose,
@@ -42,7 +43,7 @@ public:
 
   void drive_until_condition(
     const geometry_msgs::msg::Twist & cmd,
-    std::function<bool()> predicate,
+    const std::function<bool()> & predicate,
     std::chrono::milliseconds timeout = std::chrono::seconds(10),
     const std::string & topic_name = "/cmd_vel");
 
@@ -54,7 +55,7 @@ public:
 
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr
   get_occupancy_grid(
-    const std::string topic = "/ground_truth_map",
+    const std::string & topic = "/ground_truth_map",
     std::chrono::seconds timeout = std::chrono::seconds(5));
 
   std::unique_ptr<kennel::Kennel> kennel;
@@ -89,5 +90,6 @@ private:
     return pub;
   }
 
+  bool m_first_logger_timer_run {true};
   rclcpp::TimerBase::SharedPtr m_logger_timer;
 };

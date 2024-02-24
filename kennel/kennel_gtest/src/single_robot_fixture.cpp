@@ -32,11 +32,10 @@ void TestKennelSingleRobot::SetUp()
   m_logger_timer = node->create_wall_timer(
     std::chrono::milliseconds(250),
     [this]() {
-      static bool first_run = true;
       geometry_msgs::msg::TransformStamped robot_pose;
-      if (first_run) {
+      if (m_first_logger_timer_run) {
         this->wait_for_base_tf(robot_pose);
-        first_run = false;
+        m_first_logger_timer_run = false;
       }
       get_latest_base_tf(robot_pose);
       RCLCPP_INFO(
@@ -70,13 +69,6 @@ void TestKennelSingleRobot::TearDown()
 
 void TestKennelSingleRobot::setup_kennel(const rclcpp::ParameterMap & parameter_map)
 {
-  for (const auto & node_map : parameter_map) {
-    std::cout << "Node: " << node_map.first << ":" << std::endl;
-    for (const auto & param : node_map.second) {
-      std::cout << "  - " << param.get_name() << " " << param.value_to_string() << std::endl;
-    }
-  }
-
   // Setup Kennel
   kennel = std::make_unique<kennel::Kennel>();
   kennel->configure(parameter_map);
@@ -87,13 +79,14 @@ void TestKennelSingleRobot::setup_kennel(const rclcpp::ParameterMap & parameter_
 void TestKennelSingleRobot::wait_for_base_tf(
   geometry_msgs::msg::TransformStamped & robot_pose,
   const std::string & from_frame_id,
-  const std::string & to_frame_id)
+  const std::string & to_frame_id,
+  std::chrono::milliseconds timeout)
 {
   try {
     robot_pose = tf_buffer->lookupTransform(
       from_frame_id, to_frame_id,
       tf2::TimePointZero,
-      std::chrono::seconds(20));
+      timeout);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_WARN(node->get_logger(), "Could not transform: %s", ex.what());
     assert(0 && "Failed to wait for base tf");
@@ -117,7 +110,7 @@ void TestKennelSingleRobot::get_latest_base_tf(
 
 void TestKennelSingleRobot::drive_until_condition(
   const geometry_msgs::msg::Twist & cmd,
-  std::function<bool()> predicate,
+  const std::function<bool()> & predicate,
   std::chrono::milliseconds timeout,
   const std::string & topic_name)
 {
@@ -163,7 +156,7 @@ double TestKennelSingleRobot::rotate_angle(
 
 nav_msgs::msg::OccupancyGrid::ConstSharedPtr
 TestKennelSingleRobot::get_occupancy_grid(
-  const std::string topic,
+  const std::string & topic,
   std::chrono::seconds timeout)
 {
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr map;

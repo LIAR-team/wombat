@@ -4,7 +4,7 @@ wombat_add_library(kennel_gtest STATIC)
 target_sources(
   kennel_gtest
   PRIVATE
-    src/robot_config.cpp
+    src/kennel_config.cpp
     src/single_robot_fixture.cpp
 )
 target_include_directories(

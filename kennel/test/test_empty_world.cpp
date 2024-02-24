@@ -17,8 +17,8 @@
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/ros2/parameters.hpp"
 
+#include "kennel/kennel_gtest/kennel_config.hpp"
 #include "kennel/kennel_gtest/single_robot_fixture.hpp"
-#include "kennel/kennel_gtest/utils.hpp"
 
 class EmptyWorldTest : public TestKennelSingleRobot
 {
@@ -26,29 +26,14 @@ public:
   void SetUp() override
   {
     TestKennelSingleRobot::SetUp();
-    rclcpp::ParameterMap parameter_map;
-    ASSERT_NO_THROW(parameter_map = rclcpp::parameter_map_from_yaml_file(get_data_path("single_robot.yaml")));
 
-    bool success = wombat_core::write_parameter_map(
-      parameter_map,
-      "/kennel",
-      "map_yaml_filename",
-      rclcpp::ParameterValue(""));
-    ASSERT_TRUE(success);
-
-    success = wombat_core::write_parameter_map(
-      parameter_map,
-      "/my_robot/robot_sim",
-      "mobile_base.ground_truth.map_topic_name",
-      rclcpp::ParameterValue(""));
-    ASSERT_TRUE(success);
-
-    setup_kennel(parameter_map);
+    auto kennel_params = kennel::KennelParamsConfig()
+      .add_robot()
+      .set_map_yaml_filename("")
+      .get();
+    setup_kennel(kennel_params);
   }
 };
-
-static constexpr double START_X = 1.0;
-static constexpr double START_Y = 1.0;
 
 TEST_F(EmptyWorldTest, zero_vel_cmd)
 {
@@ -56,8 +41,8 @@ TEST_F(EmptyWorldTest, zero_vel_cmd)
   wait_for_base_tf(robot_pose);
 
   // Ensure that the robot is at the start pose
-  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
-  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.x, 0.0, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, 0.0, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
@@ -71,8 +56,8 @@ TEST_F(EmptyWorldTest, zero_vel_cmd)
     std::chrono::milliseconds(250));
 
   get_latest_base_tf(robot_pose);
-  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
-  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.x, 0.0, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, 0.0, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
@@ -86,8 +71,8 @@ TEST_F(EmptyWorldTest, drive_straight)
   wait_for_base_tf(robot_pose);
 
   // Ensure that the robot is at the start pose
-  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
-  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.x, 0.0, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, 0.0, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
@@ -109,8 +94,8 @@ TEST_F(EmptyWorldTest, drive_straight)
     std::chrono::seconds(10));
 
   get_latest_base_tf(robot_pose);
-  EXPECT_GE(robot_pose.transform.translation.x, START_X);
-  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
+  EXPECT_GE(robot_pose.transform.translation.x, 0.0);
+  EXPECT_NEAR(robot_pose.transform.translation.y, 0.0, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
@@ -124,8 +109,8 @@ TEST_F(EmptyWorldTest, turn_in_place)
   wait_for_base_tf(robot_pose);
 
   // Ensure that the robot is at the start pose
-  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
-  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.x, 0.0, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, 0.0, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.x, 0.0);
   EXPECT_DOUBLE_EQ(robot_pose.transform.rotation.y, 0.0);
@@ -138,15 +123,14 @@ TEST_F(EmptyWorldTest, turn_in_place)
   double rotation = rotate_angle(goal_rotation, rotate_cmd_vel, std::chrono::seconds(10));
 
   get_latest_base_tf(robot_pose);
-  EXPECT_NEAR(robot_pose.transform.translation.x, START_X, 1e-6);
-  EXPECT_NEAR(robot_pose.transform.translation.y, START_Y, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.x, 0.0, 1e-6);
+  EXPECT_NEAR(robot_pose.transform.translation.y, 0.0, 1e-6);
   EXPECT_DOUBLE_EQ(robot_pose.transform.translation.z, 0.0);
   EXPECT_GE(std::abs(rotation), goal_rotation);
 }
 
 int main(int argc, char ** argv)
 {
-  setup_data_dir_path();
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

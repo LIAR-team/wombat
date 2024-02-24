@@ -90,24 +90,27 @@ private:
     double distance_m = this->get_parameter("simplify_distance").get<double>();
     boost::geometry::model::polygon<xy> simple_poly;
     boost::geometry::simplify(poly, simple_poly, distance_m);
-    std::vector<wombat_core::grid_coord_t> grid_polygon;
-    for (const auto & world_pt : simple_poly.outer()) {
-      geometry_msgs::msg::Point pt;
-      pt.x = world_pt.x();
-      pt.y = world_pt.y();
-      auto grid_coord = wombat_core::world_pt_to_grid_coord_enforce_bounds(pt, map_info);
-      grid_polygon.push_back(grid_coord);
-    }
-
-    auto polygon_iterator = wombat_core::PolygonIterator(
-      map_info,
-      grid_polygon);
-    for (; !polygon_iterator.is_past_end(); ++polygon_iterator) {
-      auto maybe_idx = wombat_core::grid_coord_to_index(*polygon_iterator, map_info);
-      if (!maybe_idx) {
-        throw std::runtime_error("Failed to convert subgrid coord to index");
+    // TODO: we should ensure that after simplification we still have a valid polygon
+    if (!simple_poly.outer().empty()) {
+      std::vector<wombat_core::grid_coord_t> grid_polygon;
+      for (const auto & world_pt : simple_poly.outer()) {
+        geometry_msgs::msg::Point pt;
+        pt.x = world_pt.x();
+        pt.y = world_pt.y();
+        auto grid_coord = wombat_core::world_pt_to_grid_coord_enforce_bounds(pt, map_info);
+        grid_polygon.push_back(grid_coord);
       }
-      m_map->data[*maybe_idx] = gt_data.map->data[*maybe_idx];
+
+      auto polygon_iterator = wombat_core::PolygonIterator(
+        map_info,
+        grid_polygon);
+      for (; !polygon_iterator.is_past_end(); ++polygon_iterator) {
+        auto maybe_idx = wombat_core::grid_coord_to_index(*polygon_iterator, map_info);
+        if (!maybe_idx) {
+          throw std::runtime_error("Failed to convert subgrid coord to index");
+        }
+        m_map->data[*maybe_idx] = gt_data.map->data[*maybe_idx];
+      }
     }
 
     m_data.map = m_map;
@@ -130,7 +133,7 @@ private:
     params_info.push_back(info);
 
     info.name = "range_max";
-    info.value = rclcpp::ParameterValue(5.0);
+    info.value = rclcpp::ParameterValue(2.5);
     params_info.push_back(info);
 
     info.name = "simplify_distance";
