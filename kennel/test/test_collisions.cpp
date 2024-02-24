@@ -48,8 +48,8 @@ TEST_F(WallsWorldTest, WallCollisionBis)
     end_pose);
   auto maybe_new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map_info);
   EXPECT_NE(maybe_new_pose_coord, std::nullopt);
-  EXPECT_EQ(maybe_new_pose_coord->x(), 5);
-  EXPECT_EQ(maybe_new_pose_coord->y(), 50);
+  EXPECT_EQ(maybe_new_pose_coord->x(), 295);
+  EXPECT_EQ(maybe_new_pose_coord->y(), 67);
   auto maybe_new_pose_index = wombat_core::grid_coord_to_index(*maybe_new_pose_coord, map_info);
   EXPECT_NE(maybe_new_pose_index, std::nullopt);
   auto map_value = map->data[*maybe_new_pose_index];
@@ -74,8 +74,8 @@ TEST_F(WallsWorldTest, WallCollision)
     end_pose);
   auto maybe_new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map_info);
   EXPECT_NE(maybe_new_pose_coord, std::nullopt);
-  EXPECT_EQ(maybe_new_pose_coord->x(), 295);
-  EXPECT_EQ(maybe_new_pose_coord->y(), 67);
+  EXPECT_EQ(maybe_new_pose_coord->x(), 5);
+  EXPECT_EQ(maybe_new_pose_coord->y(), 50);
   auto maybe_new_pose_index = wombat_core::grid_coord_to_index(*maybe_new_pose_coord, map_info);
   EXPECT_NE(maybe_new_pose_index, std::nullopt);
   auto map_value = map->data[*maybe_new_pose_index];
