@@ -17,7 +17,9 @@
 
 // Macros to generate nested parameter names
 #include "wombat_core/cpp/macros/concat.hpp"
-#define BASE_PARAM(PARAM) WOMBAT_CORE_CONCAT_STR_LITERALS("mobile_base.", PARAM)
+#define BASE_NAME "mobile_base"
+#define BASE_PREFIX  BASE_NAME "."
+#define BASE_PARAM(PARAM) WOMBAT_CORE_CONCAT_STR_LITERALS(BASE_PREFIX, PARAM)
 #define BASE_GT_PARAM(PARAM) BASE_PARAM(WOMBAT_CORE_CONCAT_STR_LITERALS("ground_truth.", PARAM))
 
 namespace kennel
@@ -52,22 +54,19 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
 
   m_tf_broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(m_parent_node);
 
-  const auto mobile_base_update_period = std::chrono::milliseconds(
+  m_update_period_ms = std::chrono::milliseconds(
     wombat_core::declare_parameter_if_not_declared(
       m_parent_node->get_node_parameters_interface(),
       BASE_PARAM("update_period_ms"),
       rclcpp::ParameterValue{10}).get<int>());
 
-  // TODO: is wall time ok here? Should we use simulated time?
-  m_update_timer = m_parent_node->create_wall_timer(
-    mobile_base_update_period,
-    [this]() {
-      this->mobile_base_update();
-    });
-
   RCLCPP_INFO(m_logger, "Mobile Base constructed");
 }
 
+std::chrono::milliseconds MobileBase::get_update_period() const
+{
+  return m_update_period_ms;
+}
 
 localization_data_t MobileBase::get_ground_truth_data()
 {
@@ -273,7 +272,7 @@ bool MobileBase::load_positioner_plugins(rclcpp::Node * parent_node)
     // Get type of this plugin
     auto plugin_type = wombat_core::declare_parameter_if_not_declared(
       parent_node->get_node_parameters_interface(),
-      "mobile_base." + plugin_name + ".plugin_type",
+      BASE_PREFIX + plugin_name + ".plugin_type",
       rclcpp::ParameterValue("")).get<std::string>();
     if (plugin_type.empty()) {
       RCLCPP_ERROR(m_logger, "Plugin %s has no plugin type defined", plugin_name.c_str());
@@ -285,7 +284,7 @@ bool MobileBase::load_positioner_plugins(rclcpp::Node * parent_node)
     const bool plugin_init_success = loaded_plugin->initialize_positioner(
       plugin_name,
       parent_node,
-      "mobile_base");
+      BASE_NAME);
     if (!plugin_init_success) {
       RCLCPP_WARN(m_logger, "Failed to initialize plugin %s", plugin_name.c_str());
       return false;

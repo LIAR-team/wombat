@@ -94,108 +94,134 @@ KennelParamsConfig::set_robot_pose(
   return *this;
 }
 
-void KennelParamsConfig::add_positioner_to_robot(
-  const std::string & robot_name,
-  const std::string & plugin_name,
-  const std::string & positioner_type)
-{
-  if (!this->has_robot(robot_name)) {
-    throw std::runtime_error("Can't add positioner for not existing " + robot_name);
-  }
-
-  bool success = wombat_core::append_parameter_map(
-    m_parameter_map,
-    robot_name,
-    "mobile_base.positioners",
-    rclcpp::ParameterValue(std::vector<std::string>({plugin_name})));
-  if (!success) {
-    throw std::runtime_error("Failed to append positioner");
-  }
-  success = wombat_core::write_parameter_map(
-    m_parameter_map,
-    robot_name,
-    "mobile_base." + plugin_name + ".plugin_type",
-    rclcpp::ParameterValue(positioner_type),
-    true);
-  if (!success) {
-    throw std::runtime_error("Failed to write positioner plugin type");
-  }
-}
-
 KennelParamsConfig &
 KennelParamsConfig::add_lidar_slam_positioner_to_robot(
   const std::string & robot_name,
+  const NamedParams & plugin_params,
   const std::string & plugin_name)
 {
-  this->add_positioner_to_robot(robot_name, plugin_name, "kennel::LidarSLAMPositioner");
+  plugin_description_t plugin;
+  plugin.name = plugin_name;
+  plugin.prefix = "mobile_base";
+  plugin.list_param_name = "positioners";
+  plugin.type = "kennel::LidarSLAMPositioner";
+
+  this->add_plugin_to_robot(
+    robot_name,
+    plugin,
+    plugin_params);
   return *this;
 }
 
 KennelParamsConfig &
 KennelParamsConfig::add_local_slam_positioner_to_robot(
   const std::string & robot_name,
+  const NamedParams & plugin_params,
   const std::string & plugin_name)
 {
-  this->add_positioner_to_robot(robot_name, plugin_name, "kennel::LocalSLAMPositioner");
+  plugin_description_t plugin;
+  plugin.name = plugin_name;
+  plugin.prefix = "mobile_base";
+  plugin.list_param_name = "positioners";
+  plugin.type = "kennel::LocalSLAMPositioner";
+
+  this->add_plugin_to_robot(
+    robot_name,
+    plugin,
+    plugin_params);
   return *this;
-}
-
-void KennelParamsConfig::add_sensor_to_robot(
-  const std::string & robot_name,
-  const std::string & plugin_name,
-  const std::string & sensor_type)
-{
-  if (!this->has_robot(robot_name)) {
-    throw std::runtime_error("Can't add sensor for not existing " + robot_name);
-  }
-
-  bool success = wombat_core::append_parameter_map(
-    m_parameter_map,
-    robot_name,
-    "sensors",
-    rclcpp::ParameterValue(std::vector<std::string>({plugin_name})));
-  if (!success) {
-    throw std::runtime_error("Failed to append sensor");
-  }
-  success = wombat_core::write_parameter_map(
-    m_parameter_map,
-    robot_name,
-    plugin_name + ".plugin_type",
-    rclcpp::ParameterValue(sensor_type),
-    true);
-  if (!success) {
-    throw std::runtime_error("Failed to write sensor plugin type");
-  }
 }
 
 KennelParamsConfig &
 KennelParamsConfig::add_bumper_to_robot(
-  const std::string & robot_name)
+  const std::string & robot_name,
+  const NamedParams & plugin_params,
+  const std::string & plugin_name)
 {
-  this->add_sensor_to_robot(robot_name, "bumper", "kennel::Bumper");
+  plugin_description_t plugin;
+  plugin.name = plugin_name;
+  plugin.prefix = "sensors_manager";
+  plugin.list_param_name = "sensors";
+  plugin.type = "kennel::Bumper";
+
+  this->add_plugin_to_robot(
+    robot_name,
+    plugin,
+    plugin_params);
   return *this;
 }
 
 KennelParamsConfig &
 KennelParamsConfig::add_lidar2d_to_robot(
   const std::string & robot_name,
-  const std::optional<double> & range_max)
+  const NamedParams & plugin_params,
+  const std::string & plugin_name)
 {
-  this->add_sensor_to_robot(robot_name, "base_scan", "kennel::Lidar2D");
+  plugin_description_t plugin;
+  plugin.name = plugin_name;
+  plugin.prefix = "sensors_manager";
+  plugin.list_param_name = "sensors";
+  plugin.type = "kennel::Lidar2D";
 
-  if (range_max) {
-    bool success = wombat_core::write_parameter_map(
-      m_parameter_map,
-      robot_name,
-      "base_scan.range_max",
-      rclcpp::ParameterValue(*range_max),
-      true);
-    if (!success) {
-      throw std::runtime_error("Failed to write lidar range_max type");
-    }
+  this->add_plugin_to_robot(
+    robot_name,
+    plugin,
+    plugin_params);
+  return *this;
+}
+
+void KennelParamsConfig::add_plugin_to_robot(
+  const std::string & robot_name,
+  const plugin_description_t & plugin,
+  const NamedParams & plugin_params)
+{
+  if (!this->has_robot(robot_name)) {
+    std::stringstream error_text;
+    error_text << "Can't add plugin '" << plugin.name << "'";
+    error_text << " for not existing robot '" << robot_name << "'";
+    throw std::runtime_error(error_text.str());
   }
 
-  return *this;
+  const std::string full_plugin_list_param_name = plugin.prefix + "." + plugin.list_param_name;
+  bool success = wombat_core::append_parameter_map(
+    m_parameter_map,
+    robot_name,
+    full_plugin_list_param_name,
+    rclcpp::ParameterValue(std::vector<std::string>({plugin.name})));
+  if (!success) {
+    std::stringstream error_text;
+    error_text << "Failed to append plugin '" << plugin.name << "' to list '" << full_plugin_list_param_name << "'";
+    error_text << " for robot '" << robot_name << "'";
+    throw std::runtime_error(error_text.str());
+  }
+
+  static constexpr auto PLUGIN_TYPE_P_NAME = "plugin_type";
+  auto extended_plugin_params = plugin_params;
+  const auto plugin_type_map_entry = std::make_pair(PLUGIN_TYPE_P_NAME, rclcpp::ParameterValue(plugin.type));
+  const auto insert_result = extended_plugin_params.insert(plugin_type_map_entry);
+  if (!insert_result.second) {
+    std::stringstream error_text;
+    error_text << "Params for plugin '" << plugin.name << "' can't include '" << PLUGIN_TYPE_P_NAME << "' parameter";
+    error_text << " for robot '" << robot_name << "'";
+    throw std::runtime_error(error_text.str());
+  }
+
+  for (const auto & [p_name, p_value] : extended_plugin_params) {
+    const std::string full_plugin_param_name = plugin.full_param_name(p_name);
+    success = wombat_core::write_parameter_map(
+      m_parameter_map,
+      robot_name,
+      full_plugin_param_name,
+      p_value,
+      true);
+    if (!success) {
+      std::stringstream error_text;
+      error_text << "Failed to write plugin param '" << p_name << "' with value '" << rclcpp::to_string(p_value) << "'";
+      error_text << "' as '" << full_plugin_param_name << "'";
+      error_text << " for robot '" << robot_name << "'";
+      throw std::runtime_error(error_text.str());
+    }
+  }
 }
 
 std::vector<std::string> KennelParamsConfig::get_robot_names() const
@@ -238,11 +264,12 @@ void KennelParamsConfig::print_parameters_map() const
 {
   std::cout << "----- Kennel parameters map ----- " << std::endl;
   for (const auto & node_map : m_parameter_map) {
-    std::cout << "Node: " << node_map.first << ":" << std::endl;
+    std::cout << node_map.first << ":" << std::endl;
     for (const auto & param : node_map.second) {
       std::cout << "  - " << param.get_name() << " '" << param.value_to_string() << "'" << std::endl;
     }
   }
+  std::cout << "----- ----- ----- " << std::endl;
 }
 
 }  // namespace kennel

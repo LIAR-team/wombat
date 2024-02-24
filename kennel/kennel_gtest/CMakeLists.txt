@@ -19,8 +19,10 @@ target_link_libraries(
     kennel::common
     kennel::kennel_lib
     rclcpp::rclcpp
+    tf2_ros::tf2_ros
+    ${wombat_msgs_TARGETS}
+  PRIVATE
     tf2::tf2
     tf2_geometry_msgs::tf2_geometry_msgs
-    ${wombat_msgs_TARGETS}
 )
 wombat_install_target(kennel_gtest)

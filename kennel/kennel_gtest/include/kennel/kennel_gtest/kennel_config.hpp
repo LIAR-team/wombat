@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <map>
 #include <string>
 #include <utility>
 #include <vector>
@@ -17,6 +18,8 @@ namespace kennel
 static constexpr auto DEFAULT_ROBOT_NAME = "my_robot";
 static constexpr auto DEFAULT_ROBOT_NODE_NAME = "/my_robot/robot_sim";
 static constexpr auto KENNEL_NAME = "/kennel";
+
+using NamedParams = std::map<std::string, rclcpp::ParameterValue>;
 
 class KennelParamsConfig
 {
@@ -46,33 +49,48 @@ public:
   KennelParamsConfig &
   add_lidar_slam_positioner_to_robot(
     const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
+    const NamedParams & plugin_params = NamedParams(),
     const std::string & plugin_name = "map");
 
   KennelParamsConfig &
   add_local_slam_positioner_to_robot(
     const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
+    const NamedParams & plugin_params = NamedParams(),
     const std::string & plugin_name = "map");
 
   KennelParamsConfig &
-  add_bumper_to_robot(const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME);
+  add_bumper_to_robot(
+    const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
+    const NamedParams & plugin_params = NamedParams(),
+    const std::string & plugin_name = "bumper");
 
   KennelParamsConfig &
   add_lidar2d_to_robot(
     const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
-    const std::optional<double> & range_max = std::nullopt);
+    const NamedParams & plugin_params = NamedParams(),
+    const std::string & plugin_name = "base_scan");
 
   rclcpp::ParameterMap get() const;
 
 private:
-  void add_positioner_to_robot(
-    const std::string & robot_name,
-    const std::string & plugin_name,
-    const std::string & positioner_type);
+  struct plugin_description_t
+  {
+    std::string name;
+    std::string prefix;
+    std::string list_param_name;
+    std::string type;
 
-  void add_sensor_to_robot(
+    std::string full_param_name(const std::string & rel_name) const
+    {
+      const std::string prefix_element = prefix.empty() ? "" : prefix + ".";
+      return prefix_element + name + "." + rel_name;
+    }
+  };
+
+  void add_plugin_to_robot(
     const std::string & robot_name,
-    const std::string & plugin_name,
-    const std::string & sensor_type);
+    const plugin_description_t & plugin,
+    const NamedParams & plugin_params);
 
   std::vector<std::string> get_robot_names() const;
 

@@ -31,11 +31,13 @@ class MobileBase
 public:
   explicit MobileBase(rclcpp::Node * parent_node);
 
-  localization_data_t get_ground_truth_data();
-
-private:
   void mobile_base_update();
 
+  localization_data_t get_ground_truth_data();
+
+  std::chrono::milliseconds get_update_period() const;
+
+private:
   std::optional<std::vector<geometry_msgs::msg::TransformStamped>>
   process_transforms(const std::vector<geometry_msgs::msg::TransformStamped> & tfs);
 
@@ -58,7 +60,7 @@ private:
   std::shared_ptr<tf2_ros::TransformBroadcaster> m_tf_broadcaster;
   std::vector<geometry_msgs::msg::TransformStamped> m_last_transforms;
 
-  rclcpp::TimerBase::SharedPtr m_update_timer;
+  std::chrono::milliseconds m_update_period_ms;
 
   std::unique_ptr<GroundTruthManager> m_gt_manager;
   std::vector<std::shared_ptr<PositionerInterface>> m_positioners;
