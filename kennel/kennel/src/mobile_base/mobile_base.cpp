@@ -41,7 +41,7 @@ MobileBase::MobileBase(rclcpp::Node * parent_node)
   const std::string control_topic_name = wombat_core::declare_parameter_if_not_declared(
     m_parent_node->get_node_parameters_interface(),
     BASE_PARAM("control_topic_name"),
-    rclcpp::ParameterValue{std::string("/cmd_vel")}).get<std::string>();
+    rclcpp::ParameterValue{std::string("cmd_vel")}).get<std::string>();
 
   m_last_cmd_vel.header.stamp = m_parent_node->now();
   m_cmd_vel_sub = m_parent_node->create_subscription<geometry_msgs::msg::Twist>(

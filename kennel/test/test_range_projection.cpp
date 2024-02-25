@@ -33,7 +33,7 @@ public:
 
 TEST_F(WallsWorldTest, ShortRangeProjection)
 {
-  auto map = this->get_occupancy_grid();
+  auto map = robot->get_occupancy_grid(std::chrono::seconds(10), "/ground_truth_map");
   ASSERT_NE(map, nullptr) << "Failed to get gt occupancy grid";
 
   geometry_msgs::msg::Pose laser_pose;

@@ -32,7 +32,7 @@ public:
 
 TEST_F(WallsWorldTest, WallCollisionBis)
 {
-  auto map = this->get_occupancy_grid();
+  auto map = robot->get_occupancy_grid(std::chrono::seconds(10), "/ground_truth_map");
   ASSERT_NE(map, nullptr) << "Failed to get gt occupancy grid";
   auto map_info = wombat_core::MapMetaDataAdapter(map->info);
 
@@ -59,7 +59,7 @@ TEST_F(WallsWorldTest, WallCollisionBis)
 
 TEST_F(WallsWorldTest, WallCollision)
 {
-  auto map = this->get_occupancy_grid();
+  auto map = robot->get_occupancy_grid(std::chrono::seconds(10), "/ground_truth_map");
   ASSERT_NE(map, nullptr) << "Failed to get gt occupancy grid";
   auto map_info = wombat_core::MapMetaDataAdapter(map->info);
 

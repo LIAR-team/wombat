@@ -16,7 +16,7 @@ my_robot:
         update_period_ms: 5
         control_topic_name: /cmd_vel
         control_msg_lifespan_ms: 200
-        start_pose: [1.0, 1.0, 0.0]
+        start_pose: [1.0, 3.0, 0.0]
         positioners:
           - "slam"
         ground_truth:
@@ -24,7 +24,7 @@ my_robot:
         slam:
           plugin_type: "kennel::LidarSLAMPositioner"
           frame_id: "map"
-          map_topic_name: "map"
+          map_topic_name: "/map"
           range_max: 2.0
       sensors_manager:
         update_period_ms: 10
