@@ -109,6 +109,78 @@ TEST_F(BumperTest, PingPongWalls)
   ASSERT_TRUE(is_bumped);
 }
 
+class InternalBumperTest : public TestKennelSingleRobot
+{
+public:
+  void SetUp() override
+  {
+    TestKennelSingleRobot::SetUp();
+
+    bumper_subscription = node->create_subscription<wombat_msgs::msg::Bumper>(
+      "/my_robot/bumper",
+      rclcpp::SensorDataQoS(),
+      [this](wombat_msgs::msg::Bumper::ConstSharedPtr msg) {
+        if (is_bumped != msg->is_pressed) {
+          RCLCPP_INFO(
+            node->get_logger(),
+            "Bumper is now %s",
+            (msg->is_pressed ? "pressed" : "not pressed"));
+        }
+        is_bumped = msg->is_pressed;
+      });
+
+    auto kennel_params = kennel::KennelParamsConfig()
+      .set_map_yaml_filename(get_data_path("walls_map.yaml"))
+      .add_robot()
+      .set_robot_pose({1.0, 1.0, 0.0})
+      .set_robot_radius(0.15)
+      .add_bumper_to_robot()
+      .get();
+
+    setup_kennel(kennel_params);
+  }
+
+  rclcpp::SubscriptionBase::SharedPtr bumper_subscription;
+  std::atomic<bool> is_bumped {false};
+};
+
+TEST_F(InternalBumperTest, PingPongWalls)
+{
+  auto start_pose = get_latest_base_tf(std::chrono::seconds(10));
+  ASSERT_NE(start_pose, std::nullopt);
+  ASSERT_FALSE(is_bumped);
+
+  auto last_pose = start_pose;
+  // publish forward velocity command until pose stops updating
+  geometry_msgs::msg::Twist forward_cmd_vel;
+  forward_cmd_vel.linear.x = 2.5;
+  auto last_pose_change_time = node->now();
+  auto not_moving_threshold = rclcpp::Duration(std::chrono::milliseconds(500));
+  drive_until_condition(
+    forward_cmd_vel,
+    [this, &last_pose, &last_pose_change_time, &not_moving_threshold]()
+    {
+      auto cur_pose = get_latest_base_tf();
+      if (!cur_pose) {
+        throw std::runtime_error("Failed to get latest tf");
+      }
+      auto now = node->now();
+      if (cur_pose->transform.translation.x != last_pose->transform.translation.x) {
+        last_pose = cur_pose;
+        last_pose_change_time = now;
+      }
+      return now - last_pose_change_time > not_moving_threshold;
+    },
+    std::chrono::seconds(10));
+
+  ASSERT_FALSE(is_bumped);
+
+  auto cur_pose = get_latest_base_tf();
+  ASSERT_NE(cur_pose, std::nullopt);
+  double dx = cur_pose->transform.translation.x - start_pose->transform.translation.x;
+  EXPECT_GT(dx, 0.1);
+}
+
 int main(int argc, char ** argv)
 {
   setup_data_dir_path();

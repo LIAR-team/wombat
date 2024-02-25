@@ -20,7 +20,9 @@ namespace wombat_core
 class InflatableCostmap
 {
 public:
-  InflatableCostmap();
+  InflatableCostmap(
+    double robot_radius,
+    const std::string & frame_id = "map");
 
   /**
    * @brief Update the occupancy representation of the costmap from a new whole map.

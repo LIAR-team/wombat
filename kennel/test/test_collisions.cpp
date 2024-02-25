@@ -45,7 +45,8 @@ TEST_F(WallsWorldTest, WallCollisionBis)
   auto new_pose = kennel::apply_map_collisions(
     *map,
     start_pose,
-    end_pose);
+    end_pose,
+    1);
   auto maybe_new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map_info);
   EXPECT_NE(maybe_new_pose_coord, std::nullopt);
   EXPECT_EQ(maybe_new_pose_coord->x(), 295);
@@ -71,7 +72,8 @@ TEST_F(WallsWorldTest, WallCollision)
   auto new_pose = kennel::apply_map_collisions(
     *map,
     start_pose,
-    end_pose);
+    end_pose,
+    1);
   auto maybe_new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map_info);
   EXPECT_NE(maybe_new_pose_coord, std::nullopt);
   EXPECT_EQ(maybe_new_pose_coord->x(), 5);

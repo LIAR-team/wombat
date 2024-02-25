@@ -12,6 +12,7 @@ my_robot:
   robot_sim:
     ros__parameters:
       mobile_base:
+        robot_radius: 0.15
         update_period_ms: 5
         control_topic_name: /cmd_vel
         control_msg_lifespan_ms: 200

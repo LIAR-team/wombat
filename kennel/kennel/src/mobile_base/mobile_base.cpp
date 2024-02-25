@@ -189,6 +189,11 @@ bool MobileBase::setup_ground_truth()
       BASE_PARAM("control_msg_lifespan_ms"),
       rclcpp::ParameterValue{100}).get<int>());
 
+  const auto robot_radius = wombat_core::declare_parameter_if_not_declared(
+    m_parent_node->get_node_parameters_interface(),
+    BASE_PARAM("robot_radius"),
+    rclcpp::ParameterValue{0.0}).get<double>();
+
   if (start_pose_2d.size() != 3u) {
     RCLCPP_ERROR(
       m_logger,
@@ -201,6 +206,7 @@ bool MobileBase::setup_ground_truth()
     m_parent_node,
     ground_truth_frame_id,
     control_msg_lifespan,
+    robot_radius,
     robot_base_frame_id);
   geometry_msgs::msg::Pose start_pose;
   start_pose.position.x = start_pose_2d[0];

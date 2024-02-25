@@ -11,7 +11,7 @@
 namespace wombat_core
 {
 
-static std::array<int8_t, 256> create_cost_translation_table()
+static std::array<int8_t, 256> create_costmap_to_occupancy_table()
 {
   static_assert(costmap::NO_INFORMATION == 255, "Unexpected NO_INFORMATION value");
   static_assert(costmap::LETHAL_OBSTACLE == 254, "Unexpected LETHAL_OBSTACLE value");
@@ -37,7 +37,7 @@ int8_t interpret_costmap_to_occupancy_value(unsigned char value)
   // static initialization of the cost translation table.
   // it's thread-safe: https://stackoverflow.com/q/1661529/7108533
   // This means that the first invocation of this function will be "slow"
-  static std::array<int8_t, 256> s_cost_translation_table = create_cost_translation_table();
+  static std::array<int8_t, 256> s_cost_translation_table = create_costmap_to_occupancy_table();
 
   return s_cost_translation_table[static_cast<size_t>(value)];
 }

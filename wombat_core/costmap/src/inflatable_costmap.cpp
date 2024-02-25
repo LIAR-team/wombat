@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "nav_msgs/msg/occupancy_grid.hpp"
+#include "nav2_costmap_2d/footprint.hpp"
 #include "nav2_costmap_2d/layered_costmap.hpp"
 
 #include "wombat_core/costmap/inflatable_costmap.hpp"
@@ -15,10 +16,12 @@
 namespace wombat_core
 {
 
-InflatableCostmap::InflatableCostmap()
+InflatableCostmap::InflatableCostmap(
+  double robot_radius,
+  const std::string & frame_id)
 {
   m_layered_costmap = std::make_unique<nav2_costmap_2d::LayeredCostmap>(
-    "scemotto", false, false);
+    frame_id, false, false);
 
   m_static_layer = std::make_shared<wombat_core::StaticLayer>();
   m_inflation_layer = std::make_shared<wombat_core::InflationLayer>();
@@ -28,6 +31,8 @@ InflatableCostmap::InflatableCostmap()
   // Setup all plugins before doing anything
   m_static_layer->setup(m_layered_costmap.get());
   m_inflation_layer->setup(m_layered_costmap.get());
+
+  m_layered_costmap->setFootprint(nav2_costmap_2d::makeFootprintFromRadius(robot_radius));
 }
 
 bool InflatableCostmap::render_costmap()
