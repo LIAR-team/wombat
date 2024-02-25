@@ -6,6 +6,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "nav2_costmap_2d/layered_costmap.hpp"
