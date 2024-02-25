@@ -51,20 +51,20 @@ RobotInterface::RobotInterface(const std::string & robot_namespace)
     });
 
   // Setup ROS 2 executor
-  executor = std::make_unique<rclcpp::executors::SingleThreadedExecutor>();
-  executor->add_node(node);
-  executor_thread = std::make_unique<std::thread>([this]() {executor->spin();});
+  m_executor = std::make_unique<rclcpp::executors::SingleThreadedExecutor>();
+  m_executor->add_node(node);
+  m_executor_thread = std::make_unique<std::thread>([this]() {m_executor->spin();});
 
   // Setup tf
-  tf_buffer = std::make_unique<tf2_ros::Buffer>(node->get_clock());
-  tf_buffer->setUsingDedicatedThread(true);
-  tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer, node, false);
+  m_tf_buffer = std::make_unique<tf2_ros::Buffer>(node->get_clock());
+  m_tf_buffer->setUsingDedicatedThread(true);
+  m_tf_listener = std::make_shared<tf2_ros::TransformListener>(*m_tf_buffer, node, false);
 }
 
 RobotInterface::~RobotInterface()
 {
-  executor->cancel();
-  executor_thread->join();
+  m_executor->cancel();
+  m_executor_thread->join();
 }
 
 std::optional<geometry_msgs::msg::TransformStamped>
@@ -75,7 +75,7 @@ RobotInterface::get_latest_base_tf(
 {
   geometry_msgs::msg::TransformStamped robot_pose;
   try {
-    robot_pose = tf_buffer->lookupTransform(
+    robot_pose = m_tf_buffer->lookupTransform(
       from_frame_id, to_frame_id,
       tf2::TimePointZero,
       timeout);

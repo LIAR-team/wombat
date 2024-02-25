@@ -60,10 +60,10 @@ protected:
     const std::string & topic_name,
     const rclcpp::QoS & publisher_qos = rclcpp::SensorDataQoS())
   {
-    auto pub_base_it = publishers.find(topic_name);
-    if (pub_base_it == publishers.end()) {
+    auto pub_base_it = m_publishers.find(topic_name);
+    if (pub_base_it == m_publishers.end()) {
       auto new_pub = node->create_publisher<MsgT>(topic_name, publisher_qos);
-      auto insert_result = publishers.insert(std::make_pair(topic_name, new_pub));
+      auto insert_result = m_publishers.insert(std::make_pair(topic_name, new_pub));
       if (!insert_result.second) {
         throw std::runtime_error("Failed to insert new publisher for " + topic_name);
       }
@@ -80,11 +80,11 @@ protected:
   }
 
   rclcpp::TimerBase::SharedPtr m_logger_timer;
-  std::map<std::string, rclcpp::PublisherBase::SharedPtr> publishers;
-  std::unique_ptr<tf2_ros::Buffer> tf_buffer;
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener;
-  std::unique_ptr<rclcpp::Executor> executor;
-  std::unique_ptr<std::thread> executor_thread;
+  std::map<std::string, rclcpp::PublisherBase::SharedPtr> m_publishers;
+  std::unique_ptr<tf2_ros::Buffer> m_tf_buffer;
+  std::shared_ptr<tf2_ros::TransformListener> m_tf_listener;
+  std::unique_ptr<rclcpp::Executor> m_executor;
+  std::unique_ptr<std::thread> m_executor_thread;
 };
 
 }  // namespace kennel
