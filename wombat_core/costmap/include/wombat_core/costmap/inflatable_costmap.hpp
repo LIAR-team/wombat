@@ -6,6 +6,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "nav2_costmap_2d/layered_costmap.hpp"
@@ -20,7 +21,9 @@ namespace wombat_core
 class InflatableCostmap
 {
 public:
-  InflatableCostmap();
+  InflatableCostmap(
+    double robot_radius,
+    const std::string & frame_id = "map");
 
   /**
    * @brief Update the occupancy representation of the costmap from a new whole map.

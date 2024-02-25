@@ -24,31 +24,21 @@ rclcpp::ParameterMap KennelParamsConfig::get() const
 KennelParamsConfig &
 KennelParamsConfig::set_map_yaml_filename(const std::string & yaml_file)
 {
-  bool success = wombat_core::write_parameter_map(
-    m_parameter_map,
-    KENNEL_NAME,
-    "map_yaml_filename",
-    rclcpp::ParameterValue(yaml_file),
-    true);
-  if (!success) {
-    throw std::runtime_error("Failed to write yaml filename");
-  }
+  this->write_parameter_for_node(
+    rclcpp::Parameter("map_yaml_filename", rclcpp::ParameterValue(yaml_file)),
+    KENNEL_NAME);
 
   std::string map_topic_name = "";
   if (!yaml_file.empty()) {
     map_topic_name = "/ground_truth_map";
   }
+
   const auto & robot_names = this->get_robot_names();
   for (const auto & name : robot_names) {
     std::string full_name = "/" + name + "/robot_sim";
-    success = wombat_core::write_parameter_map(
-      m_parameter_map,
-      full_name,
-      "mobile_base.ground_truth.map_topic_name",
-      rclcpp::ParameterValue(map_topic_name));
-    if (!success) {
-      throw std::runtime_error("Failed to write robot map topic name");
-    }
+    this->write_parameter_for_robot(
+      rclcpp::Parameter("mobile_base.ground_truth.map_topic_name", rclcpp::ParameterValue(map_topic_name)),
+      full_name);
   }
 
   return *this;
@@ -74,23 +64,24 @@ KennelParamsConfig::add_robot(const std::string & robot_name)
 }
 
 KennelParamsConfig &
+KennelParamsConfig::set_robot_radius(
+  double robot_radius,
+  const std::string & robot_name)
+{
+  this->write_parameter_for_robot(
+    rclcpp::Parameter("mobile_base.robot_radius", rclcpp::ParameterValue(robot_radius)),
+    robot_name);
+  return *this;
+}
+
+KennelParamsConfig &
 KennelParamsConfig::set_robot_pose(
   const std::vector<double> & pose_2d,
   const std::string & robot_name)
 {
-  if (!this->has_robot(robot_name)) {
-    throw std::runtime_error("Can't set pose for not existing robot");
-  }
-  bool success = wombat_core::write_parameter_map(
-    m_parameter_map,
-    robot_name,
-    "mobile_base.start_pose",
-    rclcpp::ParameterValue(pose_2d),
-    true);
-  if (!success) {
-    throw std::runtime_error("Failed to write robot start pose");
-  }
-
+  this->write_parameter_for_robot(
+    rclcpp::Parameter("mobile_base.start_pose", rclcpp::ParameterValue(pose_2d)),
+    robot_name);
   return *this;
 }
 
@@ -208,19 +199,40 @@ void KennelParamsConfig::add_plugin_to_robot(
 
   for (const auto & [p_name, p_value] : extended_plugin_params) {
     const std::string full_plugin_param_name = plugin.full_param_name(p_name);
-    success = wombat_core::write_parameter_map(
-      m_parameter_map,
-      robot_name,
-      full_plugin_param_name,
-      p_value,
-      true);
-    if (!success) {
-      std::stringstream error_text;
-      error_text << "Failed to write plugin param '" << p_name << "' with value '" << rclcpp::to_string(p_value) << "'";
-      error_text << "' as '" << full_plugin_param_name << "'";
-      error_text << " for robot '" << robot_name << "'";
-      throw std::runtime_error(error_text.str());
-    }
+    this->write_parameter_for_robot(
+      rclcpp::Parameter(full_plugin_param_name, p_value),
+      robot_name);
+  }
+}
+
+void KennelParamsConfig::write_parameter_for_robot(
+  const rclcpp::Parameter & param,
+  const std::string & robot_name)
+{
+  if (!this->has_robot(robot_name)) {
+    std::stringstream error_text;
+    error_text << "Can't write parameter '" << param.get_name() << "'";
+    error_text << " for not existing robot '" << robot_name << "'";
+    throw std::runtime_error(error_text.str());
+  }
+  this->write_parameter_for_node(param, robot_name);
+}
+
+void KennelParamsConfig::write_parameter_for_node(
+  const rclcpp::Parameter & param,
+  const std::string & node_name)
+{
+  bool success = wombat_core::write_parameter_map(
+    m_parameter_map,
+    node_name,
+    param.get_name(),
+    param.get_parameter_value(),
+    true);
+  if (!success) {
+    std::stringstream error_text;
+    error_text << "Failed to write param '" << param.get_name() << "' with value '" << param.value_to_string() << "'";
+    error_text << " for node '" << node_name << "'";
+    throw std::runtime_error(error_text.str());
   }
 }
 
@@ -262,14 +274,16 @@ bool KennelParamsConfig::has_robot(const std::string & robot_name) const
 
 void KennelParamsConfig::print_parameters_map() const
 {
-  std::cout << "----- Kennel parameters map ----- " << std::endl;
+  std::stringstream params_txt;
+  params_txt << "----- Kennel parameters map -----\n";
   for (const auto & node_map : m_parameter_map) {
-    std::cout << node_map.first << ":" << std::endl;
+    params_txt << node_map.first << ":\n";
     for (const auto & param : node_map.second) {
-      std::cout << "  - " << param.get_name() << " '" << param.value_to_string() << "'" << std::endl;
+      params_txt << "  - " << param.get_name() << " '" << param.value_to_string() << "'\n";
     }
   }
-  std::cout << "----- ----- ----- " << std::endl;
+  params_txt << "----- ----- ----- ";
+  std::cout << params_txt.str() << std::endl;
 }
 
 }  // namespace kennel

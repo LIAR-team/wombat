@@ -47,6 +47,11 @@ public:
     const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME);
 
   KennelParamsConfig &
+  set_robot_radius(
+    double robot_radius,
+    const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME);
+
+  KennelParamsConfig &
   add_lidar_slam_positioner_to_robot(
     const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
     const NamedParams & plugin_params = NamedParams(),
@@ -95,6 +100,14 @@ private:
   std::vector<std::string> get_robot_names() const;
 
   bool has_robot(const std::string & robot_name) const;
+
+  void write_parameter_for_robot(
+    const rclcpp::Parameter & param,
+    const std::string & robot_name);
+
+  void write_parameter_for_node(
+    const rclcpp::Parameter & param,
+    const std::string & node_name);
 
   void print_parameters_map() const;
 

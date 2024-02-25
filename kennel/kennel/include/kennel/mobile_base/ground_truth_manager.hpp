@@ -31,6 +31,7 @@ public:
     rclcpp::Node * parent_node,
     std::string ground_truth_frame_id,
     const std::chrono::milliseconds & cmd_timeout,
+    double robot_radius,
     std::string robot_base_frame_id = "base_link");
 
   void map_update(nav_msgs::msg::OccupancyGrid::ConstSharedPtr map);
@@ -60,7 +61,7 @@ private:
 
   geometry_msgs::msg::Pose m_gt_pose;
   geometry_msgs::msg::TransformStamped m_gt_transform;
-  nav_msgs::msg::OccupancyGrid::ConstSharedPtr m_map;
+  nav_msgs::msg::OccupancyGrid::SharedPtr m_inflated_grid;
   std::optional<rclcpp::Time> m_last_pose_update_time;
 };
 

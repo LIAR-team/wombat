@@ -13,6 +13,7 @@
 
 #include "kennel/kennel.hpp"
 #include "wombat_core/math/angles.hpp"
+#include "wombat_msgs/msg/bumper.hpp"
 
 #include "kennel/kennel_gtest/kennel_config.hpp"
 #include "kennel/kennel_gtest/single_robot_fixture.hpp"
@@ -25,19 +26,6 @@ public:
   {
     TestKennelSingleRobot::SetUp();
 
-    bumper_subscription = node->create_subscription<wombat_msgs::msg::Bumper>(
-      "/my_robot/bumper",
-      rclcpp::SensorDataQoS(),
-      [this](wombat_msgs::msg::Bumper::ConstSharedPtr msg) {
-        if (is_bumped != msg->is_pressed) {
-          RCLCPP_INFO(
-            node->get_logger(),
-            "Bumper is now %s",
-            (msg->is_pressed ? "pressed" : "not pressed"));
-        }
-        is_bumped = msg->is_pressed;
-      });
-
     auto kennel_params = kennel::KennelParamsConfig()
       .add_robot()
       .set_robot_pose({1.0, 1.0, 0.0})
@@ -45,8 +33,17 @@ public:
       .add_bumper_to_robot()
       .set_map_yaml_filename(map_yaml_path)
       .get();
-
     setup_kennel(kennel_params);
+
+    bumper_subscription = robot->node->create_subscription<wombat_msgs::msg::Bumper>(
+      "bumper",
+      rclcpp::SensorDataQoS(),
+      [this](wombat_msgs::msg::Bumper::ConstSharedPtr msg) {
+        if (is_bumped != msg->is_pressed) {
+          std::cout << "Bumper is now " << (msg->is_pressed ? "pressed" : "not pressed") << std::endl;
+        }
+        is_bumped = msg->is_pressed;
+      });
   }
 
   rclcpp::SubscriptionBase::SharedPtr bumper_subscription;
@@ -64,10 +61,10 @@ public:
 
 TEST_F(WallsMapLocalSLAMTest, DriveAndExplore)
 {
-  auto gt_map = this->get_occupancy_grid();
+  auto gt_map = robot->get_occupancy_grid(std::chrono::seconds(10), "/ground_truth_map");
   ASSERT_NE(gt_map, nullptr) << "Failed to get gt occupancy grid";
-  auto local_map = this->get_occupancy_grid("/my_robot/map");
-  ASSERT_NE(local_map, nullptr) << "Failed to get lidar occupancy grid";
+  auto local_map = robot->get_occupancy_grid(std::chrono::seconds(10), "map");
+  ASSERT_NE(local_map, nullptr) << "Failed to get local occupancy grid";
 
   ASSERT_DOUBLE_EQ(gt_map->info.resolution, local_map->info.resolution);
   ASSERT_EQ(gt_map->info.width, local_map->info.width);
@@ -95,11 +92,11 @@ TEST_F(WallsMapLocalSLAMTest, DriveAndExplore)
   const double goal_rotation = 2 * wombat_core::PI;
   geometry_msgs::msg::Twist rotate_cmd_vel;
   rotate_cmd_vel.angular.z = 1.0;
-  double rotation = rotate_angle(goal_rotation, rotate_cmd_vel, std::chrono::seconds(10));
+  double rotation = robot->rotate_angle(goal_rotation, rotate_cmd_vel, std::chrono::seconds(10));
   EXPECT_GE(std::abs(rotation), goal_rotation);
 
-  local_map = this->get_occupancy_grid("/my_robot/map");
-  ASSERT_NE(local_map, nullptr) << "Failed to get lidar occupancy grid";
+  local_map = robot->get_occupancy_grid(std::chrono::seconds(10), "map");
+  ASSERT_NE(local_map, nullptr) << "Failed to get local occupancy grid";
 
   previous_matched = count_matched;
   count_matched = 0;
@@ -116,14 +113,14 @@ TEST_F(WallsMapLocalSLAMTest, DriveAndExplore)
   // publish forward velocity command until we bump
   geometry_msgs::msg::Twist forward_cmd_vel;
   forward_cmd_vel.linear.x = 2.5;
-  drive_until_condition(
+  robot->drive_until_condition(
     forward_cmd_vel,
     [this]() {return is_bumped.load();},
     std::chrono::seconds(10));
   ASSERT_TRUE(is_bumped);
 
-  local_map = this->get_occupancy_grid("/my_robot/map");
-  ASSERT_NE(local_map, nullptr) << "Failed to get lidar occupancy grid";
+  local_map = robot->get_occupancy_grid(std::chrono::seconds(10), "map");
+  ASSERT_NE(local_map, nullptr) << "Failed to get local occupancy grid";
 
   previous_matched = count_matched;
   count_matched = 0;

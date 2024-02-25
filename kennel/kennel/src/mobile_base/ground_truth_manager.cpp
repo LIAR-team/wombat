@@ -12,6 +12,7 @@
 #include "kennel/common/collisions.hpp"
 #include "kennel/mobile_base/ground_truth_manager.hpp"
 #include "wombat_control/models/diff_drive_model.hpp"
+#include "wombat_core/costmap/costmap_conversions.hpp"
 #include "wombat_core/grid/coordinates.hpp"
 #include "wombat_core/math/transformations.hpp"
 
@@ -22,12 +23,13 @@ GroundTruthManager::GroundTruthManager(
   rclcpp::Node * parent_node,
   std::string ground_truth_frame_id,
   const std::chrono::milliseconds & cmd_timeout,
+  double robot_radius,
   std::string robot_base_frame_id)
 : m_clock(parent_node->get_clock()), m_logger(parent_node->get_logger()),
   m_ground_truth_frame_id(std::move(ground_truth_frame_id)), m_robot_base_frame_id(std::move(robot_base_frame_id)),
   m_cmd_timeout(cmd_timeout)
 {
-  m_costmap = std::make_unique<wombat_core::InflatableCostmap>();
+  m_costmap = std::make_unique<wombat_core::InflatableCostmap>(robot_radius, ground_truth_frame_id);
 
   RCLCPP_INFO(m_logger, "Ground truth manager constructed %s", m_ground_truth_frame_id.c_str());
 }
@@ -36,10 +38,16 @@ void
 GroundTruthManager::map_update(nav_msgs::msg::OccupancyGrid::ConstSharedPtr map)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
-  m_map = map;
+  m_ground_truth_frame_id = map->header.frame_id;
   m_costmap->update_map(map);
   // We render after every map update, as we expect them to be very infrequent
   m_costmap->render_costmap();
+  // Store updated costmap as an inflated occupancy grid
+  auto costmap = this->get_costmap();
+  m_inflated_grid = std::make_unique<nav_msgs::msg::OccupancyGrid>();
+  m_inflated_grid->header = map->header;
+  m_inflated_grid->info = map->info;
+  wombat_core::costmap_to_occupancy_grid_values(*costmap, *m_inflated_grid);
 }
 
 std::string GroundTruthManager::get_ground_truth_frame_id() const
@@ -61,7 +69,7 @@ GroundTruthManager::pose_update(const geometry_msgs::msg::TwistStamped & cmd_vel
   std::lock_guard<std::mutex> lock(m_mutex);
 
   m_gt_transform.header.stamp = now;
-  m_gt_transform.header.frame_id = m_map ? m_map->header.frame_id : m_ground_truth_frame_id;
+  m_gt_transform.header.frame_id = m_ground_truth_frame_id;
   m_gt_transform.child_frame_id = m_robot_base_frame_id;
 
   if (!m_last_pose_update_time) {
@@ -82,8 +90,9 @@ GroundTruthManager::pose_update(const geometry_msgs::msg::TwistStamped & cmd_vel
       dt_since_last_pose_update);
 
     // Validate the new pose before updating the ground truth member variable
-    if (m_map) {
-      m_gt_pose = kennel::apply_map_collisions(*m_map, m_gt_pose, new_pose);
+    if (m_inflated_grid) {
+      static constexpr int8_t COLLISION_THRESHOLD = 99;
+      m_gt_pose = kennel::apply_map_collisions(*m_inflated_grid, m_gt_pose, new_pose, COLLISION_THRESHOLD);
     } else {
       m_gt_pose = new_pose;
     }

@@ -5,6 +5,7 @@ target_sources(
   kennel_gtest
   PRIVATE
     src/kennel_config.cpp
+    src/robot_interface.cpp
     src/single_robot_fixture.cpp
 )
 target_include_directories(
@@ -20,7 +21,6 @@ target_link_libraries(
     kennel::kennel_lib
     rclcpp::rclcpp
     tf2_ros::tf2_ros
-    ${wombat_msgs_TARGETS}
   PRIVATE
     tf2::tf2
     tf2_geometry_msgs::tf2_geometry_msgs

@@ -32,7 +32,7 @@ public:
 
 TEST_F(WallsWorldTest, WallCollisionBis)
 {
-  auto map = this->get_occupancy_grid();
+  auto map = robot->get_occupancy_grid(std::chrono::seconds(10), "/ground_truth_map");
   ASSERT_NE(map, nullptr) << "Failed to get gt occupancy grid";
   auto map_info = wombat_core::MapMetaDataAdapter(map->info);
 
@@ -45,7 +45,8 @@ TEST_F(WallsWorldTest, WallCollisionBis)
   auto new_pose = kennel::apply_map_collisions(
     *map,
     start_pose,
-    end_pose);
+    end_pose,
+    1);
   auto maybe_new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map_info);
   EXPECT_NE(maybe_new_pose_coord, std::nullopt);
   EXPECT_EQ(maybe_new_pose_coord->x(), 295);
@@ -58,7 +59,7 @@ TEST_F(WallsWorldTest, WallCollisionBis)
 
 TEST_F(WallsWorldTest, WallCollision)
 {
-  auto map = this->get_occupancy_grid();
+  auto map = robot->get_occupancy_grid(std::chrono::seconds(10), "/ground_truth_map");
   ASSERT_NE(map, nullptr) << "Failed to get gt occupancy grid";
   auto map_info = wombat_core::MapMetaDataAdapter(map->info);
 
@@ -71,7 +72,8 @@ TEST_F(WallsWorldTest, WallCollision)
   auto new_pose = kennel::apply_map_collisions(
     *map,
     start_pose,
-    end_pose);
+    end_pose,
+    1);
   auto maybe_new_pose_coord = wombat_core::world_pt_to_grid_coord(new_pose.position, map_info);
   EXPECT_NE(maybe_new_pose_coord, std::nullopt);
   EXPECT_EQ(maybe_new_pose_coord->x(), 5);

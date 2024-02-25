@@ -17,7 +17,8 @@ namespace kennel
 geometry_msgs::msg::Pose apply_map_collisions(
   const nav_msgs::msg::OccupancyGrid & map,
   const geometry_msgs::msg::Pose & start_pose,
-  const geometry_msgs::msg::Pose & input_end_pose)
+  const geometry_msgs::msg::Pose & input_end_pose,
+  int8_t collision_threshold)
 {
   // If the map is empty we just forward the updated pose
   if (map.data.empty()) {
@@ -43,8 +44,8 @@ geometry_msgs::msg::Pose apply_map_collisions(
   if (!start_pose_idx) {
     throw std::runtime_error("Failed to compute start pose index");
   }
-  if (map.data[*start_pose_idx] != 0) {
-    throw std::runtime_error("Start pose is not a free cell");
+  if (map.data[*start_pose_idx] >= collision_threshold) {
+    throw std::runtime_error("Start pose is not free: occupancy value " + std::to_string(map.data[*start_pose_idx]));
   }
 
   geometry_msgs::msg::Pose end_pose = input_end_pose;
@@ -73,8 +74,8 @@ geometry_msgs::msg::Pose apply_map_collisions(
     *start_pose_coord,
     *end_pose_coord,
     map_info,
-    [&map, &last_free_index](wombat_core::grid_index_t index) {
-      bool is_obstacle = map.data[index] > 0;
+    [&map, &last_free_index, collision_threshold](wombat_core::grid_index_t index) {
+      bool is_obstacle = map.data[index] >= collision_threshold;
       if (!is_obstacle) {
         last_free_index = index;
       }
@@ -135,7 +136,7 @@ geometry_msgs::msg::Pose apply_map_collisions(
     motion_text << input_end_pose.position.x << " " << input_end_pose.position.y;
     throw std::runtime_error("Failed to compute interpolated index for " + motion_text.str());
   }
-  if (map.data[*interpolated_pose_idx] != 0) {
+  if (map.data[*interpolated_pose_idx] >= collision_threshold) {
     auto maybe_last_free_world_pt = wombat_core::grid_coord_to_world_pt(*maybe_last_free_coord, map_info);
     if (!maybe_last_free_world_pt) {
       throw std::runtime_error("Failed to compute last free world point");
