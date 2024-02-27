@@ -15,9 +15,9 @@
 namespace kennel
 {
 
-static constexpr auto DEFAULT_ROBOT_NAME = "my_robot";
-static constexpr auto DEFAULT_ROBOT_NODE_NAME = "/my_robot/robot_sim";
-static constexpr auto KENNEL_NAME = "/kennel";
+static constexpr auto DEFAULT_ROBOT_NAMESPACE = "my_robot";
+static constexpr auto DEFAULT_ROBOT_NODE = "/my_robot/robot_sim";
+static constexpr auto KENNEL_NODE = "/kennel";
 
 using NamedParams = std::map<std::string, rclcpp::ParameterValue>;
 
@@ -39,39 +39,45 @@ public:
   set_map_yaml_filename(const std::string & yaml_file);
 
   KennelParamsConfig &
-  add_robot(const std::string & robot_name = DEFAULT_ROBOT_NAME);
+  add_robot(const std::string & robot_name = DEFAULT_ROBOT_NAMESPACE);
 
   KennelParamsConfig &
   set_robot_pose(
     const std::vector<double> & pose_2d,
-    const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME);
+    const std::string & robot_name = DEFAULT_ROBOT_NODE);
 
   KennelParamsConfig &
   set_robot_radius(
     double robot_radius,
-    const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME);
+    const std::string & robot_name = DEFAULT_ROBOT_NODE);
+
+  KennelParamsConfig &
+  add_stub_positioner_to_robot(
+    const std::string & robot_name = DEFAULT_ROBOT_NODE,
+    const NamedParams & plugin_params = NamedParams(),
+    const std::string & plugin_name = "map");
 
   KennelParamsConfig &
   add_lidar_slam_positioner_to_robot(
-    const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
+    const std::string & robot_name = DEFAULT_ROBOT_NODE,
     const NamedParams & plugin_params = NamedParams(),
     const std::string & plugin_name = "map");
 
   KennelParamsConfig &
   add_local_slam_positioner_to_robot(
-    const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
+    const std::string & robot_name = DEFAULT_ROBOT_NODE,
     const NamedParams & plugin_params = NamedParams(),
     const std::string & plugin_name = "map");
 
   KennelParamsConfig &
   add_bumper_to_robot(
-    const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
+    const std::string & robot_name = DEFAULT_ROBOT_NODE,
     const NamedParams & plugin_params = NamedParams(),
     const std::string & plugin_name = "bumper");
 
   KennelParamsConfig &
   add_lidar2d_to_robot(
-    const std::string & robot_name = DEFAULT_ROBOT_NODE_NAME,
+    const std::string & robot_name = DEFAULT_ROBOT_NODE,
     const NamedParams & plugin_params = NamedParams(),
     const std::string & plugin_name = "base_scan");
 

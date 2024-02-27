@@ -19,6 +19,7 @@ my_robot:
         start_pose: [1.0, 3.0, 0.0]
         positioners:
           - "slam"
+          - "odom"
         ground_truth:
           map_topic_name: /ground_truth_map
         slam:
@@ -26,6 +27,10 @@ my_robot:
           frame_id: "map"
           map_topic_name: "/map"
           range_max: 2.0
+        odom:
+          plugin_type: "kennel::StubPositioner"
+          frame_id: "odom"
+          map_topic_name: ""
       sensors_manager:
         update_period_ms: 10
         sensors:

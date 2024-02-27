@@ -120,8 +120,9 @@ void MobileBase::mobile_base_update()
   if (!maybe_tree_tfs) {
     throw std::runtime_error("Failed to process transforms!");
   }
+  m_last_transforms = sorted_tfs;
+
   m_tf_broadcaster->sendTransform(*maybe_tree_tfs);
-  m_last_transforms = *maybe_tree_tfs;
 }
 
 std::optional<std::vector<geometry_msgs::msg::TransformStamped>>
