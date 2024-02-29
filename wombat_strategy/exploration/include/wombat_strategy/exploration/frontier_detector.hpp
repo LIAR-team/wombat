@@ -9,8 +9,9 @@
 #include <utility>
 #include <vector>
 
-#include "nav2_costmap_2d/costmap_2d.hpp"
-#include "wombat_core/grid/neighbors.hpp"
+#include "nav_msgs/msg/occupancy_grid.hpp"
+
+#include "wombat_core/grid/types.hpp"
 #include "wombat_strategy/exploration/frontier.hpp"
 
 namespace wombat_strategy
@@ -45,112 +46,64 @@ public:
    */
   explicit FrontierDetector(const params_t & params);
 
-
   /**
-    * @brief Provide a pointer to a costmap that is used for frontier detection.
-    * @param costmap that is meant to be updated from the application
-    */
-  void set_costmap(std::shared_ptr<nav2_costmap_2d::Costmap2D> costmap)
-  {
-    m_costmap = std::move(costmap);
-  }
-
-  /**
-    * @brief Set current robot position, used for frontier detection and ranking.
-    * @param robot_position in world reference frame
-    */
-  void set_current_position(geometry_msgs::msg::Point robot_position)
-  {
-    m_robot_position = robot_position;
-  }
-
-  /**
-    * @brief Main API, returns a ranked list of frontiers computed on the current costmap.
-    * It requires that a valid pointer to a costmap has already been provided.
+    * @brief Main API, returns a ranked list of frontiers computed on the current occupancy grid
+    * @param grid occupancy grid
+    * @param robot_position current robot position
     * @return frontiers ranked from best to worst
     */
-  std::vector<frontier_t> search_frontiers();
+  std::vector<frontier_t> search_frontiers(
+    nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
+    const geometry_msgs::msg::Point & robot_position);
 
   /**
     * @brief Helper function that checks if a frontier is valid.
     * @param frontier the frontier to check
+    * @param grid occupancy grid
     * @param trusted whether the map has been updated or not since when the frontier was computed
     * @return true if the frontier is still valid
     */
-  bool frontier_is_valid(const frontier_t & frontier, bool trusted = true);
+  bool frontier_is_valid(
+    const frontier_t & frontier,
+    nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
+    const wombat_core::MapMetaDataAdapter & map_info,
+    bool trusted = true);
 
 private:
-  static constexpr unsigned int FREE_CELL = 0;
-  static constexpr unsigned int OCCUPIED_CELL = 100;
-  static constexpr unsigned int UNKNOWN_CELL = 255;
-
-  std::shared_ptr<nav2_costmap_2d::Costmap2D> m_costmap;
-  geometry_msgs::msg::Point m_robot_position;  // robot position in world frame
-  params_t m_params;
-
   /**
     * @brief Create a frontier object starting from a given index.
-    * While the frontier is created, its indices are also added to the already_included_frontier_indices
+    * While the frontier is created, its indices are also added to the all_frontier_indices
     * NOTE: This method will not assign a score to the frontier
     * @param starting_cell_idx first identified index belonging to the frontier
-    * @param already_included_frontier_indices
+    * @param grid occupancy grid
+    * @param all_frontier_indices
     * @return frontier_t the constructed frontier
     */
-  frontier_t build_frontier(unsigned int starting_cell_idx, std::vector<bool> & already_included_frontier_indices);
+  frontier_t build_frontier(
+    wombat_core::grid_index_t starting_cell_idx,
+    nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
+    const wombat_core::MapMetaDataAdapter & map_info,
+    std::vector<bool> & all_frontier_indices);
 
   /**
     * @brief Assign a score and ranks the frontiers according to it
     * @param frontiers will be re-ordered according to their descending score
     */
-  void rank_frontiers(std::vector<frontier_t> & frontiers);
+  void rank_frontiers(
+    const geometry_msgs::msg::Point & robot_position,
+    std::vector<frontier_t> & frontiers);
 
   /**
     * @brief checks if a cell denotes a frontier on the current costmap
     * @param cell_idx to be checked
     * @return true if the index denotes a frontier cell
     */
-  bool is_frontier_cell(unsigned int cell_idx)
-  {
-    // A cell must be FREE in order to be a frontier
-    if (m_costmap->getCharMap()[cell_idx] != FREE_CELL) {
-      return false;
-    }
+  bool is_frontier_cell(
+    wombat_core::grid_index_t cell_idx,
+    nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
+    const wombat_core::MapMetaDataAdapter & map_info);
 
-    // Examine neighbors of this cell
-    uint8_t unknown_neighbors = 0;
-    uint8_t free_neighbors = 0;
-    uint8_t occupied_neighbors = 0;
-    wombat_core::for_each_grid_neighbor(
-      cell_idx,
-      m_costmap->getSizeInCellsX(),
-      m_costmap->getSizeInCellsY(),
-      [this, &unknown_neighbors, &free_neighbors, &occupied_neighbors](wombat_core::grid_index_t i)
-      {
-        unsigned int neighbor_cell_type = m_costmap->getCharMap()[i];
-        if (neighbor_cell_type == UNKNOWN_CELL) {
-          unknown_neighbors++;
-        } else if (neighbor_cell_type == FREE_CELL) {
-          free_neighbors++;
-        } else if (neighbor_cell_type == OCCUPIED_CELL) {
-          occupied_neighbors++;
-        }
-        return false;
-      },
-      true);
-
-    // Discard cells which do not meet the requirements
-    if (unknown_neighbors < m_params.min_unknown_neighbors) {
-      return false;
-    }
-    if (free_neighbors < m_params.min_free_neighbors) {
-      return false;
-    }
-    if (occupied_neighbors >= m_params.max_occupied_neighbors) {
-      return false;
-    }
-
-    return true;
-  }
+  params_t m_params;
 };
 
 }  // namespace wombat_strategy

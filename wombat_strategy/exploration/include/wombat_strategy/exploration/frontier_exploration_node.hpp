@@ -83,7 +83,7 @@ private:
    * @brief Process an incoming map message
    * @param msg the latest map message
    */
-  void map_callback(nav_msgs::msg::OccupancyGrid::SharedPtr msg);
+  void map_callback(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg);
 
   /**
    * @brief Publishes visualizable information about the current drive goal and frontiers
@@ -92,7 +92,7 @@ private:
    */
   void visualize_frontiers(const geometry_msgs::msg::Pose & goal, const std::vector<frontier_t> & frontiers);
 
-  std::shared_ptr<nav2_costmap_2d::Costmap2D> m_costmap;
+  nav_msgs::msg::OccupancyGrid::ConstSharedPtr m_occupancy_grid;
   FrontierDetector m_detector;
 
   std::shared_ptr<ExploreActionServer> m_explore_server;
