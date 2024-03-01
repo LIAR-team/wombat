@@ -44,6 +44,12 @@ public:
     origin = map_info.origin;
   }
 
+  wombat_core::grid_index_t num_grid_cells()
+  {
+    return
+      static_cast<wombat_core::grid_index_t>(grid_size.x()) * static_cast<wombat_core::grid_index_t>(grid_size.y());
+  }
+
   grid_size_t grid_size {0, 0};
   float resolution {0.0};
   geometry_msgs::msg::Pose origin;

@@ -26,7 +26,7 @@ KennelParamsConfig::set_map_yaml_filename(const std::string & yaml_file)
 {
   this->write_parameter_for_node(
     rclcpp::Parameter("map_yaml_filename", rclcpp::ParameterValue(yaml_file)),
-    KENNEL_NAME);
+    KENNEL_NODE);
 
   std::string map_topic_name = "";
   if (!yaml_file.empty()) {
@@ -53,7 +53,7 @@ KennelParamsConfig::add_robot(const std::string & robot_name)
 
   bool success = wombat_core::append_parameter_map(
     m_parameter_map,
-    KENNEL_NAME,
+    KENNEL_NODE,
     "robots",
     rclcpp::ParameterValue(std::vector<std::string>({robot_name})));
   if (!success) {
@@ -82,6 +82,25 @@ KennelParamsConfig::set_robot_pose(
   this->write_parameter_for_robot(
     rclcpp::Parameter("mobile_base.start_pose", rclcpp::ParameterValue(pose_2d)),
     robot_name);
+  return *this;
+}
+
+KennelParamsConfig &
+KennelParamsConfig::add_stub_positioner_to_robot(
+  const std::string & robot_name,
+  const NamedParams & plugin_params,
+  const std::string & plugin_name)
+{
+  plugin_description_t plugin;
+  plugin.name = plugin_name;
+  plugin.prefix = "mobile_base";
+  plugin.list_param_name = "positioners";
+  plugin.type = "kennel::StubPositioner";
+
+  this->add_plugin_to_robot(
+    robot_name,
+    plugin,
+    plugin_params);
   return *this;
 }
 
@@ -242,7 +261,7 @@ std::vector<std::string> KennelParamsConfig::get_robot_names() const
   auto maybe_robots_param = wombat_core::get_parameter_for_node(
     "robots",
     m_parameter_map,
-    KENNEL_NAME);
+    KENNEL_NODE);
   if (!maybe_robots_param) {
     return std::vector<std::string>();
   }

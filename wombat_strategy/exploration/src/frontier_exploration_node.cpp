@@ -92,7 +92,7 @@ FrontierExplorationNode::FrontierExplorationNode(const rclcpp::NodeOptions & opt
   params.frontier_size_scaling_factor = frontier_size_scaling_factor;
   m_detector = FrontierDetector(params);
 
-  RCLCPP_INFO(this->get_logger(), "frontier_t exploration node created, must be initialized before use!");
+  RCLCPP_INFO(this->get_logger(), "Node created");
 }
 
 void FrontierExplorationNode::explore()
@@ -119,7 +119,7 @@ void FrontierExplorationNode::explore()
     }
 
     // A map is required for exploring, keep waiting until it is available
-    if (!m_costmap) {
+    if (!m_occupancy_grid) {
       RCLCPP_INFO(this->get_logger(), "No map available, can't explore");
       loop_rate.sleep();
       continue;
@@ -133,7 +133,11 @@ void FrontierExplorationNode::explore()
     if (m_navigation_goal_handle) {
       // Check if is it still worth exploring target frontier
       constexpr bool TRUSTED = false;
-      bool valid = m_detector.frontier_is_valid(m_target_frontier, TRUSTED);
+      bool valid = m_detector.frontier_is_valid(
+        m_target_frontier,
+        m_occupancy_grid,
+        wombat_core::MapMetaDataAdapter(m_occupancy_grid->info),
+        TRUSTED);
       if (valid) {
         // Now check if it is making progress
         Eigen::Affine3d last_progress_pose_inv = m_last_progress_pose.inverse();
@@ -177,15 +181,11 @@ void FrontierExplorationNode::explore()
       continue;
     }
 
-    // Protect access while we use the map for computing frontiers (so it does not get updated meanwhile)
-    std::lock_guard<nav2_costmap_2d::Costmap2D::mutex_t> guard(*(m_costmap->getMutex()));
-
     // Get current robot pose
     RCLCPP_INFO(this->get_logger(), "Current pose: %f %f", current_pose.pose.position.x, current_pose.pose.position.y);
-    m_detector.set_current_position(current_pose.pose.position);
 
     // Search new frontiers
-    auto frontiers = m_detector.search_frontiers();
+    auto frontiers = m_detector.search_frontiers(m_occupancy_grid, current_pose.pose.position);
     RCLCPP_INFO(this->get_logger(), "Found %lu frontiers", frontiers.size());
 
     // Select exploration goal
@@ -327,43 +327,9 @@ void FrontierExplorationNode::navigate_result_callback(const NavigateGoalHandle:
   }
 }
 
-void FrontierExplorationNode::map_callback(nav_msgs::msg::OccupancyGrid::SharedPtr msg)
+void FrontierExplorationNode::map_callback(nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg)
 {
-  RCLCPP_DEBUG(this->get_logger(), "Received new map message");
-
-  if (m_costmap == nullptr) {
-    m_costmap = std::make_shared<nav2_costmap_2d::Costmap2D>(
-      msg->info.width,
-      msg->info.height,
-      msg->info.resolution,
-      msg->info.origin.position.x,
-      msg->info.origin.position.y);
-    m_detector.set_costmap(m_costmap);
-  }
-
-  // Lock costmap since we are going to modify it
-  std::lock_guard<nav2_costmap_2d::Costmap2D::mutex_t> guard(*(m_costmap->getMutex()));
-
-  if (m_costmap->getSizeInCellsX() != msg->info.width ||
-    m_costmap->getSizeInCellsY() != msg->info.height ||
-    m_costmap->getResolution() != msg->info.resolution ||
-    m_costmap->getOriginX() != msg->info.origin.position.x ||
-    m_costmap->getOriginY() != msg->info.origin.position.y)
-  {
-    // Update the size of the costmap
-    m_costmap->resizeMap(
-      msg->info.width,
-      msg->info.height,
-      msg->info.resolution,
-      msg->info.origin.position.x,
-      msg->info.origin.position.y);
-  }
-
-  // Update the map representation
-  unsigned char * raw_map = m_costmap->getCharMap();
-  for (size_t i = 0; i < msg->data.size(); i++) {
-    raw_map[i] = msg->data[i];
-  }
+  m_occupancy_grid = msg;
 }
 
 void FrontierExplorationNode::visualize_frontiers(

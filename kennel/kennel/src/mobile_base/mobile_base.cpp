@@ -120,8 +120,15 @@ void MobileBase::mobile_base_update()
   if (!maybe_tree_tfs) {
     throw std::runtime_error("Failed to process transforms!");
   }
+  m_last_transforms = sorted_tfs;
+
+  geometry_msgs::msg::TransformStamped footprint_tf;
+  footprint_tf.header.stamp = m_clock->now();
+  footprint_tf.header.frame_id = maybe_tree_tfs->back().child_frame_id;
+  footprint_tf.child_frame_id = "base_footprint";
+  maybe_tree_tfs->push_back(footprint_tf);
+
   m_tf_broadcaster->sendTransform(*maybe_tree_tfs);
-  m_last_transforms = *maybe_tree_tfs;
 }
 
 std::optional<std::vector<geometry_msgs::msg::TransformStamped>>

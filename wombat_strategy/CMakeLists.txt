@@ -3,7 +3,6 @@ project(wombat_strategy)
 
 find_package(wombat_cmake REQUIRED)
 
-find_package(nav2_costmap_2d REQUIRED)
 find_package(nav2_util REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(tf2_eigen REQUIRED)
@@ -23,7 +22,6 @@ wombat_package_install(
   EXPORT_DEPS
     geometry_msgs
     nav_msgs
-    nav2_costmap_2d
     nav2_util
     rclcpp
     tf2_eigen
