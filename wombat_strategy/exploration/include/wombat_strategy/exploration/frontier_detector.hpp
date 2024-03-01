@@ -60,6 +60,7 @@ public:
     * @brief Helper function that checks if a frontier is valid.
     * @param frontier the frontier to check
     * @param grid occupancy grid
+    * @param map_info information about the grid
     * @param trusted whether the map has been updated or not since when the frontier was computed
     * @return true if the frontier is still valid
     */
@@ -76,6 +77,7 @@ private:
     * NOTE: This method will not assign a score to the frontier
     * @param starting_cell_idx first identified index belonging to the frontier
     * @param grid occupancy grid
+    * @param map_info information about the grid
     * @param all_frontier_indices
     * @return frontier_t the constructed frontier
     */
@@ -87,6 +89,7 @@ private:
 
   /**
     * @brief Assign a score and ranks the frontiers according to it
+    * @param robot_position current robot position
     * @param frontiers will be re-ordered according to their descending score
     */
   void rank_frontiers(
@@ -96,6 +99,8 @@ private:
   /**
     * @brief checks if a cell denotes a frontier on the current costmap
     * @param cell_idx to be checked
+    * @param grid occupancy grid
+    * @param map_info information about the grid
     * @return true if the index denotes a frontier cell
     */
   bool is_frontier_cell(
