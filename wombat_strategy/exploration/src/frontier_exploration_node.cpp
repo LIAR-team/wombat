@@ -120,7 +120,9 @@ void FrontierExplorationNode::explore()
 
     // A map is required for exploring, keep waiting until it is available
     if (!m_occupancy_grid) {
-      RCLCPP_INFO(this->get_logger(), "No map available, can't explore");
+      RCLCPP_INFO_THROTTLE(
+        this->get_logger(), *(this->get_clock()), 1000,
+        "No map available, can't explore");
       loop_rate.sleep();
       continue;
     }
@@ -182,7 +184,7 @@ void FrontierExplorationNode::explore()
     }
 
     // Get current robot pose
-    RCLCPP_INFO(this->get_logger(), "Current pose: %f %f", current_pose.pose.position.x, current_pose.pose.position.y);
+    RCLCPP_INFO(this->get_logger(), "Current position: %f %f", current_pose.pose.position.x, current_pose.pose.position.y);
 
     // Search new frontiers
     auto frontiers = m_detector.search_frontiers(m_occupancy_grid, current_pose.pose.position);
