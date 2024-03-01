@@ -184,7 +184,8 @@ void FrontierExplorationNode::explore()
     }
 
     // Get current robot pose
-    RCLCPP_INFO(this->get_logger(), "Current position: %f %f", current_pose.pose.position.x, current_pose.pose.position.y);
+    RCLCPP_INFO(
+      this->get_logger(), "Current position: %f %f", current_pose.pose.position.x, current_pose.pose.position.y);
 
     // Search new frontiers
     auto frontiers = m_detector.search_frontiers(m_occupancy_grid, current_pose.pose.position);

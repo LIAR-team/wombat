@@ -20,10 +20,9 @@ namespace wombat_strategy
 FrontierDetector::FrontierDetector(const FrontierDetector::params_t & params)
 : m_params(params)
 {
-  if (m_params.frontier_size_scaling_factor < 0.0f ||  m_params.frontier_size_scaling_factor > 1.0f)
-  {
-    throw std::runtime_error(
-      "Frontier scaling factor must be [0, 1], got: " + std::to_string(m_params.frontier_size_scaling_factor));
+  if (m_params.frontier_size_scaling_factor < 0.0f || m_params.frontier_size_scaling_factor > 1.0f) {
+    const std::string factor_string = std::to_string(m_params.frontier_size_scaling_factor);
+    throw std::runtime_error("Frontier scaling factor must be [0, 1], got: " + factor_string);
   }
 }
 
