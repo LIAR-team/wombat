@@ -97,7 +97,7 @@ void MobileBase::mobile_base_update()
   sorted_tfs.push_back(gt_data.robot_pose);
 
   for (size_t i = 0; i < m_positioners.size(); i++) {
-    auto maybe_tf = m_positioners[i]->positioner_update(gt_data);
+    auto maybe_tf = m_positioners[i]->positioner_update(gt_data, m_last_cmd_vel);
     // TODO: this is ugly, will need to rewrite.
     // We always need a full tree of transforms even if they are computed with different periods
     if (maybe_tf) {

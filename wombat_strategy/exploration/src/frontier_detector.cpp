@@ -5,7 +5,6 @@
 
 #include "wombat_strategy/exploration/frontier_detector.hpp"
 
-#include <assert.h>
 #include <algorithm>
 #include <limits>
 #include <queue>
@@ -21,9 +20,10 @@ namespace wombat_strategy
 FrontierDetector::FrontierDetector(const FrontierDetector::params_t & params)
 : m_params(params)
 {
-  bool valid_scale_factor =
-    m_params.frontier_size_scaling_factor >= 0.0f && m_params.frontier_size_scaling_factor <= 1.0f;
-  assert(valid_scale_factor && "Invalid scaling factor, must be [0, 1]");
+  if (m_params.frontier_size_scaling_factor < 0.0f || m_params.frontier_size_scaling_factor > 1.0f) {
+    const std::string factor_string = std::to_string(m_params.frontier_size_scaling_factor);
+    throw std::runtime_error("Frontier scaling factor must be [0, 1], got: " + factor_string);
+  }
 }
 
 std::vector<frontier_t> FrontierDetector::search_frontiers(
@@ -41,7 +41,6 @@ std::vector<frontier_t> FrontierDetector::search_frontiers(
   wombat_core::grid_index_t map_size = map_info.num_grid_cells();
   std::vector<bool> touched_indices(map_size, false);
   std::vector<bool> all_frontier_indices(map_size, false);
-
 
   auto maybe_starting_idx = wombat_core::world_pt_to_grid_index(robot_position, map_info);
   if (!maybe_starting_idx) {
@@ -75,11 +74,16 @@ std::vector<frontier_t> FrontierDetector::search_frontiers(
       [this, &touched_indices, &all_frontier_indices, &to_be_visited, &grid](wombat_core::grid_index_t i)
       {
         // Skip already visited cells
-        if (!touched_indices[i] && !all_frontier_indices[i]) {
-          if (!m_params.search_only_free_space || grid->data[i] == wombat_core::occupancy::FREE) {
-            to_be_visited.push(i);
-          }
+        if (touched_indices[i] || all_frontier_indices[i]) {
+          return false;
         }
+        // Mark this as touched to avoid looking at it again
+        touched_indices[i] = true;
+        // Add to queue if it's worth searching frontiers from this cell
+        if (!m_params.search_only_free_space || grid->data[i] == wombat_core::occupancy::FREE) {
+          to_be_visited.push(i);
+        }
+        // Keep going to next neighbor
         return false;
       },
       false);
