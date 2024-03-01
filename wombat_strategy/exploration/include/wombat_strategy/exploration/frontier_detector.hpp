@@ -23,17 +23,17 @@ public:
   /** @brief Parameters to customize the frontier detection operation */
   struct params_t
   {
-    // If true frontiers search propagates only through FREE cells
+    /// @brief If true frontiers search propagates only through FREE cells
     bool search_only_free_space {false};
-    // A cell is a frontier if it has at least this number of neighbors unknown cells
+    /// @brief A cell is a frontier if it has at least this number of neighbors unknown cells
     size_t min_unknown_neighbors {1};
-    // A cell is a frontier if it has at least this number of neighbors free cells
+    /// @brief A cell is a frontier if it has at least this number of neighbors free cells
     size_t min_free_neighbors {1};
-    // A cell is a frontier if it has less than this number of neighbors occupied cells
+    /// @brief A cell is a frontier if it has less than this number of neighbors occupied cells
     size_t max_occupied_neighbors {8};
-    // Frontiers made of less than this number of cells are discarded
+    /// @brief Frontiers made of less than this number of cells are discarded
     size_t min_frontier_size {0};
-    // [0, 1] scaling factor for ranking frontiers
+    /// @brief [0, 1] scaling factor for ranking frontiers
     double frontier_size_scaling_factor {0.0};
   };
 
@@ -94,7 +94,7 @@ private:
     */
   void rank_frontiers(
     const geometry_msgs::msg::Point & robot_position,
-    std::vector<frontier_t> & frontiers);
+    std::vector<frontier_t> & frontiers) const;
 
   /**
     * @brief checks if a cell denotes a frontier on the current costmap
@@ -106,7 +106,7 @@ private:
   bool is_frontier_cell(
     wombat_core::grid_index_t cell_idx,
     nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
-    const wombat_core::MapMetaDataAdapter & map_info);
+    const wombat_core::MapMetaDataAdapter & map_info) const;
 
   params_t m_params;
 };

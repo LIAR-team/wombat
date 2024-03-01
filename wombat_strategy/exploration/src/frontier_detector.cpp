@@ -36,11 +36,12 @@ std::vector<frontier_t> FrontierDetector::search_frontiers(
 
   // Initialize vectors of booleans with size equal to the map size
   // to keep track of indices (i.e. map cells) already examined or already added to a frontier
-  wombat_core::grid_index_t map_size = grid->info.width * grid->info.height;
+  wombat_core::MapMetaDataAdapter map_info(grid->info);
+
+  wombat_core::grid_index_t map_size = map_info.num_grid_cells();
   std::vector<bool> touched_indices(map_size, false);
   std::vector<bool> all_frontier_indices(map_size, false);
 
-  wombat_core::MapMetaDataAdapter map_info(grid->info);
 
   auto maybe_starting_idx = wombat_core::world_pt_to_grid_index(robot_position, map_info);
   if (!maybe_starting_idx) {
@@ -150,7 +151,7 @@ frontier_t FrontierDetector::build_frontier(
 
 void FrontierDetector::rank_frontiers(
   const geometry_msgs::msg::Point & robot_position,
-  std::vector<frontier_t> & frontiers)
+  std::vector<frontier_t> & frontiers) const
 {
   // Find minimum distance to a frontier and maximum frontier size to compute normalized scores
   double min_distance = std::numeric_limits<double>::max();
@@ -212,7 +213,7 @@ bool FrontierDetector::frontier_is_valid(
 bool FrontierDetector::is_frontier_cell(
   wombat_core::grid_index_t cell_idx,
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
-  const wombat_core::MapMetaDataAdapter & map_info)
+  const wombat_core::MapMetaDataAdapter & map_info) const
 {
   // A cell must be FREE in order to be a frontier
   if (grid->data[cell_idx] != wombat_core::occupancy::FREE) {
@@ -227,7 +228,7 @@ bool FrontierDetector::is_frontier_cell(
     cell_idx,
     map_info.grid_size.x(),
     map_info.grid_size.y(),
-    [this, &unknown_neighbors, &free_neighbors, &occupied_neighbors, &grid](wombat_core::grid_index_t i)
+    [&unknown_neighbors, &free_neighbors, &occupied_neighbors, &grid](wombat_core::grid_index_t i)
     {
       int8_t neighbor_cell_type = grid->data[i];
       if (neighbor_cell_type == wombat_core::occupancy::UNKNOWN) {
