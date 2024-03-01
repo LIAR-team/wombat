@@ -8,6 +8,7 @@
 #include <optional>
 #include <string>
 
+#include "geometry_msgs/msg/twist_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 #include "kennel/common/plugin_interface/plugin_base.hpp"
@@ -41,10 +42,12 @@ public:
   /**
    * @brief Update the pose estimate using the positioner
    * @param gt_data ground truth data to base the update on
+   * @param cmd_vel last velocity command
    * @return updated pose or std::nullopt if couldn't compute it
    */
   virtual std::optional<geometry_msgs::msg::TransformStamped> positioner_update(
-    const localization_data_t & gt_data) = 0;
+    const localization_data_t & gt_data,
+    const geometry_msgs::msg::TwistStamped & cmd_vel) = 0;
 };
 
 }  // namespace kennel

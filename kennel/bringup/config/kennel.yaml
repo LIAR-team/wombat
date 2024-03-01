@@ -31,6 +31,7 @@ my_robot:
           plugin_type: "kennel::StubPositioner"
           frame_id: "odom"
           map_topic_name: ""
+          odometry_topic_name: "/odom"
       sensors_manager:
         update_period_ms: 10
         sensors:

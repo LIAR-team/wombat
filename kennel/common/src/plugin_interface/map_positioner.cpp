@@ -45,6 +45,15 @@ bool MapPositioner::initialize_positioner(
       map_topic_name,
       rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
       pub_options);
+    RCLCPP_INFO(this->get_logger(), "Publishing occupancy grid msg on %s", m_map_pub->get_topic_name());
+  }
+
+  auto odometry_topic_name = get_parameter("odometry_topic_name").get<std::string>();
+  if (!odometry_topic_name.empty()) {
+    m_odom_pub = parent_node->create_publisher<nav_msgs::msg::Odometry>(
+      odometry_topic_name,
+      rclcpp::SensorDataQoS());
+    RCLCPP_INFO(this->get_logger(), "Publishing odometry msg on %s", m_odom_pub->get_topic_name());
   }
 
   const bool post_init_success = this->post_init();
@@ -62,7 +71,8 @@ bool MapPositioner::initialize_positioner(
 }
 
 std::optional<geometry_msgs::msg::TransformStamped> MapPositioner::positioner_update(
-  const localization_data_t & gt_data)
+  const localization_data_t & gt_data,
+  const geometry_msgs::msg::TwistStamped & cmd_vel)
 {
   if (!m_rate_controller->is_ready()) {
     return std::nullopt;
@@ -72,7 +82,22 @@ std::optional<geometry_msgs::msg::TransformStamped> MapPositioner::positioner_up
   if (m_map_pub && positioner_data.map) {
     m_map_pub->publish(*(positioner_data.map));
   }
-  return positioner_data.robot_pose;
+
+  const auto & robot_tf = positioner_data.robot_pose;
+  if (m_odom_pub) {
+    auto odom_msg = std::make_unique<nav_msgs::msg::Odometry>();
+    odom_msg->header = robot_tf.header;
+    odom_msg->child_frame_id = robot_tf.child_frame_id;
+    odom_msg->pose.pose.position.x = robot_tf.transform.translation.x;
+    odom_msg->pose.pose.position.y = robot_tf.transform.translation.y;
+    odom_msg->pose.pose.position.z = robot_tf.transform.translation.z;
+    odom_msg->pose.pose.orientation = robot_tf.transform.rotation;
+    odom_msg->twist.twist = cmd_vel.twist;
+
+    m_odom_pub->publish(std::move(odom_msg));
+  }
+
+  return robot_tf;
 }
 
 bool MapPositioner::declare_map_positioner_params(rclcpp::Node * parent_node)
@@ -91,6 +116,10 @@ bool MapPositioner::declare_map_positioner_params(rclcpp::Node * parent_node)
 
   info.name = "pose_update_period_ms";
   info.value = rclcpp::ParameterValue(20);
+  params_info.push_back(info);
+
+  info.name = "odometry_topic_name";
+  info.value = rclcpp::ParameterValue("");
   params_info.push_back(info);
 
   const bool params_success = this->declare_parameters(

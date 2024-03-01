@@ -8,6 +8,8 @@
 #include <memory>
 #include <string>
 
+#include "nav_msgs/msg/occupancy_grid.hpp"
+#include "nav_msgs/msg/odometry.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 #include "kennel/common/plugin_interface/positioner_interface.hpp"
@@ -38,10 +40,12 @@ public:
   /**
    * @brief Update the pose estimate using the positioner
    * @param gt_data ground truth data to base the update on
+   * @param cmd_vel last velocity command
    * @return updated pose or std::nullopt if couldn't compute it
    */
   std::optional<geometry_msgs::msg::TransformStamped> positioner_update(
-    const localization_data_t & gt_data) override;
+    const localization_data_t & gt_data,
+    const geometry_msgs::msg::TwistStamped & cmd_vel) override;
 
 private:
   /////////
@@ -62,6 +66,7 @@ private:
 
   std::unique_ptr<wombat_core::RateController> m_rate_controller;
   rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr m_map_pub;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr m_odom_pub;
 };
 
 }  // namespace kennel
