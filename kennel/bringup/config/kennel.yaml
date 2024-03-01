@@ -43,5 +43,6 @@ my_robot:
           angle_max: 1.570796
           range_max: 4.0
           num_bins: 100
+          topic_name: "/scan"
         bumper:
           plugin_type: "kennel::Bumper"

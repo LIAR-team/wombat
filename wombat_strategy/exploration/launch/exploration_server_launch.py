@@ -17,17 +17,6 @@ def generate_launch_description():
     frontiers_params_file = os.path.join(share_dir, 'config', 'frontier_exploration_params.yaml')
 
     wombat_externals_dir = get_package_share_directory('wombat_bringup_externals')
-    nav2_launch_script = PathJoinSubstitution(
-        [wombat_externals_dir, 'launch', 'nav2_navigation_launch.py'])
-    nav2_params_file = os.path.join(wombat_externals_dir, 'params', 'nav2_params.yaml')
-
-    nav2_bringup_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(nav2_launch_script),
-        launch_arguments={
-                          'params_file': nav2_params_file,
-                          'use_sim_time': 'True',
-                          'autostart': 'True',
-                          'use_composition': 'False'}.items())
 
     # Launch exploration server
     start_exploration_server = launch_ros.actions.Node(
@@ -43,6 +32,5 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     ld.add_action(start_exploration_server)
-    ld.add_action(nav2_bringup_cmd)
 
     return ld
