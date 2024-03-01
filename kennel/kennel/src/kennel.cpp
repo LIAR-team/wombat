@@ -204,7 +204,7 @@ bool Kennel::setup_robot(
     RCLCPP_ERROR(this->get_logger(), "Empty name passed to setup robot");
     return false;
   }
-  if(robot_name.at(0) == '/') {
+  if (robot_name.at(0) == '/') {
     RCLCPP_ERROR(this->get_logger(), "Robot name can't start with a slash: got '%s'", robot_name.c_str());
     return false;
   }

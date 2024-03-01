@@ -8,15 +8,11 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 import launch_ros.actions
-from launch.actions import IncludeLaunchDescription
-from launch.substitutions import PathJoinSubstitution
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+
 
 def generate_launch_description():
     share_dir = get_package_share_directory('wombat_strategy')
     frontiers_params_file = os.path.join(share_dir, 'config', 'frontier_exploration_params.yaml')
-
-    wombat_externals_dir = get_package_share_directory('wombat_bringup_externals')
 
     # Launch exploration server
     start_exploration_server = launch_ros.actions.Node(
