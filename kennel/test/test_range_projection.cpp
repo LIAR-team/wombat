@@ -41,16 +41,22 @@ TEST_F(WallsWorldTest, ShortRangeProjection)
   laser_pose.position.y = 2.0;
 
   size_t num_bins = 10;
-  auto ranges = kennel::compute_laser_ranges(
+  auto end_coords = kennel::compute_laser_projections(
     *map,
     laser_pose,
     num_bins,
     std::make_pair(wombat_core::deg_to_rad(-20.0), wombat_core::deg_to_rad(20.0)),
     std::make_pair(0.0, 0.2));
+  ASSERT_EQ(end_coords.size(), num_bins);
 
-  ASSERT_EQ(ranges.size(), num_bins);
-  for (const auto & r : ranges) {
-    EXPECT_LE(std::abs(r - 0.2), map->info.resolution * 2);
+  auto map_info = wombat_core::MapMetaDataAdapter(map->info);
+  auto maybe_laser_coord = wombat_core::world_pt_to_grid_coord(laser_pose.position, map_info);
+  ASSERT_NE(maybe_laser_coord, std::nullopt);
+  for (const auto & c : end_coords) {
+    const int dx = c.x() - maybe_laser_coord->x();
+    const int dy = c.y() - maybe_laser_coord->y();
+    auto range = std::sqrt(dx * dx + dy * dy) * map_info.resolution;
+    EXPECT_LE(std::abs(range - 0.2), map->info.resolution * 2);
   }
 }
 

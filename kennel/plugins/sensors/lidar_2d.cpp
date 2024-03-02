@@ -12,6 +12,7 @@
 #include "kennel/common/range_projection.hpp"
 #include "kennel/common/plugin_interface/sensor_publisher.hpp"
 #include "kennel/common/types.hpp"
+#include "wombat_core/grid/coordinates.hpp"
 #include "wombat_core/math/angles.hpp"
 #include "wombat_core/math/transformations.hpp"
 
@@ -57,12 +58,26 @@ private:
     {
       m_last_laser_pose = laser_pose;
 
-      m_scan_msg.ranges = compute_laser_ranges(
+      auto end_coords = compute_laser_projections(
         *gt_data.map,
         laser_pose,
         m_num_bins,
         std::make_pair(m_scan_msg.angle_min, m_scan_msg.angle_max),
         std::make_pair(m_scan_msg.range_min, m_scan_msg.range_max));
+
+      auto map_info = wombat_core::MapMetaDataAdapter(gt_data.map->info);
+      auto maybe_laser_coord = wombat_core::world_pt_to_grid_coord(laser_pose.position, map_info);
+      if (!maybe_laser_coord) {
+        throw std::runtime_error("Laser pose is outside of grid");
+      }
+      m_scan_msg.ranges = std::vector<float>(end_coords.size());
+      for (size_t i = 0; i < end_coords.size(); i++) {
+        const int dx = end_coords[i].x() - maybe_laser_coord->x();
+        const int dy = end_coords[i].y() - maybe_laser_coord->y();
+
+        m_scan_msg.ranges[i] = static_cast<float>(
+          std::sqrt(dx * dx + dy * dy) * map_info.resolution);
+      }
     }
 
     return std::make_unique<sensor_msgs::msg::LaserScan>(m_scan_msg);

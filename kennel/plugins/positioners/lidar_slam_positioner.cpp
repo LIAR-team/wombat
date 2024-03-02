@@ -66,39 +66,37 @@ private:
     static constexpr double MIN_DIST = 0.0;
     double max_dist = this->get_parameter("range_max").get<double>();
 
-    auto ranges = compute_laser_ranges(
+    auto laser_end_coords = compute_laser_projections(
       *gt_data.map,
       cur_pose,
       NUM_BINS,
       std::make_pair(static_cast<float>(angle_min), static_cast<float>(angle_max)),
       std::make_pair(static_cast<float>(MIN_DIST), static_cast<float>(max_dist)));
 
-    auto laser_yaw = tf2::getYaw(cur_pose.orientation);
-    const double angle_increment = (angle_max - angle_min) / static_cast<double>(NUM_BINS);
-    using xy = boost::geometry::model::d2::point_xy<double>;
-    boost::geometry::model::polygon<xy> poly;
-    boost::geometry::append(poly, xy{cur_pose.position.x, cur_pose.position.y});
-    for (size_t i = 0; i < ranges.size(); i++) {
-      const double this_angle = laser_yaw + angle_min + angle_increment * static_cast<double>(i);
-      geometry_msgs::msg::Point world_pt;
-      double x = cur_pose.position.x + std::cos(this_angle) * ranges[i];
-      double y = cur_pose.position.y + std::sin(this_angle) * ranges[i];
-      boost::geometry::append(poly, xy{x, y});
+    const auto maybe_robot_coord = wombat_core::world_pt_to_grid_coord(
+      cur_pose.position,
+      map_info);
+    if (!maybe_robot_coord) {
+      throw std::runtime_error("Robot is outside the map");
     }
-    boost::geometry::append(poly, xy{cur_pose.position.x, cur_pose.position.y});
 
-    double distance_m = this->get_parameter("simplify_distance").get<double>();
+    using xy = boost::geometry::model::d2::point_xy<int>;
+    boost::geometry::model::polygon<xy> poly;
+    boost::geometry::append(poly, xy{maybe_robot_coord->x(), maybe_robot_coord->y()});
+    for (const auto & coord : laser_end_coords) {
+      boost::geometry::append(poly, xy{coord.x(), coord.y()});
+    }
+    boost::geometry::append(poly, xy{maybe_robot_coord->x(), maybe_robot_coord->y()});
+
+    double distance_grid =
+      this->get_parameter("simplify_distance").get<double>() / map_info.resolution;
     boost::geometry::model::polygon<xy> simple_poly;
-    boost::geometry::simplify(poly, simple_poly, distance_m);
+    boost::geometry::simplify(poly, simple_poly, distance_grid);
     // TODO: we should ensure that after simplification we still have a valid polygon
     if (!simple_poly.outer().empty()) {
       std::vector<wombat_core::grid_coord_t> grid_polygon;
-      for (const auto & world_pt : simple_poly.outer()) {
-        geometry_msgs::msg::Point pt;
-        pt.x = world_pt.x();
-        pt.y = world_pt.y();
-        auto grid_coord = wombat_core::world_pt_to_grid_coord_enforce_bounds(pt, map_info);
-        grid_polygon.push_back(grid_coord);
+      for (const auto & grid_coord : simple_poly.outer()) {
+        grid_polygon.emplace_back(grid_coord.x(), grid_coord.y());
       }
 
       auto polygon_iterator = wombat_core::PolygonIterator(
