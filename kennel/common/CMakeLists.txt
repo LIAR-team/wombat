@@ -5,6 +5,7 @@ target_sources(
     src/plugin_interface/map_positioner.cpp
     src/plugin_interface/plugin_base.cpp
     src/collisions.cpp
+    src/pose.cpp
     src/range_projection.cpp
 )
 target_include_directories(
@@ -16,15 +17,15 @@ target_link_libraries(
   common
   PUBLIC
     rclcpp::rclcpp
-    tf2::tf2
-    tf2_geometry_msgs::tf2_geometry_msgs
     wombat_core::grid
     wombat_core::math
     wombat_core::ros2
     ${geometry_msgs_TARGETS}
     ${nav_msgs_TARGETS}
-    ${sensor_msgs_TARGETS}
     ${rcl_interfaces_TARGETS}
+  PRIVATE
+    tf2::tf2
+    tf2_geometry_msgs::tf2_geometry_msgs
 )
 
 wombat_install_target(common)

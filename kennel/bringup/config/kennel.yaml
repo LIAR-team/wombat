@@ -27,6 +27,7 @@ my_robot:
           frame_id: "map"
           map_topic_name: "/map"
           range_max: 2.0
+          simplify_distance: 0.05
         odom:
           plugin_type: "kennel::StubPositioner"
           frame_id: "odom"
