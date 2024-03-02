@@ -15,7 +15,8 @@ bool pose_2d_equal(
   const geometry_msgs::msg::Pose & p1,
   const geometry_msgs::msg::Pose & p2)
 {
-  return p1.position.x == p2.position.x &&
+  return
+    p1.position.x == p2.position.x &&
     p1.position.y == p2.position.y &&
     tf2::getYaw(p1.orientation) == tf2::getYaw(p2.orientation);
 }
