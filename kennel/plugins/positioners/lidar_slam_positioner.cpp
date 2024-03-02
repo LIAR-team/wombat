@@ -11,10 +11,8 @@
 #include "boost/geometry/geometries/polygon.hpp"
 #include "boost/geometry/geometries/point_xy.hpp"
 
-#include "tf2/utils.h"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
-
 #include "kennel/common/plugin_interface/map_positioner.hpp"
+#include "kennel/common/pose.hpp"
 #include "kennel/common/types.hpp"
 #include "kennel/common/range_projection.hpp"
 #include "wombat_core/grid/coordinates.hpp"
@@ -36,6 +34,7 @@ private:
     const localization_data_t & gt_data) override
   {
     auto frame_id = this->get_parameter("frame_id").get<std::string>();
+    auto static_map = this->get_parameter("static_map").get<bool>();
 
     // Pose is simply forwarded with a different frame_id
     m_data.robot_pose = gt_data.robot_pose;
@@ -57,8 +56,26 @@ private:
         static_cast<int>(m_map->info.height),
         m_map->info.resolution);
     }
-    auto map_info = wombat_core::MapMetaDataAdapter(m_map->info);
+    m_map->header.stamp = gt_data.map->header.stamp;
+
+    // Compute new map only if the map is not static or the robot moved
     auto cur_pose = wombat_core::transform_to_pose(gt_data.robot_pose.transform);
+    if (static_map && m_last_robot_pose && pose_2d_equal(*m_last_robot_pose, cur_pose)) {
+      return m_data;
+    }
+    m_last_robot_pose = cur_pose;
+
+    this->update_map(gt_data, cur_pose);
+
+    m_data.map = m_map;
+    return m_data;
+  }
+
+  void update_map(
+    const localization_data_t & gt_data,
+    const geometry_msgs::msg::Pose & cur_pose)
+  {
+    auto map_info = wombat_core::MapMetaDataAdapter(m_map->info);
 
     double angle_min = this->get_parameter("angle_min").get<double>();
     double angle_max = this->get_parameter("angle_max").get<double>();
@@ -66,39 +83,37 @@ private:
     static constexpr double MIN_DIST = 0.0;
     double max_dist = this->get_parameter("range_max").get<double>();
 
-    auto ranges = compute_laser_ranges(
+    auto laser_end_coords = compute_laser_projections(
       *gt_data.map,
       cur_pose,
       NUM_BINS,
       std::make_pair(static_cast<float>(angle_min), static_cast<float>(angle_max)),
       std::make_pair(static_cast<float>(MIN_DIST), static_cast<float>(max_dist)));
 
-    auto laser_yaw = tf2::getYaw(cur_pose.orientation);
-    const double angle_increment = (angle_max - angle_min) / static_cast<double>(NUM_BINS);
-    using xy = boost::geometry::model::d2::point_xy<double>;
-    boost::geometry::model::polygon<xy> poly;
-    boost::geometry::append(poly, xy{cur_pose.position.x, cur_pose.position.y});
-    for (size_t i = 0; i < ranges.size(); i++) {
-      const double this_angle = laser_yaw + angle_min + angle_increment * static_cast<double>(i);
-      geometry_msgs::msg::Point world_pt;
-      double x = cur_pose.position.x + std::cos(this_angle) * ranges[i];
-      double y = cur_pose.position.y + std::sin(this_angle) * ranges[i];
-      boost::geometry::append(poly, xy{x, y});
+    const auto maybe_robot_coord = wombat_core::world_pt_to_grid_coord(
+      cur_pose.position,
+      map_info);
+    if (!maybe_robot_coord) {
+      throw std::runtime_error("Robot is outside the map");
     }
-    boost::geometry::append(poly, xy{cur_pose.position.x, cur_pose.position.y});
 
-    double distance_m = this->get_parameter("simplify_distance").get<double>();
-    boost::geometry::model::polygon<xy> simple_poly;
-    boost::geometry::simplify(poly, simple_poly, distance_m);
+    using boost_xy = boost::geometry::model::d2::point_xy<int>;
+    boost::geometry::model::polygon<boost_xy> poly;
+    boost::geometry::append(poly, boost_xy{maybe_robot_coord->x(), maybe_robot_coord->y()});
+    for (const auto & coord : laser_end_coords) {
+      boost::geometry::append(poly, boost_xy{coord.x(), coord.y()});
+    }
+    boost::geometry::append(poly, boost_xy{maybe_robot_coord->x(), maybe_robot_coord->y()});
+
+    double distance_grid =
+      this->get_parameter("simplify_distance").get<double>() / map_info.resolution;
+    boost::geometry::model::polygon<boost_xy> simple_poly;
+    boost::geometry::simplify(poly, simple_poly, distance_grid);
     // TODO: we should ensure that after simplification we still have a valid polygon
     if (!simple_poly.outer().empty()) {
       std::vector<wombat_core::grid_coord_t> grid_polygon;
-      for (const auto & world_pt : simple_poly.outer()) {
-        geometry_msgs::msg::Point pt;
-        pt.x = world_pt.x();
-        pt.y = world_pt.y();
-        auto grid_coord = wombat_core::world_pt_to_grid_coord_enforce_bounds(pt, map_info);
-        grid_polygon.push_back(grid_coord);
+      for (const auto & boost_coord : simple_poly.outer()) {
+        grid_polygon.emplace_back(boost_coord.x(), boost_coord.y());
       }
 
       auto polygon_iterator = wombat_core::PolygonIterator(
@@ -112,10 +127,6 @@ private:
         m_map->data[*maybe_idx] = gt_data.map->data[*maybe_idx];
       }
     }
-
-    m_data.map = m_map;
-
-    return m_data;
   }
 
   std::vector<default_parameter_info_t> setup_parameters() override
@@ -140,11 +151,16 @@ private:
     info.value = rclcpp::ParameterValue(0.2);
     params_info.push_back(info);
 
+    info.name = "static_map";
+    info.value = rclcpp::ParameterValue(true);
+    params_info.push_back(info);
+
     return params_info;
   }
 
   nav_msgs::msg::OccupancyGrid::SharedPtr m_map;
   localization_data_t m_data;
+  std::optional<geometry_msgs::msg::Pose> m_last_robot_pose;
 };
 
 }  // namespace kennel

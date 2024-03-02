@@ -40,7 +40,7 @@ static wombat_core::grid_coord_t bound_coord_with_projection(
   return *maybe_boundary_coord;
 }
 
-std::vector<float> compute_laser_ranges(
+std::vector<wombat_core::grid_coord_t> compute_laser_projections(
   const nav_msgs::msg::OccupancyGrid & map,
   const geometry_msgs::msg::Pose & laser_pose,
   size_t num_bins,
@@ -49,13 +49,13 @@ std::vector<float> compute_laser_ranges(
 {
   // Validate input data
   if (angle_range.first > angle_range.second) {
-    return std::vector<float>();
+    return std::vector<wombat_core::grid_coord_t>();
   }
   if (distance_range.first > distance_range.second) {
-    return std::vector<float>();
+    return std::vector<wombat_core::grid_coord_t>();
   }
   if (num_bins == 0) {
-    return std::vector<float>();
+    return std::vector<wombat_core::grid_coord_t>();
   }
 
   auto map_info = wombat_core::MapMetaDataAdapter(map.info);
@@ -64,13 +64,13 @@ std::vector<float> compute_laser_ranges(
     laser_pose.position,
     map_info);
   if (!maybe_laser_coord) {
-    return std::vector<float>();
+    return std::vector<wombat_core::grid_coord_t>();
   }
   const auto maybe_laser_index = wombat_core::grid_coord_to_index(
     *maybe_laser_coord,
     map_info);
   if (!maybe_laser_index) {
-    return std::vector<float>();
+    return std::vector<wombat_core::grid_coord_t>();
   }
 
   const double angle_increment = (angle_range.second - angle_range.first) / static_cast<double>(num_bins);
@@ -79,8 +79,8 @@ std::vector<float> compute_laser_ranges(
     distance_range.first / map_info.resolution,
     distance_range.second / map_info.resolution};
 
-  std::vector<float> ranges(num_bins);
-  for (size_t i = 0; i < ranges.size(); i++) {
+  std::vector<wombat_core::grid_coord_t> end_coords(num_bins);
+  for (size_t i = 0; i < end_coords.size(); i++) {
     const double this_angle = laser_yaw + angle_range.first + angle_increment * static_cast<double>(i);
     // Compute laser end point
     // We can't just project the distance along the angle because the grid coordinate
@@ -112,19 +112,10 @@ std::vector<float> compute_laser_ranges(
     if (!maybe_last_touched_coord) {
       throw std::runtime_error("Failed to compute last touched grid coordinate");
     }
-
-    // Convert end coordinate to world point
-    auto maybe_end_point = wombat_core::grid_coord_to_world_pt(*maybe_last_touched_coord, map_info);
-    if (!maybe_end_point) {
-      return std::vector<float>();
-    }
-
-    ranges[i] = static_cast<float>(
-      wombat_core::points_distance_2d(
-        laser_pose.position, *maybe_end_point));
+    end_coords[i] = *maybe_last_touched_coord;
   }
 
-  return ranges;
+  return end_coords;
 }
 
 }  // namespace kennel

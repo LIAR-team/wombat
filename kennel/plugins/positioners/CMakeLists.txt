@@ -14,8 +14,6 @@ target_link_libraries(
   PRIVATE
     Boost::boost
     kennel::common
-    tf2::tf2
-    tf2_geometry_msgs::tf2_geometry_msgs
     wombat_core::grid
     wombat_core::math
 )

@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "kennel/common/plugin_interface/map_positioner.hpp"
+#include "kennel/common/pose.hpp"
 #include "kennel/common/types.hpp"
 #include "wombat_core/grid/coordinates.hpp"
 #include "wombat_core/grid/submap_iterator.hpp"
@@ -25,6 +26,7 @@ private:
     const localization_data_t & gt_data) override
   {
     auto frame_id = this->get_parameter("frame_id").get<std::string>();
+    auto static_map = this->get_parameter("static_map").get<bool>();
 
     // Pose is simply forwarded with a different frame_id
     m_data.robot_pose = gt_data.robot_pose;
@@ -49,9 +51,27 @@ private:
         m_map->info.resolution,
         static_cast<int>(m_local_radius_grid));
     }
+    m_map->header.stamp = gt_data.map->header.stamp;
+
+    // Compute new map only if the map is not static or the robot moved
+    auto cur_pose = wombat_core::transform_to_pose(gt_data.robot_pose.transform);
+    if (static_map && m_last_robot_pose && pose_2d_equal(*m_last_robot_pose, cur_pose)) {
+      return m_data;
+    }
+    m_last_robot_pose = cur_pose;
+
+    this->update_map(gt_data, cur_pose);
+
+    m_data.map = m_map;
+    return m_data;
+  }
+
+  void update_map(
+    const localization_data_t & gt_data,
+    const geometry_msgs::msg::Pose & cur_pose)
+  {
     auto map_info = wombat_core::MapMetaDataAdapter(m_map->info);
 
-    auto cur_pose = wombat_core::transform_to_pose(gt_data.robot_pose.transform);
     auto maybe_cur_grid_coord = wombat_core::world_pt_to_grid_coord(cur_pose.position, map_info);
     if (!maybe_cur_grid_coord) {
       throw std::runtime_error("Failed to convert world pose to grid coord");
@@ -79,9 +99,6 @@ private:
 
       m_map->data[*maybe_idx] = gt_data.map->data[*maybe_idx];
     }
-
-    m_data.map = m_map;
-    return m_data;
   }
 
   std::vector<default_parameter_info_t> setup_parameters() override
@@ -89,6 +106,10 @@ private:
     std::vector<default_parameter_info_t> params_info;
     default_parameter_info_t info;
     info.descriptor = rcl_interfaces::msg::ParameterDescriptor();
+
+    info.name = "static_map";
+    info.value = rclcpp::ParameterValue(true);
+    params_info.push_back(info);
 
     info.name = "radius";
     info.value = rclcpp::ParameterValue(0.5);
@@ -100,6 +121,7 @@ private:
   wombat_core::grid_index_t m_local_radius_grid {0};
   nav_msgs::msg::OccupancyGrid::SharedPtr m_map;
   localization_data_t m_data;
+  std::optional<geometry_msgs::msg::Pose> m_last_robot_pose;
 };
 
 }  // namespace kennel

@@ -12,6 +12,8 @@
 #include "geometry_msgs/msg/pose.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
 
+#include "wombat_core/grid/types.hpp"
+
 namespace kennel
 {
 
@@ -25,9 +27,9 @@ namespace kennel
  * @param num_bins number of ranges
  * @param angle_range minimum and maximum angle in laser reference frame
  * @param distance_range minimum and maximum range distance
- * @return std::vector<float> computed ranges
+ * @return std::vector<wombat_core::grid_coord_t> computed ranges
  */
-std::vector<float> compute_laser_ranges(
+std::vector<wombat_core::grid_coord_t> compute_laser_projections(
   const nav_msgs::msg::OccupancyGrid & map,
   const geometry_msgs::msg::Pose & laser_pose,
   size_t num_bins,

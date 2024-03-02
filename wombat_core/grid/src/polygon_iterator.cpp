@@ -91,7 +91,7 @@ bool PolygonIterator::is_past_end() const
 
 bool PolygonIterator::isInside() const
 {
-  return point_in_polygon(*(*m_internal_iterator), m_polygon);
+  return point_in_polygon(*(*m_internal_iterator), m_polygon, true);
 }
 
 }  // namespace wombat_core
