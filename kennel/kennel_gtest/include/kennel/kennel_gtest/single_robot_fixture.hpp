@@ -22,9 +22,7 @@ public:
 
   void TearDown() override;
 
-  void setup_kennel(
-    const rclcpp::ParameterMap & parameter_map,
-    const std::string & robot_namespace = "my_robot");
+  void kennel_start(const rclcpp::ParameterMap & parameter_map);
 
   std::unique_ptr<kennel::Kennel> kennel;
 

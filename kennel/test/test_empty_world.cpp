@@ -31,7 +31,7 @@ public:
       .add_robot()
       .set_map_yaml_filename("")
       .get();
-    setup_kennel(kennel_params);
+    kennel_start(kennel_params);
   }
 };
 

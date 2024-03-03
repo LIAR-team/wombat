@@ -33,9 +33,9 @@ public:
       .set_map_yaml_filename(get_data_path("walls_map.yaml"))
       .add_robot()
       .set_robot_pose({1.0, 1.0, 0.0})
-      .add_bumper_to_robot()
+      .add_sensor_plugin_to_robot({kennel::names::SENSOR_BUMPER, "bumper"})
       .get();
-    setup_kennel(kennel_params);
+    kennel_start(kennel_params);
 
     bumper_subscription = robot->node->create_subscription<wombat_msgs::msg::Bumper>(
       "/my_robot/bumper",
@@ -118,9 +118,9 @@ public:
       .add_robot()
       .set_robot_pose({1.0, 1.0, 0.0})
       .set_robot_radius(0.15)
-      .add_bumper_to_robot()
+      .add_sensor_plugin_to_robot({kennel::names::SENSOR_BUMPER, "bumper"})
       .get();
-    setup_kennel(kennel_params);
+    kennel_start(kennel_params);
 
     bumper_subscription = robot->node->create_subscription<wombat_msgs::msg::Bumper>(
       "bumper",

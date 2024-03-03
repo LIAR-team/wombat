@@ -15,6 +15,7 @@
 void TestKennelSingleRobot::SetUp()
 {
   rclcpp::init(0, nullptr);
+  robot = std::make_shared<kennel::RobotInterface>("my_robot");
 }
 
 void TestKennelSingleRobot::TearDown()
@@ -25,9 +26,7 @@ void TestKennelSingleRobot::TearDown()
   rclcpp::shutdown();
 }
 
-void TestKennelSingleRobot::setup_kennel(
-  const rclcpp::ParameterMap & parameter_map,
-  const std::string & robot_namespace)
+void TestKennelSingleRobot::kennel_start(const rclcpp::ParameterMap & parameter_map)
 {
   // Setup Kennel
   rclcpp::NodeOptions node_options;
@@ -36,6 +35,4 @@ void TestKennelSingleRobot::setup_kennel(
   kennel->configure(parameter_map);
   bool start_success = kennel->start();
   ASSERT_TRUE(start_success);
-
-  robot = std::make_shared<kennel::RobotInterface>(robot_namespace);
 }

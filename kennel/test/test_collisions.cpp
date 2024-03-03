@@ -26,7 +26,7 @@ public:
       .set_map_yaml_filename(get_data_path("walls_map.yaml"))
       .get();
 
-    setup_kennel(kennel_params);
+    kennel_start(kennel_params);
   }
 };
 

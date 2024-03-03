@@ -16,13 +16,9 @@ ament_add_gtest(test_multi_positioner test_multi_positioner.cpp
   ENV KENNEL_TEST_DATADIR=${CMAKE_CURRENT_SOURCE_DIR}/data)
 target_link_libraries(test_multi_positioner kennel::kennel_gtest rclcpp::rclcpp)
 
-ament_add_gtest(test_positioners_lidar_slam test_positioners_lidar_slam.cpp
+ament_add_gtest(test_positioners test_positioners.cpp
   ENV KENNEL_TEST_DATADIR=${CMAKE_CURRENT_SOURCE_DIR}/data)
-target_link_libraries(test_positioners_lidar_slam kennel::kennel_gtest rclcpp::rclcpp ${wombat_msgs_TARGETS})
-
-ament_add_gtest(test_positioners_local_slam test_positioners_local_slam.cpp
-  ENV KENNEL_TEST_DATADIR=${CMAKE_CURRENT_SOURCE_DIR}/data)
-target_link_libraries(test_positioners_local_slam kennel::kennel_gtest rclcpp::rclcpp ${wombat_msgs_TARGETS})
+target_link_libraries(test_positioners kennel::kennel_gtest rclcpp::rclcpp ${wombat_msgs_TARGETS})
 
 ament_add_gtest(test_range_projection test_range_projection.cpp
   ENV KENNEL_TEST_DATADIR=${CMAKE_CURRENT_SOURCE_DIR}/data)
