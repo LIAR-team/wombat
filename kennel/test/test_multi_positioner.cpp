@@ -24,17 +24,11 @@ public:
     auto kennel_params = kennel::KennelParamsConfig()
       .add_robot()
       .set_robot_pose({3.0, -1.0, 0.0})
-      .add_lidar_slam_positioner_to_robot(
-      kennel::DEFAULT_ROBOT_NODE,
-      kennel::NamedParams({}),
-      "map")
-      .add_stub_positioner_to_robot(
-      kennel::DEFAULT_ROBOT_NODE,
-      kennel::NamedParams({}),
-      "odom")
+      .add_positioner_plugin_to_robot({kennel::names::POSITIONER_LIDAR_SLAM, "map"})
+      .add_positioner_plugin_to_robot({kennel::names::POSITIONER_STUB, "odom"})
       .set_map_yaml_filename("")
       .get();
-    setup_kennel(kennel_params);
+    kennel_start(kennel_params);
   }
 };
 

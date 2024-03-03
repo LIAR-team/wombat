@@ -13,6 +13,9 @@ target_link_libraries(test_grid_boundary_projection wombat_core::grid)
 ament_add_gtest(test_grid_coordinates test_grid_coordinates.cpp)
 target_link_libraries(test_grid_coordinates wombat_core::grid)
 
+ament_add_gtest(test_grid_geometry test_grid_geometry.cpp)
+target_link_libraries(test_grid_geometry wombat_core::grid)
+
 ament_add_gtest(test_grid_neighbors test_grid_neighbors.cpp)
 target_link_libraries(test_grid_neighbors wombat_core::grid)
 

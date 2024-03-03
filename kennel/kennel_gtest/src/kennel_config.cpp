@@ -26,7 +26,7 @@ KennelParamsConfig::set_map_yaml_filename(const std::string & yaml_file)
 {
   this->write_parameter_for_node(
     rclcpp::Parameter("map_yaml_filename", rclcpp::ParameterValue(yaml_file)),
-    KENNEL_NODE);
+    names::KENNEL_NODE);
 
   std::string map_topic_name = "";
   if (!yaml_file.empty()) {
@@ -53,7 +53,7 @@ KennelParamsConfig::add_robot(const std::string & robot_name)
 
   bool success = wombat_core::append_parameter_map(
     m_parameter_map,
-    KENNEL_NODE,
+    names::KENNEL_NODE,
     "robots",
     rclcpp::ParameterValue(std::vector<std::string>({robot_name})));
   if (!success) {
@@ -86,96 +86,39 @@ KennelParamsConfig::set_robot_pose(
 }
 
 KennelParamsConfig &
-KennelParamsConfig::add_stub_positioner_to_robot(
-  const std::string & robot_name,
-  const NamedParams & plugin_params,
-  const std::string & plugin_name)
+KennelParamsConfig::add_positioner_plugin_to_robot(
+  const named_plugin_t & plugin,
+  const named_params_t & plugin_params,
+  const std::string & robot_name)
 {
-  plugin_description_t plugin;
-  plugin.name = plugin_name;
-  plugin.prefix = "mobile_base";
-  plugin.list_param_name = "positioners";
-  plugin.type = "kennel::StubPositioner";
+  plugin_description_t plugin_description;
+  plugin_description.name = plugin.name;
+  plugin_description.prefix = "mobile_base";
+  plugin_description.list_param_name = "positioners";
+  plugin_description.type = plugin.type;
 
   this->add_plugin_to_robot(
     robot_name,
-    plugin,
+    plugin_description,
     plugin_params);
   return *this;
 }
 
 KennelParamsConfig &
-KennelParamsConfig::add_lidar_slam_positioner_to_robot(
-  const std::string & robot_name,
-  const NamedParams & plugin_params,
-  const std::string & plugin_name)
+KennelParamsConfig::add_sensor_plugin_to_robot(
+  const named_plugin_t & plugin,
+  const named_params_t & plugin_params,
+  const std::string & robot_name)
 {
-  plugin_description_t plugin;
-  plugin.name = plugin_name;
-  plugin.prefix = "mobile_base";
-  plugin.list_param_name = "positioners";
-  plugin.type = "kennel::LidarSLAMPositioner";
+  plugin_description_t plugin_description;
+  plugin_description.name = plugin.name;
+  plugin_description.prefix = "sensors_manager";
+  plugin_description.list_param_name = "sensors";
+  plugin_description.type = plugin.type;
 
   this->add_plugin_to_robot(
     robot_name,
-    plugin,
-    plugin_params);
-  return *this;
-}
-
-KennelParamsConfig &
-KennelParamsConfig::add_local_slam_positioner_to_robot(
-  const std::string & robot_name,
-  const NamedParams & plugin_params,
-  const std::string & plugin_name)
-{
-  plugin_description_t plugin;
-  plugin.name = plugin_name;
-  plugin.prefix = "mobile_base";
-  plugin.list_param_name = "positioners";
-  plugin.type = "kennel::LocalSLAMPositioner";
-
-  this->add_plugin_to_robot(
-    robot_name,
-    plugin,
-    plugin_params);
-  return *this;
-}
-
-KennelParamsConfig &
-KennelParamsConfig::add_bumper_to_robot(
-  const std::string & robot_name,
-  const NamedParams & plugin_params,
-  const std::string & plugin_name)
-{
-  plugin_description_t plugin;
-  plugin.name = plugin_name;
-  plugin.prefix = "sensors_manager";
-  plugin.list_param_name = "sensors";
-  plugin.type = "kennel::Bumper";
-
-  this->add_plugin_to_robot(
-    robot_name,
-    plugin,
-    plugin_params);
-  return *this;
-}
-
-KennelParamsConfig &
-KennelParamsConfig::add_lidar2d_to_robot(
-  const std::string & robot_name,
-  const NamedParams & plugin_params,
-  const std::string & plugin_name)
-{
-  plugin_description_t plugin;
-  plugin.name = plugin_name;
-  plugin.prefix = "sensors_manager";
-  plugin.list_param_name = "sensors";
-  plugin.type = "kennel::Lidar2D";
-
-  this->add_plugin_to_robot(
-    robot_name,
-    plugin,
+    plugin_description,
     plugin_params);
   return *this;
 }
@@ -183,7 +126,7 @@ KennelParamsConfig::add_lidar2d_to_robot(
 void KennelParamsConfig::add_plugin_to_robot(
   const std::string & robot_name,
   const plugin_description_t & plugin,
-  const NamedParams & plugin_params)
+  const named_params_t & plugin_params)
 {
   if (!this->has_robot(robot_name)) {
     std::stringstream error_text;
@@ -261,7 +204,7 @@ std::vector<std::string> KennelParamsConfig::get_robot_names() const
   auto maybe_robots_param = wombat_core::get_parameter_for_node(
     "robots",
     m_parameter_map,
-    KENNEL_NODE);
+    names::KENNEL_NODE);
   if (!maybe_robots_param) {
     return std::vector<std::string>();
   }
@@ -271,12 +214,14 @@ std::vector<std::string> KennelParamsConfig::get_robot_names() const
 bool KennelParamsConfig::has_robot(const std::string & robot_name) const
 {
   std::string robot_namespace = robot_name;
+  // Remove prefix if present
   static const std::string FULL_NAME_PREFIX = "/";
-  static const std::string FULL_NAME_SUFFIX = "/robot_sim";
   const auto & this_prefix = robot_namespace.substr(0, FULL_NAME_PREFIX.length());
   if (this_prefix == FULL_NAME_PREFIX) {
     robot_namespace = robot_namespace.substr(FULL_NAME_PREFIX.length());
   }
+  // Remove suffix if present
+  static const std::string FULL_NAME_SUFFIX = "/robot_sim";
   const auto & this_suffix =
     robot_namespace.substr(robot_namespace.length() - FULL_NAME_SUFFIX.length(), robot_namespace.length());
   if (this_suffix == FULL_NAME_SUFFIX) {

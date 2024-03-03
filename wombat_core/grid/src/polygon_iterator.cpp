@@ -13,48 +13,33 @@
 
 #include <memory>
 
+#include "wombat_core/grid/geometry.hpp"
 #include "wombat_core/grid/polygon_iterator.hpp"
-#include "wombat_core/math/polygon.hpp"
 
 namespace wombat_core
 {
 
-static std::pair<grid_coord_t, grid_coord_t> get_bounding_box(
-  const std::vector<grid_coord_t> & points)
-{
-  std::pair<grid_coord_t, grid_coord_t> bbox;
-  bbox.first = {
-    std::numeric_limits<grid_coord_t::Scalar>::max(),
-    std::numeric_limits<grid_coord_t::Scalar>::max()
-  };
-  bbox.second = {
-    std::numeric_limits<grid_coord_t::Scalar>::lowest(),
-    std::numeric_limits<grid_coord_t::Scalar>::lowest()
-  };
-  assert(!points.empty());
-  for (const auto & pt : points) {
-    bbox.first.x() = std::min(bbox.first.x(), pt.x());
-    bbox.first.y() = std::min(bbox.first.y(), pt.y());
-    bbox.second.x() = std::max(bbox.second.x(), pt.x());
-    bbox.second.y() = std::max(bbox.second.y(), pt.y());
-  }
-
-  return bbox;
-}
-
 PolygonIterator::PolygonIterator(
   const MapMetaDataAdapter & map_info,
-  const std::vector<grid_coord_t> & polygon)
-: m_polygon(polygon)
+  const std::vector<grid_coord_t> & polygon,
+  bool include_boundary)
+: m_polygon(polygon), m_include_boundary(include_boundary)
 {
   auto bbox = get_bounding_box(polygon);
-  assert(grid_coord_is_valid(bbox.first, map_info));
-  assert(grid_coord_is_valid(bbox.second, map_info));
+  if (!grid_coord_is_valid(bbox.first, map_info)) {
+    throw std::runtime_error("Invalid bounding box min coord");
+  }
+  if (!grid_coord_is_valid(bbox.second, map_info)) {
+    throw std::runtime_error("Invalid bounding box max coord");
+  }
 
   auto bbox_size = get_grid_size_from_corners(bbox.first, bbox.second);
 
   m_internal_iterator = std::make_unique<SubmapIterator>(map_info, bbox.first, bbox_size);
-  assert(!m_internal_iterator->is_past_end());
+  if (m_internal_iterator->is_past_end()) {
+    throw std::runtime_error("Failed to setup polygon internal iterator");
+  }
+
   if (!isInside()) {++(*this);}
 }
 
@@ -91,7 +76,10 @@ bool PolygonIterator::is_past_end() const
 
 bool PolygonIterator::isInside() const
 {
-  return point_in_polygon(*(*m_internal_iterator), m_polygon, true);
+  return point_in_polygon(
+    *(*m_internal_iterator),
+    m_polygon,
+    m_include_boundary);
 }
 
 }  // namespace wombat_core

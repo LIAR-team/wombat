@@ -15,11 +15,29 @@
 namespace kennel
 {
 
+namespace names
+{
+
 static constexpr auto DEFAULT_ROBOT_NAMESPACE = "my_robot";
 static constexpr auto DEFAULT_ROBOT_NODE = "/my_robot/robot_sim";
 static constexpr auto KENNEL_NODE = "/kennel";
 
-using NamedParams = std::map<std::string, rclcpp::ParameterValue>;
+static constexpr auto POSITIONER_LIDAR_SLAM = "kennel::LidarSLAMPositioner";
+static constexpr auto POSITIONER_LOCAL_SLAM = "kennel::LocalSLAMPositioner";
+static constexpr auto POSITIONER_STUB = "kennel::StubPositioner";
+
+static constexpr auto SENSOR_BUMPER = "kennel::Bumper";
+static constexpr auto SENSOR_LIDAR2D = "kennel::Lidar2D";
+
+}  // namespace names
+
+using named_params_t = std::map<std::string, rclcpp::ParameterValue>;
+
+struct named_plugin_t
+{
+  std::string type;
+  std::string name;
+};
 
 class KennelParamsConfig
 {
@@ -39,47 +57,29 @@ public:
   set_map_yaml_filename(const std::string & yaml_file);
 
   KennelParamsConfig &
-  add_robot(const std::string & robot_name = DEFAULT_ROBOT_NAMESPACE);
+  add_robot(const std::string & robot_name = names::DEFAULT_ROBOT_NAMESPACE);
 
   KennelParamsConfig &
   set_robot_pose(
     const std::vector<double> & pose_2d,
-    const std::string & robot_name = DEFAULT_ROBOT_NODE);
+    const std::string & robot_name = names::DEFAULT_ROBOT_NODE);
 
   KennelParamsConfig &
   set_robot_radius(
     double robot_radius,
-    const std::string & robot_name = DEFAULT_ROBOT_NODE);
+    const std::string & robot_name = names::DEFAULT_ROBOT_NODE);
 
   KennelParamsConfig &
-  add_stub_positioner_to_robot(
-    const std::string & robot_name = DEFAULT_ROBOT_NODE,
-    const NamedParams & plugin_params = NamedParams(),
-    const std::string & plugin_name = "map");
+  add_positioner_plugin_to_robot(
+    const named_plugin_t & plugin,
+    const named_params_t & plugin_params = named_params_t(),
+    const std::string & robot_name = names::DEFAULT_ROBOT_NODE);
 
   KennelParamsConfig &
-  add_lidar_slam_positioner_to_robot(
-    const std::string & robot_name = DEFAULT_ROBOT_NODE,
-    const NamedParams & plugin_params = NamedParams(),
-    const std::string & plugin_name = "map");
-
-  KennelParamsConfig &
-  add_local_slam_positioner_to_robot(
-    const std::string & robot_name = DEFAULT_ROBOT_NODE,
-    const NamedParams & plugin_params = NamedParams(),
-    const std::string & plugin_name = "map");
-
-  KennelParamsConfig &
-  add_bumper_to_robot(
-    const std::string & robot_name = DEFAULT_ROBOT_NODE,
-    const NamedParams & plugin_params = NamedParams(),
-    const std::string & plugin_name = "bumper");
-
-  KennelParamsConfig &
-  add_lidar2d_to_robot(
-    const std::string & robot_name = DEFAULT_ROBOT_NODE,
-    const NamedParams & plugin_params = NamedParams(),
-    const std::string & plugin_name = "base_scan");
+  add_sensor_plugin_to_robot(
+    const named_plugin_t & plugin,
+    const named_params_t & plugin_params = named_params_t(),
+    const std::string & robot_name = names::DEFAULT_ROBOT_NODE);
 
   rclcpp::ParameterMap get() const;
 
@@ -101,7 +101,7 @@ private:
   void add_plugin_to_robot(
     const std::string & robot_name,
     const plugin_description_t & plugin,
-    const NamedParams & plugin_params);
+    const named_params_t & plugin_params);
 
   std::vector<std::string> get_robot_names() const;
 
