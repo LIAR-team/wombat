@@ -116,9 +116,12 @@ private:
         grid_polygon.emplace_back(boost_coord.x(), boost_coord.y());
       }
 
+      // We need to include the boundaries in the polygon iterator, otherwise we may
+      // end up not rendering the walls in the map.
       auto polygon_iterator = wombat_core::PolygonIterator(
         map_info,
-        grid_polygon);
+        grid_polygon,
+        true);
       for (; !polygon_iterator.is_past_end(); ++polygon_iterator) {
         auto maybe_idx = wombat_core::grid_coord_to_index(*polygon_iterator, map_info);
         if (!maybe_idx) {

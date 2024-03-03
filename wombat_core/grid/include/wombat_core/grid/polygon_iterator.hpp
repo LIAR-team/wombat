@@ -32,8 +32,13 @@ public:
    * Constructor.
    * @param map_info information about the grid to iterate on.
    * @param polygon the polygonal area to iterate on.
+   * @param include_boundary if true, the iterator will also consider
+   * grid coordinates on the boundary of the polygon.
    */
-  PolygonIterator(const MapMetaDataAdapter & map_info, const std::vector<grid_coord_t> & polygon);
+  PolygonIterator(
+    const MapMetaDataAdapter & map_info,
+    const std::vector<grid_coord_t> & polygon,
+    bool include_boundary = true);
 
   /**
    * @brief Compare to another iterator.
@@ -69,6 +74,8 @@ private:
 
   //! Polygon to iterate on.
   std::vector<grid_coord_t> m_polygon;
+
+  bool m_include_boundary {false};
 
   //! Grid submap iterator.
   std::unique_ptr<SubmapIterator> m_internal_iterator;

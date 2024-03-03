@@ -5,6 +5,7 @@ target_sources(
   grid
   PRIVATE
     src/coordinates.cpp
+    src/geometry.cpp
     src/line_iterator.cpp
     src/neighbors.cpp
     src/polygon_iterator.cpp

@@ -8,6 +8,8 @@
 #include <limits>
 
 #include "Eigen/Core"
+#include "geometry_msgs/msg/pose.hpp"
+#include "nav_msgs/msg/map_meta_data.hpp"
 
 namespace wombat_core
 {
@@ -21,6 +23,10 @@ using grid_coord_t = Eigen::Array2i;
 /** @brief size of each dimension of a 2D grid */
 using grid_size_t = grid_coord_t;
 
+/**
+ * @brief Class storing map metadata.
+ * It can be used as a bridge between multiple map representations.
+ */
 class MapMetaDataAdapter
 {
 public:
