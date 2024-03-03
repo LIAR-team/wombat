@@ -91,7 +91,6 @@ INSTANTIATE_TEST_SUITE_P(
       positioner_typename.begin(), positioner_typename.end(),
       ':', '_');
     return positioner_typename;
-
   });
 
 TEST_P(TestPositionersWithParams, DriveAndExploreWallsMap)
