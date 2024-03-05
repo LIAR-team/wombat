@@ -61,7 +61,7 @@ std::vector<frontier_t> FrontierDetector::search_frontiers(
     // Check if a new frontier can be started from current cell
     if (is_frontier_cell(cell_idx, grid, map_info) && !all_frontier_indices[cell_idx]) {
       frontier_t f = build_frontier(cell_idx, grid, map_info, all_frontier_indices);
-      if (frontier_is_valid(f, grid, map_info)) {
+      if (f.points.size() >= m_params.min_frontier_size) {
         frontiers.push_back(f);
       }
     }
@@ -191,22 +191,17 @@ void FrontierDetector::rank_frontiers(
 bool FrontierDetector::frontier_is_valid(
   const frontier_t & f,
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
-  const wombat_core::MapMetaDataAdapter & map_info,
-  bool trusted)
+  const wombat_core::MapMetaDataAdapter & map_info)
 {
   // Get number of cells that the frontier is made of
   size_t num_frontier_cells = 0;
-  if (trusted) {
-    num_frontier_cells = f.points.size();
-  } else {
-    for (const auto & point : f.points) {
-      const auto maybe_cell_idx = wombat_core::world_pt_to_grid_index(point, map_info);
-      if (!maybe_cell_idx) {
-        return false;
-      }
-      if (is_frontier_cell(*maybe_cell_idx, grid, map_info)) {
-        num_frontier_cells++;
-      }
+  for (const auto & point : f.points) {
+    const auto maybe_cell_idx = wombat_core::world_pt_to_grid_index(point, map_info);
+    if (!maybe_cell_idx) {
+      return false;
+    }
+    if (is_frontier_cell(*maybe_cell_idx, grid, map_info)) {
+      num_frontier_cells++;
     }
   }
 

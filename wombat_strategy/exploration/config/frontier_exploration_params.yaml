@@ -9,5 +9,4 @@ frontier_exploration:
       min_unknown_neighbors: 1
       min_free_neighbors: 3
       max_occupied_neighbors: 1 # Set to 8 to disable it
-      min_frontier_size: 1
       frontier_size_scaling_factor: 0.0 # TODO: tune this

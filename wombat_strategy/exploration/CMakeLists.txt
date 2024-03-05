@@ -13,21 +13,24 @@ target_include_directories(
 target_link_libraries(
   exploration
   PUBLIC
-  wombat_core::costmap
-  wombat_core::grid
-  wombat_core::math
+    rclcpp::rclcpp
+    tf2::tf2
+    tf2_eigen::tf2_eigen
+    tf2_geometry_msgs::tf2_geometry_msgs
+    tf2_ros::tf2_ros
+    wombat_core::grid
+    wombat_core::math
+    wombat_core::ros2
+    ${geometry_msgs_TARGETS}
+    ${nav_msgs_TARGETS}
+    ${visualization_msgs_TARGETS}
+    ${wombat_msgs_TARGETS}
+  PRIVATE
+    wombat_core::costmap
 )
 ament_target_dependencies(exploration
   PUBLIC
-    geometry_msgs
-    nav2_costmap_2d
-    nav_msgs
     nav2_util
-    rclcpp
-    tf2_eigen
-    tf2_ros
-    visualization_msgs
-    wombat_msgs
 )
 
 add_executable(exploration_server src/main.cpp)

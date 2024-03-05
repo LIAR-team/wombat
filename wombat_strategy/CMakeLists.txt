@@ -6,6 +6,7 @@ find_package(wombat_cmake REQUIRED)
 find_package(nav2_util REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(tf2_eigen REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(wombat_core REQUIRED)
 
@@ -25,6 +26,7 @@ wombat_package_install(
     nav2_util
     rclcpp
     tf2_eigen
+    tf2_geometry_msgs
     tf2_ros
     visualization_msgs
     wombat_core

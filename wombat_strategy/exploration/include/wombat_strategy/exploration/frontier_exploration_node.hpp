@@ -7,7 +7,6 @@
 
 #include <chrono>
 #include <memory>
-#include <mutex>
 #include <string>
 #include <vector>
 
@@ -17,7 +16,6 @@
 #include "tf2_ros/buffer.h"
 
 #include "nav_msgs/msg/occupancy_grid.hpp"
-#include "nav2_costmap_2d/costmap_2d.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "nav2_util/simple_action_server.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -104,21 +102,21 @@ private:
   geometry_msgs::msg::Pose m_current_goal;
   frontier_t m_target_frontier;
   std::vector<geometry_msgs::msg::Pose> m_attempted_goals;
-  double m_exploration_rate;
-  double m_min_attempted_goals_distance;
+  double m_exploration_rate {0.0};
+  double m_min_attempted_goals_distance {0.0};
 
-  std::string m_global_frame;
-  std::string m_robot_frame;
+  std::string m_global_frame {};
+  std::string m_robot_frame {};
 
   std::shared_ptr<tf2_ros::Buffer> m_tf;
   std::shared_ptr<tf2_ros::TransformListener> m_tf_listener;
   tf2::Stamped<Eigen::Affine3d> m_last_progress_pose;
   rclcpp::Time m_last_progress_time;
-  double m_linear_progress_dist;
-  double m_angular_progress_dist;
+  double m_linear_progress_dist {0.0};
+  double m_angular_progress_dist {0.0};
   rclcpp::Duration m_no_progress_timeout;
-  bool m_publish_frontiers;
-  size_t m_prev_num_frontiers;
+  bool m_publish_frontiers {false};
+  size_t m_prev_num_markers {0};
 };
 
 }  // namespace wombat_strategy

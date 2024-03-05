@@ -5,13 +5,16 @@
 
 #include "wombat_strategy/exploration/frontier_exploration_node.hpp"
 
+#include "geometry_msgs/msg/point.hpp"
+#include "nav2_util/robot_utils.hpp"
+#include "tf2/convert.h"
+#include "tf2_eigen/tf2_eigen.hpp"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "tf2_ros/create_timer_ros.h"
 
-#include "geometry_msgs/msg/point.hpp"
-#include "nav2_util/geometry_utils.hpp"
-#include "nav2_util/robot_utils.hpp"
-#include "tf2_eigen/tf2_eigen.hpp"
+#include "wombat_core/math/angles.hpp"
 #include "wombat_core/math/geometry_point.hpp"
+#include "wombat_core/ros2/parameters.hpp"
 
 namespace wombat_strategy
 {
@@ -21,37 +24,75 @@ FrontierExplorationNode::FrontierExplorationNode(const rclcpp::NodeOptions & opt
   m_no_progress_timeout(rclcpp::Duration::from_nanoseconds(0))
 {
   // Node parameters
-  std::string map_topic;
-  bool search_only_free_space = false;
-  int min_unknown_neighbors = 0;
-  int min_free_neighbors = 0;
-  int max_occupied_neighbors = 0;
-  int min_frontier_size = 0;
-  double frontier_size_scaling_factor = 0.0;
-  int no_progress_seconds = 0;
-  this->get_parameter_or("global_frame", m_global_frame, std::string("map"));
-  this->get_parameter_or("robot_frame", m_robot_frame, std::string("base_link"));
-  this->get_parameter_or("map_topic", map_topic, std::string("map"));
-  this->get_parameter_or("exploration_rate", m_exploration_rate, 5.0);
-  this->get_parameter_or("min_attempted_goals_distance", m_min_attempted_goals_distance, 0.2);
-  this->get_parameter_or("search_only_free_space", search_only_free_space, true);
-  this->get_parameter_or("min_unknown_neighbors", min_unknown_neighbors, 1);
-  this->get_parameter_or("min_free_neighbors", min_free_neighbors, 3);
-  this->get_parameter_or("max_occupied_neighbors", max_occupied_neighbors, 1);
-  this->get_parameter_or("min_frontier_size", min_frontier_size, 10);
-  this->get_parameter_or("frontier_size_scaling_factor", frontier_size_scaling_factor, 0.0);
-  this->get_parameter_or("linear_progress_dist", m_linear_progress_dist, 0.15);
-  this->get_parameter_or("angular_progress_dist", m_angular_progress_dist, M_PI / 9.0);
-  this->get_parameter_or("no_progress_seconds", no_progress_seconds, 10);
+  m_global_frame = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "global_frame",
+    rclcpp::ParameterValue("map")).get<std::string>();
+  m_robot_frame = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "robot_frame",
+    rclcpp::ParameterValue("base_link")).get<std::string>();
+  auto map_topic = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "map_topic",
+    rclcpp::ParameterValue("map")).get<std::string>();
+  m_exploration_rate = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "exploration_rate",
+    rclcpp::ParameterValue(5.0)).get<double>();
+  m_min_attempted_goals_distance = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "min_attempted_goals_distance",
+    rclcpp::ParameterValue(0.2)).get<double>();
+  auto search_only_free_space = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "search_only_free_space",
+    rclcpp::ParameterValue(true)).get<bool>();
+  auto min_unknown_neighbors = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "min_unknown_neighbors",
+    rclcpp::ParameterValue(1)).get<int>();
+  auto min_free_neighbors = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "min_free_neighbors",
+    rclcpp::ParameterValue(3)).get<int>();
+  auto max_occupied_neighbors = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "max_occupied_neighbors",
+    rclcpp::ParameterValue(1)).get<int>();
+  auto min_frontier_size = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "min_frontier_size",
+    rclcpp::ParameterValue(10)).get<int>();
+  auto frontier_size_scaling_factor = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "frontier_size_scaling_factor",
+    rclcpp::ParameterValue(0.0)).get<double>();
+  m_linear_progress_dist = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "linear_progress_dist",
+    rclcpp::ParameterValue(0.15)).get<double>();
+  m_angular_progress_dist = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "angular_progress_dist",
+    rclcpp::ParameterValue(wombat_core::PI / 9.0)).get<double>();
+  auto no_progress_seconds = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "no_progress_seconds",
+    rclcpp::ParameterValue(10)).get<int>();
+  m_publish_frontiers = wombat_core::declare_parameter_if_not_declared(
+    this->get_node_parameters_interface(),
+    "publish_frontiers",
+    rclcpp::ParameterValue(true)).get<bool>();
+
   m_no_progress_timeout = rclcpp::Duration(no_progress_seconds, 0);
-  this->get_parameter_or("publish_frontiers", m_publish_frontiers, true);
 
   m_map_subscription = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
     map_topic,
     10,
     std::bind(&FrontierExplorationNode::map_callback, this, std::placeholders::_1));
 
-  m_prev_num_frontiers = 0;
+  m_prev_num_markers = 0;
   if (m_publish_frontiers) {
     m_markers_pub = this->create_publisher<visualization_msgs::msg::MarkerArray>("frontiers", 10);
   }
@@ -134,12 +175,10 @@ void FrontierExplorationNode::explore()
     // If we have an active navigation goal, leave the control to navigation stack
     if (m_navigation_goal_handle) {
       // Check if is it still worth exploring target frontier
-      constexpr bool TRUSTED = false;
       bool valid = m_detector.frontier_is_valid(
         m_target_frontier,
         m_occupancy_grid,
-        wombat_core::MapMetaDataAdapter(m_occupancy_grid->info),
-        TRUSTED);
+        wombat_core::MapMetaDataAdapter(m_occupancy_grid->info));
       if (valid) {
         // Now check if it is making progress
         Eigen::Affine3d last_progress_pose_inv = m_last_progress_pose.inverse();
@@ -267,7 +306,7 @@ FrontierExplorationNode::goal_pose_from_frontier(const frontier_t & frontier)
 
   // TODO: compute a real orientation instead of using default 0.0
   // Even if laser is 360, this may result in robot reaching goal and unnecessarily turning to this orientation
-  goal.orientation = nav2_util::geometry_utils::orientationAroundZAxis(0.0);
+  goal.orientation = wombat_core::quaternion_from_rpy(0.0, 0.0, 0.0);
 
   return goal;
 }
@@ -377,18 +416,17 @@ void FrontierExplorationNode::visualize_frontiers(
   m.id = static_cast<int>(frontiers.size());
   m.points = {{goal.position}};
   markers_msg.markers.push_back(m);
-  // Frontiers + goal marker
-  unsigned int current_markers = frontiers.size() + 1;
 
-  // Old markers that are not not going to be overwritten have to be deleted
-  if (m_prev_num_frontiers > frontiers.size()) {
+  size_t current_num_markers = markers_msg.markers.size();
+  // Old markers that are not not going to be overwritten have to be explicitly deleted
+  // e.g. before we published 8 markers, now we are publishing 5, we need to delete
+  // markers with IDs 5, 6, 7 (IDs start from 0)
+  for (size_t i = current_num_markers; i < m_prev_num_markers; i++) {
     m.action = visualization_msgs::msg::Marker::DELETE;
-    for (size_t i = current_markers; i < m_prev_num_frontiers; i++) {
-      m.id = static_cast<int>(i);
-      markers_msg.markers.push_back(m);
-    }
+    m.id = static_cast<int>(i);
+    markers_msg.markers.push_back(m);
   }
-  m_prev_num_frontiers = current_markers;
+  m_prev_num_markers = current_num_markers;
 
   m_markers_pub->publish(markers_msg);
 }

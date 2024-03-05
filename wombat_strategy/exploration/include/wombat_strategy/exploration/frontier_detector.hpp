@@ -61,14 +61,12 @@ public:
     * @param frontier the frontier to check
     * @param grid occupancy grid
     * @param map_info information about the grid
-    * @param trusted whether the map has been updated or not since when the frontier was computed
     * @return true if the frontier is still valid
     */
   bool frontier_is_valid(
     const frontier_t & frontier,
     nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
-    const wombat_core::MapMetaDataAdapter & map_info,
-    bool trusted = true);
+    const wombat_core::MapMetaDataAdapter & map_info);
 
 private:
   /**
