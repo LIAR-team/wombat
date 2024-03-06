@@ -69,21 +69,33 @@ public:
     const wombat_core::MapMetaDataAdapter & map_info);
 
 private:
+  enum IndexType : unsigned int {
+    MAP_OPEN = 1 << 0,  // 0001
+    MAP_CLOSED = 1 << 1,  // 0010
+    FRONTIER_OPEN = 1 << 2,   // 0100
+    FRONTIER_CLOSED = 1 << 3,   // 1000
+  };
+
+  std::vector<wombat_core::grid_index_t>
+  enumerate_frontier(
+    wombat_core::grid_index_t starting_cell_idx,
+    nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
+    const wombat_core::MapMetaDataAdapter & map_info,
+    std::unordered_map<wombat_core::grid_index_t, IndexType> & index_type_storage);
+
   /**
     * @brief Create a frontier object starting from a given index.
     * While the frontier is created, its indices are also added to the all_frontier_indices
     * NOTE: This method will not assign a score to the frontier
     * @param starting_cell_idx first identified index belonging to the frontier
-    * @param grid occupancy grid
     * @param map_info information about the grid
     * @param all_frontier_indices
     * @return frontier_t the constructed frontier
     */
   frontier_t build_frontier(
+    const std::vector<wombat_core::grid_index_t> & frontier_indices,
     wombat_core::grid_index_t starting_cell_idx,
-    nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
-    const wombat_core::MapMetaDataAdapter & map_info,
-    std::vector<bool> & all_frontier_indices);
+    const wombat_core::MapMetaDataAdapter & map_info);
 
   /**
     * @brief Assign a score and ranks the frontiers according to it

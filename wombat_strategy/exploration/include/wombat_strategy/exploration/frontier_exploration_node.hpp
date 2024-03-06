@@ -35,6 +35,8 @@ public:
    */
   explicit FrontierExplorationNode(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
+  ~FrontierExplorationNode();
+
 private:
   using ExploreAction = wombat_msgs::action::Explore;
   using ExploreActionServer = nav2_util::SimpleActionServer<ExploreAction>;

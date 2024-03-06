@@ -136,6 +136,12 @@ FrontierExplorationNode::FrontierExplorationNode(const rclcpp::NodeOptions & opt
   RCLCPP_INFO(this->get_logger(), "Node created");
 }
 
+FrontierExplorationNode::~FrontierExplorationNode()
+{
+  auto result = std::make_shared<typename ExploreAction::Result>();
+  m_explore_server->terminate_all(result);
+}
+
 void FrontierExplorationNode::explore()
 {
   auto goal = m_explore_server->get_current_goal();
@@ -227,8 +233,16 @@ void FrontierExplorationNode::explore()
       this->get_logger(), "Current position: %f %f", current_pose.pose.position.x, current_pose.pose.position.y);
 
     // Search new frontiers
-    auto frontiers = m_detector.search_frontiers(m_occupancy_grid, current_pose.pose.position);
-    RCLCPP_INFO(this->get_logger(), "Found %lu frontiers", frontiers.size());
+    {
+      const auto start_frontier_time = std::chrono::high_resolution_clock::now();
+      auto frontiers = m_detector.search_frontiers(m_occupancy_grid, current_pose.pose.position);
+      const auto end_frontier_time = std::chrono::high_resolution_clock::now();
+
+      RCLCPP_INFO(
+        this->get_logger(), "Found %lu frontiers in %d ms",
+        frontiers.size(),
+        std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
+    }
 
     // Select exploration goal
     geometry_msgs::msg::Pose::UniquePtr exploration_goal = select_exploration_goal(frontiers);
@@ -390,9 +404,9 @@ void FrontierExplorationNode::visualize_frontiers(
   m.header.frame_id = m_global_frame;
   m.header.stamp = this->now();
   m.ns = "frontiers";
-  m.scale.x = 0.03;
-  m.scale.y = 0.03;
-  m.scale.z = 0.03;
+  m.scale.x = 0.06;
+  m.scale.y = 0.06;
+  m.scale.z = 0.06;
   m.color.g = 0.0f;
   m.color.a = 1.0f;
   m.type = visualization_msgs::msg::Marker::POINTS;
