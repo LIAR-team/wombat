@@ -72,14 +72,14 @@ bool Kennel::configure(const rclcpp::ParameterMap & parameter_map)
     .get_value<double>();
   const auto sim_time_update_period = m_kennel_node->get_parameter("sim_time_update_period_ms")
     .get_value<int>();
-  if (rtf <= 0.0) {
-    RCLCPP_WARN(this->get_logger(), "Real-Time factor must be a positive definite number: %f", rtf);
-    return false;
+  if (rtf > 0.0) {
+    m_sim_time_manager = std::make_unique<SimTimeManager>(
+      m_kennel_node.get(),
+      rtf,
+      std::chrono::milliseconds(sim_time_update_period));
+  } else {
+    RCLCPP_WARN(this->get_logger(), "Skipped initialization of sim time manager because rtf is not positive definite: %f", rtf);
   }
-  m_sim_time_manager = std::make_unique<SimTimeManager>(
-    m_kennel_node.get(),
-    rtf,
-    std::chrono::milliseconds(sim_time_update_period));
 
   // Map server setup
   const auto map_yaml_filename = m_kennel_node->get_parameter("map_yaml_filename")
@@ -132,10 +132,12 @@ bool Kennel::start()
   }
 
   // Start sim time thread
-  m_sim_time_thread = std::make_unique<std::thread>(
-    [this]() {
-      m_sim_time_manager->run();
-    });
+  if (m_sim_time_manager) {
+    m_sim_time_thread = std::make_unique<std::thread>(
+      [this]() {
+        m_sim_time_manager->run();
+      });
+  }
 
   // Start executor for the kennel node
   {
@@ -179,12 +181,14 @@ bool Kennel::stop()
   }
   m_executors.clear();
 
-  while (!m_sim_time_manager->is_running() && rclcpp::ok()) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+  if (m_sim_time_manager) {
+    while (!m_sim_time_manager->is_running() && rclcpp::ok()) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
+    m_sim_time_manager->stop();
+    m_sim_time_thread->join();
+    m_sim_time_thread.reset();
   }
-  m_sim_time_manager->stop();
-  m_sim_time_thread->join();
-  m_sim_time_thread.reset();
 
   m_is_configured = false;
   m_is_started = false;
@@ -282,6 +286,7 @@ bool Kennel::setup_map_manager(
     RCLCPP_ERROR(this->get_logger(), "Map server activation failed");
     return false;
   }
+  RCLCPP_INFO(this->get_logger(), "Started map server on topic '%s'", map_topic_name.c_str());
 
   return true;
 }

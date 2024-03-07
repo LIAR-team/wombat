@@ -169,7 +169,7 @@ void FrontierExplorationNode::explore()
     if (!m_occupancy_grid) {
       RCLCPP_INFO_THROTTLE(
         this->get_logger(), *(this->get_clock()), 1000,
-        "No map available, can't explore");
+        "No map available (%s), can't explore", m_map_subscription->get_topic_name());
       loop_rate.sleep();
       continue;
     }
@@ -233,16 +233,16 @@ void FrontierExplorationNode::explore()
       this->get_logger(), "Current position: %f %f", current_pose.pose.position.x, current_pose.pose.position.y);
 
     // Search new frontiers
-    {
-      const auto start_frontier_time = std::chrono::high_resolution_clock::now();
-      auto frontiers = m_detector.search_frontiers(m_occupancy_grid, current_pose.pose.position);
-      const auto end_frontier_time = std::chrono::high_resolution_clock::now();
+    const auto begin_search_frontier_wall_time = std::chrono::high_resolution_clock::now();
+    auto frontiers = m_detector.search_frontiers(m_occupancy_grid, current_pose.pose.position);
+    const auto end_search_frontier_wall_time = std::chrono::high_resolution_clock::now();
 
-      RCLCPP_INFO(
-        this->get_logger(), "Found %lu frontiers in %d ms",
-        frontiers.size(),
-        std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
-    }
+    const auto search_frontier_duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+      end_search_frontier_wall_time - begin_search_frontier_wall_time);
+    RCLCPP_INFO(
+      this->get_logger(), "Found %lu frontiers in %ld ms",
+      frontiers.size(),
+      search_frontier_duration_ms.count());
 
     // Select exploration goal
     geometry_msgs::msg::Pose::UniquePtr exploration_goal = select_exploration_goal(frontiers);

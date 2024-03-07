@@ -20,6 +20,7 @@ SimTimeManager::SimTimeManager(
   m_sim_time_pub = parent_node->create_publisher<rosgraph_msgs::msg::Clock>(
     "/clock",
     rclcpp::ClockQoS());
+  RCLCPP_INFO(parent_node->get_logger(), "Constructed sim time manager with RTF '%f'", real_time_factor);
 }
 
 void SimTimeManager::run()
