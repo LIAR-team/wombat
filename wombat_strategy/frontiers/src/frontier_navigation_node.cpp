@@ -51,14 +51,6 @@ FrontiersNavigationNode::FrontiersNavigationNode(const rclcpp::NodeOptions & opt
     this->get_node_parameters_interface(),
     "frontier_size_scaling_factor",
     rclcpp::ParameterValue(0.0)).get<double>();
-  m_linear_progress_dist = wombat_core::declare_parameter_if_not_declared(
-    this->get_node_parameters_interface(),
-    "linear_progress_dist",
-    rclcpp::ParameterValue(0.15)).get<double>();
-  m_angular_progress_dist = wombat_core::declare_parameter_if_not_declared(
-    this->get_node_parameters_interface(),
-    "angular_progress_dist",
-    rclcpp::ParameterValue(wombat_core::PI / 9.0)).get<double>();
   auto no_progress_seconds = wombat_core::declare_parameter_if_not_declared(
     this->get_node_parameters_interface(),
     "no_progress_seconds",

@@ -36,9 +36,11 @@ jobs:
       - name: Get changed ROS 2 packages
         id: changed-ros2-pkgs
         uses: ./.github/actions/changed_ros2_packages
+      # This is to fix GIT not liking owner of the checkout dir
+      # Setting the user to 1001 caused permission problems with the scripts
+      # https://github.com/actions/runner/issues/2033
       - name: Set ownership
         run: |
-          # this is to fix GIT not liking owner of the checkout dir
           chown -R $(id -u):$(id -g) $PWD
       - name: Build wombat
         run: |
