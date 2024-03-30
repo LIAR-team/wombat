@@ -38,7 +38,7 @@ jobs:
         uses: ./.github/actions/changed_ros2_packages
       - name: Check stuff
         run: |
-          chmod 777 /home/docker-dev/.bashrc
+          sudo chmod 777 /home/docker-dev/.bashrc
       - name: Build wombat
         run: |
           source /home/docker-dev/.bashrc \
