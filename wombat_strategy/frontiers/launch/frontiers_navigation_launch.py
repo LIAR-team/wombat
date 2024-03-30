@@ -21,7 +21,7 @@ def generate_launch_description():
         ],
         package='wombat_strategy',
         executable='exploration_server',
-        name='frontier_exploration',
+        name='frontier_navigation',
         output='screen')
 
     # Create the launch description and populate

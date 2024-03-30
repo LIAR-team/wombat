@@ -1,13 +1,10 @@
-frontier_exploration:
+frontier_navigation:
     ros__parameters:
       global_frame: "map"
       base_frame: "base_link"
       map_topic: "map"
       exploration_rate: 5.0
       min_aborted_goals_distance: 0.2
+      min_frontier_size: 20
       search_only_free_space: true
-      min_unknown_neighbors: 1
-      min_free_neighbors: 3
-      max_occupied_neighbors: 1 # Set to 8 to disable it
-      min_frontier_size: 1
       frontier_size_scaling_factor: 0.0 # TODO: tune this

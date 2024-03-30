@@ -41,6 +41,9 @@ private:
     m_data.robot_pose.header.frame_id = frame_id;
 
     if (!gt_data.map) {
+      RCLCPP_WARN_THROTTLE(
+        get_logger(), *m_clock, 1000,
+        "ground truth data map not available");
       return m_data;
     }
 

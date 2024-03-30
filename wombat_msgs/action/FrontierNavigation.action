@@ -1,0 +1,9 @@
+## Goal definition
+# Whether to keep navigating until there's no more frontier
+# If false, we will navigate only to 1 frontier
+bool explore_all true
+---
+## Result definition
+builtin_interfaces/Duration total_elapsed_time
+---
+## Feedback definition

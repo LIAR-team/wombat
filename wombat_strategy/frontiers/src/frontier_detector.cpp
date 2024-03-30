@@ -3,7 +3,7 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#include "wombat_strategy/exploration/frontier_detector.hpp"
+#include "wombat_strategy/frontiers/frontier_detector.hpp"
 
 #include <algorithm>
 #include <limits>
@@ -38,55 +38,61 @@ std::vector<frontier_t> FrontierDetector::search_frontiers(
   // to keep track of indices (i.e. map cells) already examined or already added to a frontier
   wombat_core::MapMetaDataAdapter map_info(grid->info);
 
-  wombat_core::grid_index_t map_size = map_info.num_grid_cells();
-  std::vector<bool> touched_indices(map_size, false);
-  std::vector<bool> all_frontier_indices(map_size, false);
-
   auto maybe_starting_idx = wombat_core::world_pt_to_grid_index(robot_position, map_info);
   if (!maybe_starting_idx) {
     throw std::runtime_error("Failed to convert starting position into grid index");
   }
 
   // Create queue of indices to be visited, initialized with starting index
-  std::queue<wombat_core::grid_index_t> to_be_visited;
-  to_be_visited.push(*maybe_starting_idx);
-  touched_indices[*maybe_starting_idx] = true;
+  std::unordered_map<wombat_core::grid_index_t, IndexType> index_type_storage;
+  std::queue<wombat_core::grid_index_t> map_queue;
+  map_queue.push(*maybe_starting_idx);
+  index_type_storage[*maybe_starting_idx] = static_cast<IndexType>(index_type_storage[*maybe_starting_idx] | IndexType::MAP_OPEN);
 
   // Output data structure
   std::vector<frontier_t> frontiers;
-  while (!to_be_visited.empty()) {
+  while (!map_queue.empty()) {
     // Pop front element out of the queue
-    auto cell_idx = to_be_visited.front();
-    to_be_visited.pop();
+    const auto grid_idx = map_queue.front();
+    map_queue.pop();
+
+    // Nothing to do for map closed elements
+    if ((index_type_storage[grid_idx] & IndexType::MAP_CLOSED) != 0) {
+      continue;
+    }
     // Check if a new frontier can be started from current cell
-    if (is_frontier_cell(cell_idx, grid, map_info) && !all_frontier_indices[cell_idx]) {
-      frontier_t f = build_frontier(cell_idx, grid, map_info, all_frontier_indices);
-      if (frontier_is_valid(f, grid, map_info)) {
-        frontiers.push_back(f);
+    if (is_frontier_cell(grid_idx, grid, map_info)) {
+      const auto frontier_indices = enumerate_frontier(
+        grid_idx,
+        grid,
+        map_info,
+        index_type_storage);
+      if (frontier_indices.size() >= m_params.min_frontier_size) {
+        const auto new_frontier = build_frontier(frontier_indices, map_info);
+        frontiers.push_back(new_frontier);
       }
     }
 
     // Add neighbor cells to the queue
     wombat_core::for_each_grid_neighbor(
-      cell_idx,
-      map_info.grid_size.x(),
-      map_info.grid_size.y(),
-      [this, &touched_indices, &all_frontier_indices, &to_be_visited, &grid](wombat_core::grid_index_t i)
+      grid_idx, map_info.grid_size.x(), map_info.grid_size.y(),
+      [this, &index_type_storage, &map_queue, &grid](wombat_core::grid_index_t i)
       {
-        // Skip already visited cells
-        if (touched_indices[i] || all_frontier_indices[i]) {
+        if ((index_type_storage[i] & (IndexType::MAP_OPEN | IndexType::MAP_CLOSED)) != 0) {
           return false;
         }
-        // Mark this as touched to avoid looking at it again
-        touched_indices[i] = true;
+
         // Add to queue if it's worth searching frontiers from this cell
         if (!m_params.search_only_free_space || grid->data[i] == wombat_core::occupancy::FREE) {
-          to_be_visited.push(i);
+          index_type_storage[i] = static_cast<IndexType>(index_type_storage[i] | IndexType::MAP_OPEN);
+          map_queue.push(i);
         }
         // Keep going to next neighbor
         return false;
       },
       false);
+
+    index_type_storage[grid_idx] = static_cast<IndexType>(index_type_storage[grid_idx] | IndexType::MAP_CLOSED);
   }
 
   rank_frontiers(robot_position, frontiers);
@@ -94,63 +100,78 @@ std::vector<frontier_t> FrontierDetector::search_frontiers(
 }
 
 frontier_t FrontierDetector::build_frontier(
-  wombat_core::grid_index_t starting_cell_idx,
-  nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
-  const wombat_core::MapMetaDataAdapter & map_info,
-  std::vector<bool> & all_frontier_indices)
+  const std::vector<wombat_core::grid_index_t> & frontier_indices,
+  const wombat_core::MapMetaDataAdapter & map_info)
 {
-  // Output frontier
   frontier_t f;
+  f.points.reserve(frontier_indices.size());
 
-  // We consider the first frontier cell found as the closest to the robot
-  const auto maybe_start_pt = wombat_core::grid_index_to_world_pt(starting_cell_idx, map_info);
-  if (!maybe_start_pt) {
-    return f;
-  }
-  f.closest_point = *maybe_start_pt;
-
-  // Queue of contiguous frontier cells
-  std::queue<wombat_core::grid_index_t> to_be_visited;
-  to_be_visited.push(starting_cell_idx);
-  all_frontier_indices[starting_cell_idx] = true;
-
-  while (!to_be_visited.empty()) {
-    // Pop front element out of the queue
-    wombat_core::grid_index_t cell_idx = to_be_visited.front();
-    to_be_visited.pop();
-
+  for (const auto & cell_idx : frontier_indices) {
     const auto maybe_frontier_pt = wombat_core::grid_index_to_world_pt(cell_idx, map_info);
     if (!maybe_frontier_pt) {
       throw std::runtime_error("Bad cell while building frontier");
     }
     f.points.push_back(*maybe_frontier_pt);
 
+    f.centroid.x += maybe_frontier_pt->x;
+    f.centroid.y += maybe_frontier_pt->y;
+  }
+  f.centroid.x = f.centroid.x / static_cast<double>(f.points.size());
+  f.centroid.y = f.centroid.y / static_cast<double>(f.points.size());
+
+  return f;
+}
+
+std::vector<wombat_core::grid_index_t>
+FrontierDetector::enumerate_frontier(
+  wombat_core::grid_index_t starting_cell_idx,
+  nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
+  const wombat_core::MapMetaDataAdapter & map_info,
+  std::unordered_map<wombat_core::grid_index_t, IndexType> & index_type_storage)
+{
+  // Queue of contiguous frontier cells
+  std::vector<wombat_core::grid_index_t> frontier_indices;
+  std::queue<wombat_core::grid_index_t> to_be_visited;
+  to_be_visited.push(starting_cell_idx);
+  index_type_storage[starting_cell_idx] = static_cast<IndexType>(index_type_storage[starting_cell_idx] | IndexType::FRONTIER_OPEN);
+
+  while (!to_be_visited.empty()) {
+    // Pop front element out of the queue
+    wombat_core::grid_index_t this_grid_idx = to_be_visited.front();
+    to_be_visited.pop();
+    // Nothing to do for map closed elements
+    if ((index_type_storage[this_grid_idx] & (IndexType::MAP_CLOSED | IndexType::FRONTIER_CLOSED)) != 0) {
+      continue;
+    }
+    index_type_storage[this_grid_idx] = static_cast<IndexType>(index_type_storage[this_grid_idx] | IndexType::FRONTIER_CLOSED);
+    if (!is_frontier_cell(this_grid_idx, grid, map_info)) {
+      continue;
+    }
+
+    frontier_indices.push_back(this_grid_idx);
+
     wombat_core::for_each_grid_neighbor(
-      cell_idx,
+      this_grid_idx,
       map_info.grid_size.x(),
       map_info.grid_size.y(),
-      [this, &all_frontier_indices, &to_be_visited, &grid, &map_info](wombat_core::grid_index_t i)
+      [this, &index_type_storage, &to_be_visited](wombat_core::grid_index_t i)
       {
-        if (!all_frontier_indices[i] && is_frontier_cell(i, grid, map_info)) {
+        static constexpr unsigned int invalid_types
+          {IndexType::MAP_CLOSED | IndexType::FRONTIER_OPEN | IndexType::FRONTIER_CLOSED};
+        if ((index_type_storage[i] & invalid_types) == 0) {
+          index_type_storage[i] = static_cast<IndexType>(index_type_storage[i] | IndexType::FRONTIER_OPEN);
           to_be_visited.push(i);
-          all_frontier_indices[i] = true;
         }
         return false;
       },
       false);
   }
 
-  // Compute centroid of this frontier
-  geometry_msgs::msg::Point centroid;
-  for (const auto & point : f.points) {
-    centroid.x += point.x;
-    centroid.y += point.y;
+  for (const auto & this_grid_idx : frontier_indices) {
+    index_type_storage[this_grid_idx] = static_cast<IndexType>(index_type_storage[this_grid_idx] | IndexType::FRONTIER_CLOSED);
   }
-  centroid.x = centroid.x / static_cast<double>(f.points.size());
-  centroid.y = centroid.y / static_cast<double>(f.points.size());
-  f.centroid = centroid;
 
-  return f;
+  return frontier_indices;
 }
 
 void FrontierDetector::rank_frontiers(
@@ -167,14 +188,15 @@ void FrontierDetector::rank_frontiers(
     if (f.points.size() > max_size) {
       max_size = f.points.size();
     }
-    double distance = wombat_core::points_distance_2d(f.closest_point, robot_position);
+    const double distance = wombat_core::points_distance_2d(f.centroid, robot_position);
     distances[i] = distance;
     if (distance < min_distance) {
       min_distance = distance;
     }
   }
 
-  // Compute and assign normalized score to each frontier object
+  // Compute a score for each frontier.
+  // The score is made of multiple normalized quantities.
   double distance_scaling_factor = 1.0f - m_params.frontier_size_scaling_factor;
   for (size_t i = 0; i < frontiers.size(); i++) {
     frontier_t & f = frontiers[i];
@@ -184,33 +206,28 @@ void FrontierDetector::rank_frontiers(
     f.score = distance_score + information_gain_score;
   }
 
-  // Sort frontiers according to the just assigned scores
+  // Sort frontiers from the highest to the lowest score
   std::sort(frontiers.begin(), frontiers.end(), std::greater<frontier_t>());
 }
 
-bool FrontierDetector::frontier_is_valid(
+bool FrontierDetector::validate_frontier(
   const frontier_t & f,
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
-  const wombat_core::MapMetaDataAdapter & map_info,
-  bool trusted)
+  const wombat_core::MapMetaDataAdapter & map_info)
 {
   // Get number of cells that the frontier is made of
   size_t num_frontier_cells = 0;
-  if (trusted) {
-    num_frontier_cells = f.points.size();
-  } else {
-    for (const auto & point : f.points) {
-      const auto maybe_cell_idx = wombat_core::world_pt_to_grid_index(point, map_info);
-      if (!maybe_cell_idx) {
-        return false;
-      }
-      if (is_frontier_cell(*maybe_cell_idx, grid, map_info)) {
-        num_frontier_cells++;
-      }
+  for (const auto & point : f.points) {
+    const auto maybe_cell_idx = wombat_core::world_pt_to_grid_index(point, map_info);
+    if (!maybe_cell_idx) {
+      return false;
+    }
+    if (is_frontier_cell(*maybe_cell_idx, grid, map_info)) {
+      num_frontier_cells++;
     }
   }
 
-  // A frontier is invalid if its total number of cells is less than minimum required size
+  // Frontiers that are too small become invalid
   return num_frontier_cells >= m_params.min_frontier_size;
 }
 
@@ -219,45 +236,25 @@ bool FrontierDetector::is_frontier_cell(
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
   const wombat_core::MapMetaDataAdapter & map_info) const
 {
-  // A cell must be FREE in order to be a frontier
+  // Only free cells can be part of the frontier
   if (grid->data[cell_idx] != wombat_core::occupancy::FREE) {
     return false;
   }
 
   // Examine neighbors of this cell
-  uint8_t unknown_neighbors = 0;
-  uint8_t free_neighbors = 0;
-  uint8_t occupied_neighbors = 0;
+  bool is_frontier = false;
   wombat_core::for_each_grid_neighbor(
     cell_idx,
     map_info.grid_size.x(),
     map_info.grid_size.y(),
-    [&unknown_neighbors, &free_neighbors, &occupied_neighbors, &grid](wombat_core::grid_index_t i)
+    [&is_frontier, &grid](wombat_core::grid_index_t i)
     {
-      int8_t neighbor_cell_type = grid->data[i];
-      if (neighbor_cell_type == wombat_core::occupancy::UNKNOWN) {
-        unknown_neighbors++;
-      } else if (neighbor_cell_type == wombat_core::occupancy::FREE) {
-        free_neighbors++;
-      } else if (neighbor_cell_type == wombat_core::occupancy::LETHAL_OBS) {
-        occupied_neighbors++;
-      }
-      return false;
+      is_frontier = grid->data[i] == wombat_core::occupancy::UNKNOWN;
+      return is_frontier;
     },
     true);
 
-  // Discard cells which do not meet the requirements
-  if (unknown_neighbors < m_params.min_unknown_neighbors) {
-    return false;
-  }
-  if (free_neighbors < m_params.min_free_neighbors) {
-    return false;
-  }
-  if (occupied_neighbors >= m_params.max_occupied_neighbors) {
-    return false;
-  }
-
-  return true;
+  return is_frontier;
 }
 
 }  // namespace wombat_strategy
