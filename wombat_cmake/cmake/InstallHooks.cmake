@@ -1,7 +1,4 @@
 # Copyright 2022 Soragna Alberto.
-# All Rights Reserved.
-# Unauthorized copying via any medium is strictly prohibited.
-# Proprietary and confidential.
 
 #
 # Internal utility function used to invoke the `install_hooks.sh` shell script from CMake.

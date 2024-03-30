@@ -5,7 +5,7 @@
   <version>0.0.1</version>
   <description>Core utilities and data-structures for the wombat packages</description>
   <maintainer email="alberto.soragna@gmail.com">Alberto Soragna</maintainer>
-  <license>Proprietary</license>
+  <license>GPLv3</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>wombat_cmake</buildtool_depend>

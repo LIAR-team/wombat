@@ -19,9 +19,11 @@ jobs:
 
   Build-and-Test:
     needs: Setup-Wombat
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container:
       image: ${{ needs.Setup-Wombat.outputs.base-image }}
+      # Set root to fix https://github.com/actions/checkout/issues/1014#issuecomment-1369355566
+      options: --user root
     env:
       # This variable is correct (it's pointing to a valid path in the docker)
       # depsite the presence of https://github.com/actions/runner/issues/2058
@@ -35,6 +37,12 @@ jobs:
       - name: Get changed ROS 2 packages
         id: changed-ros2-pkgs
         uses: ./.github/actions/changed_ros2_packages
+      # This is to fix GIT not liking owner of the checkout dir
+      # Setting the user to 1001 caused permission problems with the scripts
+      # https://github.com/actions/runner/issues/2033
+      - name: Set ownership
+        run: |
+          chown -R $(id -u):$(id -g) $PWD
       - name: Build wombat
         run: |
           source /home/docker-dev/.bashrc \
@@ -58,9 +66,11 @@ jobs:
 
   Documentation:
     needs: Setup-Wombat
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container:
       image: ${{ needs.Setup-Wombat.outputs.base-image }}
+      # Set root to fix https://github.com/actions/checkout/issues/1014#issuecomment-1369355566
+      options: --user root
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4

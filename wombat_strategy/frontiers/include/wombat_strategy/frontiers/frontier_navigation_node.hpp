@@ -1,7 +1,4 @@
 // Copyright 2021-2022 Soragna Alberto.
-// All Rights Reserved.
-// Unauthorized copying via any medium is strictly prohibited.
-// Proprietary and confidential.
 
 #pragma once
 
@@ -35,7 +32,7 @@ public:
    */
   explicit FrontiersNavigationNode(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
-  ~FrontiersNavigationNode();
+  ~FrontiersNavigationNode() override;
 
 private:
   using FrontierAction = wombat_msgs::action::FrontierNavigation;

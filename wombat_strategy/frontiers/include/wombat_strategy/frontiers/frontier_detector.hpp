@@ -1,11 +1,9 @@
 // Copyright 2021-2022 Soragna Alberto.
-// All Rights Reserved.
-// Unauthorized copying via any medium is strictly prohibited.
-// Proprietary and confidential.
 
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -63,7 +61,8 @@ public:
     const wombat_core::MapMetaDataAdapter & map_info);
 
 private:
-  enum IndexType : unsigned int {
+  enum IndexType : unsigned int
+  {
     MAP_OPEN = 1 << 0,  // 0001
     MAP_CLOSED = 1 << 1,  // 0010
     FRONTIER_OPEN = 1 << 2,   // 0100
@@ -78,11 +77,10 @@ private:
     std::unordered_map<wombat_core::grid_index_t, IndexType> & index_type_storage);
 
   /**
-    * @brief Create a frontier object starting from a given index.
-    * While the frontier is created, its indices are also added to the all_frontier_indices
+    * @brief Create a frontier composed of the provided grid indices
     * NOTE: This method will not assign a score to the frontier
+    * @param frontier_indices
     * @param map_info information about the grid
-    * @param all_frontier_indices
     * @return frontier_t the constructed frontier
     */
   frontier_t build_frontier(
