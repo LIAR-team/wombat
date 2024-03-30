@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ needs.Setup-Wombat.outputs.base-image }}
-      options: --user 1001
+      options: --user root
     env:
       # This variable is correct (it's pointing to a valid path in the docker)
       # depsite the presence of https://github.com/actions/runner/issues/2058
@@ -36,9 +36,10 @@ jobs:
       - name: Get changed ROS 2 packages
         id: changed-ros2-pkgs
         uses: ./.github/actions/changed_ros2_packages
-      - name: Check stuff
+      - name: Set ownership
         run: |
-          sudo chmod 777 /home/docker-dev/.bashrc
+          # this is to fix GIT not liking owner of the checkout dir
+          chown -R $(id -u):$(id -g) $PWD
       - name: Build wombat
         run: |
           source /home/docker-dev/.bashrc \
