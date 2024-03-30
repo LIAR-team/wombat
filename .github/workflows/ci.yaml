@@ -1,12 +1,8 @@
-name: wombat CI
+name: CI
 
 on:
-  pull_request:
-    branches:
-      - 'main'
   push:
     branches:
-      - main
       - asoragna/fix-push-ci
   workflow_dispatch:
 
@@ -21,17 +17,10 @@ jobs:
       image: alsora/wombat-desktop-nvidia:0.5.1
       # Set root to fix https://github.com/actions/checkout/issues/1014#issuecomment-1369355566
       options: --user root
-    env:
-      # This variable is correct (it's pointing to a valid path in the docker)
-      # depsite the presence of https://github.com/actions/runner/issues/2058
-      COLCON_HOME: ${{ github.workspace }}/.colcon
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # OR "2" -> To retrieve the preceding commit.
-      # ensure changed-files can read repo files from git
-      - name: Configure Git Safe Directory
-        run: git config --global --add safe.directory /__w/my-repo/my-repo
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v44
