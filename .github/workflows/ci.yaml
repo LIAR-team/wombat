@@ -36,16 +36,6 @@ jobs:
       - name: Get changed ROS 2 packages
         id: changed-ros2-pkgs
         uses: ./.github/actions/changed_ros2_packages
-      - name: Check stuff
-        run: |
-          echo "LS CHECK"
-          ls -lsa
-          echo "PWD CHECK"
-          pwd
-          echo "WHOAMI"
-          whoami
-          echo "GIT CHECK"
-          git rev-parse --is-inside-work-tree
       - name: Build wombat
         run: |
           source /home/docker-dev/.bashrc \
