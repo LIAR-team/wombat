@@ -16,13 +16,17 @@ jobs:
     container:
       image: alsora/wombat-desktop-nvidia:0.5.1
       # Set root to fix https://github.com/actions/checkout/issues/1014#issuecomment-1369355566
+      # Apparently this is also required
       options: --user root
     steps:
-      #- name: cleanup old checkout
-      #  run: chmod +w -R ${GITHUB_WORKSPACE}; rm -rf ${GITHUB_WORKSPACE}/*;
+      # TODO: unclear if this is necessary when running on github runners
+      - name: Cleanup old checkout
+        run: chmod +w -R ${GITHUB_WORKSPACE}; rm -rf ${GITHUB_WORKSPACE}/*;
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # OR "2" -> To retrieve the preceding commit.
+          fetch-depth: 2  # OR "2" -> To retrieve the preceding commit.
+      # This should be handled by the checkout action above, but apparently is not
+      # probably due to the "root" user set above
       - name: Configure Git Safe Directory
         run: git config --global --add safe.directory /__w/wombat/wombat
       - name: Get changed files
