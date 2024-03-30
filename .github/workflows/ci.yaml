@@ -18,12 +18,11 @@ jobs:
       # Set root to fix https://github.com/actions/checkout/issues/1014#issuecomment-1369355566
       options: --user root
     steps:
-      - name: cleanup old checkout
-        run: chmod +w -R ${GITHUB_WORKSPACE}; rm -rf ${GITHUB_WORKSPACE}/*;
+      #- name: cleanup old checkout
+      #  run: chmod +w -R ${GITHUB_WORKSPACE}; rm -rf ${GITHUB_WORKSPACE}/*;
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # OR "2" -> To retrieve the preceding commit.
-          #set-safe-directory: true
       - name: Configure Git Safe Directory
         run: git config --global --add safe.directory /__w/wombat/wombat
       - name: Get changed files
