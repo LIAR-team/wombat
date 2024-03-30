@@ -1,7 +1,4 @@
 // Copyright 2024 Soragna Alberto.
-// All Rights Reserved.
-// Unauthorized copying via any medium is strictly prohibited.
-// Proprietary and confidential.
 
 #include "tf2/utils.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"

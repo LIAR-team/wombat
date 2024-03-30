@@ -1,7 +1,4 @@
 # Copyright 2024 Soragna Alberto.
-# All Rights Reserved.
-# Unauthorized copying via any medium is strictly prohibited.
-# Proprietary and confidential.
 
 from launch import LaunchDescription
 from launch_ros.actions import Node

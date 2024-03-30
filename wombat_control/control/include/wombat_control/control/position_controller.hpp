@@ -1,7 +1,4 @@
 // Copyright 2021-2022 Azzollini Ilario, Soragna Alberto.
-// All Rights Reserved.
-// Unauthorized copying via any medium is strictly prohibited.
-// Proprietary and confidential.
 
 #pragma once
 

@@ -5,7 +5,7 @@
   <version>0.0.1</version>
   <description>Modeling and low-level control package</description>
   <maintainer email="ilario.azzollini92@gmail.com">Ilario A. Azzollini</maintainer>
-  <license>Proprietary</license>
+  <license>GPLv3</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>wombat_cmake</buildtool_depend>

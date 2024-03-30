@@ -27,6 +27,6 @@ setup(
     maintainer='Alberto Soragna',
     maintainer_email='alberto.soragna@gmail.com',
     description='Bringup scripts for Third-Party software',
-    license='Proprietary',
+    license='GPLv3',
     tests_require=['pytest']
 )

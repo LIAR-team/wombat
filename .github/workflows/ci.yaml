@@ -19,7 +19,7 @@ jobs:
 
   Build-and-Test:
     needs: Setup-Wombat
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container:
       image: ${{ needs.Setup-Wombat.outputs.base-image }}
     env:
@@ -58,7 +58,7 @@ jobs:
 
   Documentation:
     needs: Setup-Wombat
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container:
       image: ${{ needs.Setup-Wombat.outputs.base-image }}
     steps:

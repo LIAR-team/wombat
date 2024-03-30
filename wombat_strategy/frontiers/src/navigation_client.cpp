@@ -1,7 +1,4 @@
 // Copyright 2021-2024 Soragna Alberto.
-// All Rights Reserved.
-// Unauthorized copying via any medium is strictly prohibited.
-// Proprietary and confidential.
 
 #include "wombat_strategy/frontiers/navigation_client.hpp"
 

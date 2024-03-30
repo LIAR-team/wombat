@@ -12,7 +12,7 @@ on:
 
 jobs:
   setup-wombat:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     # Map the job outputs to step outputs
     outputs:
       base-image: ${{ steps.set-env.outputs.base-image }}

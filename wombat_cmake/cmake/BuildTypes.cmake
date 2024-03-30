@@ -1,7 +1,4 @@
 # Copyright 2021-2022 Soragna Alberto.
-# All Rights Reserved.
-# Unauthorized copying via any medium is strictly prohibited.
-# Proprietary and confidential.
 
 # For more information see:
 # https://gcc.gnu.org/onlinedocs/gcc-9.3.0/gcc/Debugging-Options.html#Debugging-Options
