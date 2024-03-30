@@ -32,7 +32,7 @@ public:
    */
   explicit FrontiersNavigationNode(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
-  ~FrontiersNavigationNode();
+  ~FrontiersNavigationNode() override;
 
 private:
   using FrontierAction = wombat_msgs::action::FrontierNavigation;

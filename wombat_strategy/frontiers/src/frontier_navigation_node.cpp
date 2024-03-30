@@ -82,7 +82,7 @@ FrontiersNavigationNode::FrontiersNavigationNode(const rclcpp::NodeOptions & opt
   // Nav2 Navigation action client
   m_navigation_client = std::make_unique<NavigationClient>(
     std::make_shared<wombat_core::NodeInterfaces>(this),
-    rclcpp::Duration(no_progress_seconds, 0));
+    rclcpp::Duration(static_cast<int32_t>(no_progress_seconds), 0));
 
   // TF buffer and Listener
   m_tf = std::make_shared<tf2_ros::Buffer>(this->get_clock());
@@ -135,30 +135,30 @@ void FrontiersNavigationNode::explore()
     }
 
     auto next_state = StrategyState::NONE;
-    switch(m_strategy_state) {
-    case StrategyState::DONE:
-    [[fallthrough]];
-    case StrategyState::NONE:
-    {
-      throw std::runtime_error("Bad strategy state");
-    }
-    case StrategyState::START_NAVIGATION:
-    {
-      bool has_next_goal = start_navigation();
-      next_state = has_next_goal ? StrategyState::NAVIGATE_TO_FRONTIER : StrategyState::DONE;
-      break;
-    }
-    case StrategyState::NAVIGATE_TO_FRONTIER:
-    {
-      bool is_navigation_done = handle_navigation();
-      if (!is_navigation_done) {
-        next_state = StrategyState::NAVIGATE_TO_FRONTIER;
-        break;
-      }
-      // Navigation completed, should restart or terminate?
-      next_state = goal->explore_all ? StrategyState::START_NAVIGATION : StrategyState::DONE;
-      break;
-    }
+    switch (m_strategy_state) {
+      case StrategyState::DONE:
+        [[fallthrough]];
+      case StrategyState::NONE:
+        {
+          throw std::runtime_error("Bad strategy state");
+        }
+      case StrategyState::START_NAVIGATION:
+        {
+          bool has_next_goal = start_navigation();
+          next_state = has_next_goal ? StrategyState::NAVIGATE_TO_FRONTIER : StrategyState::DONE;
+          break;
+        }
+      case StrategyState::NAVIGATE_TO_FRONTIER:
+        {
+          bool is_navigation_done = handle_navigation();
+          if (!is_navigation_done) {
+            next_state = StrategyState::NAVIGATE_TO_FRONTIER;
+            break;
+          }
+          // Navigation completed, should restart or terminate?
+          next_state = goal->explore_all ? StrategyState::START_NAVIGATION : StrategyState::DONE;
+          break;
+        }
     }
 
     if (next_state == StrategyState::DONE) {
@@ -199,7 +199,9 @@ bool FrontiersNavigationNode::start_navigation()
     return false;
   }
   m_curr_navigation_goal = *maybe_navigation_goal;
-  RCLCPP_INFO_STREAM(this->get_logger(), "New goal: " << m_curr_navigation_goal.position.x << " " << m_curr_navigation_goal.position.y);
+  RCLCPP_INFO_STREAM(
+    this->get_logger(),
+    "New nav goal: " << m_curr_navigation_goal.position.x << " " << m_curr_navigation_goal.position.y);
   geometry_msgs::msg::PoseStamped goal_pose;
   goal_pose.pose = m_curr_navigation_goal;
   goal_pose.header.frame_id = m_global_frame;
@@ -233,16 +235,16 @@ bool FrontiersNavigationNode::handle_navigation()
   // Check the navigation status
   auto nav_status = m_navigation_client->handle_navigate_to_pose(current_pose);
   switch (nav_status.status) {
-  case NavigationClient::Status::IDLE:
-    throw std::runtime_error("received bad navigation status");
-  case NavigationClient::Status::RUNNING:
-    return false;
-  case NavigationClient::Status::CANCELED:
-    RCLCPP_INFO(this->get_logger(), "Navigate to pose action canceled");
-    break;
-  case NavigationClient::Status::DONE:
-    RCLCPP_INFO(this->get_logger(), "Navigate to pose action completed");
-    break;
+    case NavigationClient::Status::IDLE:
+      throw std::runtime_error("received bad navigation status");
+    case NavigationClient::Status::RUNNING:
+      return false;
+    case NavigationClient::Status::CANCELED:
+      RCLCPP_INFO(this->get_logger(), "Navigate to pose action canceled");
+      break;
+    case NavigationClient::Status::DONE:
+      RCLCPP_INFO(this->get_logger(), "Navigate to pose action completed");
+      break;
   }
 
   m_attempted_goals.push_back(m_curr_navigation_goal);

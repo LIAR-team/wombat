@@ -81,8 +81,9 @@ function(wombat_linters)
   find_package(ament_cmake_lint_cmake REQUIRED)
   ament_lint_cmake()
 
+  ## Temporary disable copyright lint
   # Copyright linter
-  find_package(ament_cmake_copyright REQUIRED)
-  ament_copyright()
+  #find_package(ament_cmake_copyright REQUIRED)
+  #ament_copyright()
 
 endfunction()

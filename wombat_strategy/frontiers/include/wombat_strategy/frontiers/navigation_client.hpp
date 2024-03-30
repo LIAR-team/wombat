@@ -33,16 +33,16 @@ public:
     CANCELED,
   };
 
-  struct ResultWithStatus
+  struct result_with_status_t
   {
-    ResultWithStatus() = default;
-    ResultWithStatus(Status s)
+    result_with_status_t() = default;
+    explicit result_with_status_t(Status s)
     : status(s)
-    { }
+    {}
 
-    ResultWithStatus(Status s, const WrappedResult & res)
+    result_with_status_t(Status s, const WrappedResult & res)
     : status(s), wrapped_result(res)
-    { }
+    {}
 
     Status status;
     std::optional<WrappedResult> wrapped_result;
@@ -56,7 +56,7 @@ public:
 
   void start_navigate_to_pose(const geometry_msgs::msg::PoseStamped & goal_pose);
 
-  ResultWithStatus handle_navigate_to_pose(const geometry_msgs::msg::PoseStamped & current_pose);
+  result_with_status_t handle_navigate_to_pose(const geometry_msgs::msg::PoseStamped & current_pose);
 
   void cancel_navigate_to_pose(const rclcpp::Duration & goal_handle_timeout);
 

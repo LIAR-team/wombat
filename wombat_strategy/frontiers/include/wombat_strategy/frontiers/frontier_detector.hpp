@@ -3,6 +3,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -60,7 +61,8 @@ public:
     const wombat_core::MapMetaDataAdapter & map_info);
 
 private:
-  enum IndexType : unsigned int {
+  enum IndexType : unsigned int
+  {
     MAP_OPEN = 1 << 0,  // 0001
     MAP_CLOSED = 1 << 1,  // 0010
     FRONTIER_OPEN = 1 << 2,   // 0100

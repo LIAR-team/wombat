@@ -44,7 +44,8 @@ std::vector<frontier_t> FrontierDetector::search_frontiers(
   std::unordered_map<wombat_core::grid_index_t, IndexType> index_type_storage;
   std::queue<wombat_core::grid_index_t> map_queue;
   map_queue.push(*maybe_starting_idx);
-  index_type_storage[*maybe_starting_idx] = static_cast<IndexType>(index_type_storage[*maybe_starting_idx] | IndexType::MAP_OPEN);
+  index_type_storage[*maybe_starting_idx] =
+    static_cast<IndexType>(index_type_storage[*maybe_starting_idx] | IndexType::MAP_OPEN);
 
   // Output data structure
   std::vector<frontier_t> frontiers;
@@ -130,7 +131,8 @@ FrontierDetector::enumerate_frontier(
   std::vector<wombat_core::grid_index_t> frontier_indices;
   std::queue<wombat_core::grid_index_t> to_be_visited;
   to_be_visited.push(starting_cell_idx);
-  index_type_storage[starting_cell_idx] = static_cast<IndexType>(index_type_storage[starting_cell_idx] | IndexType::FRONTIER_OPEN);
+  index_type_storage[starting_cell_idx] =
+    static_cast<IndexType>(index_type_storage[starting_cell_idx] | IndexType::FRONTIER_OPEN);
 
   while (!to_be_visited.empty()) {
     // Pop front element out of the queue
@@ -140,7 +142,8 @@ FrontierDetector::enumerate_frontier(
     if ((index_type_storage[this_grid_idx] & (IndexType::MAP_CLOSED | IndexType::FRONTIER_CLOSED)) != 0) {
       continue;
     }
-    index_type_storage[this_grid_idx] = static_cast<IndexType>(index_type_storage[this_grid_idx] | IndexType::FRONTIER_CLOSED);
+    index_type_storage[this_grid_idx] =
+      static_cast<IndexType>(index_type_storage[this_grid_idx] | IndexType::FRONTIER_CLOSED);
     if (!is_frontier_cell(this_grid_idx, grid, map_info)) {
       continue;
     }
@@ -151,11 +154,11 @@ FrontierDetector::enumerate_frontier(
       this_grid_idx,
       map_info.grid_size.x(),
       map_info.grid_size.y(),
-      [this, &index_type_storage, &to_be_visited](wombat_core::grid_index_t i)
+      [&index_type_storage, &to_be_visited](wombat_core::grid_index_t i)
       {
-        static constexpr unsigned int invalid_types
-          {IndexType::MAP_CLOSED | IndexType::FRONTIER_OPEN | IndexType::FRONTIER_CLOSED};
-        if ((index_type_storage[i] & invalid_types) == 0) {
+        static constexpr unsigned int INVALID_TYPES
+        {IndexType::MAP_CLOSED | IndexType::FRONTIER_OPEN | IndexType::FRONTIER_CLOSED};
+        if ((index_type_storage[i] & INVALID_TYPES) == 0) {
           index_type_storage[i] = static_cast<IndexType>(index_type_storage[i] | IndexType::FRONTIER_OPEN);
           to_be_visited.push(i);
         }
@@ -165,7 +168,8 @@ FrontierDetector::enumerate_frontier(
   }
 
   for (const auto & this_grid_idx : frontier_indices) {
-    index_type_storage[this_grid_idx] = static_cast<IndexType>(index_type_storage[this_grid_idx] | IndexType::FRONTIER_CLOSED);
+    index_type_storage[this_grid_idx] =
+      static_cast<IndexType>(index_type_storage[this_grid_idx] | IndexType::FRONTIER_CLOSED);
   }
 
   return frontier_indices;

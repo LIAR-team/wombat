@@ -11,7 +11,7 @@ NavigationClient::NavigationClient(
   std::shared_ptr<wombat_core::NodeInterfaces> node_interfaces,
   const rclcpp::Duration & no_progress_timeout)
 : m_clock(node_interfaces->get_node_clock_interface()->get_clock()),
-m_logger(node_interfaces->get_node_logging_interface()->get_logger())
+  m_logger(node_interfaces->get_node_logging_interface()->get_logger())
 {
   (void)no_progress_timeout;
 
@@ -28,7 +28,11 @@ m_logger(node_interfaces->get_node_logging_interface()->get_logger())
 
 NavigationClient::~NavigationClient()
 {
-  cancel_navigate_to_pose(rclcpp::Duration::from_seconds(0.0));
+  try {
+    cancel_navigate_to_pose(rclcpp::Duration::from_seconds(0.0));
+  } catch (const std::exception & ex) {
+    RCLCPP_WARN(m_logger, "Exception while destroying nav client: %s", ex.what());
+  }
 }
 
 void NavigationClient::start_navigate_to_pose(
@@ -51,7 +55,7 @@ void NavigationClient::start_navigate_to_pose(
     m_navigate_to_pose_goal.pose.pose.position.y);
 }
 
-NavigationClient::ResultWithStatus
+NavigationClient::result_with_status_t
 NavigationClient::handle_navigate_to_pose(
   const geometry_msgs::msg::PoseStamped & current_pose)
 {
@@ -65,7 +69,7 @@ NavigationClient::handle_navigate_to_pose(
   if (!m_navigation_goal_handle) {
     auto status = m_future_goal_handle.wait_for(std::chrono::seconds(0));
     if (status != std::future_status::ready) {
-      return ResultWithStatus(Status::RUNNING);
+      return result_with_status_t(Status::RUNNING);
     }
     m_navigation_goal_handle = m_future_goal_handle.get();
     m_future_result = m_navigate_client->async_get_result(m_navigation_goal_handle);
@@ -80,15 +84,15 @@ NavigationClient::handle_navigate_to_pose(
   if (status == std::future_status::ready) {
     auto wrapped_result = m_future_result.get();
     clear();
-    return ResultWithStatus(Status::DONE, wrapped_result);
+    return result_with_status_t(Status::DONE, wrapped_result);
   }
 
   if (!is_making_progress()) {
     this->cancel_navigate_to_pose(rclcpp::Duration::from_seconds(0.0));
-    return ResultWithStatus(Status::CANCELED);
+    return result_with_status_t(Status::CANCELED);
   }
 
-  return ResultWithStatus(Status::RUNNING);
+  return result_with_status_t(Status::RUNNING);
 }
 
 void NavigationClient::cancel_navigate_to_pose(const rclcpp::Duration & goal_handle_timeout)

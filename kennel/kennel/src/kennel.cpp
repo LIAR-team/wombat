@@ -75,7 +75,9 @@ bool Kennel::configure(const rclcpp::ParameterMap & parameter_map)
       rtf,
       std::chrono::milliseconds(sim_time_update_period));
   } else {
-    RCLCPP_WARN(this->get_logger(), "Skipped initialization of sim time manager because rtf is not positive definite: %f", rtf);
+    RCLCPP_WARN(
+      this->get_logger(),
+      "Skipped initialization of sim time manager because rtf is not positive definite: %f", rtf);
   }
 
   // Map server setup

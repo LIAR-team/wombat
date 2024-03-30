@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ needs.Setup-Wombat.outputs.base-image }}
+      # Set root to fix https://github.com/actions/checkout/issues/1014#issuecomment-1369355566
       options: --user root
     env:
       # This variable is correct (it's pointing to a valid path in the docker)
@@ -68,6 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ needs.Setup-Wombat.outputs.base-image }}
+      # Set root to fix https://github.com/actions/checkout/issues/1014#issuecomment-1369355566
       options: --user root
     steps:
       - name: Check out repository code
