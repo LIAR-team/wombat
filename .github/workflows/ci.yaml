@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - asoragna/fix-push-ci
   workflow_dispatch:
 
 defaults:
