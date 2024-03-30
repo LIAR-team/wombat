@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ needs.Setup-Wombat.outputs.base-image }}
-      options: --user root
+      options: --user docker-dev
     env:
       # This variable is correct (it's pointing to a valid path in the docker)
       # depsite the presence of https://github.com/actions/runner/issues/2058
