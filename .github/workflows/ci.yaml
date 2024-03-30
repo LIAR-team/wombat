@@ -18,7 +18,7 @@ jobs:
   Build-and-Test:
     runs-on: ubuntu-latest
     container:
-      image: ${{ needs.Setup-Wombat.outputs.base-image }}
+      image: alsora/wombat-desktop-nvidia:0.5.1
       # Set root to fix https://github.com/actions/checkout/issues/1014#issuecomment-1369355566
       options: --user root
     env:
