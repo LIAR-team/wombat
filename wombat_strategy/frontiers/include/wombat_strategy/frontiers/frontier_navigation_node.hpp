@@ -16,46 +16,56 @@
 #include "tf2_ros/buffer.h"
 
 #include "nav_msgs/msg/occupancy_grid.hpp"
-#include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "nav2_util/simple_action_server.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
-#include "wombat_msgs/action/explore.hpp"
-#include "wombat_strategy/exploration/frontier_detector.hpp"
+#include "wombat_msgs/action/frontier_navigation.hpp"
+#include "wombat_strategy/frontiers/frontier_detector.hpp"
+#include "wombat_strategy/frontiers/navigation_client.hpp"
 
 namespace wombat_strategy
 {
 
-class FrontierExplorationNode : public rclcpp::Node
+class FrontiersNavigationNode : public rclcpp::Node
 {
 public:
   /**
    * @brief Node constructor, initializes ROS 2 entities
    * @param options
    */
-  explicit FrontierExplorationNode(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  explicit FrontiersNavigationNode(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
-  ~FrontierExplorationNode();
+  ~FrontiersNavigationNode();
 
 private:
-  using ExploreAction = wombat_msgs::action::Explore;
-  using ExploreActionServer = nav2_util::SimpleActionServer<ExploreAction>;
+  using FrontierAction = wombat_msgs::action::FrontierNavigation;
+  using FrontierActionServer = nav2_util::SimpleActionServer<FrontierAction>;
 
-  using NavigateAction = nav2_msgs::action::NavigateToPose;
-  using NavigateActionClient = rclcpp_action::Client<NavigateAction>;
-  using NavigateGoalHandle = rclcpp_action::ClientGoalHandle<NavigateAction>;
-  using NavigateCancelResponse = NavigateAction::Impl::CancelGoalService::Response;
+  enum class StrategyState
+  {
+    NONE,
+    START_NAVIGATION,
+    NAVIGATE_TO_FRONTIER,
+    DONE,
+  };
 
-  /** @brief ExploreActionServer callback, it performs the whole exploration task */
+  /** @brief FrontierActionServer callback, it performs the whole exploration task */
   void explore();
+
+
+  bool handle_cancellation(const rclcpp::Time & start_time);
+
+  bool start_navigation();
+
+  bool handle_navigation();
 
   /**
    * @brief Select a goal location among a set of frontiers
    * @param frontiers set of frontiers among which to select the goal
-   * @return geometry_msgs::msg::Pose::UniquePtr goal location
+   * @return std::optional<geometry_msgs::msg::Pose> goal location
    */
-  geometry_msgs::msg::Pose::UniquePtr
-  select_exploration_goal(const std::vector<frontier_t> & frontiers);
+  std::optional<geometry_msgs::msg::Pose>
+  select_navigation_goal(const std::vector<frontier_t> & frontiers);
 
   /**
    * @brief Select a goal location from a single frontier
@@ -64,20 +74,6 @@ private:
    */
   geometry_msgs::msg::Pose
   goal_pose_from_frontier(const frontier_t & frontier);
-
-  /** @brief Send a NavigateToPose action goal to drive towards chosen goal */
-
-  /**
-   * @brief Asynchronously send request to drive to a pose
-   * @param goal the goal pose
-   */
-  void drive_to_pose(const geometry_msgs::msg::Pose & goal);
-
-  /**
-   * @brief Handle a navigate to pose action result
-   * @param result the result
-   */
-  void navigate_result_callback(const NavigateGoalHandle::WrappedResult & result);
 
   /**
    * @brief Process an incoming map message
@@ -95,14 +91,13 @@ private:
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr m_occupancy_grid;
   FrontierDetector m_detector;
 
-  std::shared_ptr<ExploreActionServer> m_explore_server;
-  std::shared_ptr<NavigateActionClient> m_navigate_client;
+  std::shared_ptr<FrontierActionServer> m_explore_server;
+  std::unique_ptr<NavigationClient> m_navigation_client;
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr m_map_subscription;
   rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr m_markers_pub;
 
-  NavigateGoalHandle::SharedPtr m_navigation_goal_handle;
-  geometry_msgs::msg::Pose m_current_goal;
   frontier_t m_target_frontier;
+  geometry_msgs::msg::Pose m_curr_navigation_goal;
   std::vector<geometry_msgs::msg::Pose> m_attempted_goals;
   double m_exploration_rate {0.0};
   double m_min_attempted_goals_distance {0.0};
@@ -110,14 +105,10 @@ private:
   std::string m_global_frame {};
   std::string m_robot_frame {};
 
+  StrategyState m_strategy_state {StrategyState::NONE};
+
   std::shared_ptr<tf2_ros::Buffer> m_tf;
   std::shared_ptr<tf2_ros::TransformListener> m_tf_listener;
-  tf2::Stamped<Eigen::Affine3d> m_last_progress_pose;
-  rclcpp::Time m_last_progress_time;
-  double m_linear_progress_dist {0.0};
-  double m_angular_progress_dist {0.0};
-  rclcpp::Duration m_no_progress_timeout;
-  bool m_publish_frontiers {false};
   size_t m_prev_num_markers {0};
 };
 

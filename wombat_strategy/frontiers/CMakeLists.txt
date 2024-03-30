@@ -1,21 +1,21 @@
 
-wombat_add_library(exploration SHARED)
-target_sources(exploration
+wombat_add_library(frontiers SHARED)
+target_sources(frontiers
   PRIVATE
     src/frontier_detector.cpp
-    src/frontier_exploration_node.cpp
+    src/frontier_navigation_node.cpp
+    src/navigation_client.cpp
 )
 target_include_directories(
-  exploration
+  frontiers
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 target_link_libraries(
-  exploration
+  frontiers
   PUBLIC
     rclcpp::rclcpp
     tf2::tf2
-    tf2_eigen::tf2_eigen
     tf2_geometry_msgs::tf2_geometry_msgs
     tf2_ros::tf2_ros
     wombat_core::grid
@@ -28,15 +28,15 @@ target_link_libraries(
   PRIVATE
     wombat_core::costmap
 )
-ament_target_dependencies(exploration
+ament_target_dependencies(frontiers
   PUBLIC
     nav2_util
 )
 
 add_executable(exploration_server src/main.cpp)
-target_link_libraries(exploration_server PRIVATE wombat_strategy::exploration)
+target_link_libraries(exploration_server PRIVATE wombat_strategy::frontiers)
 
-wombat_install_target(exploration)
+wombat_install_target(frontiers)
 wombat_install_target(exploration_server)
 
 install(DIRECTORY launch

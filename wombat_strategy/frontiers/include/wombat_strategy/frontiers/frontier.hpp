@@ -16,8 +16,6 @@ struct frontier_t
 {
   /** @brief Points belonging to frontier in map reference frame */
   std::vector<geometry_msgs::msg::Point> points {};
-  /** @brief Point among @ref points that was closest to the robot when frontier has been created */
-  geometry_msgs::msg::Point closest_point;
   /** @brief Center of mass of @ref points */
   geometry_msgs::msg::Point centroid;
   /** @brief Score assigned by the frontier detector to this frontier */

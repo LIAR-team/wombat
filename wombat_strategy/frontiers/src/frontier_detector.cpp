@@ -3,7 +3,7 @@
 // Unauthorized copying via any medium is strictly prohibited.
 // Proprietary and confidential.
 
-#include "wombat_strategy/exploration/frontier_detector.hpp"
+#include "wombat_strategy/frontiers/frontier_detector.hpp"
 
 #include <algorithm>
 #include <limits>
@@ -68,7 +68,7 @@ std::vector<frontier_t> FrontierDetector::search_frontiers(
         map_info,
         index_type_storage);
       if (frontier_indices.size() >= m_params.min_frontier_size) {
-        const auto new_frontier = build_frontier(frontier_indices, grid_idx, map_info);
+        const auto new_frontier = build_frontier(frontier_indices, map_info);
         frontiers.push_back(new_frontier);
       }
     }
@@ -101,20 +101,11 @@ std::vector<frontier_t> FrontierDetector::search_frontiers(
 
 frontier_t FrontierDetector::build_frontier(
   const std::vector<wombat_core::grid_index_t> & frontier_indices,
-  wombat_core::grid_index_t starting_cell_idx,
   const wombat_core::MapMetaDataAdapter & map_info)
 {
-  // Output frontier
   frontier_t f;
-  // We consider the first frontier cell found as the closest to the robot
-  const auto maybe_start_pt = wombat_core::grid_index_to_world_pt(starting_cell_idx, map_info);
-  if (!maybe_start_pt) {
-    throw std::runtime_error("Bad starting cell while building frontier");
-  }
-  f.closest_point = *maybe_start_pt;
-
   f.points.reserve(frontier_indices.size());
-  geometry_msgs::msg::Point centroid;
+
   for (const auto & cell_idx : frontier_indices) {
     const auto maybe_frontier_pt = wombat_core::grid_index_to_world_pt(cell_idx, map_info);
     if (!maybe_frontier_pt) {
@@ -122,12 +113,11 @@ frontier_t FrontierDetector::build_frontier(
     }
     f.points.push_back(*maybe_frontier_pt);
 
-    centroid.x += maybe_frontier_pt->x;
-    centroid.y += maybe_frontier_pt->y;
+    f.centroid.x += maybe_frontier_pt->x;
+    f.centroid.y += maybe_frontier_pt->y;
   }
-  centroid.x = centroid.x / static_cast<double>(f.points.size());
-  centroid.y = centroid.y / static_cast<double>(f.points.size());
-  f.centroid = centroid;
+  f.centroid.x = f.centroid.x / static_cast<double>(f.points.size());
+  f.centroid.y = f.centroid.y / static_cast<double>(f.points.size());
 
   return f;
 }
@@ -198,14 +188,15 @@ void FrontierDetector::rank_frontiers(
     if (f.points.size() > max_size) {
       max_size = f.points.size();
     }
-    double distance = wombat_core::points_distance_2d(f.closest_point, robot_position);
+    const double distance = wombat_core::points_distance_2d(f.centroid, robot_position);
     distances[i] = distance;
     if (distance < min_distance) {
       min_distance = distance;
     }
   }
 
-  // Compute and assign normalized score to each frontier object
+  // Compute a score for each frontier.
+  // The score is made of multiple normalized quantities.
   double distance_scaling_factor = 1.0f - m_params.frontier_size_scaling_factor;
   for (size_t i = 0; i < frontiers.size(); i++) {
     frontier_t & f = frontiers[i];
@@ -215,11 +206,11 @@ void FrontierDetector::rank_frontiers(
     f.score = distance_score + information_gain_score;
   }
 
-  // Sort frontiers according to the just assigned scores
+  // Sort frontiers from the highest to the lowest score
   std::sort(frontiers.begin(), frontiers.end(), std::greater<frontier_t>());
 }
 
-bool FrontierDetector::frontier_is_valid(
+bool FrontierDetector::validate_frontier(
   const frontier_t & f,
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
   const wombat_core::MapMetaDataAdapter & map_info)
@@ -236,7 +227,7 @@ bool FrontierDetector::frontier_is_valid(
     }
   }
 
-  // A frontier is invalid if its total number of cells is less than minimum required size
+  // Frontiers that are too small become invalid
   return num_frontier_cells >= m_params.min_frontier_size;
 }
 
@@ -245,45 +236,25 @@ bool FrontierDetector::is_frontier_cell(
   nav_msgs::msg::OccupancyGrid::ConstSharedPtr grid,
   const wombat_core::MapMetaDataAdapter & map_info) const
 {
-  // A cell must be FREE in order to be a frontier
+  // Only free cells can be part of the frontier
   if (grid->data[cell_idx] != wombat_core::occupancy::FREE) {
     return false;
   }
 
   // Examine neighbors of this cell
-  uint8_t unknown_neighbors = 0;
-  uint8_t free_neighbors = 0;
-  uint8_t occupied_neighbors = 0;
+  bool is_frontier = false;
   wombat_core::for_each_grid_neighbor(
     cell_idx,
     map_info.grid_size.x(),
     map_info.grid_size.y(),
-    [&unknown_neighbors, &free_neighbors, &occupied_neighbors, &grid](wombat_core::grid_index_t i)
+    [&is_frontier, &grid](wombat_core::grid_index_t i)
     {
-      int8_t neighbor_cell_type = grid->data[i];
-      if (neighbor_cell_type == wombat_core::occupancy::UNKNOWN) {
-        unknown_neighbors++;
-      } else if (neighbor_cell_type == wombat_core::occupancy::FREE) {
-        free_neighbors++;
-      } else if (neighbor_cell_type == wombat_core::occupancy::LETHAL_OBS) {
-        occupied_neighbors++;
-      }
-      return false;
+      is_frontier = grid->data[i] == wombat_core::occupancy::UNKNOWN;
+      return is_frontier;
     },
     true);
 
-  // Discard cells which do not meet the requirements
-  if (unknown_neighbors < m_params.min_unknown_neighbors) {
-    return false;
-  }
-  if (free_neighbors < m_params.min_free_neighbors) {
-    return false;
-  }
-  if (occupied_neighbors >= m_params.max_occupied_neighbors) {
-    return false;
-  }
-
-  return true;
+  return is_frontier;
 }
 
 }  // namespace wombat_strategy
