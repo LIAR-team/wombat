@@ -75,11 +75,10 @@ private:
     std::unordered_map<wombat_core::grid_index_t, IndexType> & index_type_storage);
 
   /**
-    * @brief Create a frontier object starting from a given index.
-    * While the frontier is created, its indices are also added to the all_frontier_indices
+    * @brief Create a frontier composed of the provided grid indices
     * NOTE: This method will not assign a score to the frontier
+    * @param frontier_indices
     * @param map_info information about the grid
-    * @param all_frontier_indices
     * @return frontier_t the constructed frontier
     */
   frontier_t build_frontier(
